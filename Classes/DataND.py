@@ -9,25 +9,25 @@ from SciDataTool.Classes.Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from SciDataTool.Methods.Output.DataND.compare_along import compare_along
+    from SciDataTool.Methods.DataND.compare_along import compare_along
 except ImportError as error:
     compare_along = error
 try:
-    from SciDataTool.Methods.Output.DataND.compare_magnitude_along import (
+    from SciDataTool.Methods.DataND.compare_magnitude_along import (
         compare_magnitude_along,
     )
 except ImportError as error:
     compare_magnitude_along = error
 try:
-    from SciDataTool.Methods.Output.DataND.compare_phase_along import compare_phase_along
+    from SciDataTool.Methods.DataND.compare_phase_along import compare_phase_along
 except ImportError as error:
     compare_phase_along = error
 try:
-    from SciDataTool.Methods.Output.DataND.compress import compress
+    from SciDataTool.Methods.DataND.compress import compress
 except ImportError as error:
     compress = error
 try:
-    from SciDataTool.Methods.Output.DataND.set_Ftparameters import set_Ftparameters
+    from SciDataTool.Methods.DataND.set_Ftparameters import set_Ftparameters
 except ImportError as error:
     set_Ftparameters = error
 from numpy import array, array_equal
@@ -37,7 +37,7 @@ class DataND(Data):
     """Abstract class for physical quantities depending on others"""
     VERSION = 1
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Output.DataND.compare_along
+    # cf Methods.DataND.compare_along
     if isinstance(compare_along, ImportError):
         compare_along = property(
             fget=lambda x: raise_(
@@ -48,7 +48,7 @@ class DataND(Data):
         )
     else:
         compare_along = compare_along
-    # cf Methods.Output.DataND.compare_magnitude_along
+    # cf Methods.DataND.compare_magnitude_along
     if isinstance(compare_magnitude_along, ImportError):
         compare_magnitude_along = property(
             fget=lambda x: raise_(
@@ -60,7 +60,7 @@ class DataND(Data):
         )
     else:
         compare_magnitude_along = compare_magnitude_along
-    # cf Methods.Output.DataND.compare_phase_along
+    # cf Methods.DataND.compare_phase_along
     if isinstance(compare_phase_along, ImportError):
         compare_phase_along = property(
             fget=lambda x: raise_(
@@ -72,7 +72,7 @@ class DataND(Data):
         )
     else:
         compare_phase_along = compare_phase_along
-    # cf Methods.Output.DataND.compress
+    # cf Methods.DataND.compress
     if isinstance(compress, ImportError):
         compress = property(
             fget=lambda x: raise_(
@@ -81,7 +81,7 @@ class DataND(Data):
         )
     else:
         compress = compress
-    # cf Methods.Output.DataND.set_Ftparameters
+    # cf Methods.DataND.set_Ftparameters
     if isinstance(set_Ftparameters, ImportError):
         set_Ftparameters = property(
             fget=lambda x: raise_(

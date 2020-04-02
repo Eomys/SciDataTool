@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from SciDataTool.Functions.FT import NormError
-from SciDataTool.Functions.FT.fft_functions import comp_magnitude, comp_nthoctave_axis
-from SciDataTool.Functions.FT.symmetries import rebuild_symmetries
-from SciDataTool.Functions.FT.conversions import convert, to_dB, to_dBA
+from SciDataTool.Functions import NormError
+from SciDataTool.Functions.fft_functions import comp_magnitude, comp_nthoctave_axis
+from SciDataTool.Functions.symmetries import rebuild_symmetries
+from SciDataTool.Functions.conversions import convert, to_dB, to_dBA
 from numpy import array, take, squeeze, argwhere, log10, sum as np_sum
 def get_nthoctave(self, noct, freqmin, freqmax, unit="SI", is_norm=False):
     """Returns the spectrum in the 1/n octave band.

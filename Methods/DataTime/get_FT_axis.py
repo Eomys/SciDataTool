@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from SciDataTool.Functions.FT import AxisError
-from SciDataTool.Functions.FT.fft_functions import comp_fft_freqs
-from SciDataTool.Functions.FT.conversions import convert
+from SciDataTool.Functions import AxisError
+from SciDataTool.Functions.fft_functions import comp_fft_freqs
+from SciDataTool.Functions.conversions import convert
 from numpy import array, argmin, abs as np_abs, argwhere, ravel
 def get_FT_axis(self, axis_str, is_positive=False):
     """Returns the vector 'axis' for the Fourier Transform in the unit required, using conversions and symmetries if needed.

@@ -9,39 +9,39 @@ from SciDataTool.Classes.DataND import DataND
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from SciDataTool.Methods.Output.DataTime.get_axis import get_axis
+    from SciDataTool.Methods.DataTime.get_axis import get_axis
 except ImportError as error:
     get_axis = error
 try:
-    from SciDataTool.Methods.Output.DataTime.get_FT_axis import get_FT_axis
+    from SciDataTool.Methods.DataTime.get_FT_axis import get_FT_axis
 except ImportError as error:
     get_FT_axis = error
 try:
-    from SciDataTool.Methods.Output.DataTime.get_along import get_along
+    from SciDataTool.Methods.DataTime.get_along import get_along
 except ImportError as error:
     get_along = error
 try:
-    from SciDataTool.Methods.Output.DataTime.get_FT_along import get_FT_along
+    from SciDataTool.Methods.DataTime.get_FT_along import get_FT_along
 except ImportError as error:
     get_FT_along = error
 try:
-    from SciDataTool.Methods.Output.DataTime.get_magnitude_along import get_magnitude_along
+    from SciDataTool.Methods.DataTime.get_magnitude_along import get_magnitude_along
 except ImportError as error:
     get_magnitude_along = error
 try:
-    from SciDataTool.Methods.Output.DataTime.get_phase_along import get_phase_along
+    from SciDataTool.Methods.DataTime.get_phase_along import get_phase_along
 except ImportError as error:
     get_phase_along = error
 try:
-    from SciDataTool.Methods.Output.DataTime.get_harmonics import get_harmonics
+    from SciDataTool.Methods.DataTime.get_harmonics import get_harmonics
 except ImportError as error:
     get_harmonics = error
 try:
-    from SciDataTool.Methods.Output.DataTime.get_nthoctave import get_nthoctave
+    from SciDataTool.Methods.DataTime.get_nthoctave import get_nthoctave
 except ImportError as error:
     get_nthoctave = error
 try:
-    from SciDataTool.Methods.Output.DataTime.find_periods import find_periods
+    from SciDataTool.Methods.DataTime.find_periods import find_periods
 except ImportError as error:
     find_periods = error
 from numpy import array, array_equal
@@ -51,7 +51,7 @@ class DataTime(DataND):
     """Class for physical quantities stored in the time/space domain"""
     VERSION = 1
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Output.DataTime.get_axis
+    # cf Methods.DataTime.get_axis
     if isinstance(get_axis, ImportError):
         get_axis = property(
             fget=lambda x: raise_(
@@ -60,7 +60,7 @@ class DataTime(DataND):
         )
     else:
         get_axis = get_axis
-    # cf Methods.Output.DataTime.get_FT_axis
+    # cf Methods.DataTime.get_FT_axis
     if isinstance(get_FT_axis, ImportError):
         get_FT_axis = property(
             fget=lambda x: raise_(
@@ -71,7 +71,7 @@ class DataTime(DataND):
         )
     else:
         get_FT_axis = get_FT_axis
-    # cf Methods.Output.DataTime.get_along
+    # cf Methods.DataTime.get_along
     if isinstance(get_along, ImportError):
         get_along = property(
             fget=lambda x: raise_(
@@ -80,7 +80,7 @@ class DataTime(DataND):
         )
     else:
         get_along = get_along
-    # cf Methods.Output.DataTime.get_FT_along
+    # cf Methods.DataTime.get_FT_along
     if isinstance(get_FT_along, ImportError):
         get_FT_along = property(
             fget=lambda x: raise_(
@@ -91,7 +91,7 @@ class DataTime(DataND):
         )
     else:
         get_FT_along = get_FT_along
-    # cf Methods.Output.DataTime.get_magnitude_along
+    # cf Methods.DataTime.get_magnitude_along
     if isinstance(get_magnitude_along, ImportError):
         get_magnitude_along = property(
             fget=lambda x: raise_(
@@ -103,7 +103,7 @@ class DataTime(DataND):
         )
     else:
         get_magnitude_along = get_magnitude_along
-    # cf Methods.Output.DataTime.get_phase_along
+    # cf Methods.DataTime.get_phase_along
     if isinstance(get_phase_along, ImportError):
         get_phase_along = property(
             fget=lambda x: raise_(
@@ -114,7 +114,7 @@ class DataTime(DataND):
         )
     else:
         get_phase_along = get_phase_along
-    # cf Methods.Output.DataTime.get_harmonics
+    # cf Methods.DataTime.get_harmonics
     if isinstance(get_harmonics, ImportError):
         get_harmonics = property(
             fget=lambda x: raise_(
@@ -125,7 +125,7 @@ class DataTime(DataND):
         )
     else:
         get_harmonics = get_harmonics
-    # cf Methods.Output.DataTime.get_nthoctave
+    # cf Methods.DataTime.get_nthoctave
     if isinstance(get_nthoctave, ImportError):
         get_nthoctave = property(
             fget=lambda x: raise_(
@@ -136,7 +136,7 @@ class DataTime(DataND):
         )
     else:
         get_nthoctave = get_nthoctave
-    # cf Methods.Output.DataTime.find_periods
+    # cf Methods.DataTime.find_periods
     if isinstance(find_periods, ImportError):
         find_periods = property(
             fget=lambda x: raise_(

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from SciDataTool.Functions.FT import UnitError
+from SciDataTool.Functions import UnitError
 # from sympy import Symbol, sympify, Rational
 # from unyt import unyt_array
 from numpy import pi, log10, sqrt, square, mean

@@ -9,14 +9,14 @@ from SciDataTool.Classes.Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from SciDataTool.Methods.Output.DataLinspace.get_values import get_values
+    from SciDataTool.Methods.DataLinspace.get_values import get_values
 except ImportError as error:
     get_values = error
 from SciDataTool.Classes._check import InitUnKnowClassError
 class DataLinspace(Data):
     """Abstract class for all kinds of data"""
     VERSION = 1
-    # cf Methods.Output.DataLinspace.get_values
+    # cf Methods.DataLinspace.get_values
     if isinstance(get_values, ImportError):
         get_values = property(
             fget=lambda x: raise_(

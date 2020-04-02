@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from SciDataTool.Functions.FT import NormError
-from SciDataTool.Functions.FT.fft_functions import comp_fft
-from SciDataTool.Functions.FT.symmetries import rebuild_symmetries
-from SciDataTool.Functions.FT.conversions import convert
-from SciDataTool.Functions.FT.parser import read_input_strings
-from SciDataTool.Functions.FT.interpolations import get_common_base, get_interpolation
+from SciDataTool.Functions import NormError
+from SciDataTool.Functions.fft_functions import comp_fft
+from SciDataTool.Functions.symmetries import rebuild_symmetries
+from SciDataTool.Functions.conversions import convert
+from SciDataTool.Functions.parser import read_input_strings
+from SciDataTool.Functions.interpolations import get_common_base, get_interpolation
 from numpy import squeeze, take, apply_along_axis
 from os import sys
 def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):

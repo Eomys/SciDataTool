@@ -9,7 +9,7 @@ from SciDataTool.Classes.Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from SciDataTool.Methods.Output.Data1D.get_values import get_values
+    from SciDataTool.Methods.Data1D.get_values import get_values
 except ImportError as error:
     get_values = error
 from numpy import array, array_equal
@@ -17,7 +17,7 @@ from SciDataTool.Classes._check import InitUnKnowClassError
 class Data1D(Data):
     """Abstract class for all kinds of data"""
     VERSION = 1
-    # cf Methods.Output.Data1D.get_values
+    # cf Methods.Data1D.get_values
     if isinstance(get_values, ImportError):
         get_values = property(
             fget=lambda x: raise_(

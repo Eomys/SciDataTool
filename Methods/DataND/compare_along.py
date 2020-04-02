@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from SciDataTool.Functions.FT.interpolations import get_common_base, get_interpolation
+from SciDataTool.Functions.interpolations import get_common_base, get_interpolation
 from numpy import squeeze
 def compare_along(self, *args, data_list=[], unit="SI", is_norm=False):
     """Returns the ndarrays of both fields interpolated in the same axes, using conversions and symmetries if needed.
