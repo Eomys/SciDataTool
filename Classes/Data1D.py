@@ -30,11 +30,11 @@ class Data1D(Data):
     save = save
     def __init__(
         self,
-        values=None,
-        symbol=None,
-        name=None,
-        unit=None,
-        symmetries=None,
+        values=[],
+        symbol="",
+        name="",
+        unit="",
+        symmetries={},
         init_dict=None,
     ):
         """Constructor of the class. Can be use in two ways :

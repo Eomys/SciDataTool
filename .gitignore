@@ -5,3 +5,4 @@ __pycache__/
 Internal/
 _Internal/
 *.log
+.ipynb_checkpoints/

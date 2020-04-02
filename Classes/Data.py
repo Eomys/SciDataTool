@@ -13,7 +13,7 @@ class Data(FrozenClass):
     # save method is available in all object
     save = save
     def __init__(
-        self, symbol=None, name=None, unit=None, symmetries=None, init_dict=None
+        self, symbol="", name="", unit="", symmetries={}, init_dict=None
     ):
         """Constructor of the class. Can be use in two ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values

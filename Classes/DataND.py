@@ -96,14 +96,14 @@ class DataND(Data):
     save = save
     def __init__(
         self,
-        axes=list(),
-        normalizations=None,
-        FTparameters=None,
+        axes=None,
+        normalizations={},
+        FTparameters={},
         values=None,
-        symbol=None,
-        name=None,
-        unit=None,
-        symmetries=None,
+        symbol="",
+        name="",
+        unit="",
+        symmetries={},
         init_dict=None,
     ):
         """Constructor of the class. Can be use in two ways :

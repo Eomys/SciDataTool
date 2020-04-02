@@ -35,11 +35,11 @@ class DataLinspace(Data):
         final=None,
         step=None,
         number=None,
-        include_endpoint=True,
-        symbol=None,
-        name=None,
-        unit=None,
-        symmetries=None,
+        include_endpoint=False,
+        symbol="",
+        name="",
+        unit="",
+        symmetries={},
         init_dict=None,
     ):
         """Constructor of the class. Can be use in two ways :
