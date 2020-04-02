@@ -1,53 +1,41 @@
 # -*- coding: utf-8 -*-
-"""File generated according to pyleecan/Generator/ClassesRef/Output/DataND.csv
+"""File generated according to SciDataTool/Generator/ClassesRef/Output/DataND.csv
 WARNING! All changes made in this file will be lost!
 """
-
 from os import linesep
-from pyleecan.Classes._check import set_array, check_init_dict, check_var, raise_
-from pyleecan.Functions.save import save
-from pyleecan.Classes.Data import Data
-
+from SciDataTool.Classes._check import set_array, check_init_dict, check_var, raise_
+from SciDataTool.Functions.save import save
+from SciDataTool.Classes.Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from pyleecan.Methods.Output.DataND.compare_along import compare_along
+    from SciDataTool.Methods.Output.DataND.compare_along import compare_along
 except ImportError as error:
     compare_along = error
-
 try:
-    from pyleecan.Methods.Output.DataND.compare_magnitude_along import (
+    from SciDataTool.Methods.Output.DataND.compare_magnitude_along import (
         compare_magnitude_along,
     )
 except ImportError as error:
     compare_magnitude_along = error
-
 try:
-    from pyleecan.Methods.Output.DataND.compare_phase_along import compare_phase_along
+    from SciDataTool.Methods.Output.DataND.compare_phase_along import compare_phase_along
 except ImportError as error:
     compare_phase_along = error
-
 try:
-    from pyleecan.Methods.Output.DataND.compress import compress
+    from SciDataTool.Methods.Output.DataND.compress import compress
 except ImportError as error:
     compress = error
-
 try:
-    from pyleecan.Methods.Output.DataND.set_Ftparameters import set_Ftparameters
+    from SciDataTool.Methods.Output.DataND.set_Ftparameters import set_Ftparameters
 except ImportError as error:
     set_Ftparameters = error
-
-
 from numpy import array, array_equal
-from pyleecan.Classes._check import InitUnKnowClassError
-from pyleecan.Classes.Data import Data
-
-
+from SciDataTool.Classes._check import InitUnKnowClassError
+from SciDataTool.Classes.Data import Data
 class DataND(Data):
     """Abstract class for physical quantities depending on others"""
-
     VERSION = 1
-
     # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Output.DataND.compare_along
     if isinstance(compare_along, ImportError):
@@ -106,7 +94,6 @@ class DataND(Data):
         set_Ftparameters = set_Ftparameters
     # save method is available in all object
     save = save
-
     def __init__(
         self,
         axes=list(),
@@ -122,12 +109,10 @@ class DataND(Data):
         """Constructor of the class. Can be use in two ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for Matrix, None will initialise the property with an empty Matrix
-            for pyleecan type, None will call the default constructor
+            for SciDataTool type, None will call the default constructor
         - __init__ (init_dict = d) d must be a dictionnary wiht every properties as keys
-
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for pyleecan Object"""
-
+        object or dict can be given for SciDataTool Object"""
         if init_dict is not None:  # Initialisation by dict
             check_init_dict(
                 init_dict,
@@ -182,7 +167,7 @@ class DataND(Data):
                         )
                     # Dynamic import to call the correct constructor
                     module = __import__(
-                        "pyleecan.Classes." + class_name, fromlist=[class_name]
+                        "SciDataTool.Classes." + class_name, fromlist=[class_name]
                     )
                     class_obj = getattr(module, class_name)
                     self.axes.append(class_obj(init_dict=obj))
@@ -202,10 +187,8 @@ class DataND(Data):
         )
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
-
     def __str__(self):
         """Convert this objet in a readeable string (for print)"""
-
         DataND_str = ""
         # Get the properties inherited from Data
         DataND_str += super(DataND, self).__str__() + linesep
@@ -225,13 +208,10 @@ class DataND(Data):
         DataND_str += "FTparameters = " + str(self.FTparameters) + linesep
         DataND_str += "values = " + linesep + str(self.values)
         return DataND_str
-
     def __eq__(self, other):
         """Compare two objects (skip parent)"""
-
         if type(other) != type(self):
             return False
-
         # Check the properties inherited from Data
         if not super(DataND, self).__eq__(other):
             return False
@@ -244,11 +224,9 @@ class DataND(Data):
         if not array_equal(other.values, self.values):
             return False
         return True
-
     def as_dict(self):
         """Convert this objet in a json seriable dict (can be use in __init__)
         """
-
         # Get the properties inherited from Data
         DataND_dict = super(DataND, self).as_dict()
         DataND_dict["axes"] = list()
@@ -264,10 +242,8 @@ class DataND(Data):
         # Overwrite the mother class name
         DataND_dict["__class__"] = "DataND"
         return DataND_dict
-
     def _set_None(self):
-        """Set all the properties to None (except pyleecan object)"""
-
+        """Set all the properties to None (except SciDataTool object)"""
         for obj in self.axes:
             obj._set_None()
         self.normalizations = None
@@ -275,23 +251,19 @@ class DataND(Data):
         self.values = None
         # Set to None the properties inherited from Data
         super(DataND, self)._set_None()
-
     def _get_axes(self):
         """getter of axes"""
         for obj in self._axes:
             if obj is not None:
                 obj.parent = self
         return self._axes
-
     def _set_axes(self, value):
         """setter of axes"""
         check_var("axes", value, "[Data]")
         self._axes = value
-
         for obj in self._axes:
             if obj is not None:
                 obj.parent = self
-
     # List of the Data1D objects corresponding to the axes
     # Type : [Data]
     axes = property(
@@ -299,16 +271,13 @@ class DataND(Data):
         fset=_set_axes,
         doc=u"""List of the Data1D objects corresponding to the axes""",
     )
-
     def _get_normalizations(self):
         """getter of normalizations"""
         return self._normalizations
-
     def _set_normalizations(self, value):
         """setter of normalizations"""
         check_var("normalizations", value, "dict")
         self._normalizations = value
-
     # Normalizations available for the field and its axes
     # Type : dict
     normalizations = property(
@@ -316,16 +285,13 @@ class DataND(Data):
         fset=_set_normalizations,
         doc=u"""Normalizations available for the field and its axes""",
     )
-
     def _get_FTparameters(self):
         """getter of FTparameters"""
         return self._FTparameters
-
     def _set_FTparameters(self, value):
         """setter of FTparameters"""
         check_var("FTparameters", value, "dict")
         self._FTparameters = value
-
     # Tunable parameters for the Fourier Transforms
     # Type : dict
     FTparameters = property(
@@ -333,11 +299,9 @@ class DataND(Data):
         fset=_set_FTparameters,
         doc=u"""Tunable parameters for the Fourier Transforms""",
     )
-
     def _get_values(self):
         """getter of values"""
         return self._values
-
     def _set_values(self, value):
         """setter of values"""
         if type(value) is list:
@@ -347,7 +311,6 @@ class DataND(Data):
                 pass
         check_var("values", value, "ndarray")
         self._values = value
-
     # Values of the field
     # Type : ndarray
     values = property(

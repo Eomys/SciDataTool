@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from numpy import linspace
-
-
 def get_values(self):
     """Returns the vector 'axis' by rebuilding the linspace.
-
     Parameters
     ----------
     self: Data1D
@@ -14,7 +10,6 @@ def get_values(self):
     -------
     Vector of axis values
     """
-
     initial = self.initial
     if self.number == None:
         final = self.final

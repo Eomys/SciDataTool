@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
-
-from pyleecan.Functions.FT import NormError, UnitError
-from pyleecan.Functions.FT.fft_functions import comp_fft, comp_ifft
-from pyleecan.Functions.FT.symmetries import rebuild_symmetries
-from pyleecan.Functions.FT.conversions import convert, to_dB, to_dBA
-from pyleecan.Functions.FT.parser import read_input_strings
-from pyleecan.Functions.FT.interpolations import get_common_base, get_interpolation
+from SciDataTool.Functions.FT import NormError, UnitError
+from SciDataTool.Functions.FT.fft_functions import comp_fft, comp_ifft
+from SciDataTool.Functions.FT.symmetries import rebuild_symmetries
+from SciDataTool.Functions.FT.conversions import convert, to_dB, to_dBA
+from SciDataTool.Functions.FT.parser import read_input_strings
+from SciDataTool.Functions.FT.interpolations import get_common_base, get_interpolation
 from numpy import squeeze, take, apply_along_axis, abs as np_abs
 from os import sys
-
-
 def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the magnitude of the FT, using conversions and symmetries if needed.
-
     Parameters
     ----------
     self: Data
@@ -29,12 +25,10 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     -------
     list of 1Darray of axes values, ndarray of magnitude values
     """
-
     # Read the axes input in args
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
     axes_list = read_input_strings(args, axis_data)
-
     is_FTslice = False
     # Extract the requested axes (symmetries + unit)
     for i, axis_requested in enumerate(axes_list):
@@ -61,7 +55,6 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         elif axis_requested[0] == "angle":
             axis_requested[0] = "wavenumber"
             is_FTslice = True
-
     # Check if the requested axis is defined in the Data object
     for axis_requested in axes_list:
         axis_name = axis_requested[0]
@@ -77,7 +70,6 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 + "] is not available and will be ignored"
             )
             axes_list.remove(axis_requested)
-
     # Rebuild symmetries of field if axis is extracted
     values = self.values
     for index, axis in enumerate(self.axes):
@@ -87,11 +79,9 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     values, index, self.symmetries.get(axis.name)
                 )
                 break
-
     # If a slice at a given time or angle is requested, perform inverse FT, then slice, then FT
     if is_FTslice:
         values = comp_ifft(values)
-
     # Extract the slices of the field (single values)
     for index, axis in enumerate(self.axes):
         is_match = False
@@ -103,10 +93,8 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     break
         if not is_match:  # Axis was not specified -> take slice at the first value
             values = take(values, [0], axis=index)
-
     # Eliminate dimensions=1
     values = squeeze(values)
-
     # Interpolate over axis values (single values)
     for index, axis in enumerate(self.axes):
         for axis_requested in axes_list:
@@ -123,16 +111,13 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     axis_requested[4],
                 )
                 break
-
     # Eliminate dimensions=1
     values = squeeze(values)
-
     # If a slice at a given time or angle is requested, perform inverse FT, then slice, then FT
     if is_FTslice:
         values = np_abs(comp_fft(values))
     else:
         values = np_abs(values)
-
     # Extract slices again (intervals)
     index = 0
     for axis_requested in axes_list:
@@ -142,7 +127,6 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     values = take(values, axis_requested[4], axis=index)
                     index += 1
                 break
-
     # Interpolate over axis values again (intervals)
     index = 0
     for axis_requested in axes_list:
@@ -161,7 +145,6 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 )
                 index += 1
                 break
-
     # Convert into right unit
     if unit == self.unit or unit == "SI":
         if is_norm:
@@ -193,7 +176,6 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         values = values / self.normalizations.get(unit)
     else:
         values = convert(values, self.unit, unit)
-
     # Return axes and values
     return_list = []
     for axis_requested in axes_list:

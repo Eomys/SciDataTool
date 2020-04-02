@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
-
 from numpy import prod, mean, hanning, linspace
 from numpy.fft import fft, rfftn, ifftn, fftn, fftshift, ifftshift, rfft2
 from numpy import pi, zeros, cos, exp, log, meshgrid, array, abs as np_abs, angle as np_angle
 from numpy import linalg, transpose, dot
 from scipy.signal import stft, spectrogram
 import matplotlib.pyplot as plt
-
-
 def comp_fft_freqs(time, is_time, is_positive):
     """Computes the frequency/wavenumber vector from the time/space vector
-
     Parameters
     ----------
     time: array
@@ -21,7 +17,6 @@ def comp_fft_freqs(time, is_time, is_positive):
     -------
     Frequency/wavenumber vector
     """
-
     N_tot = time.size  # Number of samples
     # zero-padding
     # N_tot = int(2**(log(N_tot)//log(2)+1))
@@ -35,13 +30,9 @@ def comp_fft_freqs(time, is_time, is_positive):
     if is_time:
         freqs = [i / freqscale for i in freqs]
     # zero-padding
-
     return freqs
-
-
 def comp_fft_time(freqs, is_angle):
     """Computes the time/space vector from the frequency/wavenumber vector
-
     Parameters
     ----------
     freqs: array
@@ -52,20 +43,15 @@ def comp_fft_time(freqs, is_angle):
     -------
     Time/space vector
     """
-
     N_tot = len(freqs)  # Number of samples
     fsampt = freqs[-1] * 2.0
     timestep = 1.0 / fsampt
     if is_angle:
         timestep *= 2.0 * pi
     time = [0 + i * timestep for i in range(N_tot)]
-
     return time
-
-
 def comp_nthoctave_axis(noct, freqmin, freqmax):
     """Computes the frequency vector between freqmin and freqmax for the 1/n octave
-
     Parameters
     ----------
     noct: int
@@ -78,7 +64,6 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
     -------
     Frequency vector
     """
-
     if noct == 3:
         table = [
             10,
@@ -117,7 +102,6 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
             20000,
         ]
         f_oct = [f for f in table if (f >= freqmin and f <= freqmax)]
-
     else:
         f0 = 1000
         f_oct = [f0]
@@ -131,13 +115,9 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
             f_oct.insert(0, f0 * 2.0 ** (i / noct))
             i = i - 1
         f_oct = f_oct[1:]
-
     return f_oct
-
-
 def comp_fft(values):
     """Computes the Fourier Transform
-
     Parameters
     ----------
     values: ndarray
@@ -146,17 +126,13 @@ def comp_fft(values):
     -------
     Complex Fourier Transform
     """
-
     values_FT = fftn(values)
     values_shape = values_FT.shape
     values_FT[tuple(zeros(len(values_shape), dtype=int))] *= 0.5
     values_FT = 2.0 * fftshift(values_FT) / float(prod(values_shape))
     return values_FT
-
-
 def comp_ifft(values):
     """Computes the inverse Fourier Transform
-
     Parameters
     ----------
     values: ndarray
@@ -165,15 +141,11 @@ def comp_ifft(values):
     -------
     ndarray of the field
     """
-
     values_shape = values.shape
     values = ifftn(ifftshift(values)) * float(prod(values_shape)) / 2.0
     return values.real
-
-
 def comp_rfft(values):
     """Computes the Fourier Transform restricted to positive freqs
-
     Parameters
     ----------
     values: ndarray
@@ -182,16 +154,12 @@ def comp_rfft(values):
     -------
     Complex Fourier Transform restricted to positive freqs
     """
-
     values_shape = values.shape
     values_FT = rfft2(values)
     values_FT = values_FT / float(prod(values_shape))
     return values_FT
-
-
 def comp_magnitude(values):
     """Computes the magnitude of the Fourier Transform
-
     Parameters
     ----------
     values: ndarray
@@ -200,16 +168,10 @@ def comp_magnitude(values):
     -------
     Magnitude of the Fourier Transform
     """
-
     return np_abs(comp_fft(values))
-
-
 #    return np_abs(comp_stft_average(values))
-
-
 def comp_phase(values):
     """Computes the phase of the Fourier Transform
-
     Parameters
     ----------
     values: ndarray
@@ -218,13 +180,9 @@ def comp_phase(values):
     -------
     Phase of the Fourier Transform
     """
-
     return np_angle(comp_fft(values))
-
-
 def comp_stft_average(values):
     """Computes the average of the Short-Time Fourier Transform
-
     Parameters
     ----------
     values: ndarray
@@ -233,7 +191,6 @@ def comp_stft_average(values):
     -------
     Average of the Short-Time Fourier Transform
     """
-
     # To do
     nperseg = 3200
     noverlap = int(nperseg * 0.75)
@@ -245,11 +202,8 @@ def comp_stft_average(values):
     #    values = 2.0 * mean(Zxx, axis=1)
     print(values.shape)
     return f, np_abs(values)
-
-
 def comp_fft_average(values):
     """Computes the average of the Short-Time Fourier Transform
-
     Parameters
     ----------
     values: ndarray
@@ -258,7 +212,6 @@ def comp_fft_average(values):
     -------
     Average of the Short-Time Fourier Transform
     """
-
     # To do
     nperseg = 3200
     noverlap = int(nperseg * 0.75)
@@ -271,16 +224,13 @@ def comp_fft_average(values):
     values = values_fft[int(nperseg / 2) :] / nwindows
     f = linspace(0, int(N_tot / 2), int(nperseg / 2))
     return f, np_abs(values)
-
 def rect_window(f, dt):
     W = ((1-exp(-1j*2*pi*dt*f*(M+1)))/(1-exp(-1j*2*pi*dt*f)))/(M+1)
     return W
-
 # M = 200
 # tf = 1
 # timec = linspace(0,tf*(1-1/M),M)
 # dt = timec[1] - timec[0]
-
 # A0 = 2
 # freq0 = 9.5
 # phi0=0

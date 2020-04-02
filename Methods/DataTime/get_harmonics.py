@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-
-from pyleecan.Functions.FT import AxisError, NormError, UnitError
-from pyleecan.Functions.FT.fft_functions import comp_fft
-from pyleecan.Functions.FT.symmetries import rebuild_symmetries
-from pyleecan.Functions.FT.conversions import convert, to_dB, to_dBA
-from pyleecan.Functions.FT.parser import read_input_strings
-from pyleecan.Functions.FT.interpolations import get_common_base, get_interpolation
+from SciDataTool.Functions.FT import AxisError, NormError, UnitError
+from SciDataTool.Functions.FT.fft_functions import comp_fft
+from SciDataTool.Functions.FT.symmetries import rebuild_symmetries
+from SciDataTool.Functions.FT.conversions import convert, to_dB, to_dBA
+from SciDataTool.Functions.FT.parser import read_input_strings
+from SciDataTool.Functions.FT.interpolations import get_common_base, get_interpolation
 from numpy import (
     squeeze,
     take,
@@ -16,11 +15,8 @@ from numpy import (
     abs as np_abs,
 )
 from os import sys
-
-
 def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
     """Returns the complex Fourier Transform of the field, using conversions and symmetries if needed.
-
     Parameters
     ----------
     self: Data
@@ -39,12 +35,10 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
     -------
     list of 1Darray of axes values, ndarray of magnitude of FT
     """
-
     # Read the axes input in args
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
     axes_list = read_input_strings(args, [])
-
     # Extract the requested axes (symmetries + unit)
     for i, axis_requested in enumerate(axes_list):
         if axis_requested[3] == "values":
@@ -65,7 +59,6 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
             axis_requested[0] = "time"
         elif axis_requested[0] == "wavenumber":
             axis_requested[0] = "angle"
-
     # Check if the requested axis is defined in the Data object
     for axis_requested in axes_list:
         axis_name = axis_requested[0]
@@ -81,7 +74,6 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
                 + "] is not available and will be ignored"
             )
             axes_list.remove(axis_requested)
-
     # Rebuild symmetries of field if axis is extracted
     values = self.values
     for index, axis in enumerate(self.axes):
@@ -91,7 +83,6 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
                     values, index, self.symmetries.get(axis.name)
                 )
                 break
-
     # Extract the slices of the field (single values)
     for index, axis in enumerate(self.axes):
         is_match = False
@@ -103,10 +94,8 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
                     break
         if not is_match:  # Axis was not specified -> take slice at the first value
             values = take(values, [0], axis=index)
-
     # Eliminate dimensions=1
     values = squeeze(values)
-
     # Interpolate over axis values (single values)
     for index, axis in enumerate(self.axes):
         for axis_requested in axes_list:
@@ -123,13 +112,10 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
                     axis_requested[4],
                 )
                 break
-
     # Eliminate dimensions=1
     values = squeeze(values)
-
     # Perform Fourier Transform
     values = np_abs(comp_fft(values))
-
     # Extract slices again (intervals)
     index = 0
     for axis_requested in axes_list:
@@ -139,7 +125,6 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
                     values = take(values, axis_requested[4], axis=index)
                     index += 1
                 break
-
     # Interpolate over axis values again (intervals)
     index = 0
     for axis_requested in axes_list:
@@ -158,7 +143,6 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
                 )
                 index += 1
                 break
-
     # Test if data is 1D or 2D
     if len(values.shape) > 2:
         raise AxisError("ERROR: only 1D or 2D implemented")
@@ -194,7 +178,6 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
             values = values / self.normalizations.get(unit)
         else:
             values = convert(values, self.unit, unit)
-
         # 1D case
         if len(values.shape) == 1:
             for axis_requested in axes_list:
@@ -203,9 +186,7 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
             indices = argsort(negative(values))
             indices = indices[:N_harm]
             axis_values = axis_values[indices]
-
             return [axis_values, values]
-
         # 2D case
         else:
             for axis_requested in axes_list:
@@ -213,23 +194,19 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
                     r = axis_requested[4]
                 elif axis_requested[0] == "time":
                     f = axis_requested[4]
-
             # Flatten the data
             values_flat = values.flatten()
             R, F = meshgrid(r, f)
             f = F.flatten()
             r = R.flatten()
-
             # Get the N_harm largest peaks
             indices = argsort(negative(values_flat))
             indices = indices[:N_harm]
             values = values_flat[indices]
             f = f[indices]
             r = r[indices]
-
             if len(values.shape) == 2 and not is_flat:
                 f.reshape((N_harm, N_harm))
                 r.reshape((N_harm, N_harm))
                 values.reshape((N_harm, N_harm))
-
             return [f, r, values]

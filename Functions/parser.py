@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-
 from numpy import pi, sqrt  # for eval
-from pyleecan.Functions.FT import AxisError
-
-
+from SciDataTool.Functions.FT import AxisError
 def read_input_strings(args, axis_data):
     """Reads the string input into the "get_along" methods to define the axes
-
     Parameters
     ----------
     args: list
@@ -17,7 +13,6 @@ def read_input_strings(args, axis_data):
     -------
     list of axes data (axes_list)
     """
-
     axes_list = []
     for axis_str in args:
         axis_unit = "{SI}"
@@ -85,5 +80,4 @@ def read_input_strings(args, axis_data):
         # Whole axis
         else:
             axes_list.append([axis_str, axis_unit, "interval", "values", "whole"])
-
     return axes_list

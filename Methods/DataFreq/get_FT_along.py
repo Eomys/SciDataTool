@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
-
-from pyleecan.Functions.FT import NormError
-from pyleecan.Functions.FT.symmetries import rebuild_symmetries
-from pyleecan.Functions.FT.conversions import convert
-from pyleecan.Functions.FT.parser import read_input_strings
-from pyleecan.Functions.FT.interpolations import get_common_base, get_interpolation
+from SciDataTool.Functions.FT import NormError
+from SciDataTool.Functions.FT.symmetries import rebuild_symmetries
+from SciDataTool.Functions.FT.conversions import convert
+from SciDataTool.Functions.FT.parser import read_input_strings
+from SciDataTool.Functions.FT.interpolations import get_common_base, get_interpolation
 from numpy import squeeze, take, apply_along_axis
 from os import sys
-
-
 def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the FT of the field, using conversions and symmetries if needed.
-
     Parameters
     ----------
     self: Data
@@ -28,12 +24,10 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     -------
     list of 1Darray of axes values, ndarray of field values
     """
-
     # Read the axes input in args
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
     axes_list = read_input_strings(args, axis_data)
-
     # Check if the requested axis is defined in the Data object
     for axis_requested in axes_list:
         axis_name = axis_requested[0]
@@ -49,7 +43,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 + "] is not available and will be ignored"
             )
             axes_list.remove(axis_requested)
-
     # Extract the requested axes (symmetries + unit)
     for i, axis_requested in enumerate(axes_list):
         if axis_requested[3] == "values":
@@ -68,7 +61,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         elif axis_requested[2] == "interval":
             # Get original values of the axis
             axis_requested.append(self.get_axis(axis_requested[0] + axis_requested[1])[axis_requested[4]])
-
     # Rebuild symmetries of field if axis is extracted
     values = self.values
     for index, axis in enumerate(self.axes):
@@ -78,7 +70,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     values, index, self.symmetries.get(axis.name)
                 )
                 break
-
     # Extract the slices of the field
     for index, axis in enumerate(self.axes):
         is_match = False
@@ -90,10 +81,8 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 break
         if not is_match:  # Axis was not specified -> take slice at the first value
             values = take(values, [0], axis=index)
-
     # Eliminate dimensions=1
     values = squeeze(values)
-
     # Interpolate over axis values
     for index, axis in enumerate(self.axes):
         for axis_requested in axes_list:
@@ -106,10 +95,8 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     axis_requested[4],
                 )
                 break
-
     # Eliminate dimensions=1
     values = squeeze(values)
-
     # Convert into right unit
     if unit == self.unit or unit == "SI":
         if is_norm:
@@ -123,7 +110,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         values = values / self.normalizations.get(unit)
     else:
         values = convert(values, self.unit, unit)
-
     # Return axes and values
     return_list = []
     for axis_requested in axes_list:

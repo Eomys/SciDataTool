@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-
-from pyleecan.Functions.FT import UnitError
-
+from SciDataTool.Functions.FT import UnitError
 # from sympy import Symbol, sympify, Rational
 # from unyt import unyt_array
 from numpy import pi, log10, sqrt, square, mean
-
-
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"
 unit_symbols = [
     ("dimless", 1.0, (0, 0, 0, 0, 0, 0)),  # dimensionless
@@ -37,7 +33,6 @@ unit_symbols = [
     ("H", 1.0, (1, -2, -2, 0, 0, -2)),  # Henry
     ("m", 1.0, (1, 0, 0, 0, 0, 0)),  # meter
 ]
-
 # Dictionnary of the prefixes and their values
 unit_prefixes = {
     "Y": 1e24,
@@ -64,8 +59,6 @@ unit_prefixes = {
     "z": 1e-21,
     "y": 1e-24,
 }
-
-
 def get_dim_prefix(unit_str):
     p = 1  # power of the unit
     dim = None
@@ -83,11 +76,8 @@ def get_dim_prefix(unit_str):
     if not dim:
         raise UnitError("ERROR: Unit " + unit_str + " unknown")
     return (dim, prefix)
-
-
 def convert(values, unit1, unit2):
     """Converts values from unit1 to unit2
-
     Parameters
     ----------
     values: ndarray
@@ -100,14 +90,11 @@ def convert(values, unit1, unit2):
     -------
     ndarray of the converted field
     """
-
     unit1_save = unit1
     unit2_save = unit2
-
     # Format the strings
     unit1 = unit1.replace("*", "").replace(" ", "").replace("^", "")
     unit2 = unit2.replace("*", "").replace(" ", "").replace("^", "")
-
     # Unit1 parsing
     if "/" in unit1:
         dim1_denom, prefix1_denom = get_dim_prefix(unit1.split("/")[1])
@@ -116,7 +103,6 @@ def convert(values, unit1, unit2):
         dim1_denom = [0, 0, 0, 0, 0, 0]
         prefix1_denom = 1.0
     dim1_num, prefix1_num = get_dim_prefix(unit1)
-
     # Unit2 parsing
     if "/" in unit2:
         dim2_denom, prefix2_denom = get_dim_prefix(unit2.split("/")[1])
@@ -125,7 +111,6 @@ def convert(values, unit1, unit2):
         dim2_denom = [0, 0, 0, 0, 0, 0]
         prefix2_denom = 1.0
     dim2_num, prefix2_num = get_dim_prefix(unit2)
-
     # Check compatibility
     dim1 = [i - j for i, j in zip(dim1_num, dim1_denom)]
     dim2 = [i - j for i, j in zip(dim2_num, dim2_denom)]
@@ -135,8 +120,6 @@ def convert(values, unit1, unit2):
         )
     else:
         return values * (prefix1_num / prefix1_denom) / (prefix2_num / prefix2_denom)
-
-
 def to_dB(values, unit, ref_value=1.0):
     """Converts values into dB normalized with ref_value
     
@@ -152,16 +135,12 @@ def to_dB(values, unit, ref_value=1.0):
     -------
     ndarray of the converted field
     """
-
     values[values < ref_value] = ref_value
-
     try:
         convert(values, unit, "W")
         return 10.0 * log10(values / ref_value)
     except:
         return 20.0 * log10(values / ref_value)
-
-
 def to_dBA(values, freqs, unit, ref_value=1.0):
     """Converts values into dBA (requires frequency vector)
     
@@ -179,11 +158,8 @@ def to_dBA(values, freqs, unit, ref_value=1.0):
     -------
     ndarray of the converted field
     """
-
     values = to_dB(values, unit, ref_value)
     return dB_to_dBA(values, freqs)
-
-
 def dB_to_dBA(values, freqs):
     """Converts values from dB into dBA (requires frequency vector)
     
@@ -197,7 +173,6 @@ def dB_to_dBA(values, freqs):
     -------
     ndarray of the converted field
     """
-
     freq2 = square(freqs)
     RA = (
         12200.0 ** 2

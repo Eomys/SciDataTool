@@ -5,13 +5,9 @@ check function for classes
 @copyright (C) 2014-2015 EOMYS ENGINEERING.
 @author pierre_b
 """
-
 from numpy import array, empty, int32
-
-
 def set_array(obj, prop, value):
     """Set an array that can be None or a list
-
     Parameters
     ----------
     obj : ?
@@ -20,57 +16,44 @@ def set_array(obj, prop, value):
         Name of the property to set
     value : ?
         Value to set
-
     Returns
     -------
     None
-
     """
     if value is None:  # Default value
         value = empty(0)
     elif isinstance(value, list):
         value = array(value)
     setattr(obj, prop, value)
-
-
 def check_init_dict(init_dict, key_list):
     """Check if init_dict is correct to initialize the Object (all the keys of init_dict are in key_list)
-
     Parameters
     ----------
     init_dict : dict
         The dictionary to check
     key_list : list
         List of the expected key (str)
-
     Returns
     -------
     None
-
     Raises
     ------
     NotADictError
         init_dict is not a dictionary
     MissingInitDictKeyError
         A key is missing in init_dict
-
     """
-
     if not isinstance(init_dict, dict):
         raise NotADictError("Init by dict : init_dict must be a dict")
     msg = "Second argument is the list of variable needed in init_dict"
     assert isinstance(key_list, list), msg
-
     # Check that every key of init_dict is expected for this object
     key_list.append("__class__")  # Not a property, added for load
     for key in list(init_dict.keys()):
         if key not in key_list:
             raise UnknowInitDictKeyError("Init by dict : " + key + " is not a property")
-
-
 def check_var(var_name, value, expect_type, Vmin=None, Vmax=None):
     """Check if var_name can be set with value
-
     Parameters
     ----------
     var_name : str
@@ -83,35 +66,27 @@ def check_var(var_name, value, expect_type, Vmin=None, Vmax=None):
         Value must be >Vmin (None if the property has no Vmin) (Default value = None)
     Vmax : float
         Value must be <Vmax (None if the property has no Vmax) (Default value = None)
-
     Returns
     -------
     None
-
     Raises
     ------
     CheckError
         The value is incorrect for var_name
-
     """
-
     if value is not None:
         type_value = type(value).__name__
         if type_value == "float64":
             type_value = "float"
         # Check if value has the good type
         check_type(var_name, value, expect_type, type_value)
-
         # Check if value is in the good range (if needed)
         if Vmin is not None:
             check_min(var_name, value, type_value, Vmin)
         if Vmax is not None:
             check_max(var_name, value, type_value, Vmax)
-
-
 def check_type(var_name, value, expect_type, type_value):
     """Check if value has the expected type for var_name
-
     Parameters
     ----------
     var_name : str
@@ -123,18 +98,13 @@ def check_type(var_name, value, expect_type, type_value):
     type_value :
         The name of the actual type of the variable
     expect_type :
-
-
     Returns
     -------
-
     Raises
     ------
     CheckTypeError
         Value has a wrong type for var_nam
-
     """
-
     if expect_type == "float":  # float variable can take int value
         if not (
             (isinstance(value, int32) and not isinstance(value, bool))
@@ -234,7 +204,6 @@ def check_type(var_name, value, expect_type, type_value):
                         + type_value
                         + " given"
                     )
-
     else:
         if not type_value == expect_type:  # Check if it's the expected type
             if expect_type in ["int", "bool", "str"]:
@@ -268,11 +237,8 @@ def check_type(var_name, value, expect_type, type_value):
                         + type_value
                         + " given"
                     )
-
-
 def check_min(var_name, value, type_value, Vmin):
     """Check if value is greater than the min of var_name
-
     Parameters
     ----------
     var_name : str
@@ -283,28 +249,22 @@ def check_min(var_name, value, type_value, Vmin):
         The name of the actual type of the variable
     Vmin : float
         Value must be >Vmin
-
     Returns
     -------
     None
-
     Raises
     ------
     CheckMinError
         value is too small for var_nam
-
     """
-
     # Work only for number and matrix
     msg = "Check : You can't specify the min of variable of type " + type_value
     assert type_value in ["ndarray", "int", "long", "float", "int32"], msg
-
     # For number
     if (isinstance(value, int) or isinstance(value, float)) and value < Vmin:
         raise CheckMinError(
             var_name + " must be >= " + str(Vmin) + ", " + str(value) + " given"
         )
-
     # For non empty matrix
     if type_value == "ndarray" and value.size > 0 and value.min() < Vmin:
         raise CheckMinError(
@@ -315,11 +275,8 @@ def check_min(var_name, value, type_value, Vmin):
             + str(value)
             + " given"
         )
-
-
 def check_max(var_name, value, type_value, Vmax):
     """Check if value is less than the max of var_name
-
     Parameters
     ----------
     var_name : str
@@ -330,27 +287,22 @@ def check_max(var_name, value, type_value, Vmax):
         The name of the actual type of the variable
     Vmax : float
         Value must be <Vmax
-
     Returns
     -------
     None
-
     Raises
     ------
     CheckMaxError
         value is too large for var_nam
     """
-
     # Work only for number and matrix
     msg = "Check : You can't specify the max of variable of type " + type_value
     assert type_value in ["ndarray", "int", "long", "float", "int32"], msg
-
     # For number
     if (isinstance(value, int) or isinstance(value, float)) and value > Vmax:
         raise CheckMaxError(
             var_name + " must be <= " + str(Vmax) + ", " + str(value) + " given"
         )
-
     # For non empty matrix
     if type_value == "ndarray" and value.size > 0 and value.max() > Vmax:
         raise CheckMaxError(
@@ -361,51 +313,28 @@ def check_max(var_name, value, type_value, Vmax):
             + str(value)
             + " given"
         )
-
-
 def raise_(ex):
     """Function to raise an exeption for the method import lambda
     """
     raise ex
-
-
 class CheckError(Exception):
     """ """
-
     pass
-
-
 class CheckMinError(CheckError):
     """ """
-
     pass
-
-
 class CheckMaxError(CheckError):
     """ """
-
     pass
-
-
 class CheckTypeError(CheckError):
     """ """
-
     pass
-
-
 class InitUnKnowClassError(CheckError):
     """ """
-
     pass
-
-
 class UnknowInitDictKeyError(CheckError):
     """ """
-
     pass
-
-
 class NotADictError(CheckError):
     """ """
-
     pass

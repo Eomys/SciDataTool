@@ -1,71 +1,55 @@
 # -*- coding: utf-8 -*-
-"""File generated according to pyleecan/Generator/ClassesRef/Output/DataTime.csv
+"""File generated according to SciDataTool/Generator/ClassesRef/Output/DataTime.csv
 WARNING! All changes made in this file will be lost!
 """
-
 from os import linesep
-from pyleecan.Classes._check import set_array, check_init_dict, check_var, raise_
-from pyleecan.Functions.save import save
-from pyleecan.Classes.DataND import DataND
-
+from SciDataTool.Classes._check import set_array, check_init_dict, check_var, raise_
+from SciDataTool.Functions.save import save
+from SciDataTool.Classes.DataND import DataND
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from pyleecan.Methods.Output.DataTime.get_axis import get_axis
+    from SciDataTool.Methods.Output.DataTime.get_axis import get_axis
 except ImportError as error:
     get_axis = error
-
 try:
-    from pyleecan.Methods.Output.DataTime.get_FT_axis import get_FT_axis
+    from SciDataTool.Methods.Output.DataTime.get_FT_axis import get_FT_axis
 except ImportError as error:
     get_FT_axis = error
-
 try:
-    from pyleecan.Methods.Output.DataTime.get_along import get_along
+    from SciDataTool.Methods.Output.DataTime.get_along import get_along
 except ImportError as error:
     get_along = error
-
 try:
-    from pyleecan.Methods.Output.DataTime.get_FT_along import get_FT_along
+    from SciDataTool.Methods.Output.DataTime.get_FT_along import get_FT_along
 except ImportError as error:
     get_FT_along = error
-
 try:
-    from pyleecan.Methods.Output.DataTime.get_magnitude_along import get_magnitude_along
+    from SciDataTool.Methods.Output.DataTime.get_magnitude_along import get_magnitude_along
 except ImportError as error:
     get_magnitude_along = error
-
 try:
-    from pyleecan.Methods.Output.DataTime.get_phase_along import get_phase_along
+    from SciDataTool.Methods.Output.DataTime.get_phase_along import get_phase_along
 except ImportError as error:
     get_phase_along = error
-
 try:
-    from pyleecan.Methods.Output.DataTime.get_harmonics import get_harmonics
+    from SciDataTool.Methods.Output.DataTime.get_harmonics import get_harmonics
 except ImportError as error:
     get_harmonics = error
-
 try:
-    from pyleecan.Methods.Output.DataTime.get_nthoctave import get_nthoctave
+    from SciDataTool.Methods.Output.DataTime.get_nthoctave import get_nthoctave
 except ImportError as error:
     get_nthoctave = error
-
 try:
-    from pyleecan.Methods.Output.DataTime.find_periods import find_periods
+    from SciDataTool.Methods.Output.DataTime.find_periods import find_periods
 except ImportError as error:
     find_periods = error
-
-
 from numpy import array, array_equal
-from pyleecan.Classes._check import InitUnKnowClassError
-from pyleecan.Classes.Data import Data
-
-
+from SciDataTool.Classes._check import InitUnKnowClassError
+from SciDataTool.Classes.Data import Data
 class DataTime(DataND):
     """Class for physical quantities stored in the time/space domain"""
-
     VERSION = 1
-
     # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Output.DataTime.get_axis
     if isinstance(get_axis, ImportError):
@@ -165,7 +149,6 @@ class DataTime(DataND):
         find_periods = find_periods
     # save method is available in all object
     save = save
-
     def __init__(
         self,
         axes=list(),
@@ -181,12 +164,10 @@ class DataTime(DataND):
         """Constructor of the class. Can be use in two ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for Matrix, None will initialise the property with an empty Matrix
-            for pyleecan type, None will call the default constructor
+            for SciDataTool type, None will call the default constructor
         - __init__ (init_dict = d) d must be a dictionnary wiht every properties as keys
-
         ndarray or list can be given for Vector and Matrix
-        object or dict can be given for pyleecan Object"""
-
+        object or dict can be given for SciDataTool Object"""
         if init_dict is not None:  # Initialisation by dict
             check_init_dict(
                 init_dict,
@@ -232,39 +213,30 @@ class DataTime(DataND):
         )
         # The class is frozen (in DataND init), for now it's impossible to
         # add new properties
-
     def __str__(self):
         """Convert this objet in a readeable string (for print)"""
-
         DataTime_str = ""
         # Get the properties inherited from DataND
         DataTime_str += super(DataTime, self).__str__() + linesep
         return DataTime_str
-
     def __eq__(self, other):
         """Compare two objects (skip parent)"""
-
         if type(other) != type(self):
             return False
-
         # Check the properties inherited from DataND
         if not super(DataTime, self).__eq__(other):
             return False
         return True
-
     def as_dict(self):
         """Convert this objet in a json seriable dict (can be use in __init__)
         """
-
         # Get the properties inherited from DataND
         DataTime_dict = super(DataTime, self).as_dict()
         # The class name is added to the dict fordeserialisation purpose
         # Overwrite the mother class name
         DataTime_dict["__class__"] = "DataTime"
         return DataTime_dict
-
     def _set_None(self):
-        """Set all the properties to None (except pyleecan object)"""
-
+        """Set all the properties to None (except SciDataTool object)"""
         # Set to None the properties inherited from DataND
         super(DataTime, self)._set_None()

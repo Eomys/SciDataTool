@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-
-from pyleecan.Functions.FT.symmetries import rebuild_symmetries_axis
-
-
+from SciDataTool.Functions.FT.symmetries import rebuild_symmetries_axis
 def get_values(self):
     """Returns the vector 'axis' taking symmetries into account (no units).
-
     Parameters
     ----------
     self: Data1D
@@ -14,11 +10,8 @@ def get_values(self):
     -------
     Vector of axis values
     """
-
     values = self.values
-
     # Rebuild symmetries
     if self.name in self.symmetries:
         values = rebuild_symmetries_axis(values, self.symmetries.get(self.name))
-
     return values

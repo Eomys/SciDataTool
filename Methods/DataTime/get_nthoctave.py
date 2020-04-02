@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-
-from pyleecan.Functions.FT import NormError
-from pyleecan.Functions.FT.fft_functions import comp_magnitude, comp_nthoctave_axis
-from pyleecan.Functions.FT.symmetries import rebuild_symmetries
-from pyleecan.Functions.FT.conversions import convert, to_dB, to_dBA
+from SciDataTool.Functions.FT import NormError
+from SciDataTool.Functions.FT.fft_functions import comp_magnitude, comp_nthoctave_axis
+from SciDataTool.Functions.FT.symmetries import rebuild_symmetries
+from SciDataTool.Functions.FT.conversions import convert, to_dB, to_dBA
 from numpy import array, take, squeeze, argwhere, log10, sum as np_sum
-
-
 def get_nthoctave(self, noct, freqmin, freqmax, unit="SI", is_norm=False):
     """Returns the spectrum in the 1/n octave band.
-
     Parameters
     ----------
     self: Data
@@ -26,30 +22,23 @@ def get_nthoctave(self, noct, freqmin, freqmax, unit="SI", is_norm=False):
     -------
     list of 1Darray of axes values, ndarray of magnitude of FT
     """
-
     # Extract the frequency axis
     freqs = self.get_FT_axis("freqs")
-
     # Compute the 1/n octave axis
     f_oct = comp_nthoctave_axis(noct, freqmin, freqmax)
-
     # Rebuild symmetries for "time"
     values = self.values
     for index, axis in enumerate(self.axes):
         if axis.name == "time" and axis.name in self.symmetries.keys():
             values = rebuild_symmetries(values, index, self.symmetries.get(axis.name))
-
     # Extract the slices of the field
     for index, axis in enumerate(self.axes):
         if axis.name != "time":
             values = take(values, [0], axis=index)
-
     # Eliminate dimensions=1
     values = squeeze(values)
-
     # Perform Fourier Transform
     values = comp_magnitude(values)
-
     # Convert into right unit
     if unit == self.unit or unit == "SI":
         if is_norm:
@@ -73,7 +62,6 @@ def get_nthoctave(self, noct, freqmin, freqmax, unit="SI", is_norm=False):
         values = values / self.normalizations.get(unit)
     else:
         values = convert(values, self.unit, unit)
-
     # Compute sum over each interval
     freqbds = [f / (2 ** (1.0 / (2.0 * noct))) for f in f_oct]
     freqbds.append(freqbds[-1])
@@ -90,7 +78,5 @@ def get_nthoctave(self, noct, freqmin, freqmax, unit="SI", is_norm=False):
                 values_oct.append(0)
             else:
                 values_oct.append(10 * log10(np_sum(10 ** (0.1 * values2))))
-
     values = array(values_oct)
-
     return [f_oct, values]

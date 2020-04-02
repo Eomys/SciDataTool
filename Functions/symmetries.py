@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from numpy import tile, concatenate, negative, ones
-
-
 def rebuild_symmetries(values, axis_index, symmetries):
     """Reconstructs the field of a Data object taking symmetries into account
-
     Parameters
     ----------
     values: ndarray
@@ -18,7 +14,6 @@ def rebuild_symmetries(values, axis_index, symmetries):
     -------
     ndarray of the reconstructed field
     """
-
     if "period" in symmetries.keys():
         values = mytile(values, symmetries.get("period"), axis_index)
     elif "antiperiod" in symmetries.keys():
@@ -29,11 +24,8 @@ def rebuild_symmetries(values, axis_index, symmetries):
         else:
             values = values3
     return values
-
-
 def rebuild_symmetries_axis(values, symmetries):
     """Reconstructs the field of a Data object taking symmetries into account
-
     Parameters
     ----------
     values: ndarray
@@ -44,7 +36,6 @@ def rebuild_symmetries_axis(values, symmetries):
     -------
     ndarray of the reconstructed axis
     """
-
     values_new = values
     if "period" in symmetries.keys():
         for i in range(symmetries.get("period") - 1):
@@ -53,8 +44,6 @@ def rebuild_symmetries_axis(values, symmetries):
         for i in range(symmetries.get("antiperiod") - 1):
             values_new = concatenate((values_new, values + values_new[-1]))
     return values_new
-
-
 def mytile(values, n, axis_index):
     values_shape = values.shape
     reps = ones(len(values_shape), dtype=int)
