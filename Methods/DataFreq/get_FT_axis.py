@@ -2,6 +2,8 @@
 from SciDataTool.Functions import AxisError
 from SciDataTool.Functions.conversions import convert
 from numpy import array
+
+
 def get_FT_axis(self, axis_str):
     """Returns the vector 'axis' in the unit required, using conversions and symmetries if needed.
     Parameters

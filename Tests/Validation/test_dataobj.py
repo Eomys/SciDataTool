@@ -15,6 +15,7 @@ from SciDataTool.Classes.DataLinspace import DataLinspace
 from SciDataTool.Classes.DataFreq import DataFreq
 from SciDataTool.Tests import DATA_DIR
 from SciDataTool.Classes.ImportMatlab import ImportMatlab
+
 simu = Simu1(name="EM_SCIM_NL_006", machine=SCIM_006)
 csv_file_Br = join(DATA_DIR, "default_proj_Br_time_angle.csv")
 csv_file_time = join(DATA_DIR, "default_proj_time.csv")
@@ -79,6 +80,8 @@ pinknoise = pinknoise / (
     max_nb_bit
 )  # samples is a numpy array of float representing the samples
 rate_trafic, trafic = read(wav_file_trafic)
+
+
 class tests_dataobj(TestCase):
     # @unittest.skip
     def test_default_proj_Br_time_space(self):
@@ -197,6 +200,7 @@ class tests_dataobj(TestCase):
         out.plot_A_space("mag.Br", is_fft=True, r_max=r_max, out_list=[out4])
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_default_proj_Br_dataobj_ift.png"))
+
     # @unittest.skip
     def test_default_proj_Br_cfft2(self):
         r_max = 78
@@ -224,6 +228,7 @@ class tests_dataobj(TestCase):
         )
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_default_proj_Br_dataobj_cfft2.png"))
+
     @unittest.skip
     def test_sinus_thirdoct(self):
         out = Output(simu=simu)
@@ -251,6 +256,7 @@ class tests_dataobj(TestCase):
         out.plot_ASWL(SPL)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_sinus_thirdoct_dataobj.png"))
+
     @unittest.skip
     def test_pinknoise_thirdoct(self):
         out = Output(simu=simu)
@@ -278,6 +284,7 @@ class tests_dataobj(TestCase):
         out.plot_ASWL(SPL)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_pinknoise_thirdoct_dataobj.png"))
+
     @unittest.skip
     def test_default_proj_aswl_thirdoct(self):
         out = Output(simu=simu)
@@ -297,6 +304,7 @@ class tests_dataobj(TestCase):
         out.plot_ASWL(ASWL, is_dBA=True)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_default_proj_ASWL_thirdoct_dataobj.png"))
+
     # @unittest.skip
     def test_default_proj_surf(self):
         out = Output(simu=simu)
@@ -319,6 +327,7 @@ class tests_dataobj(TestCase):
         out.plot_A_surf("mag.Br", t_max=0.06, colormap=colormap)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_default_proj_Br_surf_dataobj.png"))
+
     # @unittest.skip
     def test_default_proj_compare(self):
         out = Output(simu=simu)
@@ -369,6 +378,7 @@ class tests_dataobj(TestCase):
         out.plot_A_time("mag.Br", out_list=[out2])
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_default_proj_Br_compare.png"))
+
     # @unittest.skip
     def test_default_proj_fft2(self):
         out = Output(simu=simu)
@@ -393,6 +403,7 @@ class tests_dataobj(TestCase):
         )
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_default_proj_MTr_fft2_dataobj.png"))
+
     # @unittest.skip
     def test_default_proj_time_space(self):
         out = Output(simu=simu)

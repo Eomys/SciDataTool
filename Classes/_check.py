@@ -6,6 +6,8 @@ check function for classes
 @author pierre_b
 """
 from numpy import array, empty, int32
+
+
 def set_array(obj, prop, value):
     """Set an array that can be None or a list
     Parameters
@@ -25,6 +27,8 @@ def set_array(obj, prop, value):
     elif isinstance(value, list):
         value = array(value)
     setattr(obj, prop, value)
+
+
 def check_init_dict(init_dict, key_list):
     """Check if init_dict is correct to initialize the Object (all the keys of init_dict are in key_list)
     Parameters
@@ -52,6 +56,8 @@ def check_init_dict(init_dict, key_list):
     for key in list(init_dict.keys()):
         if key not in key_list:
             raise UnknowInitDictKeyError("Init by dict : " + key + " is not a property")
+
+
 def check_var(var_name, value, expect_type, Vmin=None, Vmax=None):
     """Check if var_name can be set with value
     Parameters
@@ -85,6 +91,8 @@ def check_var(var_name, value, expect_type, Vmin=None, Vmax=None):
             check_min(var_name, value, type_value, Vmin)
         if Vmax is not None:
             check_max(var_name, value, type_value, Vmax)
+
+
 def check_type(var_name, value, expect_type, type_value):
     """Check if value has the expected type for var_name
     Parameters
@@ -237,6 +245,8 @@ def check_type(var_name, value, expect_type, type_value):
                         + type_value
                         + " given"
                     )
+
+
 def check_min(var_name, value, type_value, Vmin):
     """Check if value is greater than the min of var_name
     Parameters
@@ -275,6 +285,8 @@ def check_min(var_name, value, type_value, Vmin):
             + str(value)
             + " given"
         )
+
+
 def check_max(var_name, value, type_value, Vmax):
     """Check if value is less than the max of var_name
     Parameters
@@ -313,28 +325,51 @@ def check_max(var_name, value, type_value, Vmax):
             + str(value)
             + " given"
         )
+
+
 def raise_(ex):
     """Function to raise an exeption for the method import lambda
     """
     raise ex
+
+
 class CheckError(Exception):
     """ """
+
     pass
+
+
 class CheckMinError(CheckError):
     """ """
+
     pass
+
+
 class CheckMaxError(CheckError):
     """ """
+
     pass
+
+
 class CheckTypeError(CheckError):
     """ """
+
     pass
+
+
 class InitUnKnowClassError(CheckError):
     """ """
+
     pass
+
+
 class UnknowInitDictKeyError(CheckError):
     """ """
+
     pass
+
+
 class NotADictError(CheckError):
     """ """
+
     pass

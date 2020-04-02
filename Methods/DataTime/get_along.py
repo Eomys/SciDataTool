@@ -6,6 +6,8 @@ from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.interpolations import get_common_base, get_interpolation
 from numpy import squeeze, take, apply_along_axis
 from os import sys
+
+
 def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the ndarray of the field, using conversions and symmetries if needed.
     Parameters
@@ -58,7 +60,9 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 )
         elif axis_requested[2] == "interval":
             # Get original values of the axis
-            axis_requested.append(self.get_axis(axis_requested[0] + axis_requested[1])[axis_requested[4]])
+            axis_requested.append(
+                self.get_axis(axis_requested[0] + axis_requested[1])[axis_requested[4]]
+            )
     # Rebuild symmetries of field if axis is extracted
     values = self.values
     for index, axis in enumerate(self.axes):
@@ -101,7 +105,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
-                values = values / self.normalizations.get(self.unit)
+                values = values / self.normalizations.get("ref")
             except:
                 raise NormError(
                     "ERROR: Reference value not specified for normalization"
@@ -113,9 +117,9 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Return axes and values
     return_list = []
     for axis_requested in axes_list:
-        if axis_requested[2] == "interval" and axis_requested[3]=="values":
+        if axis_requested[2] == "interval" and axis_requested[3] == "values":
             return_list.append(axis_requested[4])
-        elif axis_requested[2] == "interval" and axis_requested[3]=="indices":
+        elif axis_requested[2] == "interval" and axis_requested[3] == "indices":
             return_list.append(axis_requested[5])
     return_list.append(values)
     return return_list

@@ -3,6 +3,8 @@ from SciDataTool.Functions import NormError
 from SciDataTool.Functions.fft_functions import comp_nthoctave_axis
 from SciDataTool.Functions.conversions import convert, to_dB, to_dBA
 from numpy import array, take, squeeze, argwhere, log10, sum as np_sum
+
+
 def get_nthoctave(self, noct, freqmin, freqmax, unit="SI", is_norm=False):
     """Returns the spectrum in the 1/n octave band.
     Parameters
@@ -36,20 +38,20 @@ def get_nthoctave(self, noct, freqmin, freqmax, unit="SI", is_norm=False):
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
-                values = values / self.normalizations.get(self.unit)
+                values = values / self.normalizations.get("ref")
             except:
                 raise NormError(
                     "ERROR: Reference value not specified for normalization"
                 )
     elif unit == "dB":
         ref_value = 1.0
-        if self.unit in self.normalizations.keys():
-            ref_value *= self.normalizations.get(self.unit)
+        if "ref" in self.normalizations.keys():
+            ref_value *= self.normalizations.get("ref")
         values = to_dB(values, self.unit, ref_value)
     elif unit == "dBA":
         ref_value = 1.0
-        if self.unit in self.normalizations.keys():
-            ref_value *= self.normalizations.get(self.unit)
+        if "ref" in self.normalizations.keys():
+            ref_value *= self.normalizations.get("ref")
         values = to_dBA(values, freqs, self.unit, ref_value)
     elif unit in self.normalizations:
         values = values / self.normalizations.get(unit)

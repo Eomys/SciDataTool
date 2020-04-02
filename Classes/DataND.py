@@ -6,6 +6,7 @@ from os import linesep
 from SciDataTool.Classes._check import set_array, check_init_dict, check_var, raise_
 from SciDataTool.Functions.save import save
 from SciDataTool.Classes.Data import Data
+
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
@@ -33,8 +34,11 @@ except ImportError as error:
 from numpy import array, array_equal
 from SciDataTool.Classes._check import InitUnKnowClassError
 from SciDataTool.Classes.Data import Data
+
+
 class DataND(Data):
     """Abstract class for physical quantities depending on others"""
+
     VERSION = 1
     # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.DataND.compare_along
@@ -94,6 +98,7 @@ class DataND(Data):
         set_Ftparameters = set_Ftparameters
     # save method is available in all object
     save = save
+
     def __init__(
         self,
         axes=None,
@@ -187,6 +192,7 @@ class DataND(Data):
         )
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
+
     def __str__(self):
         """Convert this objet in a readeable string (for print)"""
         DataND_str = ""
@@ -208,6 +214,7 @@ class DataND(Data):
         DataND_str += "FTparameters = " + str(self.FTparameters) + linesep
         DataND_str += "values = " + linesep + str(self.values)
         return DataND_str
+
     def __eq__(self, other):
         """Compare two objects (skip parent)"""
         if type(other) != type(self):
@@ -224,6 +231,7 @@ class DataND(Data):
         if not array_equal(other.values, self.values):
             return False
         return True
+
     def as_dict(self):
         """Convert this objet in a json seriable dict (can be use in __init__)
         """
@@ -242,6 +250,7 @@ class DataND(Data):
         # Overwrite the mother class name
         DataND_dict["__class__"] = "DataND"
         return DataND_dict
+
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""
         for obj in self.axes:
@@ -251,12 +260,14 @@ class DataND(Data):
         self.values = None
         # Set to None the properties inherited from Data
         super(DataND, self)._set_None()
+
     def _get_axes(self):
         """getter of axes"""
         for obj in self._axes:
             if obj is not None:
                 obj.parent = self
         return self._axes
+
     def _set_axes(self, value):
         """setter of axes"""
         check_var("axes", value, "[Data]")
@@ -264,6 +275,7 @@ class DataND(Data):
         for obj in self._axes:
             if obj is not None:
                 obj.parent = self
+
     # List of the Data1D objects corresponding to the axes
     # Type : [Data]
     axes = property(
@@ -271,13 +283,16 @@ class DataND(Data):
         fset=_set_axes,
         doc=u"""List of the Data1D objects corresponding to the axes""",
     )
+
     def _get_normalizations(self):
         """getter of normalizations"""
         return self._normalizations
+
     def _set_normalizations(self, value):
         """setter of normalizations"""
         check_var("normalizations", value, "dict")
         self._normalizations = value
+
     # Normalizations available for the field and its axes
     # Type : dict
     normalizations = property(
@@ -285,13 +300,16 @@ class DataND(Data):
         fset=_set_normalizations,
         doc=u"""Normalizations available for the field and its axes""",
     )
+
     def _get_FTparameters(self):
         """getter of FTparameters"""
         return self._FTparameters
+
     def _set_FTparameters(self, value):
         """setter of FTparameters"""
         check_var("FTparameters", value, "dict")
         self._FTparameters = value
+
     # Tunable parameters for the Fourier Transforms
     # Type : dict
     FTparameters = property(
@@ -299,9 +317,11 @@ class DataND(Data):
         fset=_set_FTparameters,
         doc=u"""Tunable parameters for the Fourier Transforms""",
     )
+
     def _get_values(self):
         """getter of values"""
         return self._values
+
     def _set_values(self, value):
         """setter of values"""
         if type(value) is list:
@@ -311,6 +331,7 @@ class DataND(Data):
                 pass
         check_var("values", value, "ndarray")
         self._values = value
+
     # Values of the field
     # Type : ndarray
     values = property(

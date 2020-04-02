@@ -6,6 +6,7 @@ from os import linesep
 from SciDataTool.Classes._check import set_array, check_init_dict, check_var, raise_
 from SciDataTool.Functions.save import save
 from SciDataTool.Classes.DataND import DataND
+
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
@@ -47,8 +48,11 @@ except ImportError as error:
 from numpy import array, array_equal
 from SciDataTool.Classes._check import InitUnKnowClassError
 from SciDataTool.Classes.Data import Data
+
+
 class DataFreq(DataND):
     """Abstract class for all kinds of data"""
+
     VERSION = 1
     # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.DataFreq.get_axis
@@ -149,6 +153,7 @@ class DataFreq(DataND):
         find_periods = find_periods
     # save method is available in all object
     save = save
+
     def __init__(
         self,
         axes=None,
@@ -213,12 +218,14 @@ class DataFreq(DataND):
         )
         # The class is frozen (in DataND init), for now it's impossible to
         # add new properties
+
     def __str__(self):
         """Convert this objet in a readeable string (for print)"""
         DataFreq_str = ""
         # Get the properties inherited from DataND
         DataFreq_str += super(DataFreq, self).__str__() + linesep
         return DataFreq_str
+
     def __eq__(self, other):
         """Compare two objects (skip parent)"""
         if type(other) != type(self):
@@ -227,6 +234,7 @@ class DataFreq(DataND):
         if not super(DataFreq, self).__eq__(other):
             return False
         return True
+
     def as_dict(self):
         """Convert this objet in a json seriable dict (can be use in __init__)
         """
@@ -236,6 +244,7 @@ class DataFreq(DataND):
         # Overwrite the mother class name
         DataFreq_dict["__class__"] = "DataFreq"
         return DataFreq_dict
+
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""
         # Set to None the properties inherited from DataND

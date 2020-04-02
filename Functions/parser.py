@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from numpy import pi, sqrt  # for eval
 from SciDataTool.Functions import AxisError
+
+
 def read_input_strings(args, axis_data):
     """Reads the string input into the "get_along" methods to define the axes
     Parameters

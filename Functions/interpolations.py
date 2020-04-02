@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from numpy import linspace, argmin, take, isclose, all, abs as np_abs
 from scipy import interpolate
+
+
 def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
     """Returns a common base for vectors values1 and values2
     Parameters
@@ -34,6 +36,8 @@ def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
             len([i for i in values2 if i >= initial and i <= final]),
         )
     return linspace(initial, final, number, endpoint=True)
+
+
 def get_interpolation(values, axis_values, new_axis_values):
     """Returns the interpolated field along one axis, given the new axis
     Parameters

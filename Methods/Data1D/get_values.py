@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
+
+
 def get_values(self):
     """Returns the vector 'axis' taking symmetries into account (no units).
     Parameters

@@ -4,6 +4,7 @@ from os.path import normpath, join, abspath, dirname, isdir
 from os import makedirs
 from shutil import rmtree
 from matplotlib import use
+
 use("Qt5Agg")  # Use PyQt5 backend
 TEST_DIR = abspath(dirname(__file__))
 DATA_DIR = join(TEST_DIR, "Data")

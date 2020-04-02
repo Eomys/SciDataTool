@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from numpy import linspace
+
+
 def get_values(self):
     """Returns the vector 'axis' by rebuilding the linspace.
     Parameters

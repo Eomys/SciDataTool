@@ -7,6 +7,8 @@ from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.interpolations import get_common_base, get_interpolation
 from numpy import squeeze, take, apply_along_axis, angle as np_angle
 from os import sys
+
+
 def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the phase of the FT, using conversions and symmetries if needed.
     Parameters
@@ -47,7 +49,9 @@ def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 )
         elif axis_requested[2] == "interval":
             # Get original values of the axis
-            axis_requested.append(self.get_axis(axis_requested[0] + axis_requested[1])[axis_requested[4]])
+            axis_requested.append(
+                self.get_axis(axis_requested[0] + axis_requested[1])[axis_requested[4]]
+            )
         # Change fft name for the slices of the field
         if axis_requested[0] == "time":
             axis_requested[0] = "freqs"
@@ -155,7 +159,7 @@ def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     if unit == self.unit or unit == "SI" or unit == "°":
         if is_norm:
             try:
-                values = values / self.normalizations.get(self.unit)
+                values = values / self.normalizations.get("ref")
             except:
                 raise NormError(
                     "ERROR: Reference value not specified for normalization"
@@ -169,7 +173,7 @@ def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     for axis_requested in axes_list:
         if axis_requested[2] == "interval":
             return_list.append(axis_requested[4])
-        elif axis_requested[2] == "interval" and axis_requested[3]=="indices":
+        elif axis_requested[2] == "interval" and axis_requested[3] == "indices":
             return_list.append(axis_requested[5])
     return_list.append(values)
     return return_list

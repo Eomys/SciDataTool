@@ -6,6 +6,8 @@
 """
 from json import dump
 from os.path import join, basename, isdir
+
+
 def fix_file_name(save_path, obj):
     if isdir(save_path) or not save_path:
         file_path = join(save_path, type(obj).__name__ + ".json")
@@ -14,15 +16,21 @@ def fix_file_name(save_path, obj):
     else:
         file_path = save_path
     return file_path
+
+
 def is_json_serializable(obj):
     if isinstance(obj, (bool, float, int, str)):
         return True
     else:
         return False
+
+
 def has_as_dict(obj):
     """Check if object has 'as_dict' method.
     """
     return hasattr(obj, "as_dict") and callable(getattr(obj, "as_dict", None))
+
+
 def build_data(obj):
     """
     Build a json serializable data structure of lists, dicts and pyleecan objects.
@@ -60,6 +68,8 @@ def build_data(obj):
         return obj
     else:
         return None
+
+
 def save_data(obj, save_path=""):
     """Save the object to the save_path
     Parameters
@@ -75,6 +85,8 @@ def save_data(obj, save_path=""):
     obj = build_data(obj)
     with open(file_path, "w") as json_file:
         dump(obj, json_file, sort_keys=True, indent=4, separators=(",", ": "))
+
+
 def save(self, save_path=""):
     """Save the object to the save_path
     Parameters
