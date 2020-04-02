@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+/Tests/Results
+.idea/
+Internal/
+_Internal/
+*.log
