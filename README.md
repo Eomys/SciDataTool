@@ -8,7 +8,7 @@ It is meant to be used by researchers, R&D engineers and teachers in any scienti
 EOMYS has started an open and non-commercial project named Pyleecan (Python Library for Electrical Engineering Computational Analysis). In this context, a scientific data tool has been implemented with the intent to be as generic as possible. The resulting module could be used in any scientific area, and benefit from exterior developments, hence the idea to create the separated open-source project.
 
 ## Documentation
-Tutorials are available in the [Tutorials folder](https://github.com/Eomys/SciDataTool/tree/master/Tutorials), which can also be found on [Pyleecan's website](http://www.pyleecan.org). The [plot tutorial](http://www.pyleecan.org) can also give insight on how to best use SciDataTool capabilities to design generic plot commands.
+Tutorials are available in the [Tutorials folder](https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Tutorials), which can also be found on [Pyleecan's website](http://www.pyleecan.org). The [plot tutorial](http://www.pyleecan.org) can also give insight on how to best use SciDataTool capabilities to design generic plot commands.
 
 ## Contact
 You can contact us on Github by opening an issue (to request a feature, ask a question or report a bug) or at pyleecan@framalistes.org that redirect to all the maintainers.
