@@ -6,3 +6,5 @@ Internal/
 _Internal/
 *.log
 .ipynb_checkpoints/
+SciDataTool.egg-info
+dist

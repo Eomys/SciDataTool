@@ -12,11 +12,12 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Eomys/SciDataTool",
+    download_url="https://github.com/Eomys/SciDataTool/archive/0.0.1.tar.gz",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: Apache License v2.0",
-        "Operating System :: OS Independent",
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: OS Independent',
     ],
     python_requires=">=2.7",
     install_requires=["numpy","scipy","matplotlib"]
