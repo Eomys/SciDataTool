@@ -1,5 +1,5 @@
 # Introduction
-Pyleecan project intend to create an open community of people working on electrical machines to encourage the research in this field. This community will be composed of several people with different backgrounds and perspectives. This document set a (non-exhaustive) list of rules about what is accepted in the community and what is not. This code of conduct is inspire from the [Django's one](https://www.djangoproject.com/conduct/).
+SciDataTool project intends to create an open community of people working on electrical machines to encourage the research in this field. This community will be composed of several people with different backgrounds and perspectives. This document set a (non-exhaustive) list of rules about what is accepted in the community and what is not. This code of conduct is inspire from the [Django's one](https://www.djangoproject.com/conduct/).
 
 This code of conduct applies to all spaces managed by the Pyleecan project. This includes the mailing lists, the issue tracker, the documentation and any other communication or event linked to the project. In addition, violations of this code outside these spaces may affect a person's ability to participate within them.
 
