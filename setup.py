@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="SciDataTool",
-    version="0.0.1",
+    version="0.0.3",
     author="Helene Toubin",
     author_email="helene.toubin@eomys.com",
     description="Scientific Data Tool",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Eomys/SciDataTool",
-    download_url="https://github.com/Eomys/SciDataTool/archive/0.0.1.tar.gz",
+    download_url="https://github.com/Eomys/SciDataTool/archive/0.0.3.tar.gz",
     packages=setuptools.find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
