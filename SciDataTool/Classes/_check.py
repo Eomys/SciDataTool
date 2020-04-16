@@ -354,15 +354,9 @@ def check_dimensions(values, axes):
             axes_shape.append(len(squeeze(axis.values)))
         else:
             if isinstance(axis.number, int):
-                if axis.include_endpoint:
-                    axes_shape.append(axis.number+1)
-                else:
-                    axes_shape.append(axis.number)
+                axes_shape.append(axis.number)
             else:
-                if axis.include_endpoint:
-                    axes_shape.append(int((axis.final-axis.initial)/axis.step)+1)
-                else:
-                    axes_shape.append(int((axis.final-axis.initial)/axis.step))
+                axes_shape.append(int((axis.final-axis.initial)/axis.step))
                     
     if values_shape != tuple(axes_shape):
         raise CheckDimError("Dimensions of field (" + str(values_shape) + 
