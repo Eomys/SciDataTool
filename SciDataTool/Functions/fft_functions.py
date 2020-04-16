@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import prod, mean, hanning, linspace
+from numpy import prod, mean, hanning, linspace, argmin, abs, where, isclose
 from numpy.fft import fft, rfftn, ifftn, fftn, fftshift, ifftshift, rfft2
 from numpy import (
     pi,
@@ -256,10 +256,9 @@ def comp_fft_average(values):
     return f, np_abs(values)
 
 
-def rect_window(f, dt):
-    W = (
-        (1 - exp(-1j * 2 * pi * dt * f * (M + 1))) / (1 - exp(-1j * 2 * pi * dt * f))
-    ) / (M + 1)
+def rect_window(f, M, dt):
+    W = where(isclose(f,0),
+        (1 - exp(-1j * 2 * pi * dt * f * (M))) / (1 - exp(-1j * 2 * pi * dt * f)) / M, 1)
     return W
 
 
@@ -268,7 +267,7 @@ def rect_window(f, dt):
 # timec = linspace(0,tf*(1-1/M),M)
 # dt = timec[1] - timec[0]
 # A0 = 2
-# freq0 = 9.5
+# freq0 = 10.0
 # phi0=0
 # y = A0*cos(2*pi*freq0*timec+phi0)
 # freqs = comp_fft_freqs(timec, is_time=True, is_positive=False)
@@ -276,8 +275,12 @@ def rect_window(f, dt):
 # fig = plt.figure(constrained_layout=True, figsize=(20, 10))
 # plt.plot(freqs,np_abs(y_FT))
 # freqs_th = [-freq0, freq0]
-# (xfreqs1, xfreqs2) = meshgrid(freqs,freqs_th)
-# Wmat = rect_window(xfreqs1 - xfreqs2, dt)
-# y_corr = dot(linalg.pinv(transpose(Wmat)),y_FT)
+# If = [0 for i in range(len(freqs_th))]
+# for i in range(len(freqs_th)):
+#     If[i] = int(argmin(abs([f-freqs_th[i] for f in freqs])))
+# freqs = [freqs[i] for i in If]
+# (xfreqs2, xfreqs1) = meshgrid(freqs_th,freqs)
+# Wmat = rect_window(xfreqs1 - xfreqs2, M, dt)
+# y_corr = linalg.solve(Wmat, y_FT[If])
 # print(y_corr)
 # plt.plot(freqs_th,np_abs(y_corr))

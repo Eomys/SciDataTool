@@ -13,7 +13,7 @@ try:
     from SciDataTool.Methods.Data1D.get_values import get_values
 except ImportError as error:
     get_values = error
-from numpy import array, array_equal
+from numpy import array, array_equal, squeeze
 from SciDataTool.Classes._check import InitUnKnowClassError
 
 
@@ -115,9 +115,9 @@ class Data1D(Data):
         """setter of values"""
         if type(value) is list:
             try:
-                value = array(value)
+                value = squeeze(array(value))
             except:
-                pass
+                value = squeeze(value)
         check_var("values", value, "ndarray")
         self._values = value
 

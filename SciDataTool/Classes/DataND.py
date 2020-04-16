@@ -3,7 +3,7 @@
 WARNING! All changes made in this file will be lost!
 """
 from os import linesep
-from SciDataTool.Classes._check import set_array, check_init_dict, check_var, raise_
+from SciDataTool.Classes._check import set_array, check_init_dict, check_var, raise_, check_dimensions
 from SciDataTool.Functions.save import save
 from SciDataTool.Classes.Data import Data
 
@@ -31,9 +31,8 @@ try:
     from SciDataTool.Methods.DataND.set_Ftparameters import set_Ftparameters
 except ImportError as error:
     set_Ftparameters = error
-from numpy import array, array_equal
+from numpy import array, array_equal, squeeze
 from SciDataTool.Classes._check import InitUnKnowClassError
-from SciDataTool.Classes.Data import Data
 
 
 class DataND(Data):
@@ -185,6 +184,7 @@ class DataND(Data):
         self.normalizations = normalizations
         self.FTparameters = FTparameters
         # values can be None, a ndarray or a list
+        check_dimensions(values, axes)
         set_array(self, "values", values)
         # Call Data init
         super(DataND, self).__init__(
@@ -326,9 +326,9 @@ class DataND(Data):
         """setter of values"""
         if type(value) is list:
             try:
-                value = array(value)
+                value = squeeze(array(value))
             except:
-                pass
+                value = squeeze(value)
         check_var("values", value, "ndarray")
         self._values = value
 

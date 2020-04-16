@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 17 10:04:21 2014
-@author: pierre_b
-"""
+
 from numpy.random import random_sample, ranf
 
 PYTHON_TYPE = ["float", "int", "str", "bool", "complex"]

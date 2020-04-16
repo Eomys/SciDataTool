@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
-"""@package Classes.check
-check function for classes
-@date Created on Wed Nov 05 10:10:34 2014
-@copyright (C) 2014-2015 EOMYS ENGINEERING.
-@author pierre_b
-"""
-from numpy import array, empty, int32
 
+from numpy import array, empty, int32, squeeze
 
 def set_array(obj, prop, value):
     """Set an array that can be None or a list
@@ -26,7 +20,7 @@ def set_array(obj, prop, value):
         value = empty(0)
     elif isinstance(value, list):
         value = array(value)
-    setattr(obj, prop, value)
+    setattr(obj, prop, squeeze(value))
 
 
 def check_init_dict(init_dict, key_list):
@@ -332,6 +326,53 @@ def raise_(ex):
     """
     raise ex
 
+def check_dimensions(values, axes):
+    """Check if field and axes have matching dimensions
+    Parameters
+    ----------
+    values : ndarray
+        values array
+    axes : [Data]
+        list of Data objects
+    Returns
+    -------
+    None
+    Raises
+    ------
+    CheckDimError
+        Dimensions of field and axes do not match
+    """
+    if isinstance(values, list):
+        values = squeeze(array(values))
+    else:
+        values = squeeze(values)
+    
+    values_shape = values.shape
+    axes_shape = []
+    for axis in axes:
+        if hasattr(axis, "values"):
+            axes_shape.append(len(squeeze(axis.values)))
+        else:
+            if isinstance(axis.number, int):
+                if axis.include_endpoint:
+                    axes_shape.append(axis.number+1)
+                else:
+                    axes_shape.append(axis.number)
+            else:
+                if axis.include_endpoint:
+                    axes_shape.append(int((axis.final-axis.initial)/axis.step)+1)
+                else:
+                    axes_shape.append(int((axis.final-axis.initial)/axis.step))
+                    
+    if values_shape != tuple(axes_shape):
+        raise CheckDimError("Dimensions of field (" + str(values_shape) + 
+                ") and axes (" + str(tuple(axes_shape)) + ") do not match")
+
+
+class CheckDimError(Exception):
+    """ """
+
+    pass
 
 class CheckError(Exception):
     """ """
