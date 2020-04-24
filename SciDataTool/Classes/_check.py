@@ -2,6 +2,7 @@
 
 from numpy import array, empty, int32, squeeze
 
+
 def set_array(obj, prop, value):
     """Set an array that can be None or a list
     Parameters
@@ -326,6 +327,7 @@ def raise_(ex):
     """
     raise ex
 
+
 def check_dimensions(values, axes):
     """Check if field and axes have matching dimensions
     Parameters
@@ -346,7 +348,7 @@ def check_dimensions(values, axes):
         values = squeeze(array(values))
     else:
         values = squeeze(values)
-    
+
     values_shape = values.shape
     axes_shape = []
     for axis in axes:
@@ -356,17 +358,23 @@ def check_dimensions(values, axes):
             if isinstance(axis.number, int):
                 axes_shape.append(axis.number)
             else:
-                axes_shape.append(int((axis.final-axis.initial)/axis.step))
-                    
+                axes_shape.append(int((axis.final - axis.initial) / axis.step))
+
     if values_shape != tuple(axes_shape):
-        raise CheckDimError("Dimensions of field (" + str(values_shape) + 
-                ") and axes (" + str(tuple(axes_shape)) + ") do not match")
+        raise CheckDimError(
+            "Dimensions of field ("
+            + str(values_shape)
+            + ") and axes ("
+            + str(tuple(axes_shape))
+            + ") do not match"
+        )
 
 
 class CheckDimError(Exception):
     """ """
 
     pass
+
 
 class CheckError(Exception):
     """ """

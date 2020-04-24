@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.interpolations import get_common_base, get_interpolation
-from numpy import squeeze, abs
+from numpy import squeeze
 
 
 def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False):
@@ -52,4 +52,4 @@ def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False)
                     common_axis_values[index],
                 )
         # Return axis and values
-        return (squeeze(common_axis_values), [values] + abs(data_values))
+        return (squeeze(common_axis_values), [values] + data_values)

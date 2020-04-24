@@ -15,10 +15,10 @@ setuptools.setup(
     download_url="https://github.com/Eomys/SciDataTool/archive/0.1.0.tar.gz",
     packages=setuptools.find_packages(),
     classifiers=[
-        'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: Apache Software License',
-        'Operating System :: OS Independent',
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: Apache Software License",
+        "Operating System :: OS Independent",
     ],
     python_requires=">=2.7",
-    install_requires=["numpy","scipy","matplotlib"]
+    install_requires=["numpy", "scipy", "matplotlib"],
 )

@@ -41,7 +41,6 @@ def comp_fft_freqs(time, is_time, is_positive):
         freqs = [i - int(N_tot / 2) for i in range(int(N_tot))]
     if is_time:
         freqs = [i / freqscale for i in freqs]
-    # zero-padding
     return freqs
 
 
@@ -257,8 +256,11 @@ def comp_fft_average(values):
 
 
 def rect_window(f, M, dt):
-    W = where(isclose(f,0),
-        (1 - exp(-1j * 2 * pi * dt * f * (M))) / (1 - exp(-1j * 2 * pi * dt * f)) / M, 1)
+    W = where(
+        isclose(f, 0),
+        (1 - exp(-1j * 2 * pi * dt * f * (M))) / (1 - exp(-1j * 2 * pi * dt * f)) / M,
+        1,
+    )
     return W
 
 

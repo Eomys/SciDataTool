@@ -3,7 +3,13 @@
 WARNING! All changes made in this file will be lost!
 """
 from os import linesep
-from SciDataTool.Classes._check import set_array, check_init_dict, check_var, raise_, check_dimensions
+from SciDataTool.Classes._check import (
+    set_array,
+    check_init_dict,
+    check_var,
+    raise_,
+    check_dimensions,
+)
 from SciDataTool.Functions.save import save
 from SciDataTool.Classes.Data import Data
 

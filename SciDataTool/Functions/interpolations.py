@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import linspace, argmin, take, isclose, all, abs as np_abs
+from numpy import linspace, argmin, take, isclose, isin, around, all, abs as np_abs
 from scipy import interpolate
 
 
@@ -31,10 +31,20 @@ def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
             len([i for i in values2 if i >= initial and i <= final]),
         )
     else:
-        number = max(
-            len([i for i in values1 if i >= initial and i <= final]),
-            len([i for i in values2 if i >= initial and i <= final]),
-        )
+        length1 = len([i for i in values1 if i >= initial and i <= final])
+        length2 = len([i for i in values2 if i >= initial and i <= final])
+        if length1 > length2:
+            number = length1
+            if initial not in values1:
+                initial = values1[argmin(np_abs([i - initial for i in values1])) + 1]
+            if final not in values1:
+                final = values1[argmin(np_abs([i - final for i in values1])) - 1]
+        else:
+            number = length2
+            if initial not in values2:
+                initial = values2[argmin(np_abs([i - initial for i in values2])) + 1]
+            if final not in values2:
+                final = values2[argmin(np_abs([i - final for i in values2])) - 1]
     return linspace(initial, final, number, endpoint=True)
 
 
@@ -52,15 +62,21 @@ def get_interpolation(values, axis_values, new_axis_values):
     -------
     ndarray of the interpolated field
     """
-    if str(axis_values) == "whole":
+    if str(axis_values) == "whole":  # Whole axis -> no interpolation
         return values
-    elif len(new_axis_values) == 1:
+    elif len(new_axis_values) == 1:  # Single point -> use argmin
         idx = argmin(np_abs(axis_values - new_axis_values[0]))
         return take(values, [idx])
     elif len(axis_values) == len(new_axis_values) and all(
         isclose(axis_values, new_axis_values, rtol=1e-03)
-    ):
+    ):  # Same axes -> no interpolation
         return values
+    elif isin(
+        around(new_axis_values, 5), around(axis_values, 5), assume_unique=True
+    ).all():  # New axis is subset -> no interpolation
+        return values[
+            isin(around(axis_values, 5), around(new_axis_values, 5), assume_unique=True)
+        ]
     else:
         values_spline = interpolate.splrep(axis_values, values, s=0)
         return interpolate.splev(new_axis_values, values_spline, der=0)
