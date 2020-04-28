@@ -345,9 +345,9 @@ def check_dimensions(values, axes):
         Dimensions of field and axes do not match
     """
     if isinstance(values, list):
-        values = squeeze(array(values))
+        values = array(values)
     else:
-        values = squeeze(values)
+        values = values
 
     values_shape = values.shape
     axes_shape = []
