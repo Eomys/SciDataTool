@@ -60,7 +60,7 @@ class Data1D(Data):
                 symmetries = init_dict["symmetries"]
         # Initialisation by argument
         # values can be None, a ndarray or a list
-        set_array(self, "values", values)
+        set_array(self, "values", squeeze(values))
         # Call Data init
         super(Data1D, self).__init__(
             symbol=symbol, name=name, unit=unit, symmetries=symmetries

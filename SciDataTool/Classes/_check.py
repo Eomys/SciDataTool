@@ -21,7 +21,7 @@ def set_array(obj, prop, value):
         value = empty(0)
     elif isinstance(value, list):
         value = array(value)
-    setattr(obj, prop, squeeze(value))
+    setattr(obj, prop, value)
 
 
 def check_init_dict(init_dict, key_list):
