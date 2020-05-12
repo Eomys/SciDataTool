@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""File generated according to SciDataTool/Generator/ClassesRef/Output/DataLinspace.csv
-WARNING! All changes made in this file will be lost!
-"""
 from os import linesep
 from SciDataTool.Classes._check import check_init_dict, check_var, raise_
 from SciDataTool.Functions.save import save
