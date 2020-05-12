@@ -30,7 +30,14 @@ class Data1D(Data):
     save = save
 
     def __init__(
-        self, values=[], symbol="", name="", unit="", symmetries={}, is_multiple=False, init_dict=None,
+        self,
+        values=[],
+        symbol="",
+        name="",
+        unit="",
+        symmetries={},
+        is_multiple=False,
+        init_dict=None,
     ):
         """Constructor of the class. Can be use in two ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
@@ -41,7 +48,8 @@ class Data1D(Data):
         object or dict can be given for SciDataTool Object"""
         if init_dict is not None:  # Initialisation by dict
             check_init_dict(
-                init_dict, ["values", "symbol", "name", "unit", "symmetries"]
+                init_dict,
+                ["values", "symbol", "name", "unit", "symmetries", "is_multiple"],
             )
             # Overwrite default value with init_dict content
             if "values" in list(init_dict.keys()):

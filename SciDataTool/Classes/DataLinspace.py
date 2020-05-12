@@ -42,6 +42,7 @@ class DataLinspace(Data):
         name="",
         unit="",
         symmetries={},
+        is_multiple=False,
         init_dict=None,
     ):
         """Constructor of the class. Can be use in two ways :
@@ -64,6 +65,7 @@ class DataLinspace(Data):
                     "name",
                     "unit",
                     "symmetries",
+                    "is_multiple",
                 ],
             )
             # Overwrite default value with init_dict content
@@ -85,6 +87,8 @@ class DataLinspace(Data):
                 unit = init_dict["unit"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
+            if "is_multiple" in list(init_dict.keys()):
+                is_multiple = init_dict["is_multiple"]
         # Initialisation by argument
         self.initial = initial
         self.final = final
