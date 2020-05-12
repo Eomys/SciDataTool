@@ -65,6 +65,7 @@ class Data1D(Data):
             if "is_multiple" in list(init_dict.keys()):
                 is_multiple = init_dict["is_multiple"]
         # Initialisation by argument
+        self.is_multiple = is_multiple
         # values can be None, a ndarray or a list
         set_array(self, "values", squeeze(values))
         # Call Data init
@@ -131,4 +132,21 @@ class Data1D(Data):
     # Type : ndarray
     values = property(
         fget=_get_values, fset=_set_values, doc=u"""ndarray of the field"""
+    )
+    
+    def _get_is_multiple(self):
+        """getter of include_endpoint"""
+        return self._is_multiple
+
+    def _set_is_multiple(self, value):
+        """setter of is_multiple"""
+        check_var("is_multiple", value, "bool")
+        self._is_multiple = value
+
+    # Boolean indicating if the axis is multiple
+    # Type : bool
+    is_multiple = property(
+        fget=_get_is_multiple,
+        fset=_set_is_multiple,
+        doc=u"""Boolean indicating if the axis is multiple""",
     )

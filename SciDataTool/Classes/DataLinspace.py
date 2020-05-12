@@ -95,6 +95,7 @@ class DataLinspace(Data):
         self.step = step
         self.number = number
         self.include_endpoint = include_endpoint
+        self.is_multiple = is_multiple
         # Call Data init
         super(DataLinspace, self).__init__(
             symbol=symbol, name=name, unit=unit, symmetries=symmetries
@@ -143,6 +144,7 @@ class DataLinspace(Data):
         DataLinspace_dict["step"] = self.step
         DataLinspace_dict["number"] = self.number
         DataLinspace_dict["include_endpoint"] = self.include_endpoint
+        DataLinspace_dict["is_multiple"] = self.is_multiple
         # The class name is added to the dict fordeserialisation purpose
         # Overwrite the mother class name
         DataLinspace_dict["__class__"] = "DataLinspace"
@@ -155,6 +157,7 @@ class DataLinspace(Data):
         self.step = None
         self.number = None
         self.include_endpoint = None
+        self.is_multiple = None
         # Set to None the properties inherited from Data
         super(DataLinspace, self)._set_None()
 
@@ -225,4 +228,21 @@ class DataLinspace(Data):
         fget=_get_include_endpoint,
         fset=_set_include_endpoint,
         doc=u"""Boolean indicating if the endpoint must be included""",
+    )
+    
+    def _get_is_multiple(self):
+        """getter of include_endpoint"""
+        return self._is_multiple
+
+    def _set_is_multiple(self, value):
+        """setter of is_multiple"""
+        check_var("is_multiple", value, "bool")
+        self._is_multiple = value
+
+    # Boolean indicating if the axis is multiple
+    # Type : bool
+    is_multiple = property(
+        fget=_get_is_multiple,
+        fset=_set_is_multiple,
+        doc=u"""Boolean indicating if the axis is multiple""",
     )
