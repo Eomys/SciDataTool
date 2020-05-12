@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""File generated according to SciDataTool/Generator/ClassesRef/Output/Data1D.csv
-WARNING! All changes made in this file will be lost!
-"""
 from os import linesep
 from SciDataTool.Classes._check import set_array, check_init_dict, check_var, raise_
 from SciDataTool.Functions.save import save
@@ -14,7 +11,6 @@ try:
 except ImportError as error:
     get_values = error
 from numpy import array, array_equal, squeeze
-from SciDataTool.Classes._check import InitUnKnowClassError
 
 
 class Data1D(Data):
@@ -34,7 +30,7 @@ class Data1D(Data):
     save = save
 
     def __init__(
-        self, values=[], symbol="", name="", unit="", symmetries={}, init_dict=None,
+        self, values=[], symbol="", name="", unit="", symmetries={}, is_multiple=False, init_dict=None,
     ):
         """Constructor of the class. Can be use in two ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
@@ -58,6 +54,8 @@ class Data1D(Data):
                 unit = init_dict["unit"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
+            if "is_multiple" in list(init_dict.keys()):
+                is_multiple = init_dict["is_multiple"]
         # Initialisation by argument
         # values can be None, a ndarray or a list
         set_array(self, "values", squeeze(values))
