@@ -128,18 +128,15 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     index = 0
     for axis_requested in axes_list:
         for axis in self.axes:
-            if (
-                axis.name == axis_requested[0]
-                and axis_requested[3] == "values"
-                and axis_requested[2] == "interval"
-            ):
-                values = apply_along_axis(
-                    get_interpolation,
-                    index,
-                    values,
-                    axis_requested[5],
-                    axis_requested[4],
-                )
+            if axis.name == axis_requested[0]:
+                if axis_requested[3] == "values" and axis_requested[2] == "interval":
+                    values = apply_along_axis(
+                        get_interpolation,
+                        index,
+                        values,
+                        axis_requested[5],
+                        axis_requested[4],
+                    )
                 index += 1
                 break
     # Convert into right unit
