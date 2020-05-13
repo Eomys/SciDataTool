@@ -120,7 +120,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             if axis.name == axis_requested[0]:
                 if axis_requested[2] == "indices" and axis_requested[2] == "interval":
                     values = take(values, axis_requested[4], axis=index)
-                    index += 1
+                index += 1
                 break
     # Interpolate over axis values again (intervals)
     index = 0
