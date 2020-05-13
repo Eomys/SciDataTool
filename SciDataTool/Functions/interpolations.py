@@ -74,9 +74,9 @@ def get_interpolation(values, axis_values, new_axis_values):
     elif isin(
         around(new_axis_values, 5), around(axis_values, 5), assume_unique=True
     ).all():  # New axis is subset -> no interpolation
-        return values[
-            isin(around(axis_values, 5), around(new_axis_values, 5), assume_unique=True)
-        ]
+        bool_list = isin(around(axis_values, 5), around(new_axis_values, 5), assume_unique=True)
+        indices = [index for index, i in enumerate(bool_list) if i==True]
+        return take(values, indices)
     else:
         values_spline = interpolate.splrep(axis_values, values, s=0)
         return interpolate.splev(new_axis_values, values_spline, der=0)
