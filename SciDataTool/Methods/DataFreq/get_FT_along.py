@@ -37,7 +37,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         for index, axis in enumerate(self.axes):
             if axis.name == axis_name:
                 is_match = True
-                break
         if not is_match:
             sys.stderr.write(
                 "WARNING: Requested axis ["
@@ -46,7 +45,7 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             )
             axes_list.remove(axis_requested)
     # Extract the requested axes (symmetries + unit)
-    for i, axis_requested in enumerate(axes_list):
+    for axis_requested in axes_list:
         if axis_requested[3] == "values":
             # Get original values of the axis
             axis_requested.append(
@@ -73,7 +72,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 values = rebuild_symmetries(
                     values, index, self.symmetries.get(axis.name)
                 )
-                break
     # Extract the slices of the field
     for index, axis in enumerate(self.axes):
         is_match = False
@@ -82,7 +80,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 is_match = True
                 if axis_requested[3] == "indices":
                     values = take(values, axis_requested[4], axis=index)
-                break
         if not is_match:  # Axis was not specified -> take slice at the first value
             values = take(values, [0], axis=index)
     # Eliminate dimensions=1
@@ -98,7 +95,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     axis_requested[5],
                     axis_requested[4],
                 )
-                break
     # Eliminate dimensions=1
     values = squeeze(values)
     # Convert into right unit

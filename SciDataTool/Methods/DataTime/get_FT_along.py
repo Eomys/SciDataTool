@@ -32,7 +32,7 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         args = args[0]  # if called from another script with *args
     axes_list = read_input_strings(args, axis_data)
     # Extract the requested axes (symmetries + unit)
-    for i, axis_requested in enumerate(axes_list):
+    for axis_requested in axes_list:
         if axis_requested[3] == "values":
             # Get original values of the axis
             axis_requested.append(
@@ -63,7 +63,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         for index, axis in enumerate(self.axes):
             if axis.name == axis_name:
                 is_match = True
-                break
         if not is_match:
             sys.stderr.write(
                 "WARNING: Requested axis ["
@@ -79,7 +78,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 values = rebuild_symmetries(
                     values, index, self.symmetries.get(axis.name)
                 )
-                break
     # Extract the slices of the field (single values)
     for index, axis in enumerate(self.axes):
         is_match = False
@@ -88,14 +86,10 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 is_match = True
                 if axis_requested[3] == "indices" and axis_requested[2] == "single":
                     values = take(values, axis_requested[4], axis=index)
-                    break
         if not is_match:  # Axis was not specified -> take slice at the first value
             values = take(values, [0], axis=index)
-    # Eliminate dimensions=1
-    values = squeeze(values)
     # Interpolate over axis values (single values)
-    index = 0
-    for axis in self.axes:
+    for index, axis in enumerate(self.axes):
         for axis_requested in axes_list:
             if (
                 axis.name == axis_requested[0]
@@ -109,39 +103,30 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     axis_requested[5],
                     axis_requested[4],
                 )
-                index += 1
-                break
-    # Eliminate dimensions=1
-    values = squeeze(values)
     # Perform Fourier Transform
     values = comp_fft(values)
     # Extract slices again (intervals)
-    index = 0
-    for axis_requested in axes_list:
-        for axis in self.axes:
+    for index, axis in enumerate(self.axes):
+        for axis_requested in axes_list:
             if axis.name == axis_requested[0]:
                 if axis_requested[2] == "indices" and axis_requested[2] == "interval":
                     values = take(values, axis_requested[4], axis=index)
-                    index += 1
-                break
     # Interpolate over axis values again (intervals)
-    index = 0
-    for axis_requested in axes_list:
-        for axis in self.axes:
+    for index, axis in enumerate(self.axes):
+        for axis_requested in axes_list:
             if (
                 axis.name == axis_requested[0]
-                and axis_requested[3] == "values"
-                and axis_requested[2] == "interval"
-            ):
+                and axis_requested[3] == "values" and axis_requested[2] == "interval"
+                ):
                 values = apply_along_axis(
                     get_interpolation,
                     index,
                     values,
                     axis_requested[5],
                     axis_requested[4],
-                )
-                index += 1
-                break
+               )
+    # Eliminate dimensions=1
+    values = squeeze(values)
     # Convert into right unit
     if unit == self.unit or unit == "SI":
         if is_norm:
