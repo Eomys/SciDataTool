@@ -102,8 +102,6 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     axis_requested[5],
                     axis_requested[4],
                 )
-    # Eliminate dimensions=1
-    values = squeeze(values)
     # Extract slices again (intervals)
     for index, axis in enumerate(self.axes):
         for axis_requested in axes_list:
@@ -128,6 +126,8 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     axis_requested[5],
                     axis_requested[4],
                 )
+    # Eliminate dimensions=1
+    values = squeeze(values)
     # Convert into right unit
     if unit == self.unit or unit == "SI":
         if is_norm:
