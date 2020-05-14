@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.interpolations import get_common_base, get_interpolation
-from numpy import squeeze
+from numpy import squeeze, array
 
 
 def compare_along(self, *args, data_list=[], unit="SI", is_norm=False):
@@ -38,7 +38,7 @@ def compare_along(self, *args, data_list=[], unit="SI", is_norm=False):
         # Get the common bases
         common_axis_values = []
         for index, axis in enumerate(axes):
-            if not axis.is_components:
+            #if array(axes).shape==values.shape: # Exclude components case
                 common_axis_values.append(axis)
                 for i, data in enumerate(data_list):
                     common_axis_values[index] = get_common_base(

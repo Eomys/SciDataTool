@@ -38,7 +38,7 @@ def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False)
         # Get the common bases
         common_axis_values = []
         for index, axis in enumerate(axes):
-            if not axis.is_components:
+            #if not axis.is_components:
                 common_axis_values.append(axis)
                 for i, data in enumerate(data_list):
                     common_axis_values[index] = get_common_base(

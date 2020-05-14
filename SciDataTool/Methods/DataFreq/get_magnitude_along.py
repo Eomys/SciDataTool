@@ -6,7 +6,6 @@ from SciDataTool.Functions.conversions import convert, to_dB, to_dBA
 from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.interpolations import get_common_base, get_interpolation
 from numpy import squeeze, take, apply_along_axis, abs as np_abs
-from os import sys
 
 
 def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
@@ -67,7 +66,7 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             if axis.name == axis_name:
                 is_match = True
         if not is_match:
-            sys.stderr.write(
+            print(
                 "WARNING: Requested axis ["
                 + axis_name
                 + "] is not available and will be ignored"

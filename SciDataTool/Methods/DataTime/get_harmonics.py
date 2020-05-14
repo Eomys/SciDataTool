@@ -14,7 +14,6 @@ from numpy import (
     meshgrid,
     abs as np_abs,
 )
-from os import sys
 
 
 def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
@@ -69,7 +68,7 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
             if axis.name == axis_name:
                 is_match = True
         if not is_match:
-            sys.stderr.write(
+            print(
                 "WARNING: Requested axis ["
                 + axis_name
                 + "] is not available and will be ignored"
