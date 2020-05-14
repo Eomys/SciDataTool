@@ -82,10 +82,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Interpolate over axis values
     for index, axis in enumerate(self.axes):
         for axis_requested in axes_list:
-            if (
-                axis.name == axis_requested[0]
-                and axis_requested[3] == "values"
-            ):
+            if axis.name == axis_requested[0] and axis_requested[3] == "values":
                 values = apply_along_axis(
                     get_interpolation,
                     index,

@@ -231,7 +231,7 @@ class DataLinspace(Data):
         fset=_set_include_endpoint,
         doc=u"""Boolean indicating if the endpoint must be included""",
     )
-    
+
     def _get_is_components(self):
         """getter of is_components"""
         return self._is_components

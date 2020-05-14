@@ -136,7 +136,7 @@ class Data1D(Data):
     values = property(
         fget=_get_values, fset=_set_values, doc=u"""ndarray of the field"""
     )
-    
+
     def _get_is_components(self):
         """getter of is_components"""
         return self._is_components

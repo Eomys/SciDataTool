@@ -38,18 +38,19 @@ def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False)
         # Get the common bases
         common_axis_values = []
         for index, axis in enumerate(axes):
-            common_axis_values.append(axis)
-            for i, data in enumerate(data_list):
-                common_axis_values[index] = get_common_base(
-                    common_axis_values[index], data_axis_values[i][index]
-                )
-            # Interpolate over common axis values
-            values = get_interpolation(values, axis, common_axis_values[index])
-            for i, data in enumerate(data_list):
-                data_values[i] = get_interpolation(
-                    data_values[i],
-                    data_axis_values[i][index],
-                    common_axis_values[index],
-                )
+            if not axis.is_components:
+                common_axis_values.append(axis)
+                for i, data in enumerate(data_list):
+                    common_axis_values[index] = get_common_base(
+                        common_axis_values[index], data_axis_values[i][index]
+                    )
+                # Interpolate over common axis values
+                values = get_interpolation(values, axis, common_axis_values[index])
+                for i, data in enumerate(data_list):
+                    data_values[i] = get_interpolation(
+                        data_values[i],
+                        data_axis_values[i][index],
+                        common_axis_values[index],
+                    )
         # Return axis and values
         return (squeeze(common_axis_values), [values] + data_values)

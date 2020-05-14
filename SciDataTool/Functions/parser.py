@@ -76,7 +76,7 @@ def read_input_strings(args, axis_data):
                 indices = [i for i in range(int(elems2[0]), int(elems2[1]) + 1)]
                 axes_list.append([elems[0], axis_unit, "interval", "indices", indices])
             # List of indices
-            if "," in ind_str:
+            elif "," in ind_str:
                 indices = ind_str.split(",")
                 axes_list.append([elems[0], axis_unit, "list", "indices", indices])
             # Single index

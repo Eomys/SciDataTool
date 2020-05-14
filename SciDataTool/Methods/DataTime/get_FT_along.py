@@ -116,15 +116,16 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         for axis_requested in axes_list:
             if (
                 axis.name == axis_requested[0]
-                and axis_requested[3] == "values" and axis_requested[2] == "interval"
-                ):
+                and axis_requested[3] == "values"
+                and axis_requested[2] == "interval"
+            ):
                 values = apply_along_axis(
                     get_interpolation,
                     index,
                     values,
                     axis_requested[5],
                     axis_requested[4],
-               )
+                )
     # Eliminate dimensions=1
     values = squeeze(values)
     # Convert into right unit
