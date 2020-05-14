@@ -10,7 +10,6 @@ try:
     from SciDataTool.Methods.DataLinspace.get_values import get_values
 except ImportError as error:
     get_values = error
-from SciDataTool.Classes._check import InitUnKnowClassError
 
 
 class DataLinspace(Data):
@@ -42,7 +41,7 @@ class DataLinspace(Data):
         name="",
         unit="",
         symmetries={},
-        is_multiple=False,
+        is_components=False,
         init_dict=None,
     ):
         """Constructor of the class. Can be use in two ways :
@@ -65,7 +64,7 @@ class DataLinspace(Data):
                     "name",
                     "unit",
                     "symmetries",
-                    "is_multiple",
+                    "is_components",
                 ],
             )
             # Overwrite default value with init_dict content
@@ -87,15 +86,15 @@ class DataLinspace(Data):
                 unit = init_dict["unit"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
-            if "is_multiple" in list(init_dict.keys()):
-                is_multiple = init_dict["is_multiple"]
+            if "is_components" in list(init_dict.keys()):
+                is_components = init_dict["is_components"]
         # Initialisation by argument
         self.initial = initial
         self.final = final
         self.step = step
         self.number = number
         self.include_endpoint = include_endpoint
-        self.is_multiple = is_multiple
+        self.is_components = is_components
         # Call Data init
         super(DataLinspace, self).__init__(
             symbol=symbol, name=name, unit=unit, symmetries=symmetries
@@ -113,6 +112,7 @@ class DataLinspace(Data):
         DataLinspace_str += "step = " + str(self.step) + linesep
         DataLinspace_str += "number = " + str(self.number) + linesep
         DataLinspace_str += "include_endpoint = " + str(self.include_endpoint)
+        DataLinspace_str += "is_components = " + str(self.is_components)
         return DataLinspace_str
 
     def __eq__(self, other):
@@ -132,6 +132,8 @@ class DataLinspace(Data):
             return False
         if other.include_endpoint != self.include_endpoint:
             return False
+        if other.is_components != self.is_components:
+            return False
         return True
 
     def as_dict(self):
@@ -144,7 +146,7 @@ class DataLinspace(Data):
         DataLinspace_dict["step"] = self.step
         DataLinspace_dict["number"] = self.number
         DataLinspace_dict["include_endpoint"] = self.include_endpoint
-        DataLinspace_dict["is_multiple"] = self.is_multiple
+        DataLinspace_dict["is_components"] = self.is_components
         # The class name is added to the dict fordeserialisation purpose
         # Overwrite the mother class name
         DataLinspace_dict["__class__"] = "DataLinspace"
@@ -157,7 +159,7 @@ class DataLinspace(Data):
         self.step = None
         self.number = None
         self.include_endpoint = None
-        self.is_multiple = None
+        self.is_components = None
         # Set to None the properties inherited from Data
         super(DataLinspace, self)._set_None()
 
@@ -230,19 +232,19 @@ class DataLinspace(Data):
         doc=u"""Boolean indicating if the endpoint must be included""",
     )
     
-    def _get_is_multiple(self):
-        """getter of include_endpoint"""
-        return self._is_multiple
+    def _get_is_components(self):
+        """getter of is_components"""
+        return self._is_components
 
-    def _set_is_multiple(self, value):
-        """setter of is_multiple"""
-        check_var("is_multiple", value, "bool")
-        self._is_multiple = value
+    def _set_is_components(self, value):
+        """setter of is_components"""
+        check_var("is_components", value, "bool")
+        self._is_components = value
 
-    # Boolean indicating if the axis is multiple
+    # Boolean indicating if the axis is components
     # Type : bool
-    is_multiple = property(
-        fget=_get_is_multiple,
-        fset=_set_is_multiple,
-        doc=u"""Boolean indicating if the axis is multiple""",
+    is_components = property(
+        fget=_get_is_components,
+        fset=_set_is_components,
+        doc=u"""Boolean indicating if the axis is components""",
     )

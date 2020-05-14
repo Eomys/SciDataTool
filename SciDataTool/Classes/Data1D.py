@@ -36,7 +36,7 @@ class Data1D(Data):
         name="",
         unit="",
         symmetries={},
-        is_multiple=False,
+        is_components=False,
         init_dict=None,
     ):
         """Constructor of the class. Can be use in two ways :
@@ -49,7 +49,7 @@ class Data1D(Data):
         if init_dict is not None:  # Initialisation by dict
             check_init_dict(
                 init_dict,
-                ["values", "symbol", "name", "unit", "symmetries", "is_multiple"],
+                ["values", "symbol", "name", "unit", "symmetries", "is_components"],
             )
             # Overwrite default value with init_dict content
             if "values" in list(init_dict.keys()):
@@ -62,10 +62,10 @@ class Data1D(Data):
                 unit = init_dict["unit"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
-            if "is_multiple" in list(init_dict.keys()):
-                is_multiple = init_dict["is_multiple"]
+            if "is_components" in list(init_dict.keys()):
+                is_components = init_dict["is_components"]
         # Initialisation by argument
-        self.is_multiple = is_multiple
+        self.is_components = is_components
         # values can be None, a ndarray or a list
         set_array(self, "values", squeeze(values))
         # Call Data init
@@ -81,6 +81,7 @@ class Data1D(Data):
         # Get the properties inherited from Data
         Data1D_str += super(Data1D, self).__str__() + linesep
         Data1D_str += "values = " + linesep + str(self.values)
+        Data1D_str += "is_components = " + str(self.is_components)
         return Data1D_str
 
     def __eq__(self, other):
@@ -91,6 +92,8 @@ class Data1D(Data):
         if not super(Data1D, self).__eq__(other):
             return False
         if not array_equal(other.values, self.values):
+            return False
+        if other.is_components != self.is_components:
             return False
         return True
 
@@ -134,19 +137,19 @@ class Data1D(Data):
         fget=_get_values, fset=_set_values, doc=u"""ndarray of the field"""
     )
     
-    def _get_is_multiple(self):
-        """getter of include_endpoint"""
-        return self._is_multiple
+    def _get_is_components(self):
+        """getter of is_components"""
+        return self._is_components
 
-    def _set_is_multiple(self, value):
-        """setter of is_multiple"""
-        check_var("is_multiple", value, "bool")
-        self._is_multiple = value
+    def _set_is_components(self, value):
+        """setter of is_components"""
+        check_var("is_components", value, "bool")
+        self._is_components = value
 
-    # Boolean indicating if the axis is multiple
+    # Boolean indicating if the axis is components
     # Type : bool
-    is_multiple = property(
-        fget=_get_is_multiple,
-        fset=_set_is_multiple,
-        doc=u"""Boolean indicating if the axis is multiple""",
+    is_components = property(
+        fget=_get_is_components,
+        fset=_set_is_components,
+        doc=u"""Boolean indicating if the axis is components""",
     )
