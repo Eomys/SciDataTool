@@ -10,8 +10,7 @@ def time_to_freq(self):
         a DataTime object
     Returns
     -------
-    FFT : DataFreq
-        a DataFreq object
+    a DataFreq object
     """
     
     axes_str = []
@@ -35,7 +34,7 @@ def time_to_freq(self):
             )
         elif axes_str[0] == "wavenumber":
             (wavenumber, values) = self.get_FT_along("wavenumber")
-            Wavenumber = Data1D(name="freqs", unit="dimless", values=wavenumber)
+            Wavenumber = Data1D(name="wavenumber", unit="dimless", values=wavenumber)
             return DataFreq(
                 name=self.name,
                 unit=self.unit,
@@ -46,7 +45,7 @@ def time_to_freq(self):
     elif len(axes_str) == 2:
         (freqs, wavenumber, values) = self.get_FT_along("freqs", "wavenumber")
         Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
-        Wavenumber = Data1D(name="freqs", unit="dimless", values=wavenumber)
+        Wavenumber = Data1D(name="wavenumber", unit="dimless", values=wavenumber)
         return DataFreq(
             name=self.name,
             unit=self.unit,
@@ -56,5 +55,5 @@ def time_to_freq(self):
         )
     else:
         raise AxisError(
-            "ERROR: No available axis is compatible with fft (time or angle)"
+            "ERROR: No available axis is compatible with fft (should be time or angle)"
         )
