@@ -42,6 +42,10 @@ try:
     from SciDataTool.Methods.DataTime.find_periods import find_periods
 except ImportError as error:
     find_periods = error
+try:
+    from SciDataTool.Methods.DataTime.time_to_freq import time_to_freq
+except ImportError as error:
+    time_to_freq = error
 from numpy import array, array_equal
 from SciDataTool.Classes._check import InitUnKnowClassError
 from SciDataTool.Classes.Data import Data
@@ -148,6 +152,17 @@ class DataTime(DataND):
         )
     else:
         find_periods = find_periods
+    # cf Methods.DataTime.time_to_freq
+    if isinstance(time_to_freq, ImportError):
+        time_to_freq = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataTime method time_to_freq: " + str(time_to_freq)
+                )
+            )
+        )
+    else:
+        time_to_freq = time_to_freq
     # save method is available in all object
     save = save
 
