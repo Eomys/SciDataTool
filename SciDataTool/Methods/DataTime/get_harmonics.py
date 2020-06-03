@@ -172,6 +172,7 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
             indices = argsort(negative(values))
             indices = indices[:N_harm]
             axis_values = axis_values[indices]
+            values = values[indices]
             return [axis_values, values]
         # 2D case
         else:
