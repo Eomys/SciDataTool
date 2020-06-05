@@ -61,11 +61,6 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             if axis.name == axis_name:
                 is_match = True
         if not is_match:
-            print(
-                "WARNING: Requested axis ["
-                + axis_name
-                + "] is not available and will be ignored"
-            )
             axes_list.remove(axis_requested)
     # Rebuild symmetries of field if axis is extracted
     values = self.values

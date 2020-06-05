@@ -36,11 +36,6 @@ def get_FT_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             if axis.name == axis_name:
                 is_match = True
         if not is_match:
-            print(
-                "WARNING: Requested axis ["
-                + axis_name
-                + "] is not available and will be ignored"
-            )
             axes_list.remove(axis_requested)
     # Extract the requested axes (symmetries + unit)
     for axis_requested in axes_list:
