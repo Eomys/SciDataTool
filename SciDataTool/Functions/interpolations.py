@@ -78,5 +78,5 @@ def get_interpolation(values, axis_values, new_axis_values):
             isin(around(axis_values, 5), around(new_axis_values, 5), assume_unique=True)
         ]
     else:
-        values_spline = interpolate.splrep(axis_values, values, s=0)
-        return interpolate.splev(new_axis_values, values_spline, der=0)
+        f = interpolate.interp1d(axis_values, values)
+        return f(new_axis_values)

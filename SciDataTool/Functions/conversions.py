@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions import UnitError
-
-# from sympy import Symbol, sympify, Rational
-# from unyt import unyt_array
-from numpy import pi, log10, sqrt, square, mean
+from SciDataTool.Functions.fft_functions import comp_fft_freqs, comp_fft_time
+from numpy import pi, log10, sqrt, square, column_stack, exp, real, imag, cos, sin, abs as np_abs, angle as np_angle
 
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"
 unit_symbols = [
@@ -201,3 +199,124 @@ def dB_to_dBA(values, freqs):
         return values
     except:
         raise UnitError("ERROR: dBA conversion only available for 1D fft")
+
+
+def xyz_to_rphiz(values):
+    """Converts axis values from cartesian coordinates into cylindrical coordinates
+    
+    Parameters
+    ----------
+    values: array
+        Values of the axis to convert (Nx3)
+    Returns
+    -------
+    ndarray of the axis (Nx3)
+    """
+    
+    x = values[:,0]
+    y = values[:,1]
+    z = values[:,2]
+    
+    affixe = x + 1j*y
+    r = np_abs(affixe)
+    phi = (np_angle(affixe) + 2 * pi) % (2 * pi)
+    
+    return column_stack((r, phi, z))
+
+
+def rphiz_to_xyz(values):
+    """Converts axis values from cylindrical coordinates into cartesian coordinates
+    
+    Parameters
+    ----------
+    values: array
+        Values of the axis to convert (Nx3)
+    Returns
+    -------
+    ndarray of the axis (Nx3)
+    """
+    
+    r = values[:,0]
+    phi = values[:,1]
+    z = values[:,2]
+    
+    affixe = r * exp(1j*phi)
+    x = real(affixe)
+    y = imag(affixe)
+    
+    return column_stack((x, y, z))
+
+def xyz_to_rphiz_field(values, phi):
+    """Converts field values from cartesian coordinates into cylindrical coordinates
+    
+    Parameters
+    ----------
+    values: array
+        Values of the field to convert (Nx3)
+    phi: array
+        Values of the angle axis (N)
+    Returns
+    -------
+    ndarray of the field (Nx3)
+    """
+    
+    field_x = values[:,0]
+    field_y = values[:,1]
+    field_z = values[:,2]
+    
+    cos_phi = cos(phi)
+    sin_phi = sin(phi)
+    
+    field_r = cos_phi * field_x + sin_phi * field_y
+    field_phi = - sin_phi * field_x + cos_phi * field_y
+    
+    return column_stack((field_r, field_phi, field_z))
+
+
+def rphiz_to_xyz_field(values, phi):
+    """Converts field values from cylindrical coordinates into cartesian coordinates
+    
+    Parameters
+    ----------
+    values: array
+        Values of the field to convert (Nx3)
+    phi: array
+        Values of the angle axis (N)
+    Returns
+    -------
+    ndarray of the field (Nx3)
+    """
+    
+    field_r = values[:,0]
+    field_phi = values[:,1]
+    field_z = values[:,2]
+    
+    cos_phi = cos(phi)
+    sin_phi = sin(phi)
+    
+    field_x = cos_phi * field_r - sin_phi * field_phi
+    field_y = sin_phi * field_r + cos_phi * field_phi
+    
+    return column_stack((field_x, field_y, field_z))
+
+
+def time_to_freqs(values):
+    is_time = True
+    is_positive = False
+    return comp_fft_freqs(values, is_time, is_positive)
+
+
+def freqs_to_time(values):
+    is_angle = False
+    return comp_fft_time(values, is_angle)
+
+
+def angle_to_wavenumber(values):
+    is_time = False
+    is_positive = False
+    return comp_fft_freqs(values, is_time, is_positive)
+
+
+def wavenumber_to_angle(values):
+    is_angle = True
+    return comp_fft_time(values, is_angle)

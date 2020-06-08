@@ -22,35 +22,38 @@ def compare_along(self, *args, data_list=[], unit="SI", is_norm=False):
     list of 1Darray of axis values, ndarrays of fields
     """
     if data_list == []:
-        (axis, values) = self.get_along(args, unit=unit, is_norm=is_norm)
-        return (axis, [values])
+        return self.get_along(args, unit=unit, is_norm=is_norm)
     else:
         # Extract requested axes + field values
-        result_list = self.get_along(args, unit=unit, is_norm=is_norm)
-        values = result_list[-1]
-        axes = result_list[:-1]
+        results = self.get_along(args, unit=unit, is_norm=is_norm)
+        values = results.pop(self.symbol)
+        axes = results
         data_axis_values = []
         data_values = []
+        return_dict = {}
         for data in data_list:
-            result_list = data.get_along(args, unit=unit, is_norm=is_norm)
-            data_values.append(result_list[-1])
-            data_axis_values.append(result_list[:-1])
+            results = data.get_along(args, unit=unit, is_norm=is_norm)
+            data_values.append(results.pop(data.symbol))
+            data_axis_values.append(results)
         # Get the common bases
-        common_axis_values = []
-        for index, axis in enumerate(axes):
-            #if array(axes).shape==values.shape: # Exclude components case
-                common_axis_values.append(axis)
-                for i, data in enumerate(data_list):
-                    common_axis_values[index] = get_common_base(
-                        common_axis_values[index], data_axis_values[i][index]
-                    )
-                # Interpolate over common axis values
-                values = get_interpolation(values, axis, common_axis_values[index])
-                for i, data in enumerate(data_list):
-                    data_values[i] = get_interpolation(
-                        data_values[i],
-                        data_axis_values[i][index],
-                        common_axis_values[index],
-                    )
+        common_axis_values = {}
+        for axis in axes.keys():
+            common_axis_values[axis] = axes[axis]
+            for i, data in enumerate(data_list):
+                common_axis_values[axis] = get_common_base(
+                    common_axis_values[axis], data_axis_values[i][axis]
+                )
+            # Interpolate over common axis values
+            values = get_interpolation(values, axes[axis], common_axis_values[axis])
+            for i, data in enumerate(data_list):
+                data_values[i] = get_interpolation(
+                    data_values[i],
+                    data_axis_values[i][axis],
+                    common_axis_values[axis],
+                )
+            return_dict[axis] = common_axis_values[axis]
         # Return axis and values
-        return (squeeze(common_axis_values), [values] + data_values)
+        return_dict[self.symbol + "_ref"] = values
+        for i, data in enumerate(data_list):
+            return_dict[data.symbol + "_" + str(i)] = data_values[i]
+        return return_dict

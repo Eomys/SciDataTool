@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from numpy import pi, sqrt  # for eval
 from SciDataTool.Functions import AxisError
+from SciDataTool.Classes.RequestedAxis import RequestedAxis
 
 
 def read_input_strings(args, axis_data):
@@ -17,30 +18,25 @@ def read_input_strings(args, axis_data):
     """
     axes_list = []
     for axis_str in args:
-        axis_unit = "{SI}"
+        unit = "SI"
+        values=None
+        indices=None
+        input_data=None
         # Detect unit
         if "{" in axis_str:
             elems = axis_str.split("{")
-            axis_unit = "{" + elems[1]
+            unit = elems[1].strip("}")
             axis_str = elems[0]
         # Detect axis_data input
         if "axis_data" in axis_str:
             elems = axis_str.split("=axis_data")
+            name = elems[0]
+            extension = "interval"
             try:
-                axes_list.append(
-                    [
-                        elems[0],
-                        axis_unit,
-                        "interval",
-                        "values",
-                        axis_data[int(elems[1]) - 1],
-                    ]
-                )
+                input_data = axis_data[int(elems[1]) - 1]
             except:
                 try:
-                    axes_list.append(
-                        [elems[0], axis_unit, "interval", "values", axis_data[0]]
-                    )
+                    input_data = axis_data[0]
                 except:
                     raise AxisError("ERROR: Absence of axis_data")
         # Detect interval
@@ -51,39 +47,45 @@ def read_input_strings(args, axis_data):
             interval_init = eval(init_str)
             final_str = elems2[1].strip("]")
             interval_final = eval(final_str)
-            axes_list.append(
-                [
-                    elems[0],
-                    axis_unit,
-                    "interval",
-                    "values",
-                    [interval_init, interval_final],
-                ]
-            )
+            name = elems[0]
+            extension = "interval"
+            input_data = [interval_init, interval_final]
         # Detect single value
         elif "=" in axis_str:
             elems = axis_str.split("=")
-            axes_list.append(
-                [elems[0], axis_unit, "single", "values", [eval(elems[1])]]
-            )
+            name = elems[0]
+            extension = "single"
+            input_data = [eval(elems[1])]
         # Detect index input...
         elif "[" in axis_str:
             elems = axis_str.split("[")
             ind_str = elems[1].strip("]")
+            name = elems[0]
             # Range of indices
             if ":" in ind_str:
                 elems2 = ind_str.split(":")
+                extension = "interval"
                 indices = [i for i in range(int(elems2[0]), int(elems2[1]) + 1)]
-                axes_list.append([elems[0], axis_unit, "interval", "indices", indices])
             # List of indices
             elif "," in ind_str:
+                extension = "list"
                 indices = ind_str.split(",")
-                axes_list.append([elems[0], axis_unit, "list", "indices", indices])
             # Single index
             else:
+                extension = "single"
                 indices = [int(ind_str)]
-                axes_list.append([elems[0], axis_unit, "single", "indices", indices])
         # Whole axis
         else:
-            axes_list.append([axis_str, axis_unit, "interval", "values", "whole"])
+            name = axis_str
+            extension = "whole"
+        # RequestedAxis object creation
+        axis = RequestedAxis(
+            name=name,
+            unit=unit,
+            extension=extension,
+            values=values,
+            indices=indices,
+            input_data=input_data,
+        )
+        axes_list.append(axis)
     return axes_list

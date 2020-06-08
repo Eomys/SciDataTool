@@ -34,6 +34,38 @@ try:
     from SciDataTool.Methods.DataND.set_Ftparameters import set_Ftparameters
 except ImportError as error:
     set_Ftparameters = error
+try:
+    from SciDataTool.Methods.DataND.comp_axes import comp_axes
+except ImportError as error:
+    comp_axes = error
+try:
+    from SciDataTool.Methods.DataND.convert import convert
+except ImportError as error:
+    convert = error
+try:
+    from SciDataTool.Methods.DataND.transform import transform
+except ImportError as error:
+    transform = error
+try:
+    from SciDataTool.Methods.DataND.extract_slices import extract_slices
+except ImportError as error:
+    extract_slices = error
+try:
+    from SciDataTool.Methods.DataND.get_field import get_field
+except ImportError as error:
+    get_field = error
+try:
+    from SciDataTool.Methods.DataND.interpolate import interpolate
+except ImportError as error:
+    interpolate = error
+try:
+    from SciDataTool.Methods.DataND.get_along import get_along
+except ImportError as error:
+    get_along = error
+try:
+    from SciDataTool.Methods.DataND.get_magnitude_along import get_magnitude_along
+except ImportError as error:
+    get_magnitude_along = error
 from numpy import array, array_equal, squeeze
 from SciDataTool.Classes._check import InitUnKnowClassError
 
@@ -98,6 +130,94 @@ class DataND(Data):
         )
     else:
         set_Ftparameters = set_Ftparameters
+    # cf Methods.DataND.comp_axes
+    if isinstance(comp_axes, ImportError):
+        comp_axes = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method comp_axes: " + str(comp_axes)
+                )
+            )
+        )
+    else:
+        comp_axes = comp_axes
+    # cf Methods.DataND.convert
+    if isinstance(convert, ImportError):
+        convert = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method convert: " + str(convert)
+                )
+            )
+        )
+    else:
+        convert = convert
+    # cf Methods.DataND.transform
+    if isinstance(transform, ImportError):
+        transform = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method transform: " + str(transform)
+                )
+            )
+        )
+    else:
+        transform = transform
+    # cf Methods.DataND.extract_slices
+    if isinstance(extract_slices, ImportError):
+        extract_slices = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method extract_slices: " + str(extract_slices)
+                )
+            )
+        )
+    else:
+        extract_slices = extract_slices
+    # cf Methods.DataND.get_field
+    if isinstance(get_field, ImportError):
+        get_field = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method get_field: " + str(get_field)
+                )
+            )
+        )
+    else:
+        get_field = get_field
+    # cf Methods.DataND.interpolate
+    if isinstance(interpolate, ImportError):
+        interpolate = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method interpolate: " + str(interpolate)
+                )
+            )
+        )
+    else:
+        interpolate = interpolate
+    # cf Methods.DataND.get_along
+    if isinstance(get_along, ImportError):
+        get_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method get_along: " + str(get_along)
+                )
+            )
+        )
+    else:
+        get_along = get_along
+    # cf Methods.DataND.get_magnitude_along
+    if isinstance(get_magnitude_along, ImportError):
+        get_magnitude_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method get_magnitude_along: " + str(get_magnitude_along)
+                )
+            )
+        )
+    else:
+        get_magnitude_along = get_magnitude_along
     # save method is available in all object
     save = save
 

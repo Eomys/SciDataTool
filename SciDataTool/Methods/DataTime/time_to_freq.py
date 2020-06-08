@@ -13,47 +13,24 @@ def time_to_freq(self):
     a DataFreq object
     """
     
-    axes_str = []
+    axes_str = [axis.name for axis in self.axes]
+    axes_str = ["freqs" if axis_name == "time" else axis_name for axis_name in axes_str]
+    axes_str = ["wavenumber" if axis_name == "angle" else axis_name for axis_name in axes_str]
     
-    for axis in self.axes:
-        if axis.name == "time":
-            axes_str.append("freqs")
-        elif axis.name == "angle":
-            axes_str.append("wavenumber")
-        
-    if len(axes_str) == 1:
-        if axes_str[0] == "freqs":
-            (freqs, values) = self.get_FT_along("freqs")
-            Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
-            return DataFreq(
-                name=self.name,
-                unit=self.unit,
-                symbol=self.symbol,
-                axes=[Freqs],
-                values=values,
-            )
-        elif axes_str[0] == "wavenumber":
-            (wavenumber, values) = self.get_FT_along("wavenumber")
-            Wavenumber = Data1D(name="wavenumber", unit="dimless", values=wavenumber)
-            return DataFreq(
-                name=self.name,
-                unit=self.unit,
-                symbol=self.symbol,
-                axes=[Wavenumber],
-                values=values,
-            )
-    elif len(axes_str) == 2:
-        (freqs, wavenumber, values) = self.get_FT_along("freqs", "wavenumber")
-        Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
-        Wavenumber = Data1D(name="wavenumber", unit="dimless", values=wavenumber)
+    if axes_str == [axis.name for axis in self.axes]:
+        raise AxisError(
+            "ERROR: No available axis is compatible with fft (should be time or angle)"
+        )
+    else:
+        results = self.get_along(*axes_str)
+        values = results.pop(self.symbol)
+        Axes = []
+        for axis in results.keys():
+            Axes.append(Data1D(name=axis, values=results[axis]))
         return DataFreq(
             name=self.name,
             unit=self.unit,
             symbol=self.symbol,
-            axes=[Freqs, Wavenumber],
+            axes=Axes,
             values=values,
-        )
-    else:
-        raise AxisError(
-            "ERROR: No available axis is compatible with fft (should be time or angle)"
         )

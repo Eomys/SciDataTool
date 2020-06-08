@@ -13,47 +13,24 @@ def freq_to_time(self):
     a DataTime object
     """
     
-    axes_str = []
+    axes_str = [axis.name for axis in self.axes]
+    axes_str = ["time" if axis_name == "freqs" else axis_name for axis_name in axes_str]
+    axes_str = ["angle" if axis_name == "wavenumber" else axis_name for axis_name in axes_str]
     
-    for axis in self.axes:
-        if axis.name == "freqs":
-            axes_str.append("time")
-        elif axis.name == "wavenumber":
-            axes_str.append("angle")
-        
-    if len(axes_str) == 1:
-        if axes_str[0] == "time":
-            (time, values) = self.get_FT_along("time")
-            Time = Data1D(name="time", unit="s", values=time)
-            return DataTime(
-                name=self.name,
-                unit=self.unit,
-                symbol=self.symbol,
-                axes=[Time],
-                values=values,
-            )
-        elif axes_str[0] == "angle":
-            (angle, values) = self.get_FT_along("angle")
-            Angle = Data1D(name="angle", unit="rad", values=angle)
-            return DataTime(
-                name=self.name,
-                unit=self.unit,
-                symbol=self.symbol,
-                axes=[Angle],
-                values=values,
-            )
-    elif len(axes_str) == 2:
-        (time, angle, values) = self.get_FT_along("time", "wavenumber")
-        Time = Data1D(name="time", unit="s", values=time)
-        Angle = Data1D(name="angle", unit="rad", values=angle)
+    if axes_str == [axis.name for axis in self.axes]:
+        raise AxisError(
+            "ERROR: No available axis is compatible with fft (should be time or angle)"
+        )
+    else:
+        results = self.get_along(*axes_str)
+        values = results.pop(self.symbol)
+        Axes = []
+        for axis in results.keys():
+            Axes.append(Data1D(name=axis, values=results[axis]))
         return DataTime(
             name=self.name,
             unit=self.unit,
             symbol=self.symbol,
-            axes=[Time, Angle],
+            axes=Axes,
             values=values,
-        )
-    else:
-        raise AxisError(
-            "ERROR: No available axis is compatible with fft (should be freqs or wavenumber)"
         )
