@@ -32,7 +32,7 @@ def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False)
         data_values = []
         return_dict = {}
         for data in data_list:
-            results = data.get_along(args, unit=unit, is_norm=is_norm)
+            results = data.get_magnitude_along(args, unit=unit, is_norm=is_norm)
             data_values.append(results.pop(data.symbol))
             data_axis_values.append(results)
         # Get the common bases
@@ -53,7 +53,7 @@ def compare_magnitude_along(self, *args, unit="SI", data_list=[], is_norm=False)
                 )
             return_dict[axis] = common_axis_values[axis]
         # Return axis and values
-        return_dict[self.symbol + "_ref"] = values
+        return_dict[self.symbol] = values
         for i, data in enumerate(data_list):
             return_dict[data.symbol + "_" + str(i)] = data_values[i]
         return return_dict

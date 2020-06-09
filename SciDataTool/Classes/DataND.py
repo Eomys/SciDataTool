@@ -66,6 +66,14 @@ try:
     from SciDataTool.Methods.DataND.get_magnitude_along import get_magnitude_along
 except ImportError as error:
     get_magnitude_along = error
+try:
+    from SciDataTool.Methods.DataND.get_phase_along import get_phase_along
+except ImportError as error:
+    get_phase_along = error
+try:
+    from SciDataTool.Methods.DataND.get_harmonics import get_harmonics
+except ImportError as error:
+    get_harmonics = error
 from numpy import array, array_equal, squeeze
 from SciDataTool.Classes._check import InitUnKnowClassError
 
@@ -218,6 +226,28 @@ class DataND(Data):
         )
     else:
         get_magnitude_along = get_magnitude_along
+    # cf Methods.DataND.get_phase_along
+    if isinstance(get_phase_along, ImportError):
+        get_phase_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method get_phase_along: " + str(get_phase_along)
+                )
+            )
+        )
+    else:
+        get_phase_along = get_phase_along
+    # cf Methods.DataND.get_harmonics
+    if isinstance(get_harmonics, ImportError):
+        get_harmonics = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method get_harmonics: " + str(get_harmonics)
+                )
+            )
+        )
+    else:
+        get_harmonics = get_harmonics
     # save method is available in all object
     save = save
 

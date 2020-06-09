@@ -53,7 +53,7 @@ def compare_along(self, *args, data_list=[], unit="SI", is_norm=False):
                 )
             return_dict[axis] = common_axis_values[axis]
         # Return axis and values
-        return_dict[self.symbol + "_ref"] = values
+        return_dict[self.symbol] = values
         for i, data in enumerate(data_list):
             return_dict[data.symbol + "_" + str(i)] = data_values[i]
         return return_dict

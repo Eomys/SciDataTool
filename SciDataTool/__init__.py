@@ -5,3 +5,4 @@ from SciDataTool.Classes.DataFreq import DataFreq
 from SciDataTool.Classes.DataLinspace import DataLinspace
 from SciDataTool.Classes.DataND import DataND
 from SciDataTool.Classes.DataTime import DataTime
+from SciDataTool.Classes.RequestedAxis import RequestedAxis

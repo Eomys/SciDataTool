@@ -7,10 +7,6 @@ from SciDataTool.Classes.DataND import DataND
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from SciDataTool.Methods.DataFreq.get_harmonics import get_harmonics
-except ImportError as error:
-    get_harmonics = error
-try:
     from SciDataTool.Methods.DataFreq.freq_to_time import freq_to_time
 except ImportError as error:
     freq_to_time = error
@@ -24,17 +20,6 @@ class DataFreq(DataND):
 
     VERSION = 1
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.DataFreq.get_harmonics
-    if isinstance(get_harmonics, ImportError):
-        get_harmonics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataFreq method get_harmonics: " + str(get_harmonics)
-                )
-            )
-        )
-    else:
-        get_harmonics = get_harmonics
     # cf Methods.DataFreq.freq_to_time
     if isinstance(freq_to_time, ImportError):
         freq_to_time = property(

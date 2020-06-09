@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from SciDataTool.Functions import NormError, UnitError
-from SciDataTool.Functions.conversions import convert, to_dB, to_dBA
-from numpy import abs as np_abs
+from SciDataTool.Functions import NormError
+from SciDataTool.Functions.conversions import convert
+from numpy import angle as np_angle
 
 
-def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.
     Parameters
     ----------
@@ -27,8 +27,8 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     return_dict = self.get_along(args, axis_data=axis_data)
     values = return_dict[self.symbol]
     # Compute magnitude
-    values = np_abs(values)
-    # Convert into right unit (apart because of dBA conversion)
+    values = np_angle(values)
+    # Convert into right unit (apart because of degree conversion)
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
@@ -37,21 +37,8 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 raise NormError(
                     "ERROR: Reference value not specified for normalization"
                 )
-    elif unit == "dB":
-        ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
-        values = to_dB(values, self.unit, ref_value)
-    elif unit == "dBA":
-        ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
-        if "freqs" in return_dict.keys():
-            values = to_dBA(values, return_dict["freqs"], self.unit, ref_value)
-        else:
-            raise UnitError(
-                "ERROR: dBA conversion only available for fft with frequencies"
-            )
+    elif unit == "°":
+        values = convert(values, "rad", "°")
     elif unit in self.normalizations:
         values = values / self.normalizations.get(unit)
     else:
