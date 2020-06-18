@@ -16,7 +16,8 @@ def get_axis(self, axis, normalizations):
     normalizations: dict
         dictionary of the normalizations
     """
-    if axis.is_components:
+    is_components = getattr(axis, "is_components", False)
+    if is_components:
         self.values = None
     else:
         # Get original values of the axis
