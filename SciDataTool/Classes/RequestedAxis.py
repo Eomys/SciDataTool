@@ -36,6 +36,7 @@ class RequestedAxis(FrozenClass):
         self, name="", 
         corr_name="", 
         unit="", 
+        corr_unit="",
         extension="", 
         values=None, 
         indices=None, 
@@ -49,6 +50,7 @@ class RequestedAxis(FrozenClass):
         self.name = name
         self.corr_name = corr_name
         self.unit = unit
+        self.corr_unit = corr_unit
         self.extension = extension
         self.values = values
         self.indices = indices

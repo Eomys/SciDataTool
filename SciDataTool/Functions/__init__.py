@@ -28,13 +28,13 @@ class NormError(FTError):
 
 
 axes_dict = {
-    "angle": ["wavenumber", "ifft"],
-    "time": ["freqs", "ifft"],
-    "xyz": ["rphiz", "pol2cart"],
+    "angle": ["wavenumber", "ifft", "rad"],
+    "time": ["freqs", "ifft", "s"],
+    "xyz": ["rphiz", "pol2cart", "m"],
 }
 
 rev_axes_dict = {
-    "wavenumber": ["angle", "fft"],
-    "freqs": ["time", "fft"],
-    "rphiz": ["xyz", "cart2pol"],
+    "wavenumber": ["angle", "fft", "dimless"],
+    "freqs": ["time", "fft", "Hz"],
+    "rphiz": ["xyz", "cart2pol", "m"],
 }

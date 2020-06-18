@@ -354,7 +354,7 @@ def check_dimensions(values, axes):
     for axis in axes:
         if hasattr(axis, "values"):
             if axis.values.size == 1:
-                axes.values = [axes.values]
+                axis.values = [axis.values]
             axes_shape.append(len(squeeze(axis.values)))
         else:
             if isinstance(axis.number, int):

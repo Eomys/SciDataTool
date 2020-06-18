@@ -62,6 +62,8 @@ unit_prefixes = {
 
 
 def get_dim_prefix(unit_str):
+    if unit_str == "":
+        unit_str = "dimless"
     p = 1  # power of the unit
     dim = None
     for key in unit_symbols:
