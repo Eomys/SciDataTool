@@ -45,7 +45,7 @@ def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
                 initial = values2[argmin(np_abs([i - initial for i in values2])) + 1]
             if final not in values2:
                 final = values2[argmin(np_abs([i - final for i in values2])) - 1]
-    return linspace(initial, final, number, endpoint=True)
+    return linspace(initial, final, int(number), endpoint=True)
 
 
 def get_interpolation(values, axis_values, new_axis_values):

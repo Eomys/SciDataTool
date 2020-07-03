@@ -22,4 +22,4 @@ def get_values(self):
     else:
         number = self.number
         final = self.final
-    return linspace(initial, final, number, endpoint=self.include_endpoint)
+    return linspace(initial, final, int(number), endpoint=self.include_endpoint)
