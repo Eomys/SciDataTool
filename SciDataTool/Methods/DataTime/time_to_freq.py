@@ -30,7 +30,13 @@ def time_to_freq(self):
         values = results.pop(self.symbol)
         Axes = []
         for axis in results.keys():
-            Axes.append(Data1D(name=axis, values=results[axis]))
+            if next((ax.is_components for ax in self.axes if ax.name==axis),False): # components axis
+                is_components = True
+                axis_values = next((ax.values for ax in self.axes if ax.name==axis))
+            else:
+                is_components = False
+                axis_values = results[axis]
+            Axes.append(Data1D(name=axis, values=axis_values, is_components=is_components))
         return DataFreq(
             name=self.name,
             unit=self.unit,
