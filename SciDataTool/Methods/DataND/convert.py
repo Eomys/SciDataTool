@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions import NormError
+from SciDataTool.Functions.conversions import convert as convert_unit
 
 def convert(self, values, axes_list, unit, is_norm):
     """Returns the values of the field transformed or converted.
@@ -33,5 +34,5 @@ def convert(self, values, axes_list, unit, is_norm):
     elif unit in self.normalizations:
         values = values / self.normalizations.get(unit)
     else:
-        values = convert(values, self.unit, unit)
+        values = convert_unit(values, self.unit, unit)
     return values
