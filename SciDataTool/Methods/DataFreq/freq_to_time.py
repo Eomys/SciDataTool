@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from SciDataTool import Data1D, DataTime
+from SciDataTool import Data1D
 from SciDataTool.Functions import AxisError
 
 def freq_to_time(self):
@@ -12,6 +12,10 @@ def freq_to_time(self):
     -------
     a DataTime object
     """
+    
+    # Dynamic import to avoid loop
+    module = __import__("SciDataTool.Classes.DataTime", fromlist=["DataTime"])
+    DataTime = getattr(module, "DataTime")
     
     axes_str = [axis.name for axis in self.axes]
     axes_str = ["time" if axis_name == "freqs" else axis_name for axis_name in axes_str]
