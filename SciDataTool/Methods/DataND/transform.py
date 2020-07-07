@@ -19,12 +19,15 @@ def transform(self, values, axes_list):
         values of the transformed field
     """
     
+    is_fft = True
     for axis_requested in axes_list:
         # Transform (fft, coordinates, etc)
-        if axis_requested.transform == "fft":
+        if axis_requested.transform == "fft" and is_fft:
             values = apply_along_axis(comp_fft, axis_requested.index, values)
-        elif axis_requested.transform == "ifft":
+            is_fft = False
+        elif axis_requested.transform == "ifft" and is_fft:
             values = apply_along_axis(comp_ifft, axis_requested.index, values)
+            is_fft = False
         elif axis_requested.transform == "pol2cart":
             values = apply_along_axis(rphiz_to_xyz_field, axis_requested.index, values, axis_requested.values[:,1])
         elif axis_requested.transform == "cart2pol":

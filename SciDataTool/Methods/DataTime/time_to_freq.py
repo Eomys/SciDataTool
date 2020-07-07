@@ -17,10 +17,17 @@ def time_to_freq(self):
     module = __import__("SciDataTool.Classes.DataFreq", fromlist=["DataFreq"])
     DataFreq = getattr(module, "DataFreq")
     
-    axes_str = [axis.name for axis in self.axes]
-    axes_str = ["freqs" if axis_name == "time" else axis_name for axis_name in axes_str]
-    axes_str = ["wavenumber" if axis_name == "angle" else axis_name for axis_name in axes_str]
-    
+    axes_str = []
+    for i, axis in enumerate(self.axes):
+        if axis.is_components:
+            axis_str = axis.name + str(list(range(len(axis.values))))
+        elif axis.name == "time":
+            axis_str = "freqs"
+        elif axis.name == "angle":
+            axis_str = "wavenumber"
+        else:
+            axis_str = axis.name
+        axes_str.append(axis_str)
     if axes_str == [axis.name for axis in self.axes]:
         raise AxisError(
             "ERROR: No available axis is compatible with fft (should be time or angle)"
@@ -29,14 +36,28 @@ def time_to_freq(self):
         results = self.get_along(*axes_str)
         values = results.pop(self.symbol)
         Axes = []
-        for axis in results.keys():
-            if next((ax.is_components for ax in self.axes if ax.name==axis),False): # components axis
+        for axis in self.axes:
+            if axis.is_components: # components axis
+                name = axis.name
                 is_components = True
-                axis_values = next((ax.values for ax in self.axes if ax.name==axis))
-            else:
+                axis_values = axis.values
+                unit = "SI"
+            elif axis.name == "time":
+                name = "freqs"
                 is_components = False
-                axis_values = results[axis]
-            Axes.append(Data1D(name=axis, values=axis_values, is_components=is_components))
+                axis_values = results["freqs"]
+                unit = "Hz"
+            elif axis.name == "angle":
+                name = "wavenumber"
+                is_components = False
+                axis_values = results["wavenumber"]
+                unit = "dimless"
+            else:
+                name = axis.name
+                is_components = False
+                axis_values = results[axis.name]
+                unit = axis.unit
+            Axes.append(Data1D(name=name, unit=unit, values=axis_values, is_components=is_components))
         return DataFreq(
             name=self.name,
             unit=self.unit,
