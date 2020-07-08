@@ -166,7 +166,9 @@ def comp_ifft(values):
     ndarray of the field
     """
     
-    values = ifft(ifftshift(values)) * len(values)
+    N = len(values)
+    values[int(N/2)] *= 2
+    values = ifft(ifftshift(values)) * len(values) / 2.0
     return values.real
 
 
