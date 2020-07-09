@@ -322,3 +322,35 @@ def angle_to_wavenumber(values):
 def wavenumber_to_angle(values):
     is_angle = True
     return comp_fft_time(values, is_angle)
+
+def xy_to_rphi(x, y):
+    affixe = x + 1j*y
+    r = np_abs(affixe)
+    phi = (np_angle(affixe) + 2 * pi) % (2 * pi)
+    
+    return (r, phi)
+
+def rphi_to_xy(r, phi):
+    affixe = r * exp(1j*phi)
+    x = real(affixe)
+    y = imag(affixe)
+    
+    return (x, y)
+
+def cart2pol(field_x, field_y, phi):
+    cos_phi = cos(phi)
+    sin_phi = sin(phi)
+    
+    field_r = cos_phi * field_x + sin_phi * field_y
+    field_phi = - sin_phi * field_x + cos_phi * field_y
+    
+    return(field_r, field_phi)
+
+def pol2cart(field_r, field_phi, phi):
+    cos_phi = cos(phi)
+    sin_phi = sin(phi)
+    
+    field_x = cos_phi * field_r - sin_phi * field_phi
+    field_y = sin_phi * field_r + cos_phi * field_phi
+    
+    return(field_x, field_y)
