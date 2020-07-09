@@ -6,3 +6,4 @@ from SciDataTool.Classes.DataTime import DataTime
 from SciDataTool.Classes.DataLinspace import DataLinspace
 from SciDataTool.Classes.DataND import DataND
 from SciDataTool.Classes.RequestedAxis import RequestedAxis
+from SciDataTool.Classes.VectorField import VectorField
