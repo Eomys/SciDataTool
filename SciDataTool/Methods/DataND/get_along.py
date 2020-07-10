@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.parser import read_input_strings
-
+from SciDataTool.Functions.fft_functions import comp_fft, comp_ifft
 
 def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the ndarray of the field, using conversions and symmetries if needed.
@@ -25,16 +25,22 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         args = args[0]  # if called from another script with *args
     axes_list = read_input_strings(args, axis_data)
     # Extract the requested axes (symmetries + unit)
-    axes_list = self.comp_axes(axes_list)
+    axes_list, transforms = self.comp_axes(axes_list)
     # Get the field with symmetries
     values = self.get_field(axes_list)
-    # Extract slices
+    # Inverse fft
+    if "ifft" in transforms:
+        values = comp_ifft(values)
+    # Slices along time/space axes
     values = self.extract_slices(values, axes_list)
-    # Transformations
-    values = self.transform(values, axes_list)
+    # fft
+    if "fft" in transforms:
+        values = comp_fft(values)
+    # Slices along fft axes
+    values = self.extract_slices_fft(values, axes_list)
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
-    # Transformations + conversions
+    # Conversions
     values = self.convert(values, axes_list, unit, is_norm)
     # Return axes and values
     return_dict = {}

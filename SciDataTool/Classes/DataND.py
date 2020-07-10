@@ -51,6 +51,10 @@ try:
 except ImportError as error:
     extract_slices = error
 try:
+    from SciDataTool.Methods.DataND.extract_slices_fft import extract_slices_fft
+except ImportError as error:
+    extract_slices_fft = error
+try:
     from SciDataTool.Methods.DataND.get_field import get_field
 except ImportError as error:
     get_field = error
@@ -182,6 +186,17 @@ class DataND(Data):
         )
     else:
         extract_slices = extract_slices
+    # cf Methods.DataND.extract_slices_fft
+    if isinstance(extract_slices_fft, ImportError):
+        extract_slices_fft = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method extract_slices_fft: " + str(extract_slices_fft)
+                )
+            )
+        )
+    else:
+        extract_slices_fft = extract_slices_fft
     # cf Methods.DataND.get_field
     if isinstance(get_field, ImportError):
         get_field = property(

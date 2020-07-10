@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from numpy import prod, mean, hanning, linspace, argmin, abs, where, isclose
-from numpy.fft import fft, ifft, rfftn, ifftn, fftn, fftshift, ifftshift, rfft2
+from numpy.fft import fft, rfftn, ifftn, fftn, fftshift, rfft2
+from scipy.fftpack import ifft, ifftshift
 from numpy import (
     pi,
     zeros,
@@ -133,7 +134,7 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
     return f_oct
 
 
-def comp_fft(values):
+def comp_fft(values, axes=None):
     """Computes the Fourier Transform
     Parameters
     ----------
@@ -143,15 +144,10 @@ def comp_fft(values):
     -------
     Complex Fourier Transform
     """
-#    values_FT = fftn(values, axes=axes)
-#    values_shape = values_FT.shape
-#    size = len(values_shape)
-#    print(values_shape)
-#    values_FT[tuple([0 if i in axes else None for i in range(size)])] *= 0.5
-#    values_FT = 2.0 * fftshift(values_FT, axes=axes) / float(prod([shape for i,shape in enumerate(values_shape) if i in axes]))
-    values_FT = fft(values)
-    values_FT[0] *= 0.5
-    values_FT = 2.0 * fftshift(values_FT) / len(values)
+    values_shape = values.shape
+    values_FT = fftn(values)
+    values_FT[tuple([0 for N in values_shape])] *= 0.5
+    values_FT = 2.0 * fftshift(values_FT) / float(prod([N for N in values_shape]))
     return values_FT
 
 
@@ -166,9 +162,10 @@ def comp_ifft(values):
     ndarray of the field
     """
     
-    N = len(values)
-    values[int(N/2)] *= 2
-    values = ifft(ifftshift(values)) * len(values) / 2.0
+    values_shape = values.shape
+    values[tuple([N//2 for N in values_shape])] *= 2
+    values = ifftshift(values*float(prod([N for N in values_shape])) / 2)
+    values = ifftn(values)
     return values.real
 
 
