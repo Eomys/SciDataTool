@@ -29,6 +29,46 @@ try:
     from SciDataTool.Methods.VectorField.get_rphiz_along import get_rphiz_along
 except ImportError as error:
     get_rphiz_along = error
+    
+try:
+    from SciDataTool.Methods.VectorField.get_mag_rad_along import get_mag_rad_along
+except ImportError as error:
+    get_mag_rad_along = error
+
+try:
+    from SciDataTool.Methods.VectorField.get_mag_tan_along import get_mag_tan_along
+except ImportError as error:
+    get_mag_tan_along = error
+
+try:
+    from SciDataTool.Methods.VectorField.get_mag_ax_along import get_mag_ax_along
+except ImportError as error:
+    get_mag_ax_along = error
+
+try:
+    from SciDataTool.Methods.VectorField.get_mag_rphiz_along import get_mag_rphiz_along
+except ImportError as error:
+    get_mag_rphiz_along = error
+    
+try:
+    from SciDataTool.Methods.VectorField.get_harm_rad_along import get_harm_rad_along
+except ImportError as error:
+    get_harm_rad_along = error
+
+try:
+    from SciDataTool.Methods.VectorField.get_harm_tan_along import get_harm_tan_along
+except ImportError as error:
+    get_harm_tan_along = error
+
+try:
+    from SciDataTool.Methods.VectorField.get_harm_ax_along import get_harm_ax_along
+except ImportError as error:
+    get_harm_ax_along = error
+
+try:
+    from SciDataTool.Methods.VectorField.get_harm_rphiz_along import get_harm_rphiz_along
+except ImportError as error:
+    get_harm_rphiz_along = error
 
 
 from SciDataTool.Classes._check import InitUnKnowClassError
@@ -78,12 +118,100 @@ class VectorField(FrozenClass):
         get_rphiz_along = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use VectorField method get_ax_along: " + str(get_rphiz_along)
+                    "Can't use VectorField method get_rphiz_along: " + str(get_rphiz_along)
                 )
             )
         )
     else:
         get_rphiz_along = get_rphiz_along
+    # cf Methods.Simulation.VectorField.get_mag_rad_along
+    if isinstance(get_mag_rad_along, ImportError):
+        get_mag_rad_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_mag_rad_along: " + str(get_mag_rad_along)
+                )
+            )
+        )
+    else:
+        get_mag_rad_along = get_mag_rad_along
+    # cf Methods.Simulation.VectorField.get_mag_tan_along
+    if isinstance(get_mag_tan_along, ImportError):
+        get_mag_tan_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_mag_tan_along: " + str(get_mag_tan_along)
+                )
+            )
+        )
+    else:
+        get_mag_tan_along = get_mag_tan_along
+    # cf Methods.Simulation.VectorField.get_mag_ax_along
+    if isinstance(get_mag_ax_along, ImportError):
+        get_mag_ax_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_mag_ax_along: " + str(get_mag_ax_along)
+                )
+            )
+        )
+    else:
+        get_mag_ax_along = get_mag_ax_along
+    # cf Methods.Simulation.VectorField.get_mag_rphiz_along
+    if isinstance(get_mag_rphiz_along, ImportError):
+        get_mag_rphiz_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_mag_rphiz_along: " + str(get_mag_rphiz_along)
+                )
+            )
+        )
+    else:
+        get_mag_rphiz_along = get_mag_rphiz_along
+    # cf Methods.Simulation.VectorField.get_mag_rad_along
+    if isinstance(get_harm_rad_along, ImportError):
+        get_harm_rad_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_harm_rad_along: " + str(get_harm_rad_along)
+                )
+            )
+        )
+    else:
+        get_harm_rad_along = get_harm_rad_along
+    # cf Methods.Simulation.VectorField.get_harm_tan_along
+    if isinstance(get_harm_tan_along, ImportError):
+        get_harm_tan_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_harm_tan_along: " + str(get_harm_tan_along)
+                )
+            )
+        )
+    else:
+        get_harm_tan_along = get_harm_tan_along
+    # cf Methods.Simulation.VectorField.get_harm_ax_along
+    if isinstance(get_harm_ax_along, ImportError):
+        get_harm_ax_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_harm_ax_along: " + str(get_harm_ax_along)
+                )
+            )
+        )
+    else:
+        get_harm_ax_along = get_harm_ax_along
+    # cf Methods.Simulation.VectorField.get_harm_rphiz_along
+    if isinstance(get_harm_rphiz_along, ImportError):
+        get_harm_rphiz_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_harm_rphiz_along: " + str(get_harm_rphiz_along)
+                )
+            )
+        )
+    else:
+        get_harm_rphiz_along = get_harm_rphiz_along
     # save method is available in all object
     save = save
 

@@ -43,10 +43,6 @@ try:
 except ImportError as error:
     convert = error
 try:
-    from SciDataTool.Methods.DataND.transform import transform
-except ImportError as error:
-    transform = error
-try:
     from SciDataTool.Methods.DataND.extract_slices import extract_slices
 except ImportError as error:
     extract_slices = error
@@ -164,17 +160,6 @@ class DataND(Data):
         )
     else:
         convert = convert
-    # cf Methods.DataND.transform
-    if isinstance(transform, ImportError):
-        transform = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method transform: " + str(transform)
-                )
-            )
-        )
-    else:
-        transform = transform
     # cf Methods.DataND.extract_slices
     if isinstance(extract_slices, ImportError):
         extract_slices = property(
