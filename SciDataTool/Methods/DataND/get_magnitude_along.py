@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions import NormError, UnitError
 from SciDataTool.Functions.conversions import convert, to_dB, to_dBA
-from numpy import abs as np_abs
+from numpy import apply_along_axis, abs as np_abs
 
 
 def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
@@ -47,7 +47,8 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         if "ref" in self.normalizations.keys():
             ref_value *= self.normalizations.get("ref")
         if "freqs" in return_dict.keys():
-            values = to_dBA(values, return_dict["freqs"], self.unit, ref_value)
+            index = list(return_dict.keys()).index("freqs")
+            values = apply_along_axis(to_dBA, index, values, return_dict["freqs"], self.unit, ref_value)
         else:
             raise UnitError(
                 "ERROR: dBA conversion only available for fft with frequencies"
