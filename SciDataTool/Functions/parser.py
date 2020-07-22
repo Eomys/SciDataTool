@@ -27,8 +27,13 @@ def read_input_strings(args, axis_data):
             elems = axis_str.split("{")
             unit = elems[1].strip("}")
             axis_str = elems[0]
+        # Detect sum
+        if "sum" in axis_str:
+             elems = axis_str.split("=sum")
+             name = elems[0]
+             extension = "sum"
         # Detect axis_data input
-        if "axis_data" in axis_str:
+        elif "axis_data" in axis_str:
             elems = axis_str.split("=axis_data")
             name = elems[0]
             extension = "interval"

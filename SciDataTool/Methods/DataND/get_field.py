@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from numpy import sum as np_sum
 from SciDataTool.Functions.symmetries import rebuild_symmetries
 
 def get_field(self, axes_list):
-    """Returns the values of the field (with symmetries and transformations).
+    """Returns the values of the field (with symmetries and sums).
     Parameters
     ----------
     self: Data
@@ -22,4 +23,7 @@ def get_field(self, axes_list):
             values = rebuild_symmetries(
                 values, axis_requested.index, self.symmetries.get(axis_requested.corr_name)
             )
+        # Sum over sum axes
+        if axis_requested.extension == "sum":
+            values = np_sum(values, axis=axis_requested.index)
     return values
