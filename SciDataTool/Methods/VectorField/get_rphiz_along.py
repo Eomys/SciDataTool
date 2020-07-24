@@ -112,9 +112,9 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     else:
         raise AxisError("Vector_field object is empty (should contain at least radial, tangential, axial, x, y or z")
         
-    return_dict[self.symbol + "_r"] = field_r
-    return_dict[self.symbol + "_t"] = field_t
-    return_dict[self.symbol + "_z"] = field_z
+    return_dict["radial"] = field_r
+    return_dict["tangential"] = field_t
+    return_dict["axial"] = field_z
         
     return return_dict
     
