@@ -303,11 +303,11 @@ class DataND(Data):
                 symmetries = init_dict["symmetries"]
         # Initialisation by argument
         # axes can be None or a list of Data object
-        self.axes = list()
+        axes_list = list()
         if type(axes) is list:
             for obj in axes:
                 if obj is None:  # Default value
-                    self.axes.append(Data())
+                    axes_list.append(Data())
                 elif isinstance(obj, dict):
                     # Check that the type is correct (including daughter)
                     class_name = obj.get("__class__")
@@ -327,17 +327,18 @@ class DataND(Data):
                         "SciDataTool.Classes." + class_name, fromlist=[class_name]
                     )
                     class_obj = getattr(module, class_name)
-                    self.axes.append(class_obj(init_dict=obj))
+                    axes_list.append(class_obj(init_dict=obj))
                 else:
-                    self.axes.append(obj)
+                    axes_list.append(obj)
         elif axes is None:
-            self.axes = list()
+            axes_list = list()
         else:
-            self.axes = axes
+            axes_list = axes
         self.normalizations = normalizations
         self.FTparameters = FTparameters
         # values can be None, a ndarray or a list
-        check_dimensions(values, axes)
+        values = check_dimensions(values, axes_list)
+        self.axes = axes_list
         set_array(self, "values", values)
         # Call Data init
         super(DataND, self).__init__(

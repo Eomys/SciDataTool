@@ -128,6 +128,8 @@ class Data1D(Data):
                 value = squeeze(array(value))
             except:
                 value = squeeze(value)
+        if type(value.tolist()) is not list:
+            value = array([value])
         check_var("values", value, "ndarray")
         self._values = value
 

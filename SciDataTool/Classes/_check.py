@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import array, empty, int32, squeeze
+from numpy import array, empty, int32, squeeze, expand_dims
 
 
 def set_array(obj, prop, value):
@@ -348,14 +348,15 @@ def check_dimensions(values, axes):
         values = array(values)
     else:
         values = values
-
     values_shape = values.shape
     axes_shape = []
     for axis in axes:
         if hasattr(axis, "values"):
-            if axis.values.size == 1:
-                axis.values = [axis.values]
-            axes_shape.append(len(squeeze(axis.values)))
+            axes_shape.append(axis.values.size)
+            # if axis.value.size==1:
+            #     axes_shape.append(1)
+            # else:
+            #     axes_shape.append(len(squeeze(axis.values)))
         else:
             if isinstance(axis.number, int):
                 axes_shape.append(axis.number)
@@ -363,13 +364,18 @@ def check_dimensions(values, axes):
                 axes_shape.append(int((axis.final - axis.initial) / axis.step))
 
     if values_shape != tuple(axes_shape):
-        raise CheckDimError(
-            "Dimensions of field ("
-            + str(values_shape)
-            + ") and axes ("
-            + str(tuple(axes_shape))
-            + ") do not match"
-        )
+        for i, s in enumerate(axes_shape):
+            if s == 1:
+                values = expand_dims(values, axis=i)
+        if values.shape != tuple(axes_shape):
+            raise CheckDimError(
+                "Dimensions of field ("
+                + str(values_shape)
+                + ") and axes ("
+                + str(tuple(axes_shape))
+                + ") do not match"
+            )
+    return values
 
 
 class CheckDimError(Exception):
