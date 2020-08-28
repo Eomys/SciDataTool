@@ -2,6 +2,8 @@
 from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.fft_functions import comp_fft, comp_ifft
 
+from numpy import apply_along_axis
+
 def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the ndarray of the field, using conversions and symmetries if needed.
     Parameters
@@ -30,12 +32,18 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     values = self.get_field(axes_list)
     # Inverse fft
     if "ifft" in transforms:
-        values = comp_ifft(values)
+        for axis in axes_list:
+            if axis.transform == "ifft":
+                print(axis.index)
+                values = apply_along_axis(comp_ifft, axis.index, values)
     # Slices along time/space axes
     values = self.extract_slices(values, axes_list)
     # fft
     if "fft" in transforms:
-        values = comp_fft(values)
+        for axis in axes_list:
+            if axis.transform == "fft":
+                print(axis.index)
+                values = apply_along_axis(comp_fft, axis.index, values)
     # Slices along fft axes
     values = self.extract_slices_fft(values, axes_list)
     # Interpolate over axis values
