@@ -42,7 +42,6 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     if "fft" in transforms:
         for axis in axes_list:
             if axis.transform == "fft":
-                print(axis.index)
                 values = apply_along_axis(comp_fft, axis.index, values)
     # Slices along fft axes
     values = self.extract_slices_fft(values, axes_list)
