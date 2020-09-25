@@ -18,11 +18,11 @@ def get_field(self, axes_list):
     
     values = self.values
     for axis_requested in axes_list:
-        # Rebuild symmetries
-        if axis_requested.corr_name in self.symmetries.keys():
-            values = rebuild_symmetries(
-                values, axis_requested.index, self.symmetries.get(axis_requested.corr_name)
-            )
+        # # Rebuild symmetries
+        # if axis_requested.corr_name in self.symmetries.keys():
+        #     values = rebuild_symmetries(
+        #         values, axis_requested.index, self.symmetries.get(axis_requested.corr_name)
+        #     )
         # Sum over sum axes
         if axis_requested.extension == "sum":
             values = np_sum(values, axis=axis_requested.index)

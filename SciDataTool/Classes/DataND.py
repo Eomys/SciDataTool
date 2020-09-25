@@ -55,6 +55,10 @@ try:
 except ImportError as error:
     get_field = error
 try:
+    from SciDataTool.Methods.DataND.rebuild_symmetries import rebuild_symmetries
+except ImportError as error:
+    rebuild_symmetries = error
+try:
     from SciDataTool.Methods.DataND.interpolate import interpolate
 except ImportError as error:
     interpolate = error
@@ -193,6 +197,17 @@ class DataND(Data):
         )
     else:
         get_field = get_field
+    # cf Methods.DataND.rebuild_symmetries
+    if isinstance(rebuild_symmetries, ImportError):
+        rebuild_symmetries = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method rebuild_symmetries: " + str(rebuild_symmetries)
+                )
+            )
+        )
+    else:
+        rebuild_symmetries = rebuild_symmetries
     # cf Methods.DataND.interpolate
     if isinstance(interpolate, ImportError):
         interpolate = property(

@@ -36,7 +36,7 @@ class DataLinspace(Data):
         final=None,
         step=None,
         number=None,
-        include_endpoint=False,
+        include_endpoint=True,
         symbol="",
         name="",
         unit="",

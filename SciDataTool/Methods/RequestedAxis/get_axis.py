@@ -20,13 +20,17 @@ def get_axis(self, axis, normalizations):
     if is_components:
         self.values = None
     else:
+        if self.transform == "fft":
+            is_fft = True
+        else:
+            is_fft = False
         # Get original values of the axis
         if self.operation is not None:
             module = import_module("SciDataTool.Functions.conversions")
             func = getattr(module, self.operation) # Conversion function
-            values = array(func(axis.get_values()))
+            values = array(func(axis.get_values(is_fft)))
         else:
-            values = array(axis.get_values())
+            values = array(axis.get_values(is_fft))
         # Unit conversions and normalizations
         unit = self.unit
         if unit == self.corr_unit or unit == "SI":

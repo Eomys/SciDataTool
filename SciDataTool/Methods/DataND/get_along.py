@@ -28,13 +28,12 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     axes_list = read_input_strings(args, axis_data)
     # Extract the requested axes (symmetries + unit)
     axes_list, transforms = self.comp_axes(axes_list)
-    # Get the field with symmetries
+    # Get the field
     values = self.get_field(axes_list)
     # Inverse fft
     if "ifft" in transforms:
         for axis in axes_list:
             if axis.transform == "ifft":
-                print(axis.index)
                 values = apply_along_axis(comp_ifft, axis.index, values)
     # Slices along time/space axes
     values = self.extract_slices(values, axes_list)
@@ -45,6 +44,8 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 values = apply_along_axis(comp_fft, axis.index, values)
     # Slices along fft axes
     values = self.extract_slices_fft(values, axes_list)
+    # Rebuild symmetries
+    values = self.rebuild_symmetries(values, axes_list)
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
     # Conversions

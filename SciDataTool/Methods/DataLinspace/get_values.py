@@ -2,7 +2,7 @@
 from numpy import linspace
 
 
-def get_values(self):
+def get_values(self, is_fft=False):
     """Returns the vector 'axis' by rebuilding the linspace.
     Parameters
     ----------
