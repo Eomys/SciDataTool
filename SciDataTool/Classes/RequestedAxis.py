@@ -28,7 +28,7 @@ class RequestedAxis(FrozenClass):
 
     VERSION = 1
 
-    # cf Methods..RequestedAxis.get_axis
+    # cf Methods.RequestedAxis.get_axis
     if isinstance(get_axis, ImportError):
         get_axis = property(
             fget=lambda x: raise_(

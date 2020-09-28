@@ -20,13 +20,6 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
-from cloudpickle import dumps, loads
-from ._check import CheckTypeError
-
-try:
-    from SciDataTool.Classes import Data1D
-except ImportError:
-    Data1D = ImportError
 from ._check import InitUnKnowClassError
 
 

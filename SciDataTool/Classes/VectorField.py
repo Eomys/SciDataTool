@@ -74,12 +74,6 @@ except ImportError as error:
     get_harm_rphiz_along = error
 
 
-from ._check import CheckTypeError
-
-try:
-    from SciDataTool.Classes import DataND
-except ImportError:
-    DataND = ImportError
 from ._check import InitUnKnowClassError
 
 
@@ -377,7 +371,7 @@ class VectorField(FrozenClass):
                     value[key] = class_obj(init_dict=obj)
         if value is -1:
             value = dict()
-        check_var("components", value, "{SciDataTool.Classes.DataND}")
+        check_var("components", value, "{DataND}")
         self._components = value
 
     components = property(

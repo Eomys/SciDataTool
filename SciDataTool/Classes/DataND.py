@@ -95,12 +95,6 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
-from ._check import CheckTypeError
-
-try:
-    from SciDataTool.Classes import Data1D
-except ImportError:
-    Data1D = ImportError
 from ._check import InitUnKnowClassError
 
 
@@ -110,7 +104,7 @@ class DataND(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods..DataND.compare_along
+    # cf Methods.DataND.compare_along
     if isinstance(compare_along, ImportError):
         compare_along = property(
             fget=lambda x: raise_(
@@ -121,7 +115,7 @@ class DataND(Data):
         )
     else:
         compare_along = compare_along
-    # cf Methods..DataND.compare_magnitude_along
+    # cf Methods.DataND.compare_magnitude_along
     if isinstance(compare_magnitude_along, ImportError):
         compare_magnitude_along = property(
             fget=lambda x: raise_(
@@ -133,7 +127,7 @@ class DataND(Data):
         )
     else:
         compare_magnitude_along = compare_magnitude_along
-    # cf Methods..DataND.compare_phase_along
+    # cf Methods.DataND.compare_phase_along
     if isinstance(compare_phase_along, ImportError):
         compare_phase_along = property(
             fget=lambda x: raise_(
@@ -145,7 +139,7 @@ class DataND(Data):
         )
     else:
         compare_phase_along = compare_phase_along
-    # cf Methods..DataND.compress
+    # cf Methods.DataND.compress
     if isinstance(compress, ImportError):
         compress = property(
             fget=lambda x: raise_(
@@ -154,7 +148,7 @@ class DataND(Data):
         )
     else:
         compress = compress
-    # cf Methods..DataND.set_Ftparameters
+    # cf Methods.DataND.set_Ftparameters
     if isinstance(set_Ftparameters, ImportError):
         set_Ftparameters = property(
             fget=lambda x: raise_(
@@ -165,7 +159,7 @@ class DataND(Data):
         )
     else:
         set_Ftparameters = set_Ftparameters
-    # cf Methods..DataND.comp_axes
+    # cf Methods.DataND.comp_axes
     if isinstance(comp_axes, ImportError):
         comp_axes = property(
             fget=lambda x: raise_(
@@ -174,7 +168,7 @@ class DataND(Data):
         )
     else:
         comp_axes = comp_axes
-    # cf Methods..DataND.convert
+    # cf Methods.DataND.convert
     if isinstance(convert, ImportError):
         convert = property(
             fget=lambda x: raise_(
@@ -183,7 +177,7 @@ class DataND(Data):
         )
     else:
         convert = convert
-    # cf Methods..DataND.extract_slices
+    # cf Methods.DataND.extract_slices
     if isinstance(extract_slices, ImportError):
         extract_slices = property(
             fget=lambda x: raise_(
@@ -194,7 +188,7 @@ class DataND(Data):
         )
     else:
         extract_slices = extract_slices
-    # cf Methods..DataND.extract_slices_fft
+    # cf Methods.DataND.extract_slices_fft
     if isinstance(extract_slices_fft, ImportError):
         extract_slices_fft = property(
             fget=lambda x: raise_(
@@ -206,7 +200,7 @@ class DataND(Data):
         )
     else:
         extract_slices_fft = extract_slices_fft
-    # cf Methods..DataND.get_field
+    # cf Methods.DataND.get_field
     if isinstance(get_field, ImportError):
         get_field = property(
             fget=lambda x: raise_(
@@ -215,7 +209,7 @@ class DataND(Data):
         )
     else:
         get_field = get_field
-    # cf Methods..DataND.rebuild_symmetries
+    # cf Methods.DataND.rebuild_symmetries
     if isinstance(rebuild_symmetries, ImportError):
         rebuild_symmetries = property(
             fget=lambda x: raise_(
@@ -227,7 +221,7 @@ class DataND(Data):
         )
     else:
         rebuild_symmetries = rebuild_symmetries
-    # cf Methods..DataND.interpolate
+    # cf Methods.DataND.interpolate
     if isinstance(interpolate, ImportError):
         interpolate = property(
             fget=lambda x: raise_(
@@ -236,7 +230,7 @@ class DataND(Data):
         )
     else:
         interpolate = interpolate
-    # cf Methods..DataND.get_along
+    # cf Methods.DataND.get_along
     if isinstance(get_along, ImportError):
         get_along = property(
             fget=lambda x: raise_(
@@ -245,7 +239,7 @@ class DataND(Data):
         )
     else:
         get_along = get_along
-    # cf Methods..DataND.get_magnitude_along
+    # cf Methods.DataND.get_magnitude_along
     if isinstance(get_magnitude_along, ImportError):
         get_magnitude_along = property(
             fget=lambda x: raise_(
@@ -257,7 +251,7 @@ class DataND(Data):
         )
     else:
         get_magnitude_along = get_magnitude_along
-    # cf Methods..DataND.get_phase_along
+    # cf Methods.DataND.get_phase_along
     if isinstance(get_phase_along, ImportError):
         get_phase_along = property(
             fget=lambda x: raise_(
@@ -268,7 +262,7 @@ class DataND(Data):
         )
     else:
         get_phase_along = get_phase_along
-    # cf Methods..DataND.get_harmonics
+    # cf Methods.DataND.get_harmonics
     if isinstance(get_harmonics, ImportError):
         get_harmonics = property(
             fget=lambda x: raise_(
@@ -431,7 +425,7 @@ class DataND(Data):
                     value[ii] = class_obj(init_dict=obj)
         if value is -1:
             value = list()
-        check_var("axes", value, "[SciDataTool.Classes.Data1D]")
+        check_var("axes", value, "[Data1D]")
         self._axes = value
 
         for obj in self._axes:

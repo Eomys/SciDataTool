@@ -20,12 +20,6 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
-from ._check import CheckTypeError
-
-try:
-    from SciDataTool.Classes import Data1D
-except ImportError:
-    Data1D = ImportError
 from ._check import InitUnKnowClassError
 
 
@@ -34,7 +28,7 @@ class DataTime(DataND):
 
     VERSION = 1
 
-    # cf Methods..DataTime.time_to_freq
+    # cf Methods.DataTime.time_to_freq
     if isinstance(time_to_freq, ImportError):
         time_to_freq = property(
             fget=lambda x: raise_(
