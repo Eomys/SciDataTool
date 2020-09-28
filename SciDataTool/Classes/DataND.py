@@ -418,9 +418,7 @@ class DataND(Data):
             for ii, obj in enumerate(value):
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes." + obj.get("__class__"),
-                        obj.get("__class__"),
-                        "axes",
+                        "SciDataTool.Classes", obj.get("__class__"), "axes"
                     )
                     value[ii] = class_obj(init_dict=obj)
         if value is -1:

@@ -364,9 +364,7 @@ class VectorField(FrozenClass):
             for key, obj in value.items():
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "SciDataTool.Classes." + obj.get("__class__"),
-                        obj.get("__class__"),
-                        "components",
+                        "SciDataTool.Classes", obj.get("__class__"), "components"
                     )
                     value[key] = class_obj(init_dict=obj)
         if value is -1:
