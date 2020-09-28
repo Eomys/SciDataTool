@@ -1,0 +1,3 @@
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
+values,,List or ndarray of the axis values,,list,[],,,,,Data,get_values,VERSION,1,Class for axes defined as vectors,
+is_components,,Boolean inidcating if the axis is components,,,False,,,,,,,,,,

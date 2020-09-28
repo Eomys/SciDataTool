@@ -1,0 +1,5 @@
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
+symbol,,Symbol of the variable (in latex syntax),,str,,,,,,,,VERSION,1,Abstract class for all kinds of data,
+name,,Name of the physical quantity (to be used in plots),,str,,,,,,,,,,,
+unit,,Unit of the physical quantity (to be used in plots),,str,,,,,,,,,,,
+symmetries,,"Dictionary of the symmetries along each axis, used to reduce storage",,dict,{},,,,,,,,,,

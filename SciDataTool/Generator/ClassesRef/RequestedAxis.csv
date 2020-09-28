@@ -1,0 +1,12 @@
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
+name,,Name requested in get_along command,,str,,,,,,,get_axis,VERSION,1,Class to handle requested axes during get_along methods,
+corr_name,,Corresponding axis if a transform is required,,str,,,,,,,,,,,
+unit,,Unit requested in get_along command,,str,,,,,,,,,,,
+corr_unit,,Corresponding unit if a transform is required,,str,,,,,,,,,,,
+extension,,Extension of the requested axis (single or interval),,str,,,,,,,,,,,
+values,,Values of the axis,,ndarray,None,,,,,,,,,,
+indices,,Indices of the axis,,list,None,,,,,,,,,,
+input_data,,Input data to interpolate on,,list,None,,,,,,,,,,
+operation,,"Operation to perform on the axis (coordinate change, etc)",,str,None,,,,,,,,,,
+index,,Index of the axis in the axes list,,int,None,,,,,,,,,,
+transform,,"Transform to perform on the axis (fft, ifft)",,str,None,,,,,,,,,,
