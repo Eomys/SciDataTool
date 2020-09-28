@@ -425,7 +425,7 @@ class DataND(Data):
                     value[ii] = class_obj(init_dict=obj)
         if value is -1:
             value = list()
-        check_var("axes", value, "[Data1D]")
+        check_var("axes", value, "[Data]")
         self._axes = value
 
         for obj in self._axes:
@@ -437,7 +437,7 @@ class DataND(Data):
         fset=_set_axes,
         doc=u"""List of the Data1D objects corresponding to the axes
 
-        :Type: [SciDataTool.Classes.Data1D]
+        :Type: [SciDataTool.Classes.Data]
         """,
     )
 

@@ -1,5 +1,5 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
-axes,,List of the Data1D objects corresponding to the axes,,[SciDataTool.Classes.Data1D],None,,,,,Data,compare_along,VERSION,1,Abstract class for fields (time or frequency domain),
+axes,,List of the Data1D objects corresponding to the axes,,[SciDataTool.Classes.Data],None,,,,,Data,compare_along,VERSION,1,Abstract class for fields (time or frequency domain),
 normalizations,,Normalizations available for the field and its axes,,dict,{},,,,,,compare_magnitude_along,,,,
 FTparameters,,Tunable parameters for the Fourier Transforms,,dict,{},,,,,,compare_phase_along,,,,
 values,,Values of the field,,ndarray,None,,,,,,compress,,,,
