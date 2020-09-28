@@ -1,7 +1,7 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
 initial,,First value,,float,None,,,,,Data,get_values,VERSION,1,Class for axes defined as linspaces,
-final,,Last value,,,None,,,,,,,,,,
-step,,Step,,,None,,,,,,,,,,
-number,,Number of steps,,,None,,,,,,,,,,
-include_endpoint,,Boolean indicating if the endpoint must be included,,,True,,,,,,,,,,
-is_components,,Boolean inidcating if the axis is components,,,False,,,,,,,,,,
+final,,Last value,,float,None,,,,,,,,,,
+step,,Step,,float,None,,,,,,,,,,
+number,,Number of steps,,int,None,,,,,,,,,,
+include_endpoint,,Boolean indicating if the endpoint must be included,,bool,True,,,,,,,,,,
+is_components,,Boolean inidcating if the axis is components,,bool,False,,,,,,,,,,

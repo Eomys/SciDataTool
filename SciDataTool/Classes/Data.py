@@ -1,31 +1,51 @@
 # -*- coding: utf-8 -*-
-"""File generated according to SciDataTool/Generator/ClassesRef/Output/Data.csv
-WARNING! All changes made in this file will be lost!
+# File generated according to Generator/ClassesRef/Data/Data.csv
+# WARNING! All changes made in this file will be lost!
+"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Data
 """
+
 from os import linesep
-from SciDataTool.Classes._check import check_init_dict, check_var, raise_
-from SciDataTool.Functions.save import save
-from SciDataTool.Classes._frozen import FrozenClass
-from SciDataTool.Classes._check import InitUnKnowClassError
+from logging import getLogger
+from ._check import check_var, raise_
+from ..Functions.save import save
+from ..Functions.load import load_init_dict
+from ..Functions.Load.import_class import import_class
+from ._frozen import FrozenClass
+
+from ._check import InitUnKnowClassError
 
 
 class Data(FrozenClass):
     """Abstract class for all kinds of data"""
 
     VERSION = 1
+
     # save method is available in all object
     save = save
 
-    def __init__(self, symbol="", name="", unit="", symmetries={}, init_dict=None):
-        """Constructor of the class. Can be use in two ways :
+    # generic copy method
+    def copy(self):
+        """Return a copy of the class
+        """
+        return type(self)(init_dict=self.as_dict())
+
+    def __init__(
+        self, symbol="", name="", unit="", symmetries=-1, init_dict=None, init_str=None
+    ):
+        """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for Matrix, None will initialise the property with an empty Matrix
-            for SciDataTool type, None will call the default constructor
-        - __init__ (init_dict = d) d must be a dictionnary wiht every properties as keys
+            for SciDataTool type, -1 will call the default constructor
+        - __init__ (init_dict = d) d must be a dictionnary with property names as keys
+        - __init__ (init_str = s) s must be a string
+        s is the file path to load
+
         ndarray or list can be given for Vector and Matrix
         object or dict can be given for SciDataTool Object"""
+
+        if init_str is not None:  # Load from a file
+            init_dict = load_init_dict(init_str)[1]
         if init_dict is not None:  # Initialisation by dict
-            check_init_dict(init_dict, ["symbol", "name", "unit", "symmetries"])
+            assert type(init_dict) is dict
             # Overwrite default value with init_dict content
             if "symbol" in list(init_dict.keys()):
                 symbol = init_dict["symbol"]
@@ -35,17 +55,19 @@ class Data(FrozenClass):
                 unit = init_dict["unit"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
-        # Initialisation by argument
+        # Set the properties (value check and convertion are done in setter)
         self.parent = None
         self.symbol = symbol
         self.name = name
         self.unit = unit
         self.symmetries = symmetries
+
         # The class is frozen, for now it's impossible to add new properties
         self._freeze()
 
     def __str__(self):
         """Convert this objet in a readeable string (for print)"""
+
         Data_str = ""
         if self.parent is None:
             Data_str += "parent = None " + linesep
@@ -54,11 +76,12 @@ class Data(FrozenClass):
         Data_str += 'symbol = "' + str(self.symbol) + '"' + linesep
         Data_str += 'name = "' + str(self.name) + '"' + linesep
         Data_str += 'unit = "' + str(self.unit) + '"' + linesep
-        Data_str += "symmetries = " + str(self.symmetries)
+        Data_str += "symmetries = " + str(self.symmetries) + linesep
         return Data_str
 
     def __eq__(self, other):
         """Compare two objects (skip parent)"""
+
         if type(other) != type(self):
             return False
         if other.symbol != self.symbol:
@@ -74,6 +97,7 @@ class Data(FrozenClass):
     def as_dict(self):
         """Convert this objet in a json seriable dict (can be use in __init__)
         """
+
         Data_dict = dict()
         Data_dict["symbol"] = self.symbol
         Data_dict["name"] = self.name
@@ -85,6 +109,7 @@ class Data(FrozenClass):
 
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""
+
         self.symbol = None
         self.name = None
         self.unit = None
@@ -99,12 +124,13 @@ class Data(FrozenClass):
         check_var("symbol", value, "str")
         self._symbol = value
 
-    # Symbol of the variable (in latex syntax)
-    # Type : str
     symbol = property(
         fget=_get_symbol,
         fset=_set_symbol,
-        doc=u"""Symbol of the variable (in latex syntax)""",
+        doc=u"""Symbol of the variable (in latex syntax)
+
+        :Type: str
+        """,
     )
 
     def _get_name(self):
@@ -116,12 +142,13 @@ class Data(FrozenClass):
         check_var("name", value, "str")
         self._name = value
 
-    # Name of the physical quantity (to be used in plots)
-    # Type : str
     name = property(
         fget=_get_name,
         fset=_set_name,
-        doc=u"""Name of the physical quantity (to be used in plots)""",
+        doc=u"""Name of the physical quantity (to be used in plots)
+
+        :Type: str
+        """,
     )
 
     def _get_unit(self):
@@ -133,12 +160,13 @@ class Data(FrozenClass):
         check_var("unit", value, "str")
         self._unit = value
 
-    # Unit of the physical quantity (to be used in plots)
-    # Type : str
     unit = property(
         fget=_get_unit,
         fset=_set_unit,
-        doc=u"""Unit of the physical quantity (to be used in plots)""",
+        doc=u"""Unit of the physical quantity (to be used in plots)
+
+        :Type: str
+        """,
     )
 
     def _get_symmetries(self):
@@ -147,13 +175,16 @@ class Data(FrozenClass):
 
     def _set_symmetries(self, value):
         """setter of symmetries"""
+        if value is -1:
+            value = dict()
         check_var("symmetries", value, "dict")
         self._symmetries = value
 
-    # List of the symmetries along each axis used for reducing storage
-    # Type : dict
     symmetries = property(
         fget=_get_symmetries,
         fset=_set_symmetries,
-        doc=u"""List of the symmetries along each axis used for reducing storage""",
+        doc=u"""Dictionary of the symmetries along each axis, used to reduce storage
+
+        :Type: dict
+        """,
     )
