@@ -5,7 +5,6 @@
 """
 
 from os import linesep
-from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
@@ -29,7 +28,7 @@ class RequestedAxis(FrozenClass):
 
     VERSION = 1
 
-    # cf Methods.RequestedAxis.get_axis
+    # cf Methods..RequestedAxis.get_axis
     if isinstance(get_axis, ImportError):
         get_axis = property(
             fget=lambda x: raise_(
@@ -47,7 +46,22 @@ class RequestedAxis(FrozenClass):
         """
         return type(self)(init_dict=self.as_dict())
 
-    def __init__(self, name="", corr_name="", unit="", corr_unit="", extension="", values=None, indices=None, input_data=None, operation=None, index=None, transform=None, init_dict = None, init_str = None):
+    def __init__(
+        self,
+        name="",
+        corr_name="",
+        unit="",
+        corr_unit="",
+        extension="",
+        values=None,
+        indices=None,
+        input_data=None,
+        operation=None,
+        index=None,
+        transform=None,
+        init_dict=None,
+        init_str=None,
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -109,15 +123,34 @@ class RequestedAxis(FrozenClass):
         if self.parent is None:
             RequestedAxis_str += "parent = None " + linesep
         else:
-            RequestedAxis_str += "parent = " + str(type(self.parent)) + " object" + linesep
+            RequestedAxis_str += (
+                "parent = " + str(type(self.parent)) + " object" + linesep
+            )
         RequestedAxis_str += 'name = "' + str(self.name) + '"' + linesep
         RequestedAxis_str += 'corr_name = "' + str(self.corr_name) + '"' + linesep
         RequestedAxis_str += 'unit = "' + str(self.unit) + '"' + linesep
         RequestedAxis_str += 'corr_unit = "' + str(self.corr_unit) + '"' + linesep
         RequestedAxis_str += 'extension = "' + str(self.extension) + '"' + linesep
-        RequestedAxis_str += "values = " + linesep + str(self.values).replace(linesep, linesep + "\t") + linesep + linesep
-        RequestedAxis_str += "indices = " + linesep + str(self.indices).replace(linesep, linesep + "\t") + linesep
-        RequestedAxis_str += "input_data = " + linesep + str(self.input_data).replace(linesep, linesep + "\t") + linesep
+        RequestedAxis_str += (
+            "values = "
+            + linesep
+            + str(self.values).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
+        RequestedAxis_str += (
+            "indices = "
+            + linesep
+            + str(self.indices).replace(linesep, linesep + "\t")
+            + linesep
+        )
+        RequestedAxis_str += (
+            "input_data = "
+            + linesep
+            + str(self.input_data).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
         RequestedAxis_str += 'operation = "' + str(self.operation) + '"' + linesep
         RequestedAxis_str += "index = " + str(self.index) + linesep
         RequestedAxis_str += 'transform = "' + str(self.transform) + '"' + linesep
@@ -142,7 +175,7 @@ class RequestedAxis(FrozenClass):
             return False
         if other.indices != self.indices:
             return False
-        if other.input_data != self.input_data:
+        if not array_equal(other.input_data, self.input_data):
             return False
         if other.operation != self.operation:
             return False
@@ -167,7 +200,10 @@ class RequestedAxis(FrozenClass):
         else:
             RequestedAxis_dict["values"] = self.values.tolist()
         RequestedAxis_dict["indices"] = self.indices
-        RequestedAxis_dict["input_data"] = self.input_data
+        if self.input_data is None:
+            RequestedAxis_dict["input_data"] = None
+        else:
+            RequestedAxis_dict["input_data"] = self.input_data.tolist()
         RequestedAxis_dict["operation"] = self.operation
         RequestedAxis_dict["index"] = self.index
         RequestedAxis_dict["transform"] = self.transform

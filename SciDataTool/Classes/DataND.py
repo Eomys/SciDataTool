@@ -5,7 +5,6 @@
 """
 
 from os import linesep
-from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
@@ -96,6 +95,12 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
+from ._check import CheckTypeError
+
+try:
+    from SciDataTool.Classes import Data1D
+except ImportError:
+    Data1D = ImportError
 from ._check import InitUnKnowClassError
 
 
@@ -105,7 +110,7 @@ class DataND(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.DataND.compare_along
+    # cf Methods..DataND.compare_along
     if isinstance(compare_along, ImportError):
         compare_along = property(
             fget=lambda x: raise_(
@@ -116,7 +121,7 @@ class DataND(Data):
         )
     else:
         compare_along = compare_along
-    # cf Methods.DataND.compare_magnitude_along
+    # cf Methods..DataND.compare_magnitude_along
     if isinstance(compare_magnitude_along, ImportError):
         compare_magnitude_along = property(
             fget=lambda x: raise_(
@@ -128,7 +133,7 @@ class DataND(Data):
         )
     else:
         compare_magnitude_along = compare_magnitude_along
-    # cf Methods.DataND.compare_phase_along
+    # cf Methods..DataND.compare_phase_along
     if isinstance(compare_phase_along, ImportError):
         compare_phase_along = property(
             fget=lambda x: raise_(
@@ -140,7 +145,7 @@ class DataND(Data):
         )
     else:
         compare_phase_along = compare_phase_along
-    # cf Methods.DataND.compress
+    # cf Methods..DataND.compress
     if isinstance(compress, ImportError):
         compress = property(
             fget=lambda x: raise_(
@@ -149,7 +154,7 @@ class DataND(Data):
         )
     else:
         compress = compress
-    # cf Methods.DataND.set_Ftparameters
+    # cf Methods..DataND.set_Ftparameters
     if isinstance(set_Ftparameters, ImportError):
         set_Ftparameters = property(
             fget=lambda x: raise_(
@@ -160,7 +165,7 @@ class DataND(Data):
         )
     else:
         set_Ftparameters = set_Ftparameters
-    # cf Methods.DataND.comp_axes
+    # cf Methods..DataND.comp_axes
     if isinstance(comp_axes, ImportError):
         comp_axes = property(
             fget=lambda x: raise_(
@@ -169,7 +174,7 @@ class DataND(Data):
         )
     else:
         comp_axes = comp_axes
-    # cf Methods.DataND.convert
+    # cf Methods..DataND.convert
     if isinstance(convert, ImportError):
         convert = property(
             fget=lambda x: raise_(
@@ -178,7 +183,7 @@ class DataND(Data):
         )
     else:
         convert = convert
-    # cf Methods.DataND.extract_slices
+    # cf Methods..DataND.extract_slices
     if isinstance(extract_slices, ImportError):
         extract_slices = property(
             fget=lambda x: raise_(
@@ -189,7 +194,7 @@ class DataND(Data):
         )
     else:
         extract_slices = extract_slices
-    # cf Methods.DataND.extract_slices_fft
+    # cf Methods..DataND.extract_slices_fft
     if isinstance(extract_slices_fft, ImportError):
         extract_slices_fft = property(
             fget=lambda x: raise_(
@@ -201,7 +206,7 @@ class DataND(Data):
         )
     else:
         extract_slices_fft = extract_slices_fft
-    # cf Methods.DataND.get_field
+    # cf Methods..DataND.get_field
     if isinstance(get_field, ImportError):
         get_field = property(
             fget=lambda x: raise_(
@@ -210,7 +215,7 @@ class DataND(Data):
         )
     else:
         get_field = get_field
-    # cf Methods.DataND.rebuild_symmetries
+    # cf Methods..DataND.rebuild_symmetries
     if isinstance(rebuild_symmetries, ImportError):
         rebuild_symmetries = property(
             fget=lambda x: raise_(
@@ -222,7 +227,7 @@ class DataND(Data):
         )
     else:
         rebuild_symmetries = rebuild_symmetries
-    # cf Methods.DataND.interpolate
+    # cf Methods..DataND.interpolate
     if isinstance(interpolate, ImportError):
         interpolate = property(
             fget=lambda x: raise_(
@@ -231,7 +236,7 @@ class DataND(Data):
         )
     else:
         interpolate = interpolate
-    # cf Methods.DataND.get_along
+    # cf Methods..DataND.get_along
     if isinstance(get_along, ImportError):
         get_along = property(
             fget=lambda x: raise_(
@@ -240,7 +245,7 @@ class DataND(Data):
         )
     else:
         get_along = get_along
-    # cf Methods.DataND.get_magnitude_along
+    # cf Methods..DataND.get_magnitude_along
     if isinstance(get_magnitude_along, ImportError):
         get_magnitude_along = property(
             fget=lambda x: raise_(
@@ -252,7 +257,7 @@ class DataND(Data):
         )
     else:
         get_magnitude_along = get_magnitude_along
-    # cf Methods.DataND.get_phase_along
+    # cf Methods..DataND.get_phase_along
     if isinstance(get_phase_along, ImportError):
         get_phase_along = property(
             fget=lambda x: raise_(
@@ -263,7 +268,7 @@ class DataND(Data):
         )
     else:
         get_phase_along = get_phase_along
-    # cf Methods.DataND.get_harmonics
+    # cf Methods..DataND.get_harmonics
     if isinstance(get_harmonics, ImportError):
         get_harmonics = property(
             fget=lambda x: raise_(
@@ -283,7 +288,19 @@ class DataND(Data):
         """
         return type(self)(init_dict=self.as_dict())
 
-    def __init__(self, axes=None, normalizations=-1, FTparameters=-1, values=None, symbol="", name="", unit="", symmetries=-1, init_dict = None, init_str = None):
+    def __init__(
+        self,
+        axes=None,
+        normalizations=-1,
+        FTparameters=-1,
+        values=None,
+        symbol="",
+        name="",
+        unit="",
+        symmetries=-1,
+        init_dict=None,
+        init_str=None,
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -321,7 +338,9 @@ class DataND(Data):
         self.FTparameters = FTparameters
         self.values = values
         # Call Data init
-        super(DataND, self).__init__(symbol=symbol, name=name, unit=unit, symmetries=symmetries)
+        super(DataND, self).__init__(
+            symbol=symbol, name=name, unit=unit, symmetries=symmetries
+        )
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
 
@@ -331,10 +350,16 @@ class DataND(Data):
         DataND_str = ""
         # Get the properties inherited from Data
         DataND_str += super(DataND, self).__str__()
-        DataND_str += "axes = " + linesep + str(self.axes).replace(linesep, linesep + "\t") + linesep
+        DataND_str += "axes = " + str(self.axes) + linesep + linesep
         DataND_str += "normalizations = " + str(self.normalizations) + linesep
         DataND_str += "FTparameters = " + str(self.FTparameters) + linesep
-        DataND_str += "values = " + linesep + str(self.values).replace(linesep, linesep + "\t") + linesep + linesep
+        DataND_str += (
+            "values = "
+            + linesep
+            + str(self.values).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
         return DataND_str
 
     def __eq__(self, other):
@@ -362,7 +387,9 @@ class DataND(Data):
 
         # Get the properties inherited from Data
         DataND_dict = super(DataND, self).as_dict()
-        DataND_dict["axes"] = self.axes
+        DataND_dict["axes"] = list()
+        for obj in self.axes:
+            DataND_dict["axes"].append(obj.as_dict())
         DataND_dict["normalizations"] = self.normalizations
         DataND_dict["FTparameters"] = self.FTparameters
         if self.values is None:
@@ -386,21 +413,37 @@ class DataND(Data):
 
     def _get_axes(self):
         """getter of axes"""
+        for obj in self._axes:
+            if obj is not None:
+                obj.parent = self
         return self._axes
 
     def _set_axes(self, value):
         """setter of axes"""
+        if type(value) is list:
+            for ii, obj in enumerate(value):
+                if type(obj) is dict:
+                    class_obj = import_class(
+                        "SciDataTool.Classes." + obj.get("__class__"),
+                        obj.get("__class__"),
+                        "axes",
+                    )
+                    value[ii] = class_obj(init_dict=obj)
         if value is -1:
             value = list()
-        check_var("axes", value, "list")
+        check_var("axes", value, "[SciDataTool.Classes.Data1D]")
         self._axes = value
+
+        for obj in self._axes:
+            if obj is not None:
+                obj.parent = self
 
     axes = property(
         fget=_get_axes,
         fset=_set_axes,
         doc=u"""List of the Data1D objects corresponding to the axes
 
-        :Type: list
+        :Type: [SciDataTool.Classes.Data1D]
         """,
     )
 

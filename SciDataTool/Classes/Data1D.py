@@ -5,8 +5,7 @@
 """
 
 from os import linesep
-from logging import getLogger
-from ._check import check_var, raise_
+from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
@@ -20,6 +19,7 @@ except ImportError as error:
     get_values = error
 
 
+from numpy import array, array_equal
 from ._check import InitUnKnowClassError
 
 
@@ -46,7 +46,17 @@ class Data1D(Data):
         """
         return type(self)(init_dict=self.as_dict())
 
-    def __init__(self, values=-1, is_components=False, symbol="", name="", unit="", symmetries=-1, init_dict = None, init_str = None):
+    def __init__(
+        self,
+        values=None,
+        is_components=False,
+        symbol="",
+        name="",
+        unit="",
+        symmetries=-1,
+        init_dict=None,
+        init_str=None,
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -78,7 +88,9 @@ class Data1D(Data):
         self.values = values
         self.is_components = is_components
         # Call Data init
-        super(Data1D, self).__init__(symbol=symbol, name=name, unit=unit, symmetries=symmetries)
+        super(Data1D, self).__init__(
+            symbol=symbol, name=name, unit=unit, symmetries=symmetries
+        )
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
 
@@ -88,7 +100,13 @@ class Data1D(Data):
         Data1D_str = ""
         # Get the properties inherited from Data
         Data1D_str += super(Data1D, self).__str__()
-        Data1D_str += "values = " + linesep + str(self.values).replace(linesep, linesep + "\t") + linesep
+        Data1D_str += (
+            "values = "
+            + linesep
+            + str(self.values).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
         Data1D_str += "is_components = " + str(self.is_components) + linesep
         return Data1D_str
 
@@ -101,7 +119,7 @@ class Data1D(Data):
         # Check the properties inherited from Data
         if not super(Data1D, self).__eq__(other):
             return False
-        if other.values != self.values:
+        if not array_equal(other.values, self.values):
             return False
         if other.is_components != self.is_components:
             return False
@@ -113,7 +131,10 @@ class Data1D(Data):
 
         # Get the properties inherited from Data
         Data1D_dict = super(Data1D, self).as_dict()
-        Data1D_dict["values"] = self.values
+        if self.values is None:
+            Data1D_dict["values"] = None
+        else:
+            Data1D_dict["values"] = self.values.tolist()
         Data1D_dict["is_components"] = self.is_components
         # The class name is added to the dict fordeserialisation purpose
         # Overwrite the mother class name
@@ -147,7 +168,7 @@ class Data1D(Data):
     values = property(
         fget=_get_values,
         fset=_set_values,
-        doc=u"""ndarray of the axis values
+        doc=u"""List or ndarray of the axis values
 
         :Type: ndarray
         """,

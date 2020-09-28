@@ -5,7 +5,6 @@
 """
 
 from os import linesep
-from logging import getLogger
 from ._check import check_var, raise_
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
@@ -75,6 +74,12 @@ except ImportError as error:
     get_harm_rphiz_along = error
 
 
+from ._check import CheckTypeError
+
+try:
+    from SciDataTool.Classes import DataND
+except ImportError:
+    DataND = ImportError
 from ._check import InitUnKnowClassError
 
 
@@ -234,7 +239,9 @@ class VectorField(FrozenClass):
         """
         return type(self)(init_dict=self.as_dict())
 
-    def __init__(self, name="", symbol="", components=-1, init_dict = None, init_str = None):
+    def __init__(
+        self, name="", symbol="", components={}, init_dict=None, init_str=None
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -272,10 +279,12 @@ class VectorField(FrozenClass):
         if self.parent is None:
             VectorField_str += "parent = None " + linesep
         else:
-            VectorField_str += "parent = " + str(type(self.parent)) + " object" + linesep
+            VectorField_str += (
+                "parent = " + str(type(self.parent)) + " object" + linesep
+            )
         VectorField_str += 'name = "' + str(self.name) + '"' + linesep
         VectorField_str += 'symbol = "' + str(self.symbol) + '"' + linesep
-        VectorField_str += "components = " + str(self.components) + linesep
+        VectorField_str += "components = " + str(self.components) + linesep + linesep
         return VectorField_str
 
     def __eq__(self, other):
@@ -298,7 +307,9 @@ class VectorField(FrozenClass):
         VectorField_dict = dict()
         VectorField_dict["name"] = self.name
         VectorField_dict["symbol"] = self.symbol
-        VectorField_dict["components"] = self.components
+        VectorField_dict["components"] = dict()
+        for key, obj in self.components.items():
+            VectorField_dict["components"][key] = obj.as_dict()
         # The class name is added to the dict fordeserialisation purpose
         VectorField_dict["__class__"] = "VectorField"
         return VectorField_dict
@@ -348,13 +359,25 @@ class VectorField(FrozenClass):
 
     def _get_components(self):
         """getter of components"""
+        for key, obj in self._components.items():
+            if obj is not None:
+                obj.parent = self
         return self._components
 
     def _set_components(self, value):
         """setter of components"""
+        if type(value) is dict:
+            for key, obj in value.items():
+                if type(obj) is dict:
+                    class_obj = import_class(
+                        "SciDataTool.Classes." + obj.get("__class__"),
+                        obj.get("__class__"),
+                        "components",
+                    )
+                    value[key] = class_obj(init_dict=obj)
         if value is -1:
             value = dict()
-        check_var("components", value, "dict")
+        check_var("components", value, "{SciDataTool.Classes.DataND}")
         self._components = value
 
     components = property(
@@ -362,6 +385,6 @@ class VectorField(FrozenClass):
         fset=_set_components,
         doc=u"""Dict of the components
 
-        :Type: dict
+        :Type: {SciDataTool.Classes.DataND}
         """,
     )

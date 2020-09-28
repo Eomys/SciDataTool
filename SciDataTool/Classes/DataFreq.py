@@ -5,7 +5,6 @@
 """
 
 from os import linesep
-from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
@@ -21,6 +20,13 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
+from cloudpickle import dumps, loads
+from ._check import CheckTypeError
+
+try:
+    from SciDataTool.Classes import Data1D
+except ImportError:
+    Data1D = ImportError
 from ._check import InitUnKnowClassError
 
 
@@ -49,7 +55,19 @@ class DataFreq(DataND):
         """
         return type(self)(init_dict=self.as_dict())
 
-    def __init__(self, axes=None, normalizations=-1, FTparameters=-1, values=None, symbol="", name="", unit="", symmetries=-1, init_dict = None, init_str = None):
+    def __init__(
+        self,
+        axes=None,
+        normalizations=-1,
+        FTparameters=-1,
+        values=None,
+        symbol="",
+        name="",
+        unit="",
+        symmetries=-1,
+        init_dict=None,
+        init_str=None,
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -83,7 +101,16 @@ class DataFreq(DataND):
                 symmetries = init_dict["symmetries"]
         # Set the properties (value check and convertion are done in setter)
         # Call DataND init
-        super(DataFreq, self).__init__(axes=axes, normalizations=normalizations, FTparameters=FTparameters, values=values, symbol=symbol, name=name, unit=unit, symmetries=symmetries)
+        super(DataFreq, self).__init__(
+            axes=axes,
+            normalizations=normalizations,
+            FTparameters=FTparameters,
+            values=values,
+            symbol=symbol,
+            name=name,
+            unit=unit,
+            symmetries=symmetries,
+        )
         # The class is frozen (in DataND init), for now it's impossible to
         # add new properties
 

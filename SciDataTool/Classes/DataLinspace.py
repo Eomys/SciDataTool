@@ -5,7 +5,6 @@
 """
 
 from os import linesep
-from logging import getLogger
 from ._check import check_var, raise_
 from ..Functions.save import save
 from ..Functions.load import load_init_dict
@@ -48,7 +47,21 @@ class DataLinspace(Data):
         """
         return type(self)(init_dict=self.as_dict())
 
-    def __init__(self, initial=None, final=None, step=None, number=None, include_endpoint=True, is_components=False, symbol="", name="", unit="", symmetries=-1, init_dict = None, init_str = None):
+    def __init__(
+        self,
+        initial=None,
+        final=None,
+        step=None,
+        number=None,
+        include_endpoint=True,
+        is_components=False,
+        symbol="",
+        name="",
+        unit="",
+        symmetries=-1,
+        init_dict=None,
+        init_str=None,
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -92,7 +105,9 @@ class DataLinspace(Data):
         self.include_endpoint = include_endpoint
         self.is_components = is_components
         # Call Data init
-        super(DataLinspace, self).__init__(symbol=symbol, name=name, unit=unit, symmetries=symmetries)
+        super(DataLinspace, self).__init__(
+            symbol=symbol, name=name, unit=unit, symmetries=symmetries
+        )
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
 
