@@ -407,9 +407,10 @@ class DataND(Data):
 
     def _get_axes(self):
         """getter of axes"""
-        for obj in self._axes:
-            if obj is not None:
-                obj.parent = self
+        if self._axes is not None:
+            for obj in self._axes:
+                if obj is not None:
+                    obj.parent = self
         return self._axes
 
     def _set_axes(self, value):
@@ -425,10 +426,6 @@ class DataND(Data):
             value = list()
         check_var("axes", value, "[Data]")
         self._axes = value
-
-        for obj in self._axes:
-            if obj is not None:
-                obj.parent = self
 
     axes = property(
         fget=_get_axes,
