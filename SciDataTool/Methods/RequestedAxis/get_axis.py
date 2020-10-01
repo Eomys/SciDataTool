@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.conversions import convert
 from SciDataTool.Functions.interpolations import get_common_base
+from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
 from numpy import array
 from importlib import import_module
 
@@ -39,6 +40,14 @@ def get_axis(self, axis, normalizations):
             values = array([v / normalizations.get(unit) for v in values])
         else:
             values = convert(values, self.corr_unit, unit)
+        # Rebuild symmetries
+        if is_fft and axis.name in axis.symmetries:
+            if "period" in axis.symmetries.get(axis.name).keys():
+                values = values * axis.symmetries.get(axis.name).get("period")
+            elif "antiperiod" in axis.symmetries.keys():
+                values = values * axis.symmetries.get(axis.name).get("antiperiod")
+        elif axis.name in axis.symmetries:
+            values = rebuild_symmetries_axis(values, axis.symmetries.get(axis.name))
         # Interpolate axis with input data
         if self.extension == "whole":
             self.values = values
