@@ -7,6 +7,7 @@
 from os import linesep
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
+from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
 from .DataND import DataND
@@ -39,14 +40,9 @@ class DataTime(DataND):
         )
     else:
         time_to_freq = time_to_freq
-    # save method is available in all object
+    # save and copy methods are available in all object
     save = save
-
-    # generic copy method
-    def copy(self):
-        """Return a copy of the class
-        """
-        return type(self)(init_dict=self.as_dict())
+    copy = copy
 
     def __init__(
         self,
@@ -108,7 +104,7 @@ class DataTime(DataND):
         # add new properties
 
     def __str__(self):
-        """Convert this objet in a readeable string (for print)"""
+        """Convert this object in a readeable string (for print)"""
 
         DataTime_str = ""
         # Get the properties inherited from DataND
@@ -127,12 +123,11 @@ class DataTime(DataND):
         return True
 
     def as_dict(self):
-        """Convert this objet in a json seriable dict (can be use in __init__)
-        """
+        """Convert this object in a json seriable dict (can be use in __init__)"""
 
         # Get the properties inherited from DataND
         DataTime_dict = super(DataTime, self).as_dict()
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataTime_dict["__class__"] = "DataTime"
         return DataTime_dict

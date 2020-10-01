@@ -7,6 +7,7 @@
 from os import linesep
 from ._check import check_var, raise_
 from ..Functions.save import save
+from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
 from ._frozen import FrozenClass
@@ -19,14 +20,9 @@ class Data(FrozenClass):
 
     VERSION = 1
 
-    # save method is available in all object
+    # save and copy methods are available in all object
     save = save
-
-    # generic copy method
-    def copy(self):
-        """Return a copy of the class
-        """
-        return type(self)(init_dict=self.as_dict())
+    copy = copy
 
     def __init__(
         self, symbol="", name="", unit="", symmetries=-1, init_dict=None, init_str=None
@@ -65,7 +61,7 @@ class Data(FrozenClass):
         self._freeze()
 
     def __str__(self):
-        """Convert this objet in a readeable string (for print)"""
+        """Convert this object in a readeable string (for print)"""
 
         Data_str = ""
         if self.parent is None:
@@ -94,15 +90,14 @@ class Data(FrozenClass):
         return True
 
     def as_dict(self):
-        """Convert this objet in a json seriable dict (can be use in __init__)
-        """
+        """Convert this object in a json seriable dict (can be use in __init__)"""
 
         Data_dict = dict()
         Data_dict["symbol"] = self.symbol
         Data_dict["name"] = self.name
         Data_dict["unit"] = self.unit
         Data_dict["symmetries"] = self.symmetries
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         Data_dict["__class__"] = "Data"
         return Data_dict
 
@@ -174,7 +169,7 @@ class Data(FrozenClass):
 
     def _set_symmetries(self, value):
         """setter of symmetries"""
-        if value is -1:
+        if type(value) is int and value == -1:
             value = dict()
         check_var("symmetries", value, "dict")
         self._symmetries = value

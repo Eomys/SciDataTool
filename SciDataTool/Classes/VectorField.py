@@ -7,6 +7,7 @@
 from os import linesep
 from ._check import check_var, raise_
 from ..Functions.save import save
+from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
 from ._frozen import FrozenClass
@@ -224,14 +225,9 @@ class VectorField(FrozenClass):
         )
     else:
         get_harm_rphiz_along = get_harm_rphiz_along
-    # save method is available in all object
+    # save and copy methods are available in all object
     save = save
-
-    # generic copy method
-    def copy(self):
-        """Return a copy of the class
-        """
-        return type(self)(init_dict=self.as_dict())
+    copy = copy
 
     def __init__(
         self, name="", symbol="", components={}, init_dict=None, init_str=None
@@ -267,7 +263,7 @@ class VectorField(FrozenClass):
         self._freeze()
 
     def __str__(self):
-        """Convert this objet in a readeable string (for print)"""
+        """Convert this object in a readeable string (for print)"""
 
         VectorField_str = ""
         if self.parent is None:
@@ -295,16 +291,18 @@ class VectorField(FrozenClass):
         return True
 
     def as_dict(self):
-        """Convert this objet in a json seriable dict (can be use in __init__)
-        """
+        """Convert this object in a json seriable dict (can be use in __init__)"""
 
         VectorField_dict = dict()
         VectorField_dict["name"] = self.name
         VectorField_dict["symbol"] = self.symbol
-        VectorField_dict["components"] = dict()
-        for key, obj in self.components.items():
-            VectorField_dict["components"][key] = obj.as_dict()
-        # The class name is added to the dict fordeserialisation purpose
+        if self.components is None:
+            VectorField_dict["components"] = None
+        else:
+            VectorField_dict["components"] = dict()
+            for key, obj in self.components.items():
+                VectorField_dict["components"][key] = obj.as_dict()
+        # The class name is added to the dict for deserialisation purpose
         VectorField_dict["__class__"] = "VectorField"
         return VectorField_dict
 
@@ -368,7 +366,7 @@ class VectorField(FrozenClass):
                         "SciDataTool.Classes", obj.get("__class__"), "components"
                     )
                     value[key] = class_obj(init_dict=obj)
-        if value is -1:
+        if type(value) is int and value == -1:
             value = dict()
         check_var("components", value, "{DataND}")
         self._components = value

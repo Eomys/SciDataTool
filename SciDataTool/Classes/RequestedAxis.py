@@ -7,6 +7,7 @@
 from os import linesep
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
+from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
 from ._frozen import FrozenClass
@@ -37,14 +38,9 @@ class RequestedAxis(FrozenClass):
         )
     else:
         get_axis = get_axis
-    # save method is available in all object
+    # save and copy methods are available in all object
     save = save
-
-    # generic copy method
-    def copy(self):
-        """Return a copy of the class
-        """
-        return type(self)(init_dict=self.as_dict())
+    copy = copy
 
     def __init__(
         self,
@@ -117,7 +113,7 @@ class RequestedAxis(FrozenClass):
         self._freeze()
 
     def __str__(self):
-        """Convert this objet in a readeable string (for print)"""
+        """Convert this object in a readeable string (for print)"""
 
         RequestedAxis_str = ""
         if self.parent is None:
@@ -186,8 +182,7 @@ class RequestedAxis(FrozenClass):
         return True
 
     def as_dict(self):
-        """Convert this objet in a json seriable dict (can be use in __init__)
-        """
+        """Convert this object in a json seriable dict (can be use in __init__)"""
 
         RequestedAxis_dict = dict()
         RequestedAxis_dict["name"] = self.name
@@ -207,7 +202,7 @@ class RequestedAxis(FrozenClass):
         RequestedAxis_dict["operation"] = self.operation
         RequestedAxis_dict["index"] = self.index
         RequestedAxis_dict["transform"] = self.transform
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
 
@@ -322,8 +317,8 @@ class RequestedAxis(FrozenClass):
 
     def _set_values(self, value):
         """setter of values"""
-        if value is -1:
-            value = list()
+        if type(value) is int and value == -1:
+            value = array([])
         elif type(value) is list:
             try:
                 value = array(value)
@@ -347,7 +342,7 @@ class RequestedAxis(FrozenClass):
 
     def _set_indices(self, value):
         """setter of indices"""
-        if value is -1:
+        if type(value) is int and value == -1:
             value = list()
         check_var("indices", value, "list")
         self._indices = value
@@ -367,8 +362,8 @@ class RequestedAxis(FrozenClass):
 
     def _set_input_data(self, value):
         """setter of input_data"""
-        if value is -1:
-            value = list()
+        if type(value) is int and value == -1:
+            value = array([])
         elif type(value) is list:
             try:
                 value = array(value)

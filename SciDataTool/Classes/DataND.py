@@ -7,6 +7,7 @@
 from os import linesep
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
+from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
 from .Data import Data
@@ -92,6 +93,11 @@ try:
     from ..Methods.DataND.get_harmonics import get_harmonics
 except ImportError as error:
     get_harmonics = error
+
+try:
+    from ..Methods.DataND._set_values import _set_values
+except ImportError as error:
+    _set_values = error
 
 
 from numpy import array, array_equal
@@ -273,14 +279,18 @@ class DataND(Data):
         )
     else:
         get_harmonics = get_harmonics
-    # save method is available in all object
+    # cf Methods.DataND._set_values
+    if isinstance(_set_values, ImportError):
+        _set_values = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method _set_values: " + str(_set_values))
+            )
+        )
+    else:
+        _set_values = _set_values
+    # save and copy methods are available in all object
     save = save
-
-    # generic copy method
-    def copy(self):
-        """Return a copy of the class
-        """
-        return type(self)(init_dict=self.as_dict())
+    copy = copy
 
     def __init__(
         self,
@@ -339,7 +349,7 @@ class DataND(Data):
         # add new properties
 
     def __str__(self):
-        """Convert this objet in a readeable string (for print)"""
+        """Convert this object in a readeable string (for print)"""
 
         DataND_str = ""
         # Get the properties inherited from Data
@@ -376,21 +386,23 @@ class DataND(Data):
         return True
 
     def as_dict(self):
-        """Convert this objet in a json seriable dict (can be use in __init__)
-        """
+        """Convert this object in a json seriable dict (can be use in __init__)"""
 
         # Get the properties inherited from Data
         DataND_dict = super(DataND, self).as_dict()
-        DataND_dict["axes"] = list()
-        for obj in self.axes:
-            DataND_dict["axes"].append(obj.as_dict())
+        if self.axes is None:
+            DataND_dict["axes"] = None
+        else:
+            DataND_dict["axes"] = list()
+            for obj in self.axes:
+                DataND_dict["axes"].append(obj.as_dict())
         DataND_dict["normalizations"] = self.normalizations
         DataND_dict["FTparameters"] = self.FTparameters
         if self.values is None:
             DataND_dict["values"] = None
         else:
             DataND_dict["values"] = self.values.tolist()
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataND_dict["__class__"] = "DataND"
         return DataND_dict
@@ -422,7 +434,7 @@ class DataND(Data):
                         "SciDataTool.Classes", obj.get("__class__"), "axes"
                     )
                     value[ii] = class_obj(init_dict=obj)
-        if value is -1:
+        if value == -1:
             value = list()
         check_var("axes", value, "[Data]")
         self._axes = value
@@ -442,7 +454,7 @@ class DataND(Data):
 
     def _set_normalizations(self, value):
         """setter of normalizations"""
-        if value is -1:
+        if type(value) is int and value == -1:
             value = dict()
         check_var("normalizations", value, "dict")
         self._normalizations = value
@@ -462,7 +474,7 @@ class DataND(Data):
 
     def _set_FTparameters(self, value):
         """setter of FTparameters"""
-        if value is -1:
+        if type(value) is int and value == -1:
             value = dict()
         check_var("FTparameters", value, "dict")
         self._FTparameters = value
@@ -479,18 +491,6 @@ class DataND(Data):
     def _get_values(self):
         """getter of values"""
         return self._values
-
-    def _set_values(self, value):
-        """setter of values"""
-        if value is -1:
-            value = list()
-        elif type(value) is list:
-            try:
-                value = array(value)
-            except:
-                pass
-        check_var("values", value, "ndarray")
-        self._values = value
 
     values = property(
         fget=_get_values,
