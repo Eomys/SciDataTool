@@ -20,7 +20,7 @@ def rebuild_symmetries(values, axis_index, symmetries):
         values = mytile(values, symmetries.get("period"), axis_index)
     elif "antiperiod" in symmetries.keys():
         values2 = concatenate((values, negative(values)), axis=axis_index)
-        values3 = mytile(values2, symmetries.get("antiperiod"), axis_index)
+        values3 = mytile(values2, symmetries.get("antiperiod")//2, axis_index)
         if symmetries.get("antiperiod") % 2 == 1:
             values = concatenate((values3, values), axis=axis_index)
         else:
