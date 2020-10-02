@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
 from numpy import linspace
 
 
@@ -22,4 +23,13 @@ def get_values(self, is_fft=False):
     else:
         number = self.number
         final = self.final
-    return linspace(initial, final, int(number), endpoint=self.include_endpoint)
+    values = linspace(initial, final, int(number), endpoint=self.include_endpoint)
+    # Rebuild symmetries
+    if self.name in self.symmetries and is_fft:
+        if "antiperiod" in self.symmetries:
+            nper = self.symmetries["antiperiod"]
+            self.symmetries["antiperiod"] = 2
+            values = rebuild_symmetries_axis(values, self.symmetries.get(self.name))
+            del self.symmetries["antiperiod"]
+            self.symmetries["period"] = nper
+    return values

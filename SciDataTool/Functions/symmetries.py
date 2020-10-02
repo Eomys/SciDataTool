@@ -43,10 +43,10 @@ def rebuild_symmetries_axis(values, symmetries):
     values_new = values
     if "period" in symmetries.keys():
         for i in range(symmetries.get("period") - 1):
-            values_new = concatenate((values_new, values + values_new[-1]))
+            values_new = concatenate((values_new, values + (values_new[-1]-values_new[-2]) + values_new[-1]))
     elif "antiperiod" in symmetries.keys():
         for i in range(symmetries.get("antiperiod") - 1):
-            values_new = concatenate((values_new, values + values_new[-1]))
+            values_new = concatenate((values_new, values + (values_new[-1]-values_new[-2]) + values_new[-1]))
     return values_new
 
 

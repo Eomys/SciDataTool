@@ -18,7 +18,19 @@ def get_field(self, axes_list):
     
     values = self.values
     for axis_requested in axes_list:
-        # # Rebuild symmetries
+        # Rebuild symmetries
+        if(
+            axis_requested.transform == "fft"
+            and axis_requested.corr_name in self.symmetries.keys()
+        ):
+            if "antiperiod" in self.symmetries.get(axis_requested.corr_name):
+                nper = self.symmetries.get(axis_requested.corr_name)["antiperiod"]
+                self.symmetries.get(axis_requested.corr_name)["antiperiod"] = 2
+                values = rebuild_symmetries(
+                    values, axis_requested.index, self.symmetries.get(axis_requested.corr_name)
+                )
+                del self.symmetries.get(axis_requested.corr_name)["antiperiod"]
+                self.symmetries.get(axis_requested.corr_name)["period"] = nper
         # if axis_requested.corr_name in self.symmetries.keys():
         #     values = rebuild_symmetries(
         #         values, axis_requested.index, self.symmetries.get(axis_requested.corr_name)
