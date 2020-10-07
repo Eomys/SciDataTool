@@ -47,7 +47,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     values = self.extract_slices_fft(values, axes_list)
     # Rebuild symmetries
     for axis in axes_list:
-        if axis.transform != "fft":
+        if axis.transform != "fft" and axis.extension in ["whole", "interval", "oneperiod", "antiperiod"]:
             values = self.rebuild_symmetries(values, axis.corr_name, axis.index)
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)

@@ -48,7 +48,7 @@ def get_values(self, unit="SI", is_oneperiod=False, is_antiperiod=False):
             else:
                 raise AxisError("ERROR: unknown periodicity")
         else:
-            raise AxisError("ERROR: axis has no periodicity")
+            return values
     else:
         if self.name in self.symmetries:
             values = rebuild_symmetries_axis(values, self.symmetries.get(self.name))
