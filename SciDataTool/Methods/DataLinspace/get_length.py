@@ -16,7 +16,12 @@ def get_length(self, is_oneperiod=False, is_antiperiod=False):
     -------
     Length of axis
     """
-    N = len(self.values)
+    
+    if self.number is None:
+        N = (self.final - self.initial + self.step) / self.step
+    else:
+        N = self.number
+        
     # Rebuild symmetries
     if is_antiperiod:
         if self.name in self.symmetries:
@@ -35,7 +40,7 @@ def get_length(self, is_oneperiod=False, is_antiperiod=False):
             else:
                 raise AxisError("ERROR: unknown periodicity")
         else:
-            raise AxisError("ERROR: axis has no periodicity")
+            return N
     else:
         if self.name in self.symmetries:
             if "antiperiod" in self.symmetries.get(self.name):

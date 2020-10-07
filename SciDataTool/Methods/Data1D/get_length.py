@@ -35,7 +35,7 @@ def get_length(self, is_oneperiod=False, is_antiperiod=False):
             else:
                 raise AxisError("ERROR: unknown periodicity")
         else:
-            raise AxisError("ERROR: axis has no periodicity")
+            return N
     else:
         if self.name in self.symmetries:
             if "antiperiod" in self.symmetries.get(self.name):
