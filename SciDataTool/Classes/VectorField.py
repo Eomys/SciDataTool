@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data/VectorField.csv
+# File generated according to Generator/ClassesRef/VectorField.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//VectorField
 """
 
 from os import linesep
+from logging import getLogger
 from ._check import check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -302,7 +303,7 @@ class VectorField(FrozenClass):
             VectorField_dict["components"] = dict()
             for key, obj in self.components.items():
                 VectorField_dict["components"][key] = obj.as_dict()
-        # The class name is added to the dict for deserialisation purpose
+        # The class name is added to the dict fordeserialisation purpose
         VectorField_dict["__class__"] = "VectorField"
         return VectorField_dict
 

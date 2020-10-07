@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data/Data1D.csv
+# File generated according to Generator/ClassesRef/Data1D.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Data1D
 """
 
 from os import linesep
+from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -19,6 +20,11 @@ try:
 except ImportError as error:
     get_values = error
 
+try:
+    from ..Methods.Data1D.get_length import get_length
+except ImportError as error:
+    get_length = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -29,6 +35,7 @@ class Data1D(Data):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.Data1D.get_values
     if isinstance(get_values, ImportError):
         get_values = property(
@@ -38,6 +45,15 @@ class Data1D(Data):
         )
     else:
         get_values = get_values
+    # cf Methods.Data1D.get_length
+    if isinstance(get_length, ImportError):
+        get_length = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Data1D method get_length: " + str(get_length))
+            )
+        )
+    else:
+        get_length = get_length
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -131,7 +147,7 @@ class Data1D(Data):
         else:
             Data1D_dict["values"] = self.values.tolist()
         Data1D_dict["is_components"] = self.is_components
-        # The class name is added to the dict for deserialisation purpose
+        # The class name is added to the dict fordeserialisation purpose
         # Overwrite the mother class name
         Data1D_dict["__class__"] = "Data1D"
         return Data1D_dict

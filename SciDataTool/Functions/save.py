@@ -21,8 +21,7 @@ def is_json_serializable(obj):
 
 
 def has_as_dict(obj):
-    """Check if object has 'as_dict' method.
-    """
+    """Check if object has 'as_dict' method."""
     return hasattr(obj, "as_dict") and callable(getattr(obj, "as_dict", None))
 
 
@@ -32,9 +31,9 @@ def build_data(obj):
     Data that can not be serialized will be set to None. Tuples will also be None.
     Parameters
     ----------
-    obj : 
+    obj :
         An object to serialize
-    
+
     Returns
     -------
     data :
@@ -69,7 +68,7 @@ def save_data(obj, save_path=""):
     """Save the object to the save_path
     Parameters
     ----------
-    self : 
+    self :
         A pyleecan object
     save_path: str
         path to the folder to save the object
@@ -86,7 +85,7 @@ def save(self, save_path=""):
     """Save the object to the save_path
     Parameters
     ----------
-    self : 
+    self :
         A pyleecan object
     save_path: str
         path to the folder to save the object

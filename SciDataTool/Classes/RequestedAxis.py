@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data/RequestedAxis.csv
+# File generated according to Generator/ClassesRef/RequestedAxis.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//RequestedAxis
 """
 
 from os import linesep
+from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -202,7 +203,7 @@ class RequestedAxis(FrozenClass):
         RequestedAxis_dict["operation"] = self.operation
         RequestedAxis_dict["index"] = self.index
         RequestedAxis_dict["transform"] = self.transform
-        # The class name is added to the dict for deserialisation purpose
+        # The class name is added to the dict fordeserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
 

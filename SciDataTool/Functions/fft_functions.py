@@ -31,11 +31,11 @@ def comp_fft_freqs(time, is_time, is_positive):
     Frequency/wavenumber vector
     """
     N_tot = time.size  # Number of samples
-    if N_tot==1:
+    if N_tot == 1:
         freqs = [0]
     else:
-    # zero-padding
-    # N_tot = int(2**(log(N_tot)//log(2)+1))
+        # zero-padding
+        # N_tot = int(2**(log(N_tot)//log(2)+1))
         timestep = float(time[1] - time[0])  # Sample step
         fsampt = 1.0 / timestep  # Sample frequency
         freqscale = N_tot / fsampt
@@ -60,7 +60,7 @@ def comp_fft_time(freqs, is_angle):
     -------
     Time/space vector
     """
-    if freqs.size==1:
+    if freqs.size == 1:
         time = [0]
     else:
         N_tot = len(freqs)  # Number of samples
@@ -167,10 +167,10 @@ def comp_ifft(values):
     -------
     ndarray of the field
     """
-    
+
     values_shape = values.shape
-    values[tuple([N//2 for N in values_shape])] *= 2
-    values = ifftshift(values*float(prod([N for N in values_shape])) / 2)
+    values[tuple([N // 2 for N in values_shape])] *= 2
+    values = ifftshift(values * float(prod([N for N in values_shape])) / 2)
     values = ifftn(values)
     return values.real
 

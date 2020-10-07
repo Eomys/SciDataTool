@@ -22,18 +22,26 @@ def get_harm_tan_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=
     -------
     list of 1Darray of axes values, ndarray of field values
     """
-    
+
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
-        
+
     if "tangential" in self.components.keys():
-        return_dict = self.components["tangential"].get_harmonics(N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data)
-        return_dict[self.symbol + "_t"] = return_dict.pop(self.components["tangential"].symbol)
-        
+        return_dict = self.components["tangential"].get_harmonics(
+            N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
+        return_dict[self.symbol + "_t"] = return_dict.pop(
+            self.components["tangential"].symbol
+        )
+
     elif "x" in self.components.keys() and "y" in self.components.keys():
         # Extract from DataND
-        resultx = self.components["x"].get_harmonics(N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data)
-        resulty = self.components["y"].get_harmonics(N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data)
+        resultx = self.components["x"].get_harmonics(
+            N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
+        resulty = self.components["y"].get_harmonics(
+            N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
         field_x = resultx[self.components["x"].symbol]
         field_y = resulty[self.components["y"].symbol]
         x = resultx["x"]
@@ -46,6 +54,5 @@ def get_harm_tan_along(self, N_harm, *args, unit="SI", is_norm=False, axis_data=
         return_dict[self.symbol + "_t"] = field_t
     else:
         raise AxisError("tangential or x,y components necessary")
-        
+
     return return_dict
-    

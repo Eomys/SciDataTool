@@ -40,7 +40,7 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
         args = args[0]  # if called from another script with *args
     return_dict = self.get_magnitude_along(args, unit=unit, is_norm=is_norm)
     values = return_dict[self.symbol]
-    
+
     # 2D case
     if "freqs" in return_dict and "wavenumber" in return_dict:
         r = return_dict["wavenumber"]
@@ -63,7 +63,7 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
         return_dict["freqs"] = f
         return_dict["wavenumber"] = r
         return_dict[self.symbol] = values
-        
+
     # 1D cases
     elif "freqs" in return_dict:
         f = return_dict["freqs"]
@@ -81,5 +81,5 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
         values = values[indices]
         return_dict["wavenumber"] = r
         return_dict[self.symbol] = values
-        
+
     return return_dict

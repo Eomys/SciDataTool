@@ -21,17 +21,30 @@ def get_axis(self, axis, normalizations):
     if is_components:
         self.values = None
     else:
-        if self.transform == "fft":
-            is_fft = True
+        if self.extension == "antiperiod":
+            is_oneperiod = False
+            is_antiperiod = True
+        elif self.extension == "oneperiod" or self.transform == "fft":
+            is_oneperiod = True
+            is_antiperiod = False
         else:
-            is_fft = False
+            is_oneperiod = False
+            is_antiperiod = False
         # Get original values of the axis
         if self.operation is not None:
             module = import_module("SciDataTool.Functions.conversions")
-            func = getattr(module, self.operation) # Conversion function
-            values = array(func(axis.get_values(is_fft)))
+            func = getattr(module, self.operation)  # Conversion function
+            values = array(
+                func(
+                    axis.get_values(
+                        is_oneperiod=is_oneperiod, is_antiperiod=is_antiperiod
+                    )
+                )
+            )
         else:
-            values = array(axis.get_values(is_fft))
+            values = array(
+                axis.get_values(is_oneperiod=is_oneperiod, is_antiperiod=is_antiperiod)
+            )
         # Unit conversions and normalizations
         unit = self.unit
         if unit == self.corr_unit or unit == "SI":
@@ -40,20 +53,33 @@ def get_axis(self, axis, normalizations):
             values = array([v / normalizations.get(unit) for v in values])
         else:
             values = convert(values, self.corr_unit, unit)
-        # Rebuild symmetries
-        if is_fft and axis.name in axis.symmetries:
+        # Rebuild symmetries in fft case
+        if self.transform == "fft" and axis.name in axis.symmetries:
             if "period" in axis.symmetries.get(axis.name).keys():
-                values = values * axis.symmetries.get(axis.name).get("period")
-            elif "antiperiod" in axis.symmetries.keys():
-                values = values * axis.symmetries.get(axis.name).get("antiperiod")
-        elif axis.name in axis.symmetries:
-            values = rebuild_symmetries_axis(values, axis.symmetries.get(axis.name))
+                if axis.name != "time":
+                    values = values * axis.symmetries.get(axis.name).get("period")
+            elif "antiperiod" in axis.symmetries.keys() and axis.name != "time":
+                if axis.name != "time":
+                    values = (
+                        values * axis.symmetries.get(axis.name).get("antiperiod") / 2
+                    )
         # Interpolate axis with input data
-        if self.extension == "whole":
+        if (
+            self.extension == "whole"
+            or self.extension == "oneperiod"
+            or self.extension == "antiperiod"
+        ):
             self.values = values
         elif self.input_data is not None:
-            self.input_data = get_common_base(self.input_data, values)
-            self.values = values
-        elif self.indices is not None:
+            if len(self.input_data) == 2:
+                self.indices = [
+                    i
+                    for i, x in enumerate(values)
+                    if x >= self.input_data[0] and x <= self.input_data[-1]
+                ]
+                self.input_data = None
+            else:
+                self.input_data = get_common_base(self.input_data, values)
+                self.values = values
+        if self.indices is not None:
             self.values = values[self.indices]
-                    

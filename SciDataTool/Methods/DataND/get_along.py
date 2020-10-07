@@ -4,6 +4,7 @@ from SciDataTool.Functions.fft_functions import comp_fft, comp_ifft
 
 from numpy import apply_along_axis
 
+
 def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the ndarray of the field, using conversions and symmetries if needed.
     Parameters
@@ -45,7 +46,9 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Slices along fft axes
     values = self.extract_slices_fft(values, axes_list)
     # Rebuild symmetries
-    values = self.rebuild_symmetries(values, axes_list)
+    for axis in axes_list:
+        if axis.transform != "fft":
+            values = self.rebuild_symmetries(values, axis.corr_name, axis.index)
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
     # Conversions
@@ -53,8 +56,12 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Return axes and values
     return_dict = {}
     for axis_requested in axes_list:
-        if axis_requested.extension == "whole" or axis_requested.extension == "interval":
+        if (
+            axis_requested.extension == "whole"
+            or axis_requested.extension == "interval"
+            or axis_requested.extension == "oneperiod"
+            or axis_requested.extension == "antiperiod"
+        ):
             return_dict[axis_requested.name] = axis_requested.values
     return_dict[self.symbol] = values
     return return_dict
-    

@@ -14,7 +14,7 @@ def comp_axes(self, axes_list):
     -------
     list of RequestedAxis objects + transformations
     """
-    
+
     transforms = []
     # Check if the requested axis is defined in the Data object
     for axis_requested in axes_list[:]:
@@ -24,8 +24,6 @@ def comp_axes(self, axes_list):
                 axis_requested.index = index
                 axis_requested.corr_name = axis_name
                 axis_requested.corr_unit = axis.unit
-                # if axis_name in rev_axes_dict.keys():
-                #     transforms.append(rev_axes_dict[axis_name][1])
                 if axis_name in axes_dict.keys():
                     axis_requested.transform = axes_dict[axis_name][1]
         if axis_requested.index is None:
@@ -35,7 +33,9 @@ def comp_axes(self, axes_list):
                     if axis.name == axes_dict[axis_name][0]:
                         axis_requested.corr_name = axes_dict[axis_name][0]
                         axis_requested.corr_unit = axes_dict[axis_name][2]
-                        axis_requested.operation = axes_dict[axis_name][0]+"_to_"+axis_name
+                        axis_requested.operation = (
+                            axes_dict[axis_name][0] + "_to_" + axis_name
+                        )
                         axis_requested.transform = axes_dict[axis_name][1]
                         transforms.append(axes_dict[axis_name][1])
                         axis_requested.index = index
@@ -47,7 +47,9 @@ def comp_axes(self, axes_list):
                     if axis.name == rev_axes_dict[axis_name][0]:
                         axis_requested.corr_name = rev_axes_dict[axis_name][0]
                         axis_requested.corr_unit = rev_axes_dict[axis_name][2]
-                        axis_requested.operation = rev_axes_dict[axis_name][0]+"_to_"+axis_name
+                        axis_requested.operation = (
+                            rev_axes_dict[axis_name][0] + "_to_" + axis_name
+                        )
                         axis_requested.transform = rev_axes_dict[axis_name][1]
                         transforms.append(rev_axes_dict[axis_name][1])
                         axis_requested.index = index
@@ -61,4 +63,3 @@ def comp_axes(self, axes_list):
     for axis_requested in axes_list:
         axis_requested.get_axis(self.axes[axis_requested.index], self.normalizations)
     return axes_list, transforms
-        

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data/DataND.csv
+# File generated according to Generator/ClassesRef/DataND.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataND
 """
 
 from os import linesep
+from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -402,7 +403,7 @@ class DataND(Data):
             DataND_dict["values"] = None
         else:
             DataND_dict["values"] = self.values.tolist()
-        # The class name is added to the dict for deserialisation purpose
+        # The class name is added to the dict fordeserialisation purpose
         # Overwrite the mother class name
         DataND_dict["__class__"] = "DataND"
         return DataND_dict

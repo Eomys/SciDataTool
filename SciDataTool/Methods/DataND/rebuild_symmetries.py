@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
-from SciDataTool.Functions.symmetries import rebuild_symmetries as rebuild_symmetries_fct
+from SciDataTool.Functions.symmetries import (
+    rebuild_symmetries as rebuild_symmetries_fct,
+)
+from SciDataTool.Functions import AxisError
 
-def rebuild_symmetries(self, values, axes_list):
+
+def rebuild_symmetries(
+    self, values, axis_name, axis_index, is_oneperiod=False, is_antiperiod=False
+):
     """Reconstructs the field of a Data object taking symmetries into account
     Parameters
     ----------
@@ -15,14 +21,34 @@ def rebuild_symmetries(self, values, axes_list):
     -------
     ndarray of the reconstructed field
     """
-    for axis_requested in axes_list:
-        # Rebuild symmetries
-        if(
-            axis_requested.transform != "fft"
-            and axis_requested.indices is None
-            and axis_requested.corr_name in self.symmetries.keys()
-        ):
+    # Rebuild symmetries
+    if is_antiperiod:
+        if axis_name in self.symmetries.keys():
+            if "antiperiod" in self.symmetries.get(axis_name):
+                return values
+            else:
+                raise AxisError("ERROR: axis has no antiperiodicity")
+        else:
+            raise AxisError("ERROR: axis has no antiperiodicity")
+    elif is_oneperiod:
+        if axis_name in self.symmetries:
+            if "antiperiod" in self.symmetries.get(axis_name):
+                nper = self.symmetries.get(axis_name)["antiperiod"]
+                self.symmetries.get(axis_name)["antiperiod"] = 2
+                values = rebuild_symmetries_fct(
+                    values, axis_index, self.symmetries.get(axis_name)
+                )
+                self.symmetries.get(axis_name)["antiperiod"] = nper
+                return values
+            else:
+                return values
+        else:
+            raise AxisError("ERROR: axis has no periodicity")
+    else:
+        if axis_name in self.symmetries:
             values = rebuild_symmetries_fct(
-                values, axis_requested.index, self.symmetries.get(axis_requested.corr_name)
+                values, axis_index, self.symmetries.get(axis_name)
             )
-    return values    
+            return values
+        else:
+            return values

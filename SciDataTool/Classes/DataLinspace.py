@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data/DataLinspace.csv
+# File generated according to Generator/ClassesRef/DataLinspace.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataLinspace
 """
 
 from os import linesep
+from logging import getLogger
 from ._check import check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -19,6 +20,11 @@ try:
 except ImportError as error:
     get_values = error
 
+try:
+    from ..Methods.DataLinspace.get_length import get_length
+except ImportError as error:
+    get_length = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -28,6 +34,7 @@ class DataLinspace(Data):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.DataLinspace.get_values
     if isinstance(get_values, ImportError):
         get_values = property(
@@ -39,6 +46,17 @@ class DataLinspace(Data):
         )
     else:
         get_values = get_values
+    # cf Methods.DataLinspace.get_length
+    if isinstance(get_length, ImportError):
+        get_length = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataLinspace method get_length: " + str(get_length)
+                )
+            )
+        )
+    else:
+        get_length = get_length
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -155,7 +173,7 @@ class DataLinspace(Data):
         DataLinspace_dict["number"] = self.number
         DataLinspace_dict["include_endpoint"] = self.include_endpoint
         DataLinspace_dict["is_components"] = self.is_components
-        # The class name is added to the dict for deserialisation purpose
+        # The class name is added to the dict fordeserialisation purpose
         # Overwrite the mother class name
         DataLinspace_dict["__class__"] = "DataLinspace"
         return DataLinspace_dict

@@ -19,9 +19,9 @@ def read_input_strings(args, axis_data):
     axes_list = []
     for axis_str in args:
         unit = "SI"
-        values=None
-        indices=None
-        input_data=None
+        values = None
+        indices = None
+        input_data = None
         # Detect unit
         if "{" in axis_str:
             elems = axis_str.split("{")
@@ -29,9 +29,17 @@ def read_input_strings(args, axis_data):
             axis_str = elems[0]
         # Detect sum
         if "sum" in axis_str:
-             elems = axis_str.split("=sum")
-             name = elems[0]
-             extension = "sum"
+            elems = axis_str.split("=sum")
+            name = elems[0]
+            extension = "sum"
+        elif "oneperiod" in axis_str:
+            elems = axis_str.split("[")
+            name = elems[0]
+            extension = "oneperiod"
+        elif "antiperiod" in axis_str:
+            elems = axis_str.split("[")
+            name = elems[0]
+            extension = "antiperiod"
         # Detect axis_data input
         elif "axis_data" in axis_str:
             elems = axis_str.split("=axis_data")

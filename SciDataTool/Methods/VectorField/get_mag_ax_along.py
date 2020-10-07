@@ -21,20 +21,25 @@ def get_mag_ax_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     -------
     list of 1Darray of axes values, ndarray of field values
     """
-    
+
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
-        
+
     if "axial" in self.components.keys():
-        return_dict = self.components["axial"].get_magnitude_along(args, unit=unit, is_norm=is_norm, axis_data=axis_data)
-        return_dict[self.symbol + "_z"] = return_dict.pop(self.components["axial"].symbol)
-        
+        return_dict = self.components["axial"].get_magnitude_along(
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
+        return_dict[self.symbol + "_z"] = return_dict.pop(
+            self.components["axial"].symbol
+        )
+
     elif "z" in self.components.keys():
-        return_dict = self.components["z"].get_magnitude_along(args, unit=unit, is_norm=is_norm, axis_data=axis_data)
+        return_dict = self.components["z"].get_magnitude_along(
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
         return_dict[self.symbol + "_z"] = return_dict.pop(self.components["z"].symbol)
-        
+
     else:
         raise AxisError("axial or z component necessary")
-        
+
     return return_dict
-    

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data/DataFreq.csv
+# File generated according to Generator/ClassesRef/DataFreq.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataFreq
 """
 
 from os import linesep
+from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -127,7 +128,7 @@ class DataFreq(DataND):
 
         # Get the properties inherited from DataND
         DataFreq_dict = super(DataFreq, self).as_dict()
-        # The class name is added to the dict for deserialisation purpose
+        # The class name is added to the dict fordeserialisation purpose
         # Overwrite the mother class name
         DataFreq_dict["__class__"] = "DataFreq"
         return DataFreq_dict

@@ -170,9 +170,17 @@ class tests_dataobj(TestCase):
         out4.post.legend_name = "Inverse FT"
         out4.post.line_color = "r--"
         # Build the data objects
-        Freqs = Data1D(name="freqs", unit="Hz", symmetries={}, values=freqs_Br,)
+        Freqs = Data1D(
+            name="freqs",
+            unit="Hz",
+            symmetries={},
+            values=freqs_Br,
+        )
         Wavenumber = Data1D(
-            name="wavenumber", unit="", symmetries={}, values=wavenumber,
+            name="wavenumber",
+            unit="",
+            symmetries={},
+            values=wavenumber,
         )
         out4.mag.Br = DataFreq(
             symbol="B_r",
@@ -309,9 +317,17 @@ class tests_dataobj(TestCase):
     def test_default_proj_surf(self):
         out = Output(simu=simu)
         # Build the data objects
-        Freqs = Data1D(name="freqs", unit="Hz", symmetries={}, values=freqs_Br,)
+        Freqs = Data1D(
+            name="freqs",
+            unit="Hz",
+            symmetries={},
+            values=freqs_Br,
+        )
         Wavenumber = Data1D(
-            name="wavenumber", unit="", symmetries={}, values=wavenumber,
+            name="wavenumber",
+            unit="",
+            symmetries={},
+            values=wavenumber,
         )
         out.mag.Br = DataFreq(
             symbol="B_r",

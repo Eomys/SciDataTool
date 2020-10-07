@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data/Data.csv
+# File generated according to Generator/ClassesRef/Data.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Data
 """
 
 from os import linesep
+from logging import getLogger
 from ._check import check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -97,7 +98,7 @@ class Data(FrozenClass):
         Data_dict["name"] = self.name
         Data_dict["unit"] = self.unit
         Data_dict["symmetries"] = self.symmetries
-        # The class name is added to the dict for deserialisation purpose
+        # The class name is added to the dict fordeserialisation purpose
         Data_dict["__class__"] = "Data"
         return Data_dict
 

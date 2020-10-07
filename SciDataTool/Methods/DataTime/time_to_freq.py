@@ -2,6 +2,7 @@
 from SciDataTool import Data1D
 from SciDataTool.Functions import AxisError
 
+
 def time_to_freq(self):
     """Performs the Fourier Transform and stores the resulting field in a DataFreq object.
     Parameters
@@ -12,11 +13,11 @@ def time_to_freq(self):
     -------
     a DataFreq object
     """
-    
+
     # Dynamic import to avoid loop
     module = __import__("SciDataTool.Classes.DataFreq", fromlist=["DataFreq"])
     DataFreq = getattr(module, "DataFreq")
-    
+
     axes_str = []
     for i, axis in enumerate(self.axes):
         if axis.is_components:
@@ -37,7 +38,7 @@ def time_to_freq(self):
         values = results.pop(self.symbol)
         Axes = []
         for axis in self.axes:
-            if axis.is_components: # components axis
+            if axis.is_components:  # components axis
                 name = axis.name
                 is_components = True
                 axis_values = axis.values
@@ -57,7 +58,14 @@ def time_to_freq(self):
                 is_components = False
                 axis_values = results[axis.name]
                 unit = axis.unit
-            Axes.append(Data1D(name=name, unit=unit, values=axis_values, is_components=is_components))
+            Axes.append(
+                Data1D(
+                    name=name,
+                    unit=unit,
+                    values=axis_values,
+                    is_components=is_components,
+                )
+            )
         return DataFreq(
             name=self.name,
             unit=self.unit,

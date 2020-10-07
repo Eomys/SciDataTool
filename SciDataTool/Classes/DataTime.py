@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data/DataTime.csv
+# File generated according to Generator/ClassesRef/DataTime.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataTime
 """
 
 from os import linesep
+from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -127,7 +128,7 @@ class DataTime(DataND):
 
         # Get the properties inherited from DataND
         DataTime_dict = super(DataTime, self).as_dict()
-        # The class name is added to the dict for deserialisation purpose
+        # The class name is added to the dict fordeserialisation purpose
         # Overwrite the mother class name
         DataTime_dict["__class__"] = "DataTime"
         return DataTime_dict

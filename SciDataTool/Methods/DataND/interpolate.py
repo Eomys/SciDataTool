@@ -2,6 +2,7 @@
 from SciDataTool.Functions.interpolations import get_interpolation
 from numpy import apply_along_axis, squeeze
 
+
 def interpolate(self, values, axes_list):
     """Returns the values of the field interpolated over the axes values.
     Parameters
@@ -17,7 +18,7 @@ def interpolate(self, values, axes_list):
     values: ndarray
         values of the field
     """
-    
+
     # Interpolate over axis values
     for axis_requested in axes_list:
         if axis_requested.input_data is not None:

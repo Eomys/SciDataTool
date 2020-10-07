@@ -22,18 +22,26 @@ def get_mag_rad_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     -------
     list of 1Darray of axes values, ndarray of field values
     """
-    
+
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
-        
+
     if "radial" in self.components.keys():
-        return_dict = self.components["radial"].get_magnitude_along(args, unit=unit, is_norm=is_norm, axis_data=axis_data)
-        return_dict[self.symbol + "_r"] = return_dict.pop(self.components["radial"].symbol)
-        
+        return_dict = self.components["radial"].get_magnitude_along(
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
+        return_dict[self.symbol + "_r"] = return_dict.pop(
+            self.components["radial"].symbol
+        )
+
     elif "x" in self.components.keys() and "y" in self.components.keys():
         # Extract from DataND
-        resultx = self.components["x"].get_magnitude_along(args, unit=unit, is_norm=is_norm, axis_data=axis_data)
-        resulty = self.components["y"].get_magnitude_along(args, unit=unit, is_norm=is_norm, axis_data=axis_data)
+        resultx = self.components["x"].get_magnitude_along(
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
+        resulty = self.components["y"].get_magnitude_along(
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
         field_x = resultx[self.components["x"].symbol]
         field_y = resulty[self.components["y"].symbol]
         x = resultx["x"]
@@ -46,6 +54,5 @@ def get_mag_rad_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         return_dict[self.symbol + "_r"] = field_r
     else:
         raise AxisError("radial or x,y components necessary")
-        
+
     return return_dict
-    
