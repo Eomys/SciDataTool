@@ -52,14 +52,22 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             "interval",
             "oneperiod",
             "antiperiod",
+            "smallestperiod",
         ]:
-            if axis.extension == "antiperiod":
+            if axis.extension == "smallestperiod":
+                is_smallestperiod = True
+                is_oneperiod = False
+                is_antiperiod = False
+            elif axis.extension == "antiperiod":
+                is_smallestperiod = False
                 is_oneperiod = False
                 is_antiperiod = True
             elif axis.extension == "oneperiod":
+                is_smallestperiod = False
                 is_oneperiod = True
                 is_antiperiod = False
             else:
+                is_smallestperiod = False
                 is_oneperiod = False
                 is_antiperiod = False
             values = self.rebuild_symmetries(
@@ -68,6 +76,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 axis.index,
                 is_oneperiod=is_oneperiod,
                 is_antiperiod=is_antiperiod,
+                is_smallestperiod=is_smallestperiod,
             )
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
@@ -76,12 +85,12 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Return axes and values
     return_dict = {}
     for axis_requested in axes_list:
-        if (
-            axis_requested.extension == "whole"
-            or axis_requested.extension == "interval"
-            or axis_requested.extension == "oneperiod"
-            or axis_requested.extension == "antiperiod"
-        ):
+        if axis_requested.extension in [
+            "whole",
+            "oneperiod",
+            "antiperiod",
+            "smallestperiod",
+        ]:
             return_dict[axis_requested.name] = axis_requested.values
     return_dict[self.symbol] = values
     return return_dict

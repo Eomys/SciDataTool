@@ -21,13 +21,20 @@ def get_axis(self, axis, normalizations):
     if is_components:
         self.values = None
     else:
-        if self.extension == "antiperiod":
+        if self.extension == "smallestperiod":
+            is_smallestperiod = True
+            is_oneperiod = False
+            is_antiperiod = False
+        elif self.extension == "antiperiod":
+            is_smallestperiod = False
             is_oneperiod = False
             is_antiperiod = True
         elif self.extension == "oneperiod" or self.transform == "fft":
+            is_smallestperiod = False
             is_oneperiod = True
             is_antiperiod = False
         else:
+            is_smallestperiod = False
             is_oneperiod = False
             is_antiperiod = False
         # Get original values of the axis
@@ -37,13 +44,19 @@ def get_axis(self, axis, normalizations):
             values = array(
                 func(
                     axis.get_values(
-                        is_oneperiod=is_oneperiod, is_antiperiod=is_antiperiod
+                        is_oneperiod=is_oneperiod,
+                        is_antiperiod=is_antiperiod,
+                        is_smallestperiod=is_smallestperiod,
                     )
                 )
             )
         else:
             values = array(
-                axis.get_values(is_oneperiod=is_oneperiod, is_antiperiod=is_antiperiod)
+                axis.get_values(
+                    is_oneperiod=is_oneperiod,
+                    is_antiperiod=is_antiperiod,
+                    is_smallestperiod=is_smallestperiod,
+                )
             )
         # Unit conversions and normalizations
         unit = self.unit
@@ -64,11 +77,7 @@ def get_axis(self, axis, normalizations):
                         values * axis.symmetries.get(axis.name).get("antiperiod") / 2
                     )
         # Interpolate axis with input data
-        if (
-            self.extension == "whole"
-            or self.extension == "oneperiod"
-            or self.extension == "antiperiod"
-        ):
+        if self.extension in ["whole", "oneperiod", "antiperiod", "smallestperiod"]:
             self.values = values
         elif self.input_data is not None:
             if len(self.input_data) == 2:

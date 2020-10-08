@@ -6,7 +6,13 @@ from SciDataTool.Functions import AxisError
 
 
 def rebuild_symmetries(
-    self, values, axis_name, axis_index, is_oneperiod=False, is_antiperiod=False
+    self,
+    values,
+    axis_name,
+    axis_index,
+    is_oneperiod=False,
+    is_antiperiod=False,
+    is_smallestperiod=False,
 ):
     """Reconstructs the field of a Data object taking symmetries into account
     Parameters
@@ -22,7 +28,9 @@ def rebuild_symmetries(
     ndarray of the reconstructed field
     """
     # Rebuild symmetries
-    if is_antiperiod:
+    if is_smallestperiod:
+        return values
+    elif is_antiperiod:
         if axis_name in self.symmetries.keys():
             if "antiperiod" in self.symmetries.get(axis_name):
                 return values

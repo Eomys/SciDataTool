@@ -5,7 +5,9 @@ from SciDataTool.Functions import AxisError
 from numpy import linspace
 
 
-def get_values(self, unit="SI", is_oneperiod=False, is_antiperiod=False):
+def get_values(
+    self, unit="SI", is_oneperiod=False, is_antiperiod=False, is_smallestperiod=False
+):
     """Returns the vector 'axis' by rebuilding the linspace, symmetries and unit included.
     Parameters
     ----------
@@ -38,7 +40,9 @@ def get_values(self, unit="SI", is_oneperiod=False, is_antiperiod=False):
         values = convert(values, self.unit, unit)
 
     # Rebuild symmetries
-    if is_antiperiod:
+    if is_smallestperiod:
+        return values
+    elif is_antiperiod:
         if self.name in self.symmetries:
             if "antiperiod" in self.symmetries.get(self.name):
                 return values

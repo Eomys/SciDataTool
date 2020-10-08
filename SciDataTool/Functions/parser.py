@@ -40,6 +40,10 @@ def read_input_strings(args, axis_data):
             elems = axis_str.split("[")
             name = elems[0]
             extension = "antiperiod"
+        elif "smallestperiod" in axis_str:
+            elems = axis_str.split("[")
+            name = elems[0]
+            extension = "smallestperiod"
         # Detect axis_data input
         elif "axis_data" in axis_str:
             elems = axis_str.split("=axis_data")
