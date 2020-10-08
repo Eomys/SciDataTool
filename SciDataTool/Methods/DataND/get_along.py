@@ -48,7 +48,16 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Rebuild symmetries
     for axis in axes_list:
         if axis.transform != "fft" and axis.extension in ["whole", "interval", "oneperiod", "antiperiod"]:
-            values = self.rebuild_symmetries(values, axis.corr_name, axis.index)
+            if axis.extension == "antiperiod":
+                is_oneperiod = False
+                is_antiperiod = True
+            elif axis.extension == "oneperiod":
+                is_oneperiod = True
+                is_antiperiod = False
+            else:
+                is_oneperiod = False
+                is_antiperiod = False
+            values = self.rebuild_symmetries(values, axis.corr_name, axis.index, is_oneperiod=is_oneperiod, is_antiperiod=is_antiperiod)
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
     # Conversions
