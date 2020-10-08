@@ -87,6 +87,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     for axis_requested in axes_list:
         if axis_requested.extension in [
             "whole",
+            "interval",
             "oneperiod",
             "antiperiod",
             "smallestperiod",
