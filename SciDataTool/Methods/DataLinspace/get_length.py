@@ -16,12 +16,12 @@ def get_length(self, is_oneperiod=False, is_antiperiod=False):
     -------
     Length of axis
     """
-    
+
     if self.number is None:
         N = (self.final - self.initial + self.step) / self.step
     else:
         N = self.number
-        
+
     # Rebuild symmetries
     if is_antiperiod:
         if self.name in self.symmetries:

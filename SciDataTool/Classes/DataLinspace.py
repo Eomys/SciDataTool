@@ -25,6 +25,16 @@ try:
 except ImportError as error:
     get_length = error
 
+try:
+    from ..Methods.DataLinspace.get_axis_periodic import get_axis_periodic
+except ImportError as error:
+    get_axis_periodic = error
+
+try:
+    from ..Methods.DataLinspace.has_period import has_period
+except ImportError as error:
+    has_period = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -57,6 +67,29 @@ class DataLinspace(Data):
         )
     else:
         get_length = get_length
+    # cf Methods.DataLinspace.get_axis_periodic
+    if isinstance(get_axis_periodic, ImportError):
+        get_axis_periodic = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataLinspace method get_axis_periodic: "
+                    + str(get_axis_periodic)
+                )
+            )
+        )
+    else:
+        get_axis_periodic = get_axis_periodic
+    # cf Methods.DataLinspace.has_period
+    if isinstance(has_period, ImportError):
+        has_period = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataLinspace method has_period: " + str(has_period)
+                )
+            )
+        )
+    else:
+        has_period = has_period
     # save and copy methods are available in all object
     save = save
     copy = copy

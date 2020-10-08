@@ -47,7 +47,12 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     values = self.extract_slices_fft(values, axes_list)
     # Rebuild symmetries
     for axis in axes_list:
-        if axis.transform != "fft" and axis.extension in ["whole", "interval", "oneperiod", "antiperiod"]:
+        if axis.transform != "fft" and axis.extension in [
+            "whole",
+            "interval",
+            "oneperiod",
+            "antiperiod",
+        ]:
             if axis.extension == "antiperiod":
                 is_oneperiod = False
                 is_antiperiod = True
@@ -57,7 +62,13 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             else:
                 is_oneperiod = False
                 is_antiperiod = False
-            values = self.rebuild_symmetries(values, axis.corr_name, axis.index, is_oneperiod=is_oneperiod, is_antiperiod=is_antiperiod)
+            values = self.rebuild_symmetries(
+                values,
+                axis.corr_name,
+                axis.index,
+                is_oneperiod=is_oneperiod,
+                is_antiperiod=is_antiperiod,
+            )
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
     # Conversions

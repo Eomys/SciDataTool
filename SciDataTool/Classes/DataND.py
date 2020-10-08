@@ -100,6 +100,11 @@ try:
 except ImportError as error:
     _set_values = error
 
+try:
+    from ..Methods.DataND.has_period import has_period
+except ImportError as error:
+    has_period = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -289,6 +294,15 @@ class DataND(Data):
         )
     else:
         _set_values = _set_values
+    # cf Methods.DataND.has_period
+    if isinstance(has_period, ImportError):
+        has_period = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method has_period: " + str(has_period))
+            )
+        )
+    else:
+        has_period = has_period
     # save and copy methods are available in all object
     save = save
     copy = copy
