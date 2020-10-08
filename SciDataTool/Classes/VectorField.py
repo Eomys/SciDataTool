@@ -75,6 +75,11 @@ try:
 except ImportError as error:
     get_harm_rphiz_along = error
 
+try:
+    from ..Methods.VectorField.get_axes import get_axes
+except ImportError as error:
+    get_axes = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -226,6 +231,15 @@ class VectorField(FrozenClass):
         )
     else:
         get_harm_rphiz_along = get_harm_rphiz_along
+    # cf Methods.VectorField.get_axes
+    if isinstance(get_axes, ImportError):
+        get_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VectorField method get_axes: " + str(get_axes))
+            )
+        )
+    else:
+        get_axes = get_axes
     # save and copy methods are available in all object
     save = save
     copy = copy
