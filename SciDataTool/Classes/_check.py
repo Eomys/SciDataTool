@@ -357,9 +357,9 @@ def check_dimensions(values, axes):
             # else:
             #     axes_shape.append(len(squeeze(axis.values)))
         else:
-            if isinstance(axis.number, int):
-                axes_shape.append(axis.number)
-            else:
+            try:
+                axes_shape.append(int(axis.number))
+            except:
                 axes_shape.append(int((axis.final - axis.initial) / axis.step))
 
     if values_shape != tuple(axes_shape):
