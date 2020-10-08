@@ -43,7 +43,7 @@ def rebuild_symmetries(
             else:
                 return values
         else:
-            raise AxisError("ERROR: axis has no periodicity")
+            return values
     else:
         if axis_name in self.symmetries:
             values = rebuild_symmetries_fct(
