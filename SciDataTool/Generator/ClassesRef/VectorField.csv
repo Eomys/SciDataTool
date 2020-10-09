@@ -12,3 +12,4 @@ components,,Dict of the components,,{SciDataTool.Classes.DataND},{},,,,,,get_ax_
 ,,,,,,,,,,,get_harm_ax_along,,,,
 ,,,,,,,,,,,get_harm_rphiz_along,,,,
 ,,,,,,,,,,,get_axes,,,,
+,,,,,,,,,,,get_symmetries,,,,

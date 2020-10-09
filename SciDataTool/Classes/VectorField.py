@@ -80,6 +80,11 @@ try:
 except ImportError as error:
     get_axes = error
 
+try:
+    from ..Methods.VectorField.get_symmetries import get_symmetries
+except ImportError as error:
+    get_symmetries = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -240,6 +245,18 @@ class VectorField(FrozenClass):
         )
     else:
         get_axes = get_axes
+    # cf Methods.VectorField.get_symmetries
+    if isinstance(get_symmetries, ImportError):
+        get_symmetries = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_symmetries: "
+                    + str(get_symmetries)
+                )
+            )
+        )
+    else:
+        get_symmetries = get_symmetries
     # save and copy methods are available in all object
     save = save
     copy = copy
