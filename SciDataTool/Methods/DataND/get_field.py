@@ -29,7 +29,8 @@ def get_field(self, axes_list):
                     values,
                     axis_requested.corr_name,
                     axis_requested.index,
-                    is_antiperiod=True,
+                    is_oneperiod=True,
+                    is_antiperiod=False,
                 )
 
         # Sum over sum axes
