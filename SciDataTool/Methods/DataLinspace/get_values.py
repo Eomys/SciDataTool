@@ -56,8 +56,7 @@ def get_values(
                 nper = self.symmetries.get(self.name)["antiperiod"]
                 self.symmetries.get(self.name)["antiperiod"] = 2
                 values = rebuild_symmetries_axis(values, self.symmetries.get(self.name))
-                del self.symmetries.get(self.name)["antiperiod"]
-                self.symmetries.get(self.name)["period"] = nper
+                self.symmetries.get(self.name)["antiperiod"] = nper
                 return values
             elif "period" in self.symmetries.get(self.name):
                 return values
