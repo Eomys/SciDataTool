@@ -5,6 +5,7 @@
 """
 
 from os import linesep
+from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy

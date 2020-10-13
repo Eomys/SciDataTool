@@ -35,6 +35,11 @@ try:
 except ImportError as error:
     has_period = error
 
+try:
+    from ..Methods.DataLinspace.get_periodicity import get_periodicity
+except ImportError as error:
+    get_periodicity = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -90,6 +95,18 @@ class DataLinspace(Data):
         )
     else:
         has_period = has_period
+    # cf Methods.DataLinspace.get_periodicity
+    if isinstance(get_periodicity, ImportError):
+        get_periodicity = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataLinspace method get_periodicity: "
+                    + str(get_periodicity)
+                )
+            )
+        )
+    else:
+        get_periodicity = get_periodicity
     # save and copy methods are available in all object
     save = save
     copy = copy
