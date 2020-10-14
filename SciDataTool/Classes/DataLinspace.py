@@ -223,7 +223,7 @@ class DataLinspace(Data):
         DataLinspace_dict["number"] = self.number
         DataLinspace_dict["include_endpoint"] = self.include_endpoint
         DataLinspace_dict["is_components"] = self.is_components
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataLinspace_dict["__class__"] = "DataLinspace"
         return DataLinspace_dict

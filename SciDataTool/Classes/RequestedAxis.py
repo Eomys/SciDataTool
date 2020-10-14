@@ -203,7 +203,7 @@ class RequestedAxis(FrozenClass):
         RequestedAxis_dict["operation"] = self.operation
         RequestedAxis_dict["index"] = self.index
         RequestedAxis_dict["transform"] = self.transform
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
 

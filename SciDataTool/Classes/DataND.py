@@ -105,6 +105,11 @@ try:
 except ImportError as error:
     has_period = error
 
+try:
+    from ..Methods.DataND.get_axes import get_axes
+except ImportError as error:
+    get_axes = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -303,6 +308,15 @@ class DataND(Data):
         )
     else:
         has_period = has_period
+    # cf Methods.DataND.get_axes
+    if isinstance(get_axes, ImportError):
+        get_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method get_axes: " + str(get_axes))
+            )
+        )
+    else:
+        get_axes = get_axes
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -417,7 +431,7 @@ class DataND(Data):
             DataND_dict["values"] = None
         else:
             DataND_dict["values"] = self.values.tolist()
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataND_dict["__class__"] = "DataND"
         return DataND_dict

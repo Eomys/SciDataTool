@@ -194,7 +194,7 @@ class Data1D(Data):
         else:
             Data1D_dict["values"] = self.values.tolist()
         Data1D_dict["is_components"] = self.is_components
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         Data1D_dict["__class__"] = "Data1D"
         return Data1D_dict

@@ -128,7 +128,7 @@ class DataFreq(DataND):
 
         # Get the properties inherited from DataND
         DataFreq_dict = super(DataFreq, self).as_dict()
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataFreq_dict["__class__"] = "DataFreq"
         return DataFreq_dict

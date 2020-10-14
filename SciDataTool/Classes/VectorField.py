@@ -334,7 +334,7 @@ class VectorField(FrozenClass):
             VectorField_dict["components"] = dict()
             for key, obj in self.components.items():
                 VectorField_dict["components"][key] = obj.as_dict()
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         VectorField_dict["__class__"] = "VectorField"
         return VectorField_dict
 

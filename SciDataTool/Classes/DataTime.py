@@ -128,7 +128,7 @@ class DataTime(DataND):
 
         # Get the properties inherited from DataND
         DataTime_dict = super(DataTime, self).as_dict()
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataTime_dict["__class__"] = "DataTime"
         return DataTime_dict

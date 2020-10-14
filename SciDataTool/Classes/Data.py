@@ -98,7 +98,7 @@ class Data(FrozenClass):
         Data_dict["name"] = self.name
         Data_dict["unit"] = self.unit
         Data_dict["symmetries"] = self.symmetries
-        # The class name is added to the dict fordeserialisation purpose
+        # The class name is added to the dict for deserialisation purpose
         Data_dict["__class__"] = "Data"
         return Data_dict
 
