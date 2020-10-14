@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.parser import read_input_strings
-from SciDataTool.Functions.fft_functions import comp_fft, comp_ifft
+from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifft
 
 from numpy import apply_along_axis
 
@@ -40,9 +40,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     values = self.extract_slices(values, axes_list)
     # fft
     if "fft" in transforms:
-        for axis in axes_list:
-            if axis.transform == "fft":
-                values = apply_along_axis(comp_fft, axis.index, values)
+        values = comp_fftn(values, axes_list)
     # Slices along fft axes
     values = self.extract_slices_fft(values, axes_list)
     # Rebuild symmetries

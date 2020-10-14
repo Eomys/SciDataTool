@@ -1,18 +1,8 @@
 # -*- coding: utf-8 -*-
-from SciDataTool.Functions import AxisError, NormError, UnitError
-from SciDataTool.Functions.fft_functions import comp_fft
-from SciDataTool.Functions.symmetries import rebuild_symmetries
-from SciDataTool.Functions.conversions import convert, to_dB, to_dBA
-from SciDataTool.Functions.parser import read_input_strings
-from SciDataTool.Functions.interpolations import get_common_base, get_interpolation
 from numpy import (
-    squeeze,
-    take,
-    apply_along_axis,
     argsort,
     negative,
     meshgrid,
-    abs as np_abs,
 )
 
 
