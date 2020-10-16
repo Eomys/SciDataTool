@@ -151,11 +151,11 @@ def _comp_fft(values, n=0):
     Complex Fourier Transform
     """
     values_FT = fft(values)
-    # if n==0:
-    #     values_FT[tuple([0 for N in values_shape])] *= 0.5
-    #     values_FT = 2.0 * fftshift(values_FT) / float(prod([N for N in values_shape]))
-    # else:
-    #     values_FT = fftshift(values_FT) / float(prod([N for N in values_shape]))
+    if n==0:
+        values_FT[0] *= 0.5
+        values_FT = 2.0 * fftshift(values_FT) / len(values)
+    else:
+        values_FT = fftshift(values_FT) / len(values)
     return values_FT
 
 
@@ -176,9 +176,6 @@ def comp_fftn(values, axes_list):
         if axis.transform == "fft":
             values = apply_along_axis(_comp_fft, axis.index, values, n=n)
             n = n+1
-            values_shape.append(values.shape[axis.index])
-    values[tuple([0 for N in values_shape])] *= 0.5
-    values = 2.0 * fftshift(values) / float(prod([N for N in values_shape]))
     return values
 
 
