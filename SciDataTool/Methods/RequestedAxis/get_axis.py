@@ -75,7 +75,7 @@ def get_axis(self, axis, normalizations):
             if "period" in axis.symmetries.get(axis.name).keys():
                 if axis.name != "time":
                     values = values * axis.symmetries.get(axis.name).get("period")
-            elif "antiperiod" in axis.symmetries.keys() and axis.name != "time":
+            elif "antiperiod" in axis.symmetries.get(axis.name).keys():
                 if axis.name != "time":
                     values = (
                         values * axis.symmetries.get(axis.name).get("antiperiod") / 2
