@@ -82,7 +82,7 @@ def get_dim_prefix(unit_str):
     for key in unit_symbols:
         if key[0] in unit_str:
             if unit_str.rsplit(key[0], 1)[1].isdigit():
-                p = int(unit_str.rsplit(key, 1)[1])
+                p = int(unit_str.rsplit(key[0], 1)[1])
             dim = [p * d for d in key[2]]
             prefix_str = unit_str.rsplit(key[0], 1)[0]
             if prefix_str in unit_prefixes.keys():
