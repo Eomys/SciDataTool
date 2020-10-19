@@ -33,6 +33,10 @@ def get_axis(self, axis, normalizations):
             is_smallestperiod = False
             is_oneperiod = True
             is_antiperiod = False
+        elif self.extension == "axis_data":
+            is_smallestperiod = True
+            is_oneperiod = False
+            is_antiperiod = False
         else:
             is_smallestperiod = False
             is_oneperiod = False
