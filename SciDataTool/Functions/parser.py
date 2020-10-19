@@ -48,14 +48,11 @@ def read_input_strings(args, axis_data):
         elif "axis_data" in axis_str:
             elems = axis_str.split("=axis_data")
             name = elems[0]
-            extension = "interval"
+            extension = "axis_data"
             try:
-                input_data = axis_data[int(elems[1]) - 1]
+                input_data = axis_data[name]
             except:
-                try:
-                    input_data = axis_data[0]
-                except:
-                    raise AxisError("ERROR: Absence of axis_data")
+                raise AxisError("ERROR: No axis_data provided")
         # Detect interval
         elif "=[" in axis_str:
             elems = axis_str.split("=[")

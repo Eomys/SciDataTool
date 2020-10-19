@@ -80,7 +80,7 @@ def get_axis(self, axis, normalizations):
         if self.extension in ["whole", "oneperiod", "antiperiod", "smallestperiod"]:
             self.values = values
         elif self.input_data is not None:
-            if len(self.input_data) == 2:
+            if len(self.input_data) == 2 and self.extension != "axis_data":
                 self.indices = [
                     i
                     for i, x in enumerate(values)
@@ -88,7 +88,10 @@ def get_axis(self, axis, normalizations):
                 ]
                 self.input_data = None
             else:
-                self.input_data = get_common_base(self.input_data, values)
+                if self.extension == "axis_data":
+                    self.input_data = get_common_base(self.input_data, values, is_downsample=True)
+                else:
+                    self.input_data = get_common_base(self.input_data, values)
                 self.values = values
         if self.indices is not None:
             self.values = values[self.indices]
