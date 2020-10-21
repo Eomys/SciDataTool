@@ -17,6 +17,8 @@ def extract_slices(self, values, axes_list):
     values: ndarray
         values of the field
     """
+    
+    axes_dict_other = {}
 
     # Extract the slices of the field
     for index, axis in enumerate(self.axes):
@@ -30,5 +32,6 @@ def extract_slices(self, values, axes_list):
                 ):
                     values = take(values, axis_requested.indices, axis=index)
         if not is_match:  # Axis was not specified -> take slice at the first value
+            axes_dict_other[axis.name] = [axis.get_values()[0], axis.unit]
             values = take(values, [0], axis=index)
-    return values
+    return values, axes_dict_other

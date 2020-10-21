@@ -64,12 +64,16 @@ def comp_fft_time(freqs, is_angle):
         time = [0]
     else:
         N_tot = len(freqs)  # Number of samples
-        fsampt = freqs[-1] * 2.0
-        timestep = 1.0 / fsampt
+        fs = freqs[-1] / (N_tot-1)
+        tf = 1 / (fs*2)
+        time = linspace(0, tf, N_tot, endpoint=False)
+        # fsampt = freqs[-1] * 2.0
+        # timestep = 1.0 / fsampt
         if is_angle:
-            timestep *= 2.0 * pi
-        time = [0 + i * timestep for i in range(N_tot)]
-    return time
+            time *= 2.0 * pi
+            # timestep *= 2.0 * pi
+        # time = [0 + i * timestep for i in range(N_tot)]
+    return time.tolist()
 
 
 def comp_nthoctave_axis(noct, freqmin, freqmax):

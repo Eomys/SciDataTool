@@ -83,7 +83,7 @@ def read_input_strings(args, axis_data):
             # List of indices
             elif "," in ind_str:
                 extension = "list"
-                indices = ind_str.split(",")
+                indices = [int(x) for x in ind_str.split(",")]
             # Single index
             else:
                 extension = "single"
