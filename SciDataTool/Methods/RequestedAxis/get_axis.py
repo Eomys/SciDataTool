@@ -19,7 +19,8 @@ def get_axis(self, axis, normalizations):
     """
     is_components = getattr(axis, "is_components", False)
     if is_components:
-        self.values = None
+        self.values = axis.get_values()
+        self.extension = "list"
     else:
         if self.extension == "smallestperiod":
             is_smallestperiod = True
