@@ -3,7 +3,7 @@ from SciDataTool.Functions import NormError
 from SciDataTool.Functions.conversions import convert as convert_unit
 
 
-def convert(self, values, axes_list, unit, is_norm):
+def convert(self, values, unit, is_norm):
     """Returns the values of the field transformed or converted.
     Parameters
     ----------
@@ -11,8 +11,6 @@ def convert(self, values, axes_list, unit, is_norm):
         a Data object
     values: ndarray
         array of the field
-    axes_list: list
-        a list of RequestedAxis objects
     unit: str
         Unit requested by the user ("SI" by default)
     is_norm: bool

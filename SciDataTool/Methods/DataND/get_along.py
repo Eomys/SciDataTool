@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.parser import read_input_strings
-from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifft
+from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifftn
 
 from numpy import apply_along_axis
 
@@ -33,9 +33,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     values = self.get_field(axes_list)
     # Inverse fft
     if "ifft" in transforms:
-        for axis in axes_list:
-            if axis.transform == "ifft":
-                values = apply_along_axis(comp_ifft, axis.index, values)
+        values = comp_ifftn(values, axes_list)
     # Slices along time/space axes
     values, axes_dict_other = self.extract_slices(values, axes_list)
     # fft
@@ -79,18 +77,10 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
     # Conversions
-    values = self.convert(values, axes_list, unit, is_norm)
+    values = self.convert(values, unit, is_norm)
     # Return axes and values
     return_dict = {}
     for axis_requested in axes_list:
-        # if axis_requested.extension in [
-        #     "whole",
-        #     "interval",
-        #     "axis_data",
-        #     "oneperiod",
-        #     "antiperiod",
-        #     "smallestperiod",
-        # ]:
         return_dict[axis_requested.name] = axis_requested.values
     return_dict[self.symbol] = values
     return_dict["axes_list"] = axes_list

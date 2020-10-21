@@ -175,7 +175,6 @@ def comp_fftn(values, axes_list):
     """
     
     n = 0
-    values_shape = []
     for axis in axes_list:
         if axis.transform == "fft":
             values = apply_along_axis(_comp_fft, axis.index, values, n=n)
@@ -183,22 +182,43 @@ def comp_fftn(values, axes_list):
     return values
 
 
-def comp_ifft(values):
-    """Computes the inverse Fourier Transform
+def _comp_ifft(values, n=0):
+    """Computes the Inverse Fourier Transform
     Parameters
     ----------
     values: ndarray
-        complex Fourier transform
+        ndarray of the FT
     Returns
     -------
-    ndarray of the field
-    """
+    IFT
+    """   
+    
+    values_IFT = ifft(values)
+    if n==0:
+        values_IFT[0] *= 2
+        values_IFT = ifftshift(values_IFT * len(values) / 2)
+    else:
+        values_IFT = ifftshift(values_IFT) / len(values)
+    return values_IFT
 
-    values_shape = values.shape
-    values[tuple([N // 2 for N in values_shape])] *= 2
-    values = ifftshift(values * float(prod([N for N in values_shape])) / 2)
-    values = ifftn(values)
-    return values.real
+
+def comp_ifftn(values, axes_list):
+    """Computes the Inverse Fourier Transform
+    Parameters
+    ----------
+    values: ndarray
+        ndarray of the FT
+    Returns
+    -------
+    IFT
+    """
+    
+    n = 0
+    for axis in axes_list:
+        if axis.transform == "ifft":
+            values = apply_along_axis(_comp_ifft, axis.index, values, n=n)
+            n = n+1
+    return values
 
 
 def comp_rfft(values):
@@ -227,7 +247,7 @@ def comp_magnitude(values):
     -------
     Magnitude of the Fourier Transform
     """
-    return np_abs(comp_fft(values))
+    return np_abs(_comp_fft(values))
 
 
 #    return np_abs(comp_stft_average(values))
@@ -241,7 +261,7 @@ def comp_phase(values):
     -------
     Phase of the Fourier Transform
     """
-    return np_angle(comp_fft(values))
+    return np_angle(_comp_fft(values))
 
 
 def comp_stft_average(values):
@@ -285,7 +305,7 @@ def comp_fft_average(values):
     nwindows = int(N_tot / (2.0 * step))
     values_fft = zeros(nperseg, dtype="complex128")
     for i in range(nwindows):
-        values_fft += comp_fft(values[i * step : nperseg + i * step] * hanning(nperseg))
+        values_fft += _comp_fft(values[i * step : nperseg + i * step] * hanning(nperseg))
     values = values_fft[int(nperseg / 2) :] / nwindows
     f = linspace(0, int(N_tot / 2), int(nperseg / 2))
     return f, np_abs(values)
