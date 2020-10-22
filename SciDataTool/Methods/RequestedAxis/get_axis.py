@@ -23,6 +23,8 @@ def get_axis(self, axis, normalizations):
         self.extension = "list"
         if self.indices is not None:
             self.values = values[self.indices]
+        else:
+            self.values = values
     else:
         if self.extension == "smallestperiod":
             is_smallestperiod = True
