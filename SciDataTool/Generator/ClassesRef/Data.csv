@@ -3,3 +3,4 @@ symbol,,Symbol of the variable (in latex syntax),,str,,,,,,,,VERSION,1,Abstract 
 name,,Name of the physical quantity (to be used in plots),,str,,,,,,,,,,,
 unit,,Unit of the physical quantity (to be used in plots),,str,,,,,,,,,,,
 symmetries,,"Dictionary of the symmetries along each axis, used to reduce storage",,dict,{},,,,,,,,,,
+normalizations,,Normalizations available for the field and its axes,,dict,{},,,,,,,,,,

@@ -13,12 +13,11 @@ def has_period(self):
     """
     answer = False
 
-    if self.name in self.symmetries:
-        if "antiperiod" in self.symmetries.get(self.name):
-            if self.symmetries.get(self.name)["antiperiod"] > 1:
-                answer = True
-        elif "period" in self.symmetries.get(self.name):
-            if self.symmetries.get(self.name)["period"] > 1:
-                answer = True
+    if "antiperiod" in self.symmetries:
+        if self.symmetries["antiperiod"] > 1:
+            answer = True
+    elif "period" in self.symmetries:
+        if self.symmetries["period"] > 1:
+            answer = True
 
     return answer

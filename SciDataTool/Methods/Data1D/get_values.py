@@ -32,30 +32,21 @@ def get_values(
     if is_smallestperiod:
         return values
     elif is_antiperiod:
-        if self.name in self.symmetries:
-            if "antiperiod" in self.symmetries.get(self.name):
-                return values
-            else:
-                raise AxisError("ERROR: axis has no antiperiodicity")
+        if "antiperiod" in self.symmetries:
+            return values
         else:
             raise AxisError("ERROR: axis has no antiperiodicity")
     elif is_oneperiod:
-        if self.name in self.symmetries:
-            if "antiperiod" in self.symmetries.get(self.name):
-                nper = self.symmetries.get(self.name)["antiperiod"]
-                self.symmetries.get(self.name)["antiperiod"] = 2
-                values = rebuild_symmetries_axis(values, self.symmetries.get(self.name))
-                self.symmetries.get(self.name)["antiperiod"] = nper
-                return values
-            elif "period" in self.symmetries.get(self.name):
-                return values
-            else:
-                raise AxisError("ERROR: unknown periodicity")
+        if "antiperiod" in self.symmetries:
+            nper = self.symmetries["antiperiod"]
+            self.symmetries["antiperiod"] = 2
+            values = rebuild_symmetries_axis(values, self.symmetries)
+            self.symmetries["antiperiod"] = nper
+            return values
+        elif "period" in self.symmetries:
+            return values
         else:
             return values
     else:
-        if self.name in self.symmetries:
-            values = rebuild_symmetries_axis(values, self.symmetries.get(self.name))
-            return values
-        else:
-            return values
+        values = rebuild_symmetries_axis(values, self.symmetries)
+        return values

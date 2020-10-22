@@ -38,7 +38,7 @@ def test_units():
     
     result = Field.get_along("angle{°}", unit="dm/ms2")
     assert_array_almost_equal(180/np.pi*angle, result["angle"])
-    assert_array_almost_equal(1e-5*field, result["X"])
+    assert_array_almost_equal(1e-5*field[0,:], result["X"])
 
 
 @pytest.mark.validation
@@ -51,6 +51,7 @@ def test_norm():
         final=10,
         number=10,
         include_endpoint=False,
+        normalizations={"elec_order": 7}
     )
     field = np.cos(2*np.pi*100*time)
     Field = DataTime(
@@ -59,7 +60,7 @@ def test_norm():
         axes=[Time],
         values=field,
         unit="m/s2",
-        normalizations={"ref": 0.2, "elec_order": 7}
+        normalizations={"ref": 0.2}
     )
     result = Field.get_along("freqs=[0,100]{elec_order}", is_norm=True)
     assert_array_almost_equal(1/(7*10), result["freqs"][1])

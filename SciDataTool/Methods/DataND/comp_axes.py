@@ -61,5 +61,5 @@ def comp_axes(self, axes_list):
                 axes_list.remove(axis_requested)
     # Extract the requested axes (symmetries + unit)
     for axis_requested in axes_list:
-        axis_requested.get_axis(self.axes[axis_requested.index], self.normalizations)
+        axis_requested.get_axis(self.axes[axis_requested.index])
     return axes_list, transforms

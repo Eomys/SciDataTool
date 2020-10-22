@@ -321,19 +321,7 @@ class DataND(Data):
     save = save
     copy = copy
 
-    def __init__(
-        self,
-        axes=None,
-        normalizations=-1,
-        FTparameters=-1,
-        values=None,
-        symbol="",
-        name="",
-        unit="",
-        symmetries=-1,
-        init_dict=None,
-        init_str=None,
-    ):
+    def __init__(self, axes=None, FTparameters=-1, values=None, symbol="", name="", unit="", symmetries=-1, normalizations=-1, init_dict = None, init_str = None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -351,8 +339,6 @@ class DataND(Data):
             # Overwrite default value with init_dict content
             if "axes" in list(init_dict.keys()):
                 axes = init_dict["axes"]
-            if "normalizations" in list(init_dict.keys()):
-                normalizations = init_dict["normalizations"]
             if "FTparameters" in list(init_dict.keys()):
                 FTparameters = init_dict["FTparameters"]
             if "values" in list(init_dict.keys()):
@@ -365,15 +351,14 @@ class DataND(Data):
                 unit = init_dict["unit"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
+            if "normalizations" in list(init_dict.keys()):
+                normalizations = init_dict["normalizations"]
         # Set the properties (value check and convertion are done in setter)
         self.axes = axes
-        self.normalizations = normalizations
         self.FTparameters = FTparameters
         self.values = values
         # Call Data init
-        super(DataND, self).__init__(
-            symbol=symbol, name=name, unit=unit, symmetries=symmetries
-        )
+        super(DataND, self).__init__(symbol=symbol, name=name, unit=unit, symmetries=symmetries, normalizations=normalizations)
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
 
@@ -383,16 +368,9 @@ class DataND(Data):
         DataND_str = ""
         # Get the properties inherited from Data
         DataND_str += super(DataND, self).__str__()
-        DataND_str += "axes = " + str(self.axes) + linesep + linesep
-        DataND_str += "normalizations = " + str(self.normalizations) + linesep
+        DataND_str += "axes = "+ str(self.axes) + linesep + linesep
         DataND_str += "FTparameters = " + str(self.FTparameters) + linesep
-        DataND_str += (
-            "values = "
-            + linesep
-            + str(self.values).replace(linesep, linesep + "\t")
-            + linesep
-            + linesep
-        )
+        DataND_str += "values = " + linesep + str(self.values).replace(linesep, linesep + "\t") + linesep + linesep
         return DataND_str
 
     def __eq__(self, other):
@@ -406,8 +384,6 @@ class DataND(Data):
             return False
         if other.axes != self.axes:
             return False
-        if other.normalizations != self.normalizations:
-            return False
         if other.FTparameters != self.FTparameters:
             return False
         if not array_equal(other.values, self.values):
@@ -415,7 +391,8 @@ class DataND(Data):
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+        """Convert this object in a json seriable dict (can be use in __init__)
+        """
 
         # Get the properties inherited from Data
         DataND_dict = super(DataND, self).as_dict()
@@ -425,8 +402,7 @@ class DataND(Data):
             DataND_dict["axes"] = list()
             for obj in self.axes:
                 DataND_dict["axes"].append(obj.as_dict())
-        DataND_dict["normalizations"] = self.normalizations
-        DataND_dict["FTparameters"] = self.FTparameters
+        DataND_dict["FTparameters"] = self.FTparameters.copy() if self.FTparameters is not None else None
         if self.values is None:
             DataND_dict["values"] = None
         else:
@@ -440,7 +416,6 @@ class DataND(Data):
         """Set all the properties to None (except SciDataTool object)"""
 
         self.axes = None
-        self.normalizations = None
         self.FTparameters = None
         self.values = None
         # Set to None the properties inherited from Data
@@ -459,9 +434,7 @@ class DataND(Data):
         if type(value) is list:
             for ii, obj in enumerate(value):
                 if type(obj) is dict:
-                    class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "axes"
-                    )
+                    class_obj = import_class('SciDataTool.Classes', obj.get('__class__'), 'axes')
                     value[ii] = class_obj(init_dict=obj)
         if value == -1:
             value = list()
@@ -474,26 +447,6 @@ class DataND(Data):
         doc=u"""List of the Data1D objects corresponding to the axes
 
         :Type: [SciDataTool.Classes.Data]
-        """,
-    )
-
-    def _get_normalizations(self):
-        """getter of normalizations"""
-        return self._normalizations
-
-    def _set_normalizations(self, value):
-        """setter of normalizations"""
-        if type(value) is int and value == -1:
-            value = dict()
-        check_var("normalizations", value, "dict")
-        self._normalizations = value
-
-    normalizations = property(
-        fget=_get_normalizations,
-        fset=_set_normalizations,
-        doc=u"""Normalizations available for the field and its axes
-
-        :Type: dict
         """,
     )
 

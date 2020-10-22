@@ -16,39 +16,14 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.VectorField.get_rad_along import get_rad_along
-except ImportError as error:
-    get_rad_along = error
-
-try:
-    from ..Methods.VectorField.get_tan_along import get_tan_along
-except ImportError as error:
-    get_tan_along = error
-
-try:
-    from ..Methods.VectorField.get_ax_along import get_ax_along
-except ImportError as error:
-    get_ax_along = error
-
-try:
     from ..Methods.VectorField.get_rphiz_along import get_rphiz_along
 except ImportError as error:
     get_rphiz_along = error
 
 try:
-    from ..Methods.VectorField.get_mag_rad_along import get_mag_rad_along
+    from ..Methods.VectorField.get_xyz_along import get_xyz_along
 except ImportError as error:
-    get_mag_rad_along = error
-
-try:
-    from ..Methods.VectorField.get_mag_tan_along import get_mag_tan_along
-except ImportError as error:
-    get_mag_tan_along = error
-
-try:
-    from ..Methods.VectorField.get_mag_ax_along import get_mag_ax_along
-except ImportError as error:
-    get_mag_ax_along = error
+    get_xyz_along = error
 
 try:
     from ..Methods.VectorField.get_mag_rphiz_along import get_mag_rphiz_along
@@ -56,19 +31,9 @@ except ImportError as error:
     get_mag_rphiz_along = error
 
 try:
-    from ..Methods.VectorField.get_harm_rad_along import get_harm_rad_along
+    from ..Methods.VectorField.get_mag_xyz_along import get_mag_xyz_along
 except ImportError as error:
-    get_harm_rad_along = error
-
-try:
-    from ..Methods.VectorField.get_harm_tan_along import get_harm_tan_along
-except ImportError as error:
-    get_harm_tan_along = error
-
-try:
-    from ..Methods.VectorField.get_harm_ax_along import get_harm_ax_along
-except ImportError as error:
-    get_harm_ax_along = error
+    get_mag_xyz_along = error
 
 try:
     from ..Methods.VectorField.get_harm_rphiz_along import get_harm_rphiz_along
@@ -76,14 +41,14 @@ except ImportError as error:
     get_harm_rphiz_along = error
 
 try:
+    from ..Methods.VectorField.get_harm_xyz_along import get_harm_xyz_along
+except ImportError as error:
+    get_harm_xyz_along = error
+
+try:
     from ..Methods.VectorField.get_axes import get_axes
 except ImportError as error:
     get_axes = error
-
-try:
-    from ..Methods.VectorField.get_symmetries import get_symmetries
-except ImportError as error:
-    get_symmetries = error
 
 
 from ._check import InitUnKnowClassError
@@ -95,39 +60,6 @@ class VectorField(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.VectorField.get_rad_along
-    if isinstance(get_rad_along, ImportError):
-        get_rad_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_rad_along: " + str(get_rad_along)
-                )
-            )
-        )
-    else:
-        get_rad_along = get_rad_along
-    # cf Methods.VectorField.get_tan_along
-    if isinstance(get_tan_along, ImportError):
-        get_tan_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_tan_along: " + str(get_tan_along)
-                )
-            )
-        )
-    else:
-        get_tan_along = get_tan_along
-    # cf Methods.VectorField.get_ax_along
-    if isinstance(get_ax_along, ImportError):
-        get_ax_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_ax_along: " + str(get_ax_along)
-                )
-            )
-        )
-    else:
-        get_ax_along = get_ax_along
     # cf Methods.VectorField.get_rphiz_along
     if isinstance(get_rphiz_along, ImportError):
         get_rphiz_along = property(
@@ -140,42 +72,17 @@ class VectorField(FrozenClass):
         )
     else:
         get_rphiz_along = get_rphiz_along
-    # cf Methods.VectorField.get_mag_rad_along
-    if isinstance(get_mag_rad_along, ImportError):
-        get_mag_rad_along = property(
+    # cf Methods.VectorField.get_xyz_along
+    if isinstance(get_xyz_along, ImportError):
+        get_xyz_along = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use VectorField method get_mag_rad_along: "
-                    + str(get_mag_rad_along)
+                    "Can't use VectorField method get_xyz_along: " + str(get_xyz_along)
                 )
             )
         )
     else:
-        get_mag_rad_along = get_mag_rad_along
-    # cf Methods.VectorField.get_mag_tan_along
-    if isinstance(get_mag_tan_along, ImportError):
-        get_mag_tan_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_mag_tan_along: "
-                    + str(get_mag_tan_along)
-                )
-            )
-        )
-    else:
-        get_mag_tan_along = get_mag_tan_along
-    # cf Methods.VectorField.get_mag_ax_along
-    if isinstance(get_mag_ax_along, ImportError):
-        get_mag_ax_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_mag_ax_along: "
-                    + str(get_mag_ax_along)
-                )
-            )
-        )
-    else:
-        get_mag_ax_along = get_mag_ax_along
+        get_xyz_along = get_xyz_along
     # cf Methods.VectorField.get_mag_rphiz_along
     if isinstance(get_mag_rphiz_along, ImportError):
         get_mag_rphiz_along = property(
@@ -188,42 +95,18 @@ class VectorField(FrozenClass):
         )
     else:
         get_mag_rphiz_along = get_mag_rphiz_along
-    # cf Methods.VectorField.get_harm_rad_along
-    if isinstance(get_harm_rad_along, ImportError):
-        get_harm_rad_along = property(
+    # cf Methods.VectorField.get_mag_xyz_along
+    if isinstance(get_mag_xyz_along, ImportError):
+        get_mag_xyz_along = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use VectorField method get_harm_rad_along: "
-                    + str(get_harm_rad_along)
+                    "Can't use VectorField method get_mag_xyz_along: "
+                    + str(get_mag_xyz_along)
                 )
             )
         )
     else:
-        get_harm_rad_along = get_harm_rad_along
-    # cf Methods.VectorField.get_harm_tan_along
-    if isinstance(get_harm_tan_along, ImportError):
-        get_harm_tan_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_harm_tan_along: "
-                    + str(get_harm_tan_along)
-                )
-            )
-        )
-    else:
-        get_harm_tan_along = get_harm_tan_along
-    # cf Methods.VectorField.get_harm_ax_along
-    if isinstance(get_harm_ax_along, ImportError):
-        get_harm_ax_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_harm_ax_along: "
-                    + str(get_harm_ax_along)
-                )
-            )
-        )
-    else:
-        get_harm_ax_along = get_harm_ax_along
+        get_mag_xyz_along = get_mag_xyz_along
     # cf Methods.VectorField.get_harm_rphiz_along
     if isinstance(get_harm_rphiz_along, ImportError):
         get_harm_rphiz_along = property(
@@ -236,6 +119,18 @@ class VectorField(FrozenClass):
         )
     else:
         get_harm_rphiz_along = get_harm_rphiz_along
+    # cf Methods.VectorField.get_harm_xyz_along
+    if isinstance(get_harm_xyz_along, ImportError):
+        get_harm_xyz_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_harm_xyz_along: "
+                    + str(get_harm_xyz_along)
+                )
+            )
+        )
+    else:
+        get_harm_xyz_along = get_harm_xyz_along
     # cf Methods.VectorField.get_axes
     if isinstance(get_axes, ImportError):
         get_axes = property(
@@ -245,25 +140,11 @@ class VectorField(FrozenClass):
         )
     else:
         get_axes = get_axes
-    # cf Methods.VectorField.get_symmetries
-    if isinstance(get_symmetries, ImportError):
-        get_symmetries = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_symmetries: "
-                    + str(get_symmetries)
-                )
-            )
-        )
-    else:
-        get_symmetries = get_symmetries
     # save and copy methods are available in all object
     save = save
     copy = copy
 
-    def __init__(
-        self, name="", symbol="", components={}, init_dict=None, init_str=None
-    ):
+    def __init__(self, name="", symbol="", components={}, init_dict = None, init_str = None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -301,12 +182,10 @@ class VectorField(FrozenClass):
         if self.parent is None:
             VectorField_str += "parent = None " + linesep
         else:
-            VectorField_str += (
-                "parent = " + str(type(self.parent)) + " object" + linesep
-            )
+            VectorField_str += "parent = " + str(type(self.parent)) + " object" + linesep
         VectorField_str += 'name = "' + str(self.name) + '"' + linesep
         VectorField_str += 'symbol = "' + str(self.symbol) + '"' + linesep
-        VectorField_str += "components = " + str(self.components) + linesep + linesep
+        VectorField_str += "components = "+ str(self.components) + linesep + linesep
         return VectorField_str
 
     def __eq__(self, other):
@@ -323,7 +202,8 @@ class VectorField(FrozenClass):
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+        """Convert this object in a json seriable dict (can be use in __init__)
+        """
 
         VectorField_dict = dict()
         VectorField_dict["name"] = self.name
@@ -394,9 +274,7 @@ class VectorField(FrozenClass):
         if type(value) is dict:
             for key, obj in value.items():
                 if type(obj) is dict:
-                    class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "components"
-                    )
+                    class_obj = import_class('SciDataTool.Classes', obj.get('__class__'), 'components')
                     value[key] = class_obj(init_dict=obj)
         if type(value) is int and value == -1:
             value = dict()

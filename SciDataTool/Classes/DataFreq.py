@@ -45,19 +45,7 @@ class DataFreq(DataND):
     save = save
     copy = copy
 
-    def __init__(
-        self,
-        axes=None,
-        normalizations=-1,
-        FTparameters=-1,
-        values=None,
-        symbol="",
-        name="",
-        unit="",
-        symmetries=-1,
-        init_dict=None,
-        init_str=None,
-    ):
+    def __init__(self, axes=None, FTparameters=-1, values=None, symbol="", name="", unit="", symmetries=-1, normalizations=-1, init_dict = None, init_str = None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -75,8 +63,6 @@ class DataFreq(DataND):
             # Overwrite default value with init_dict content
             if "axes" in list(init_dict.keys()):
                 axes = init_dict["axes"]
-            if "normalizations" in list(init_dict.keys()):
-                normalizations = init_dict["normalizations"]
             if "FTparameters" in list(init_dict.keys()):
                 FTparameters = init_dict["FTparameters"]
             if "values" in list(init_dict.keys()):
@@ -89,18 +75,11 @@ class DataFreq(DataND):
                 unit = init_dict["unit"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
+            if "normalizations" in list(init_dict.keys()):
+                normalizations = init_dict["normalizations"]
         # Set the properties (value check and convertion are done in setter)
         # Call DataND init
-        super(DataFreq, self).__init__(
-            axes=axes,
-            normalizations=normalizations,
-            FTparameters=FTparameters,
-            values=values,
-            symbol=symbol,
-            name=name,
-            unit=unit,
-            symmetries=symmetries,
-        )
+        super(DataFreq, self).__init__(axes=axes, FTparameters=FTparameters, values=values, symbol=symbol, name=name, unit=unit, symmetries=symmetries, normalizations=normalizations)
         # The class is frozen (in DataND init), for now it's impossible to
         # add new properties
 
@@ -124,7 +103,8 @@ class DataFreq(DataND):
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+        """Convert this object in a json seriable dict (can be use in __init__)
+        """
 
         # Get the properties inherited from DataND
         DataFreq_dict = super(DataFreq, self).as_dict()

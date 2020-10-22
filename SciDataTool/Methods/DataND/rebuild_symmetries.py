@@ -8,11 +8,7 @@ from SciDataTool.Functions import AxisError
 def rebuild_symmetries(
     self,
     values,
-    axis_name,
-    axis_index,
-    is_oneperiod=False,
-    is_antiperiod=False,
-    is_smallestperiod=False,
+    axes_list,
 ):
     """Reconstructs the field of a Data object taking symmetries into account
     Parameters
@@ -27,36 +23,56 @@ def rebuild_symmetries(
     -------
     ndarray of the reconstructed field
     """
-    # Rebuild symmetries
-    if is_smallestperiod:
-        return values
-    elif is_antiperiod:
-        if axis_name in self.symmetries.keys():
-            if "antiperiod" in self.symmetries.get(axis_name):
-                return values
+    
+    for axis in axes_list:
+        if axis.transform != "fft" and axis.extension in [
+            "whole",
+            "interval",
+            "oneperiod",
+            "antiperiod",
+            "smallestperiod",
+        ]:
+            if axis.extension == "smallestperiod":
+                is_smallestperiod = True
+                is_oneperiod = False
+                is_antiperiod = False
+            elif axis.extension == "antiperiod":
+                is_smallestperiod = False
+                is_oneperiod = False
+                is_antiperiod = True
+            elif axis.extension == "oneperiod":
+                is_smallestperiod = False
+                is_oneperiod = True
+                is_antiperiod = False
             else:
-                raise AxisError("ERROR: axis has no antiperiodicity")
-        else:
-            raise AxisError("ERROR: axis has no antiperiodicity")
-    elif is_oneperiod:
-        if axis_name in self.symmetries:
-            if "antiperiod" in self.symmetries.get(axis_name):
-                nper = self.symmetries.get(axis_name)["antiperiod"]
-                self.symmetries.get(axis_name)["antiperiod"] = 2
+                is_smallestperiod = False
+                is_oneperiod = False
+                is_antiperiod = False
+             
+            # Rebuild symmetries
+            axis_symmetries = self.axes[axis.index].symmetries
+            if is_smallestperiod:
+                return values
+            elif is_antiperiod:
+                if "antiperiod" in axis_symmetries:
+                    return values
+                else:
+                    raise AxisError("ERROR: axis has no antiperiodicity")
+            elif is_oneperiod:
+                if "antiperiod" in axis_symmetries:
+                    nper = axis_symmetries["antiperiod"]
+                    axis_symmetries["antiperiod"] = 2
+                    values = rebuild_symmetries_fct(
+                        values, axis.index, axis_symmetries
+                    )
+                    axis_symmetries["antiperiod"] = nper
+                    return values
+                else:
+                    return values
+            else:
                 values = rebuild_symmetries_fct(
-                    values, axis_index, self.symmetries.get(axis_name)
+                    values, axis.index, axis_symmetries
                 )
-                self.symmetries.get(axis_name)["antiperiod"] = nper
                 return values
-            else:
-                return values
-        else:
-            return values
-    else:
-        if axis_name in self.symmetries:
-            values = rebuild_symmetries_fct(
-                values, axis_index, self.symmetries.get(axis_name)
-            )
-            return values
         else:
             return values

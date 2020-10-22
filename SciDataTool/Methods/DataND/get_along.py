@@ -2,6 +2,8 @@
 from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifftn
 
+from numpy import apply_along_axis
+
 
 def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the ndarray of the field, using conversions and symmetries if needed.
@@ -40,38 +42,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Slices along fft axes
     values = self.extract_slices_fft(values, axes_list)
     # Rebuild symmetries
-    for axis in axes_list:
-        if axis.transform != "fft" and axis.extension in [
-            "whole",
-            "interval",
-            "oneperiod",
-            "antiperiod",
-            "smallestperiod",
-        ]:
-            if axis.extension == "smallestperiod":
-                is_smallestperiod = True
-                is_oneperiod = False
-                is_antiperiod = False
-            elif axis.extension == "antiperiod":
-                is_smallestperiod = False
-                is_oneperiod = False
-                is_antiperiod = True
-            elif axis.extension == "oneperiod":
-                is_smallestperiod = False
-                is_oneperiod = True
-                is_antiperiod = False
-            else:
-                is_smallestperiod = False
-                is_oneperiod = False
-                is_antiperiod = False
-            values = self.rebuild_symmetries(
-                values,
-                axis.corr_name,
-                axis.index,
-                is_oneperiod=is_oneperiod,
-                is_antiperiod=is_antiperiod,
-                is_smallestperiod=is_smallestperiod,
-            )
+    values = self.rebuild_symmetries(values, axes_list)
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
     # Conversions

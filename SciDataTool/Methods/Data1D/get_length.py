@@ -19,30 +19,21 @@ def get_length(self, is_oneperiod=False, is_antiperiod=False):
     N = len(self.values)
     # Rebuild symmetries
     if is_antiperiod:
-        if self.name in self.symmetries:
-            if "antiperiod" in self.symmetries.get(self.name):
-                return N
-            else:
-                raise AxisError("ERROR: axis has no antiperiodicity")
+        if "antiperiod" in self.symmetries:
+            return N
         else:
             raise AxisError("ERROR: axis has no antiperiodicity")
     elif is_oneperiod:
-        if self.name in self.symmetries:
-            if "antiperiod" in self.symmetries.get(self.name):
-                return N * 2
-            elif "period" in self.symmetries.get(self.name):
-                return N
-            else:
-                raise AxisError("ERROR: unknown periodicity")
+        if "antiperiod" in self.symmetries:
+            return N * 2
+        elif "period" in self.symmetries:
+            return N
         else:
             return N
     else:
-        if self.name in self.symmetries:
-            if "antiperiod" in self.symmetries.get(self.name):
-                return N * self.symmetries.get(self.name)["antiperiod"]
-            elif "period" in self.symmetries.get(self.name):
-                return N * self.symmetries.get(self.name)["period"]
-            else:
-                raise AxisError("ERROR: unknown periodicity")
+        if "antiperiod" in self.symmetries:
+            return N * self.symmetries["antiperiod"]
+        elif "period" in self.symmetries:
+            return N * self.symmetries["period"]
         else:
             return N

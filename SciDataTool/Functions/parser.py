@@ -53,6 +53,11 @@ def read_input_strings(args, axis_data):
                 input_data = axis_data[name]
             except:
                 raise AxisError("ERROR: No axis_data provided")
+        # Detect normalization
+        # elif "->" in axis_str:
+        #     elems = axis_str.split("->")
+        #     name = elems[0]
+        #     extension = 
         # Detect interval
         elif "=[" in axis_str:
             elems = axis_str.split("=[")

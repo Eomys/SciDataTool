@@ -23,7 +23,7 @@ def test_period_linspace():
         symbol="X",
         axes=[Time_periodic],
         values=field_periodic,
-        symmetries={"time":{"period":5}}
+        symmetries={"period":5}
     )
     result = Field.get_along("time")
     assert_array_almost_equal(time, result["time"])

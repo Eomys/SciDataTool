@@ -105,17 +105,7 @@ class Data1D(Data):
     save = save
     copy = copy
 
-    def __init__(
-        self,
-        values=None,
-        is_components=False,
-        symbol="",
-        name="",
-        unit="",
-        symmetries=-1,
-        init_dict=None,
-        init_str=None,
-    ):
+    def __init__(self, values=None, is_components=False, symbol="", name="", unit="", symmetries=-1, normalizations=-1, init_dict = None, init_str = None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -143,13 +133,13 @@ class Data1D(Data):
                 unit = init_dict["unit"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
+            if "normalizations" in list(init_dict.keys()):
+                normalizations = init_dict["normalizations"]
         # Set the properties (value check and convertion are done in setter)
         self.values = values
         self.is_components = is_components
         # Call Data init
-        super(Data1D, self).__init__(
-            symbol=symbol, name=name, unit=unit, symmetries=symmetries
-        )
+        super(Data1D, self).__init__(symbol=symbol, name=name, unit=unit, symmetries=symmetries, normalizations=normalizations)
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
 
@@ -159,13 +149,7 @@ class Data1D(Data):
         Data1D_str = ""
         # Get the properties inherited from Data
         Data1D_str += super(Data1D, self).__str__()
-        Data1D_str += (
-            "values = "
-            + linesep
-            + str(self.values).replace(linesep, linesep + "\t")
-            + linesep
-            + linesep
-        )
+        Data1D_str += "values = " + linesep + str(self.values).replace(linesep, linesep + "\t") + linesep + linesep
         Data1D_str += "is_components = " + str(self.is_components) + linesep
         return Data1D_str
 
@@ -185,7 +169,8 @@ class Data1D(Data):
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+        """Convert this object in a json seriable dict (can be use in __init__)
+        """
 
         # Get the properties inherited from Data
         Data1D_dict = super(Data1D, self).as_dict()

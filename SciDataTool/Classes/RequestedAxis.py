@@ -43,22 +43,7 @@ class RequestedAxis(FrozenClass):
     save = save
     copy = copy
 
-    def __init__(
-        self,
-        name="",
-        corr_name="",
-        unit="",
-        corr_unit="",
-        extension="",
-        values=None,
-        indices=None,
-        input_data=None,
-        operation=None,
-        index=None,
-        transform=None,
-        init_dict=None,
-        init_str=None,
-    ):
+    def __init__(self, name="", corr_name="", unit="", corr_unit="", extension="", values=None, indices=None, input_data=None, operation=None, index=None, transform=None, init_dict = None, init_str = None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -120,34 +105,15 @@ class RequestedAxis(FrozenClass):
         if self.parent is None:
             RequestedAxis_str += "parent = None " + linesep
         else:
-            RequestedAxis_str += (
-                "parent = " + str(type(self.parent)) + " object" + linesep
-            )
+            RequestedAxis_str += "parent = " + str(type(self.parent)) + " object" + linesep
         RequestedAxis_str += 'name = "' + str(self.name) + '"' + linesep
         RequestedAxis_str += 'corr_name = "' + str(self.corr_name) + '"' + linesep
         RequestedAxis_str += 'unit = "' + str(self.unit) + '"' + linesep
         RequestedAxis_str += 'corr_unit = "' + str(self.corr_unit) + '"' + linesep
         RequestedAxis_str += 'extension = "' + str(self.extension) + '"' + linesep
-        RequestedAxis_str += (
-            "values = "
-            + linesep
-            + str(self.values).replace(linesep, linesep + "\t")
-            + linesep
-            + linesep
-        )
-        RequestedAxis_str += (
-            "indices = "
-            + linesep
-            + str(self.indices).replace(linesep, linesep + "\t")
-            + linesep
-        )
-        RequestedAxis_str += (
-            "input_data = "
-            + linesep
-            + str(self.input_data).replace(linesep, linesep + "\t")
-            + linesep
-            + linesep
-        )
+        RequestedAxis_str += "values = " + linesep + str(self.values).replace(linesep, linesep + "\t") + linesep + linesep
+        RequestedAxis_str += "indices = " + linesep + str(self.indices).replace(linesep, linesep + "\t") + linesep
+        RequestedAxis_str += "input_data = " + linesep + str(self.input_data).replace(linesep, linesep + "\t") + linesep + linesep
         RequestedAxis_str += 'operation = "' + str(self.operation) + '"' + linesep
         RequestedAxis_str += "index = " + str(self.index) + linesep
         RequestedAxis_str += 'transform = "' + str(self.transform) + '"' + linesep
@@ -183,7 +149,8 @@ class RequestedAxis(FrozenClass):
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+        """Convert this object in a json seriable dict (can be use in __init__)
+        """
 
         RequestedAxis_dict = dict()
         RequestedAxis_dict["name"] = self.name
@@ -195,7 +162,7 @@ class RequestedAxis(FrozenClass):
             RequestedAxis_dict["values"] = None
         else:
             RequestedAxis_dict["values"] = self.values.tolist()
-        RequestedAxis_dict["indices"] = self.indices
+        RequestedAxis_dict["indices"] = self.indices.copy() if self.indices is not None else None
         if self.input_data is None:
             RequestedAxis_dict["input_data"] = None
         else:

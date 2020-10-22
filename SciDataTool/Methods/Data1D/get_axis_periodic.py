@@ -40,7 +40,7 @@ def get_axis_periodic(self, Nper, is_antiperiod=False):
         values=values_per,
         name=self.name,
         unit=self.unit,
-        symmetries={self.name: {sym: Nper}},
+        symmetries={sym: Nper},
         is_components=self.is_components,
         symbol=self.symbol,
     )

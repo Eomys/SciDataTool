@@ -5,7 +5,6 @@
 """
 
 from os import linesep
-from logging import getLogger
 from ._check import check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -111,21 +110,7 @@ class DataLinspace(Data):
     save = save
     copy = copy
 
-    def __init__(
-        self,
-        initial=None,
-        final=None,
-        step=None,
-        number=None,
-        include_endpoint=True,
-        is_components=False,
-        symbol="",
-        name="",
-        unit="",
-        symmetries=-1,
-        init_dict=None,
-        init_str=None,
-    ):
+    def __init__(self, initial=None, final=None, step=None, number=None, include_endpoint=True, is_components=False, symbol="", name="", unit="", symmetries=-1, normalizations=-1, init_dict = None, init_str = None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -161,6 +146,8 @@ class DataLinspace(Data):
                 unit = init_dict["unit"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
+            if "normalizations" in list(init_dict.keys()):
+                normalizations = init_dict["normalizations"]
         # Set the properties (value check and convertion are done in setter)
         self.initial = initial
         self.final = final
@@ -169,9 +156,7 @@ class DataLinspace(Data):
         self.include_endpoint = include_endpoint
         self.is_components = is_components
         # Call Data init
-        super(DataLinspace, self).__init__(
-            symbol=symbol, name=name, unit=unit, symmetries=symmetries
-        )
+        super(DataLinspace, self).__init__(symbol=symbol, name=name, unit=unit, symmetries=symmetries, normalizations=normalizations)
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
 
@@ -213,7 +198,8 @@ class DataLinspace(Data):
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+        """Convert this object in a json seriable dict (can be use in __init__)
+        """
 
         # Get the properties inherited from Data
         DataLinspace_dict = super(DataLinspace, self).as_dict()

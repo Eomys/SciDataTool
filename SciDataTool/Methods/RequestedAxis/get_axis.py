@@ -6,7 +6,7 @@ from numpy import array
 from importlib import import_module
 
 
-def get_axis(self, axis, normalizations):
+def get_axis(self, axis):
     """Computes the vector 'axis' in the unit required, using conversions and symmetries if needed.
     Parameters
     ----------
@@ -14,8 +14,6 @@ def get_axis(self, axis, normalizations):
         a RequestedAxis object
     axis: Axis
         an Axis object
-    normalizations: dict
-        dictionary of the normalizations
     """
     is_components = getattr(axis, "is_components", False)
     if is_components:
@@ -71,19 +69,19 @@ def get_axis(self, axis, normalizations):
         unit = self.unit
         if unit == self.corr_unit or unit == "SI":
             pass
-        elif unit in normalizations:
-            values = array([v / normalizations.get(unit) for v in values])
+        elif unit in axis.normalizations:
+            values = array([v / axis.normalizations.get(unit) for v in values])
         else:
             values = convert(values, self.corr_unit, unit)
         # Rebuild symmetries in fft case
-        if self.transform == "fft" and axis.name in axis.symmetries:
-            if "period" in axis.symmetries.get(axis.name).keys():
+        if self.transform == "fft":
+            if "period" in axis.symmetries:
                 if axis.name != "time":
-                    values = values * axis.symmetries.get(axis.name).get("period")
-            elif "antiperiod" in axis.symmetries.get(axis.name).keys():
+                    values = values * axis.symmetries["period"]
+            elif "antiperiod" in axis.symmetries:
                 if axis.name != "time":
                     values = (
-                        values * axis.symmetries.get(axis.name).get("antiperiod") / 2
+                        values * axis.symmetries["antiperiod"] / 2
                     )
         # Interpolate axis with input data
         if self.extension in ["whole", "oneperiod", "antiperiod", "smallestperiod"]:

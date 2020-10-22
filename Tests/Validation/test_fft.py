@@ -163,7 +163,7 @@ def test_fft2d_period():
         name="time",
         unit="s",
         values=time,
-        symmetries={"time": {"period":5}}
+        symmetries={"period":5}
     )
     angle = np.linspace(0,2*np.pi,20,endpoint=False)
     ta, at = np.meshgrid(time, angle)
@@ -171,7 +171,7 @@ def test_fft2d_period():
         name="angle",
         unit="rad",
         values=angle,
-        symmetries={"angle": {"period":4}}
+        symmetries={"period":4}
     )
     field = 5*np.cos(2*np.pi*f*ta + at)
     # field = 5*np.cos(2*np.pi*f*time)
@@ -181,7 +181,6 @@ def test_fft2d_period():
         axes=[Angle, Time],
         values=field,
         unit="m",
-        symmetries={"angle": {"period":5}, "time": {"period":4}}
     )
     result = Field.get_magnitude_along("freqs=[0,100]")
     assert_array_almost_equal(np.array([0,f,2*f]), result["freqs"])

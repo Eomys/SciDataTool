@@ -15,13 +15,12 @@ def get_periodicity(self):
     per = 1
     is_antiper = False
 
-    if self.name in self.symmetries:
-        if "antiperiod" in self.symmetries.get(self.name):
-            if self.symmetries.get(self.name)["antiperiod"] > 1:
-                per = self.symmetries.get(self.name)["antiperiod"]
-                is_antiper = True
-        elif "period" in self.symmetries.get(self.name):
-            if self.symmetries.get(self.name)["period"] > 1:
-                per = self.symmetries.get(self.name)["period"]
+    if "antiperiod" in self.symmetries:
+        if self.symmetries["antiperiod"] > 1:
+            per = self.symmetries["antiperiod"]
+            is_antiper = True
+    elif "period" in self.symmetries:
+        if self.symmetries["period"] > 1:
+            per = self.symmetries["period"]
 
     return (per, is_antiper)
