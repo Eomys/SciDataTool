@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import pi, sqrt  # for eval
+from numpy import pi, sqrt, inf  # for eval
 from SciDataTool.Functions import AxisError
 from SciDataTool.Classes.RequestedAxis import RequestedAxis
 
@@ -27,6 +27,17 @@ def read_input_strings(args, axis_data):
             elems = axis_str.split("{")
             unit = elems[1].strip("}")
             axis_str = elems[0]
+        # Detect normalization
+        if "->" in axis_str:
+            elems = axis_str.split("->")
+            if "=" in axis_str:
+                unit = elems[1].split("=")[0]
+            elif "[" in axis_str:
+                unit = elems[1].split("[")[0]
+            else:
+                unit = elems[1]
+            name = elems[0]
+            axis_str = axis_str.replace("->" + unit, "")
         # Detect sum
         if "sum" in axis_str:
             elems = axis_str.split("=sum")
@@ -53,11 +64,15 @@ def read_input_strings(args, axis_data):
                 input_data = axis_data[name]
             except:
                 raise AxisError("ERROR: No axis_data provided")
-        # Detect normalization
-        # elif "->" in axis_str:
-        #     elems = axis_str.split("->")
-        #     name = elems[0]
-        #     extension = 
+        # Detect above
+        elif ">" in axis_str:
+            elems = axis_str.split(">")
+            init_str = elems[1]
+            interval_init = eval(init_str)
+            interval_final = inf
+            name = elems[0]
+            extension = "interval"
+            input_data = [interval_init, interval_final]
         # Detect interval
         elif "=[" in axis_str:
             elems = axis_str.split("=[")

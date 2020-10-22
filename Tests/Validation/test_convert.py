@@ -62,7 +62,7 @@ def test_norm():
         unit="m/s2",
         normalizations={"ref": 0.2}
     )
-    result = Field.get_along("freqs=[0,100]{elec_order}", is_norm=True)
+    result = Field.get_along("freqs->elec_order=[0,100]", is_norm=True)
     assert_array_almost_equal(1/(7*10), result["freqs"][1])
     assert_array_almost_equal(1/0.2, result["X"][0])
 
