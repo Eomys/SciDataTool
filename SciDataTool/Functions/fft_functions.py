@@ -1,21 +1,13 @@
 # -*- coding: utf-8 -*-
-from numpy import prod, mean, hanning, linspace, argmin, abs, where, isclose, apply_along_axis
-from numpy.fft import fft, rfftn, ifftn, fftn, fftshift, rfft2
-from scipy.fftpack import ifft, ifftshift
+from numpy import mean, hanning, linspace, where, isclose, apply_along_axis
+from numpy.fft import fft, fftshift, ifft, ifftshift
 from numpy import (
     pi,
     zeros,
-    cos,
     exp,
-    log,
-    meshgrid,
-    array,
     abs as np_abs,
     angle as np_angle,
 )
-from numpy import linalg, transpose, dot
-from scipy.signal import stft, spectrogram
-import matplotlib.pyplot as plt
 
 
 def comp_fft_freqs(time, is_time, is_positive):
@@ -193,12 +185,12 @@ def _comp_ifft(values, n=0):
     IFT
     """   
     
-    values_IFT = ifft(values)
     if n==0:
-        values_IFT[0] *= 2
-        values_IFT = ifftshift(values_IFT * len(values) / 2)
+        values[0] *= 2
+        values = ifftshift(values * len(values) / 2)
     else:
-        values_IFT = ifftshift(values_IFT) / len(values)
+        values = ifftshift(values) * len(values)
+    values_IFT = ifft(values)
     return values_IFT
 
 
@@ -219,22 +211,6 @@ def comp_ifftn(values, axes_list):
             values = apply_along_axis(_comp_ifft, axis.index, values, n=n)
             n = n+1
     return values
-
-
-def comp_rfft(values):
-    """Computes the Fourier Transform restricted to positive freqs
-    Parameters
-    ----------
-    values: ndarray
-        ndarray of the field
-    Returns
-    -------
-    Complex Fourier Transform restricted to positive freqs
-    """
-    values_shape = values.shape
-    values_FT = rfft2(values)
-    values_FT = values_FT / float(prod(values_shape))
-    return values_FT
 
 
 def comp_magnitude(values):

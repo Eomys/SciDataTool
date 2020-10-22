@@ -1,4 +1,3 @@
-
 import pytest
 from SciDataTool import DataTime, DataLinspace
 import numpy as np

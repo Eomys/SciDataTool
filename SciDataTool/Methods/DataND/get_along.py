@@ -2,8 +2,6 @@
 from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifftn
 
-from numpy import apply_along_axis
-
 
 def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the ndarray of the field, using conversions and symmetries if needed.

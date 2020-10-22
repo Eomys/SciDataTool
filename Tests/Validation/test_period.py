@@ -1,4 +1,3 @@
-
 import pytest
 from SciDataTool import DataTime, Data1D, DataLinspace
 import numpy as np
@@ -120,8 +119,8 @@ def test_antiperiod_1d():
     )
     Time_periodic = Time.get_axis_periodic(4, is_antiperiod=True)
     field_periodic = np.arange(50,70,5)
-    field = np.concatenate((field_periodic, np.negative(field_periodic)))
-    field = np.tile(field, 2)
+    field_antisym = np.concatenate((field_periodic, np.negative(field_periodic)))
+    field = np.tile(field_antisym, 2)
     
     Field = DataTime(
         name="field",
