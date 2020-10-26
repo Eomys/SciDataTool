@@ -51,10 +51,7 @@ def rebuild_symmetries(
              
             # Rebuild symmetries
             axis_symmetries = self.axes[axis.index].symmetries
-            if is_antiperiod:
-                if "antiperiod" not in axis_symmetries:
-                    raise AxisError("ERROR: axis has no antiperiodicity")
-            elif is_oneperiod:
+            if is_oneperiod:
                 if "antiperiod" in axis_symmetries:
                     nper = axis_symmetries["antiperiod"]
                     axis_symmetries["antiperiod"] = 2
@@ -62,7 +59,7 @@ def rebuild_symmetries(
                         values, axis.index, axis_symmetries
                     )
                     axis_symmetries["antiperiod"] = nper
-            else:
+            elif not is_smallestperiod and not is_antiperiod:
                 values = rebuild_symmetries_fct(
                     values, axis.index, axis_symmetries
                 )
