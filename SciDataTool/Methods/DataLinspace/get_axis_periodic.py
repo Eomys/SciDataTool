@@ -44,6 +44,7 @@ def get_axis_periodic(self, Nper, is_antiperiod=False):
         name=self.name,
         unit=self.unit,
         symmetries={sym: Nper},
+        normalizations=self.normalizations,
         is_components=self.is_components,
         symbol=self.symbol,
     )
