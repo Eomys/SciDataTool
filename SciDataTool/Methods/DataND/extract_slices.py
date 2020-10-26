@@ -17,7 +17,7 @@ def extract_slices(self, values, axes_list):
     values: ndarray
         values of the field
     """
-    
+
     axes_dict_other = {}
 
     # Extract the slices of the field

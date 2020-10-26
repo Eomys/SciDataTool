@@ -25,7 +25,15 @@ class Data(FrozenClass):
     save = save
     copy = copy
 
-    def __init__(self, symbol="", name="", unit="", symmetries=-1, normalizations=-1, init_dict = None, init_str = None):
+    def __init__(
+        self,
+        symbol="",
+        name="",
+        unit="",
+        normalizations=-1,
+        init_dict=None,
+        init_str=None,
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -47,8 +55,6 @@ class Data(FrozenClass):
                 name = init_dict["name"]
             if "unit" in list(init_dict.keys()):
                 unit = init_dict["unit"]
-            if "symmetries" in list(init_dict.keys()):
-                symmetries = init_dict["symmetries"]
             if "normalizations" in list(init_dict.keys()):
                 normalizations = init_dict["normalizations"]
         # Set the properties (value check and convertion are done in setter)
@@ -56,7 +62,6 @@ class Data(FrozenClass):
         self.symbol = symbol
         self.name = name
         self.unit = unit
-        self.symmetries = symmetries
         self.normalizations = normalizations
 
         # The class is frozen, for now it's impossible to add new properties
@@ -73,7 +78,6 @@ class Data(FrozenClass):
         Data_str += 'symbol = "' + str(self.symbol) + '"' + linesep
         Data_str += 'name = "' + str(self.name) + '"' + linesep
         Data_str += 'unit = "' + str(self.unit) + '"' + linesep
-        Data_str += "symmetries = " + str(self.symmetries) + linesep
         Data_str += "normalizations = " + str(self.normalizations) + linesep
         return Data_str
 
@@ -88,22 +92,20 @@ class Data(FrozenClass):
             return False
         if other.unit != self.unit:
             return False
-        if other.symmetries != self.symmetries:
-            return False
         if other.normalizations != self.normalizations:
             return False
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)
-        """
+        """Convert this object in a json seriable dict (can be use in __init__)"""
 
         Data_dict = dict()
         Data_dict["symbol"] = self.symbol
         Data_dict["name"] = self.name
         Data_dict["unit"] = self.unit
-        Data_dict["symmetries"] = self.symmetries.copy() if self.symmetries is not None else None
-        Data_dict["normalizations"] = self.normalizations.copy() if self.normalizations is not None else None
+        Data_dict["normalizations"] = (
+            self.normalizations.copy() if self.normalizations is not None else None
+        )
         # The class name is added to the dict for deserialisation purpose
         Data_dict["__class__"] = "Data"
         return Data_dict
@@ -114,7 +116,6 @@ class Data(FrozenClass):
         self.symbol = None
         self.name = None
         self.unit = None
-        self.symmetries = None
         self.normalizations = None
 
     def _get_symbol(self):
@@ -168,26 +169,6 @@ class Data(FrozenClass):
         doc=u"""Unit of the physical quantity (to be used in plots)
 
         :Type: str
-        """,
-    )
-
-    def _get_symmetries(self):
-        """getter of symmetries"""
-        return self._symmetries
-
-    def _set_symmetries(self, value):
-        """setter of symmetries"""
-        if type(value) is int and value == -1:
-            value = dict()
-        check_var("symmetries", value, "dict")
-        self._symmetries = value
-
-    symmetries = property(
-        fget=_get_symmetries,
-        fset=_set_symmetries,
-        doc=u"""Dictionary of the symmetries along each axis, used to reduce storage
-
-        :Type: dict
         """,
     )
 

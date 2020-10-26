@@ -73,6 +73,15 @@ def read_input_strings(args, axis_data):
             name = elems[0]
             extension = "interval"
             input_data = [interval_init, interval_final]
+        # Detect below
+        elif "<" in axis_str:
+            elems = axis_str.split("<")
+            init_str = elems[1]
+            interval_init = -inf
+            interval_final = eval(init_str)
+            name = elems[0]
+            extension = "interval"
+            input_data = [interval_init, interval_final]
         # Detect interval
         elif "=[" in axis_str:
             elems = axis_str.split("=[")

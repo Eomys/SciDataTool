@@ -81,9 +81,7 @@ def get_axis(self, axis):
                     values = values * axis.symmetries["period"]
             elif "antiperiod" in axis.symmetries:
                 if axis.name != "time":
-                    values = (
-                        values * axis.symmetries["antiperiod"] / 2
-                    )
+                    values = values * axis.symmetries["antiperiod"] / 2
         # Interpolate axis with input data
         if self.extension in ["whole", "oneperiod", "antiperiod", "smallestperiod"]:
             self.values = values
@@ -97,7 +95,9 @@ def get_axis(self, axis):
                 self.input_data = None
             else:
                 if self.extension == "axis_data":
-                    self.input_data = get_common_base(self.input_data, values, is_downsample=True)
+                    self.input_data = get_common_base(
+                        self.input_data, values, is_downsample=True
+                    )
                 else:
                     self.input_data = get_common_base(self.input_data, values)
                 self.values = values

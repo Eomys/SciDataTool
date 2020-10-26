@@ -144,7 +144,9 @@ class VectorField(FrozenClass):
     save = save
     copy = copy
 
-    def __init__(self, name="", symbol="", components={}, init_dict = None, init_str = None):
+    def __init__(
+        self, name="", symbol="", components={}, init_dict=None, init_str=None
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -182,10 +184,12 @@ class VectorField(FrozenClass):
         if self.parent is None:
             VectorField_str += "parent = None " + linesep
         else:
-            VectorField_str += "parent = " + str(type(self.parent)) + " object" + linesep
+            VectorField_str += (
+                "parent = " + str(type(self.parent)) + " object" + linesep
+            )
         VectorField_str += 'name = "' + str(self.name) + '"' + linesep
         VectorField_str += 'symbol = "' + str(self.symbol) + '"' + linesep
-        VectorField_str += "components = "+ str(self.components) + linesep + linesep
+        VectorField_str += "components = " + str(self.components) + linesep + linesep
         return VectorField_str
 
     def __eq__(self, other):
@@ -202,8 +206,7 @@ class VectorField(FrozenClass):
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)
-        """
+        """Convert this object in a json seriable dict (can be use in __init__)"""
 
         VectorField_dict = dict()
         VectorField_dict["name"] = self.name
@@ -274,7 +277,9 @@ class VectorField(FrozenClass):
         if type(value) is dict:
             for key, obj in value.items():
                 if type(obj) is dict:
-                    class_obj = import_class('SciDataTool.Classes', obj.get('__class__'), 'components')
+                    class_obj = import_class(
+                        "SciDataTool.Classes", obj.get("__class__"), "components"
+                    )
                     value[key] = class_obj(init_dict=obj)
         if type(value) is int and value == -1:
             value = dict()

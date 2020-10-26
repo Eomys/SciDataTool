@@ -23,7 +23,7 @@ def rebuild_symmetries(
     -------
     ndarray of the reconstructed field
     """
-    
+
     for axis in axes_list:
         if axis.transform != "fft" and axis.extension in [
             "whole",
@@ -48,19 +48,15 @@ def rebuild_symmetries(
                 is_smallestperiod = False
                 is_oneperiod = False
                 is_antiperiod = False
-             
+
             # Rebuild symmetries
             axis_symmetries = self.axes[axis.index].symmetries
             if is_oneperiod:
                 if "antiperiod" in axis_symmetries:
                     nper = axis_symmetries["antiperiod"]
                     axis_symmetries["antiperiod"] = 2
-                    values = rebuild_symmetries_fct(
-                        values, axis.index, axis_symmetries
-                    )
+                    values = rebuild_symmetries_fct(values, axis.index, axis_symmetries)
                     axis_symmetries["antiperiod"] = nper
             elif not is_smallestperiod and not is_antiperiod:
-                values = rebuild_symmetries_fct(
-                    values, axis.index, axis_symmetries
-                )
+                values = rebuild_symmetries_fct(values, axis.index, axis_symmetries)
     return values

@@ -49,17 +49,13 @@ def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
         if length1 > length2:
             number = length1
             if initial not in values1:
-                initial = values1[
-                    argmin(np_abs([i - initial for i in values1])) + 1
-                ]
+                initial = values1[argmin(np_abs([i - initial for i in values1])) + 1]
             if final not in values1:
                 final = values1[argmin(np_abs([i - final for i in values1])) - 1]
         else:
             number = length2
             if initial not in values2:
-                initial = values2[
-                    argmin(np_abs([i - initial for i in values2])) + 1
-                ]
+                initial = values2[argmin(np_abs([i - initial for i in values2])) + 1]
             if final not in values2:
                 final = values2[argmin(np_abs([i - final for i in values2])) - 1]
     return linspace(initial, final, int(number), endpoint=True)

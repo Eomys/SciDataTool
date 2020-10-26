@@ -56,8 +56,8 @@ def comp_fft_time(freqs, is_angle):
         time = [0]
     else:
         N_tot = len(freqs)  # Number of samples
-        fs = freqs[-1] / (N_tot-1)
-        tf = 1 / (fs*2)
+        fs = freqs[-1] / (N_tot - 1)
+        tf = 1 / (fs * 2)
         time = linspace(0, tf, N_tot, endpoint=False)
         # fsampt = freqs[-1] * 2.0
         # timestep = 1.0 / fsampt
@@ -147,7 +147,7 @@ def _comp_fft(values, n=0):
     Complex Fourier Transform
     """
     values_FT = fft(values)
-    if n==0:
+    if n == 0:
         values_FT[0] *= 0.5
         values_FT = 2.0 * fftshift(values_FT) / len(values)
     else:
@@ -165,12 +165,12 @@ def comp_fftn(values, axes_list):
     -------
     Complex Fourier Transform
     """
-    
+
     n = 0
     for axis in axes_list:
         if axis.transform == "fft":
             values = apply_along_axis(_comp_fft, axis.index, values, n=n)
-            n = n+1
+            n = n + 1
     return values
 
 
@@ -183,9 +183,9 @@ def _comp_ifft(values, n=0):
     Returns
     -------
     IFT
-    """   
-    
-    if n==0:
+    """
+
+    if n == 0:
         values[0] *= 2
         values = ifftshift(values * len(values) / 2)
     else:
@@ -204,12 +204,12 @@ def comp_ifftn(values, axes_list):
     -------
     IFT
     """
-    
+
     n = 0
     for axis in axes_list:
         if axis.transform == "ifft":
             values = apply_along_axis(_comp_ifft, axis.index, values, n=n)
-            n = n+1
+            n = n + 1
     return values
 
 
@@ -281,7 +281,9 @@ def comp_fft_average(values):
     nwindows = int(N_tot / (2.0 * step))
     values_fft = zeros(nperseg, dtype="complex128")
     for i in range(nwindows):
-        values_fft += _comp_fft(values[i * step : nperseg + i * step] * hanning(nperseg))
+        values_fft += _comp_fft(
+            values[i * step : nperseg + i * step] * hanning(nperseg)
+        )
     values = values_fft[int(nperseg / 2) :] / nwindows
     f = linspace(0, int(N_tot / 2), int(nperseg / 2))
     return f, np_abs(values)

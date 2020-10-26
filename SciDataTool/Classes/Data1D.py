@@ -105,7 +105,18 @@ class Data1D(Data):
     save = save
     copy = copy
 
-    def __init__(self, values=None, is_components=False, symbol="", name="", unit="", symmetries=-1, normalizations=-1, init_dict = None, init_str = None):
+    def __init__(
+        self,
+        values=None,
+        is_components=False,
+        symmetries=-1,
+        symbol="",
+        name="",
+        unit="",
+        normalizations=-1,
+        init_dict=None,
+        init_str=None,
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -125,21 +136,24 @@ class Data1D(Data):
                 values = init_dict["values"]
             if "is_components" in list(init_dict.keys()):
                 is_components = init_dict["is_components"]
+            if "symmetries" in list(init_dict.keys()):
+                symmetries = init_dict["symmetries"]
             if "symbol" in list(init_dict.keys()):
                 symbol = init_dict["symbol"]
             if "name" in list(init_dict.keys()):
                 name = init_dict["name"]
             if "unit" in list(init_dict.keys()):
                 unit = init_dict["unit"]
-            if "symmetries" in list(init_dict.keys()):
-                symmetries = init_dict["symmetries"]
             if "normalizations" in list(init_dict.keys()):
                 normalizations = init_dict["normalizations"]
         # Set the properties (value check and convertion are done in setter)
         self.values = values
         self.is_components = is_components
+        self.symmetries = symmetries
         # Call Data init
-        super(Data1D, self).__init__(symbol=symbol, name=name, unit=unit, symmetries=symmetries, normalizations=normalizations)
+        super(Data1D, self).__init__(
+            symbol=symbol, name=name, unit=unit, normalizations=normalizations
+        )
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
 
@@ -149,8 +163,15 @@ class Data1D(Data):
         Data1D_str = ""
         # Get the properties inherited from Data
         Data1D_str += super(Data1D, self).__str__()
-        Data1D_str += "values = " + linesep + str(self.values).replace(linesep, linesep + "\t") + linesep + linesep
+        Data1D_str += (
+            "values = "
+            + linesep
+            + str(self.values).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
         Data1D_str += "is_components = " + str(self.is_components) + linesep
+        Data1D_str += "symmetries = " + str(self.symmetries) + linesep
         return Data1D_str
 
     def __eq__(self, other):
@@ -166,11 +187,12 @@ class Data1D(Data):
             return False
         if other.is_components != self.is_components:
             return False
+        if other.symmetries != self.symmetries:
+            return False
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)
-        """
+        """Convert this object in a json seriable dict (can be use in __init__)"""
 
         # Get the properties inherited from Data
         Data1D_dict = super(Data1D, self).as_dict()
@@ -179,6 +201,9 @@ class Data1D(Data):
         else:
             Data1D_dict["values"] = self.values.tolist()
         Data1D_dict["is_components"] = self.is_components
+        Data1D_dict["symmetries"] = (
+            self.symmetries.copy() if self.symmetries is not None else None
+        )
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         Data1D_dict["__class__"] = "Data1D"
@@ -189,6 +214,7 @@ class Data1D(Data):
 
         self.values = None
         self.is_components = None
+        self.symmetries = None
         # Set to None the properties inherited from Data
         super(Data1D, self)._set_None()
 
@@ -232,5 +258,25 @@ class Data1D(Data):
         doc=u"""Boolean inidcating if the axis is components
 
         :Type: bool
+        """,
+    )
+
+    def _get_symmetries(self):
+        """getter of symmetries"""
+        return self._symmetries
+
+    def _set_symmetries(self, value):
+        """setter of symmetries"""
+        if type(value) is int and value == -1:
+            value = dict()
+        check_var("symmetries", value, "dict")
+        self._symmetries = value
+
+    symmetries = property(
+        fget=_get_symmetries,
+        fset=_set_symmetries,
+        doc=u"""Dictionary of the symmetries along each axis, used to reduce storage
+
+        :Type: dict
         """,
     )

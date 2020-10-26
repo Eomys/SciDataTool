@@ -21,15 +21,10 @@ def get_field(self, axes_list):
     for axis_requested in axes_list:
         # Rebuild symmetries only for fft case
         axis_symmetries = self.axes[axis_requested.index].symmetries
-        if (
-            axis_requested.transform == "fft"
-            and "antiperiod" in axis_symmetries
-        ):
+        if axis_requested.transform == "fft" and "antiperiod" in axis_symmetries:
             nper = axis_symmetries["antiperiod"]
             axis_symmetries["antiperiod"] = 2
-            values = rebuild_symmetries(
-                values, axis_requested.index, axis_symmetries
-            )
+            values = rebuild_symmetries(values, axis_requested.index, axis_symmetries)
             axis_symmetries["antiperiod"] = nper
 
         # Sum over sum axes

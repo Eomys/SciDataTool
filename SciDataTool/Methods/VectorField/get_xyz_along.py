@@ -28,7 +28,10 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
 
-    if "radial" in self.components.keys() and "circumferential" in self.components.keys():
+    if (
+        "radial" in self.components.keys()
+        and "circumferential" in self.components.keys()
+    ):
         # Extract from DataND
         resultr = self.components["radial"].get_along(
             args, unit=unit, is_norm=is_norm, axis_data=axis_data

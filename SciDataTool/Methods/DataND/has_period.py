@@ -12,7 +12,7 @@ def has_period(self):
     Boolean
     """
     answer = False
-    
+
     for axis in self.axes:
 
         if axis.symmetries != {}:

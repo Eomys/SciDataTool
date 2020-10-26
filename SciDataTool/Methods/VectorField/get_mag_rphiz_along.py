@@ -28,16 +28,16 @@ def get_mag_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
 
-    if "x" in self.components.keys() and "y" in self.components.keys():
+    if "comp_x" in self.components.keys() and "comp_y" in self.components.keys():
         # Extract from DataND
-        resultx = self.components["x"].get_magnitude_along(
+        resultx = self.components["comp_x"].get_magnitude_along(
             args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-        resulty = self.components["y"].get_magnitude_along(
+        resulty = self.components["comp_y"].get_magnitude_along(
             args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-        field_x = resultx[self.components["x"].symbol]
-        field_y = resulty[self.components["y"].symbol]
+        field_x = resultx[self.components["comp_x"].symbol]
+        field_y = resulty[self.components["comp_y"].symbol]
         shape = field_x.shape
         x = resultx["x"]
         y = resultx["y"]
@@ -50,14 +50,14 @@ def get_mag_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             )
             field_z = resultz[self.components["axial"].symbol]
         elif "z" in self.components.keys():
-            resultz = self.components["z"].get_magnitude_along(
+            resultz = self.components["comp_z"].get_magnitude_along(
                 args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
-            field_z = resultz[self.components["z"].symbol]
+            field_z = resultz[self.components["comp_z"].symbol]
         else:
             field_z = zeros(shape)
         return_dict = dict(resultx)
-        del return_dict[self.components["x"].symbol]
+        del return_dict[self.components["comp_x"].symbol]
 
     elif "radial" in self.components.keys():
         resultr = self.components["radial"].get_magnitude_along(
@@ -65,11 +65,11 @@ def get_mag_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         )
         field_r = resultr[self.components["radial"].symbol]
         shape = field_r.shape
-        if "tangential" in self.components.keys():
-            resultphi = self.components["tangential"].get_magnitude_along(
+        if "circumferential" in self.components.keys():
+            resultphi = self.components["circumferential"].get_magnitude_along(
                 args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
-            field_t = resultphi[self.components["tangential"].symbol]
+            field_t = resultphi[self.components["circumferential"].symbol]
         else:
             field_t = zeros(shape)
         if "axial" in self.components.keys():
@@ -77,21 +77,21 @@ def get_mag_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
             field_z = resultz[self.components["axial"].symbol]
-        elif "z" in self.components.keys():
-            resultz = self.components["z"].get_magnitude_along(
+        elif "comp_z" in self.components.keys():
+            resultz = self.components["comp_z"].get_magnitude_along(
                 args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
-            field_z = resultz[self.components["z"].symbol]
+            field_z = resultz[self.components["comp_z"].symbol]
         else:
             field_z = zeros(shape)
         return_dict = dict(resultr)
         del return_dict[self.components["radial"].symbol]
 
-    elif "tangential" in self.components.keys():
-        resultphi = self.components["tangential"].get_magnitude_along(
+    elif "circumferential" in self.components.keys():
+        resultphi = self.components["circumferential"].get_magnitude_along(
             args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-        field_t = resultphi[self.components["tangential"].symbol]
+        field_t = resultphi[self.components["circumferential"].symbol]
         shape = field_t.shape
         if "radial" in self.components.keys():
             resultr = self.components["radial"].get_magnitude_along(
@@ -105,15 +105,15 @@ def get_mag_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
             field_z = resultz[self.components["axial"].symbol]
-        elif "z" in self.components.keys():
-            resultz = self.components["z"].get_magnitude_along(
+        elif "comp_z" in self.components.keys():
+            resultz = self.components["comp_z"].get_magnitude_along(
                 args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
-            field_z = resultz[self.components["z"].symbol]
+            field_z = resultz[self.components["comp_z"].symbol]
         else:
             field_z = zeros(shape)
         return_dict = dict(resultphi)
-        del return_dict[self.components["tangential"].symbol]
+        del return_dict[self.components["circumferential"].symbol]
 
     elif "axial" in self.components.keys():
         resultz = self.components["axial"].get_magnitude_along(
@@ -126,24 +126,24 @@ def get_mag_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         return_dict = dict(resultz)
         del return_dict[self.components["axial"].symbol]
 
-    elif "z" in self.components.keys():
-        resultz = self.components["z"].get_magnitude_along(
+    elif "comp_z" in self.components.keys():
+        resultz = self.components["comp_z"].get_magnitude_along(
             args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-        field_z = resultz[self.components["z"].symbol]
+        field_z = resultz[self.components["comp_z"].symbol]
         shape = field_z.shape
         field_r = zeros(shape)
         field_t = zeros(shape)
         return_dict = resultz
-        del return_dict[self.components["z"].symbol]
+        del return_dict[self.components["comp_z"].symbol]
 
     else:
         raise AxisError(
-            "Vector_field object is empty (should contain at least radial, tangential, axial, x, y or z"
+            "Vector_field object is empty (should contain at least radial, circumferential, axial, x, y or z"
         )
 
-    return_dict[self.symbol + "_r"] = field_r
-    return_dict[self.symbol + "_t"] = field_t
-    return_dict[self.symbol + "_z"] = field_z
+    return_dict["radial"] = field_r
+    return_dict["circumferential"] = field_t
+    return_dict["axial"] = field_z
 
     return return_dict

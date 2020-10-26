@@ -321,7 +321,18 @@ class DataND(Data):
     save = save
     copy = copy
 
-    def __init__(self, axes=None, FTparameters=-1, values=None, symbol="", name="", unit="", symmetries=-1, normalizations=-1, init_dict = None, init_str = None):
+    def __init__(
+        self,
+        axes=None,
+        FTparameters=-1,
+        values=None,
+        symbol="",
+        name="",
+        unit="",
+        normalizations=-1,
+        init_dict=None,
+        init_str=None,
+    ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -349,8 +360,6 @@ class DataND(Data):
                 name = init_dict["name"]
             if "unit" in list(init_dict.keys()):
                 unit = init_dict["unit"]
-            if "symmetries" in list(init_dict.keys()):
-                symmetries = init_dict["symmetries"]
             if "normalizations" in list(init_dict.keys()):
                 normalizations = init_dict["normalizations"]
         # Set the properties (value check and convertion are done in setter)
@@ -358,7 +367,9 @@ class DataND(Data):
         self.FTparameters = FTparameters
         self.values = values
         # Call Data init
-        super(DataND, self).__init__(symbol=symbol, name=name, unit=unit, symmetries=symmetries, normalizations=normalizations)
+        super(DataND, self).__init__(
+            symbol=symbol, name=name, unit=unit, normalizations=normalizations
+        )
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
 
@@ -368,9 +379,15 @@ class DataND(Data):
         DataND_str = ""
         # Get the properties inherited from Data
         DataND_str += super(DataND, self).__str__()
-        DataND_str += "axes = "+ str(self.axes) + linesep + linesep
+        DataND_str += "axes = " + str(self.axes) + linesep + linesep
         DataND_str += "FTparameters = " + str(self.FTparameters) + linesep
-        DataND_str += "values = " + linesep + str(self.values).replace(linesep, linesep + "\t") + linesep + linesep
+        DataND_str += (
+            "values = "
+            + linesep
+            + str(self.values).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
         return DataND_str
 
     def __eq__(self, other):
@@ -391,8 +408,7 @@ class DataND(Data):
         return True
 
     def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)
-        """
+        """Convert this object in a json seriable dict (can be use in __init__)"""
 
         # Get the properties inherited from Data
         DataND_dict = super(DataND, self).as_dict()
@@ -402,7 +418,9 @@ class DataND(Data):
             DataND_dict["axes"] = list()
             for obj in self.axes:
                 DataND_dict["axes"].append(obj.as_dict())
-        DataND_dict["FTparameters"] = self.FTparameters.copy() if self.FTparameters is not None else None
+        DataND_dict["FTparameters"] = (
+            self.FTparameters.copy() if self.FTparameters is not None else None
+        )
         if self.values is None:
             DataND_dict["values"] = None
         else:
@@ -434,7 +452,9 @@ class DataND(Data):
         if type(value) is list:
             for ii, obj in enumerate(value):
                 if type(obj) is dict:
-                    class_obj = import_class('SciDataTool.Classes', obj.get('__class__'), 'axes')
+                    class_obj = import_class(
+                        "SciDataTool.Classes", obj.get("__class__"), "axes"
+                    )
                     value[ii] = class_obj(init_dict=obj)
         if value == -1:
             value = list()
