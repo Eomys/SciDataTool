@@ -30,9 +30,13 @@ def read_input_strings(args, axis_data):
         # Detect normalization
         if "->" in axis_str:
             elems = axis_str.split("->")
-            if "=" in axis_str:
+            if "=" in elems[1]:
                 unit = elems[1].split("=")[0]
-            elif "[" in axis_str:
+            elif "[" in elems[1]:
+                unit = elems[1].split("[")[0]
+            elif ">" in elems[1]:
+                unit = elems[1].split("[")[0]
+            elif "<" in elems[1]:
                 unit = elems[1].split("[")[0]
             else:
                 unit = elems[1]
