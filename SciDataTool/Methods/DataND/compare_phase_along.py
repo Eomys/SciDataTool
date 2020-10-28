@@ -27,6 +27,8 @@ def compare_phase_along(self, *args, unit="SI", data_list=[], is_norm=False):
         # Extract requested axes + field values
         results = self.get_phase_along(args, unit=unit, is_norm=is_norm)
         values = results.pop(self.symbol)
+        axes_list = results.pop("axes_list")
+        axes_dict_other = results.pop("axes_dict_other")
         axes = results
         data_axis_values = []
         data_values = []
@@ -54,6 +56,8 @@ def compare_phase_along(self, *args, unit="SI", data_list=[], is_norm=False):
             return_dict[axis] = common_axis_values[axis]
         # Return axis and values
         return_dict[self.symbol] = values
+        return_dict["axes_list"] = axes_list
+        return_dict["axes_dict_other"] = axes_dict_other
         for i, data in enumerate(data_list):
             return_dict[data.symbol + "_" + str(i)] = data_values[i]
         return return_dict
