@@ -5,7 +5,6 @@
 """
 
 from os import linesep
-from logging import getLogger
 from ._check import check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -145,7 +144,7 @@ class VectorField(FrozenClass):
     copy = copy
 
     def __init__(
-        self, name="", symbol="", components={}, init_dict=None, init_str=None
+        self, name="", symbol="", components=None, init_dict=None, init_str=None
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
