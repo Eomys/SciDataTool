@@ -30,4 +30,7 @@ def get_field(self, axes_list):
         # Sum over sum axes
         if axis_requested.extension == "sum":
             values = np_sum(values, axis=axis_requested.index)
+        # RMS over sum axes
+        elif axis_requested.extension == "rms":
+            values = sqrt(np_sum(values**2, axis=axis_requested.index))
     return values

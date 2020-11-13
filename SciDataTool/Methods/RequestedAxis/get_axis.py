@@ -18,7 +18,7 @@ def get_axis(self, axis):
     is_components = getattr(axis, "is_components", False)
     if is_components:
         values = axis.get_values()
-        if self.extension != "sum":
+        if self.extension != "sum" or self.extension != "rms":
             self.extension = "list"
         if self.indices is not None:
             self.values = values[self.indices]

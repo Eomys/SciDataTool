@@ -47,6 +47,12 @@ def read_input_strings(args, axis_data):
             elems = axis_str.split("=sum")
             name = elems[0]
             extension = "sum"
+        # Detect rms
+        elif "rms" in axis_str:
+            elems = axis_str.split("=rms")
+            name = elems[0]
+            extension = "rms"
+        # Detect periods
         elif "oneperiod" in axis_str:
             elems = axis_str.split("[")
             name = elems[0]
