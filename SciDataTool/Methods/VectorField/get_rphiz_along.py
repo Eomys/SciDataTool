@@ -39,10 +39,12 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         field_x = resultx[self.components["comp_x"].symbol]
         field_y = resulty[self.components["comp_y"].symbol]
         shape = field_x.shape
-        x = resultx["x"]
-        y = resultx["y"]
+        if "phi" not in resultx:
+            raise AxisError(
+                "ERROR: need phi axis to convert to cylindircal coordinates"
+            )
+        phi = resultx["phi"]
         # Convert to cylindrical coordinates
-        (r, phi) = xy_to_rphi(x, y)
         (field_r, field_c) = cart2pol(field_x, field_y, phi)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_along(

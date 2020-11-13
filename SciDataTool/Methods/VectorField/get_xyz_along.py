@@ -28,20 +28,21 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
 
-    if (
-        "radial" in self.components.keys()
-        and "circumferential" in self.components.keys()
-    ):
+    if "radial" in self.components.keys() and "tangential" in self.components.keys():
         # Extract from DataND
         resultr = self.components["radial"].get_along(
             args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-        resultphi = self.components["circumferential"].get_along(
+        resultphi = self.components["tangential"].get_along(
             args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
         field_r = resultr[self.components["radial"].symbol]
-        field_c = resultphi[self.components["circumferential"].symbol]
+        field_c = resultphi[self.components["tangential"].symbol]
         shape = field_r.shape
+        if "phi" not in resultr:
+            raise AxisError(
+                "ERROR: need phi axis to convert to cylindircal coordinates"
+            )
         phi = resultr["phi"]
         # Convert to cylindrical coordinates
         (field_x, field_y) = pol2cart(field_r, field_c, phi)
@@ -140,7 +141,7 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     else:
         raise AxisError(
-            "Vector_field object is empty (should contain at least radial, circumferential, axial, x, y or z"
+            "Vector_field object is empty (should contain at least radial, tangential, axial, x, y or z"
         )
 
     return_dict["comp_x"] = field_x
