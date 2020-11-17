@@ -65,3 +65,24 @@ def test_norm():
     result = Field.get_along("freqs->elec_order=[0,100]", is_norm=True)
     assert_array_almost_equal(1 / (7 * 10), result["freqs"][1])
     assert_array_almost_equal(1 / 0.2, result["X"][0])
+    
+    angle = np.linspace(0, 2*np.pi, 10, endpoint=False)
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=2*np.pi,
+        number=10,
+        include_endpoint=False,
+        normalizations={"tooth_id": "indices"},
+    )
+    field = np.cos(2 * np.pi * 100 * angle)
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Angle],
+        values=field,
+        unit="m/s2",
+    )
+    result = Field.get_along("angle->tooth_id")
+    assert_array_almost_equal(np.linspace(0,10,10,endpoint=False), result["angle"])

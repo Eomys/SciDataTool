@@ -41,7 +41,7 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         shape = field_x.shape
         if "phi" not in resultx:
             raise AxisError(
-                "ERROR: need phi axis to convert to cylindircal coordinates"
+                "ERROR: need phi axis to convert to cylindrical coordinates"
             )
         phi = resultx["phi"]
         # Convert to cylindrical coordinates

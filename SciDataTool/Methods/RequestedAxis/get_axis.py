@@ -71,7 +71,10 @@ def get_axis(self, axis):
         if unit == self.corr_unit or unit == "SI":
             pass
         elif unit in axis.normalizations:
-            values = array([v / axis.normalizations.get(unit) for v in values])
+            if axis.normalizations.get(unit) == "indices":
+                values = array([i for i in range(len(values))])
+            else:
+                values = array([v / axis.normalizations.get(unit) for v in values])
         else:
             values = convert(values, self.corr_unit, unit)
         # Rebuild symmetries in fft case
