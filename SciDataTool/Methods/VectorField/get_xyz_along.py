@@ -41,7 +41,7 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         shape = field_r.shape
         if "phi" not in resultr:
             raise AxisError(
-                "ERROR: need phi axis to convert to cylindircal coordinates"
+                "ERROR: need phi axis to convert to cartesian coordinates"
             )
         phi = resultr["phi"]
         # Convert to cylindrical coordinates
