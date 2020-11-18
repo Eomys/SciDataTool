@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import sum as np_sum
+from numpy import sum as np_sum, sqrt
 from SciDataTool.Functions.symmetries import rebuild_symmetries
 
 
