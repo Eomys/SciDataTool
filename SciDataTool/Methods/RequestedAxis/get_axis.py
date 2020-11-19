@@ -67,14 +67,29 @@ def get_axis(self, axis):
                 is_smallestperiod = False
                 is_oneperiod = True
                 is_antiperiod = False
-        elif self.extension == "axis_data":
-            is_smallestperiod = False
-            is_oneperiod = False
-            is_antiperiod = False
         else:
-            is_smallestperiod = False
-            is_oneperiod = False
-            is_antiperiod = False
+            if self.input_data is not None:
+                axis_values = axis.get_values(is_smallestperiod=True)
+                if min(self.input_data) >= min(axis_values) and max(self.input_data) <= max(axis_values):
+                    is_smallestperiod=True
+                    is_oneperiod = False
+                    is_antiperiod = False
+                else:
+                    axis_values = axis.get_values(is_oneperiod=True)
+                    if min(self.input_data) >= min(axis_values) and max(self.input_data) <= max(axis_values):
+                        is_smallestperiod=False
+                        is_oneperiod = True
+                        is_antiperiod = False
+                        self.extension = "oneperiod"
+                    else:
+                        is_smallestperiod=False
+                        is_oneperiod = False
+                        is_antiperiod = False
+                        self.extension = "interval"
+            else:
+                is_smallestperiod=False
+                is_oneperiod = False
+                is_antiperiod = False
         # Get original values of the axis
         if self.operation is not None:
             module = import_module("SciDataTool.Functions.conversions")
@@ -116,9 +131,9 @@ def get_axis(self, axis):
                 if axis.name != "time":
                     values = values * axis.symmetries["antiperiod"] / 2
         # Interpolate axis with input data
-        if self.extension in ["whole", "oneperiod", "antiperiod", "smallestperiod"]:
+        if self.input_data is None:
             self.values = values
-        elif self.input_data is not None:
+        else:
             if len(self.input_data) == 2 and self.extension != "axis_data":
                 self.indices = [
                     i
@@ -128,12 +143,12 @@ def get_axis(self, axis):
                 self.input_data = None
             else:
                 if self.extension == "axis_data":
-                    if self.is_step:
-                        self.input_data = self.input_data
-                    else:
-                        self.input_data = get_common_base(
-                            self.input_data, values, is_downsample=True
-                        )
+                    # if self.is_step:
+                    self.input_data = self.input_data
+                    # else:
+                    #     self.input_data = get_common_base(
+                    #         self.input_data, values, is_downsample=True
+                    #     )
                 else:
                     self.input_data = get_common_base(self.input_data, values)
                 self.values = values
