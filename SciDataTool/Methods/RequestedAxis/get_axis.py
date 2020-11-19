@@ -128,10 +128,12 @@ def get_axis(self, axis):
                 self.input_data = None
             else:
                 if self.extension == "axis_data":
-                    self.input_data = self.input_data
-                    # self.input_data = get_common_base(
-                    #     self.input_data, values, is_downsample=True
-                    # )
+                    if self.is_step:
+                        self.input_data = self.input_data
+                    else:
+                        self.input_data = get_common_base(
+                            self.input_data, values, is_downsample=True
+                        )
                 else:
                     self.input_data = get_common_base(self.input_data, values)
                 self.values = values
