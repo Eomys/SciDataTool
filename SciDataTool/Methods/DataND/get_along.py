@@ -48,7 +48,12 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Return axes and values
     return_dict = {}
     for axis_requested in axes_list:
-        return_dict[axis_requested.name] = axis_requested.values
+        if axis_requested.extension == "sum":
+            return_dict[axis_requested.name] = "sum"
+        elif axis_requested.extension == "rms":
+            return_dict[axis_requested.name] = "rms"
+        else:
+            return_dict[axis_requested.name] = axis_requested.values
     return_dict[self.symbol] = values
     return_dict["axes_list"] = axes_list
     return_dict["axes_dict_other"] = axes_dict_other
