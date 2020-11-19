@@ -23,7 +23,7 @@ def get_axis(self, axis):
     is_components = getattr(axis, "is_components", False)
     if is_components:
         values = axis.get_values()
-        if self.extension != "sum" or self.extension != "rms":
+        if self.extension != "sum" and self.extension != "rms":
             self.extension = "list"
         if self.indices is not None:
             self.values = values[self.indices]
@@ -70,24 +70,28 @@ def get_axis(self, axis):
         else:
             if self.input_data is not None:
                 axis_values = axis.get_values(is_smallestperiod=True)
-                if min(self.input_data) >= min(axis_values) and max(self.input_data) <= max(axis_values):
-                    is_smallestperiod=True
+                if min(self.input_data) >= min(axis_values) and max(
+                    self.input_data
+                ) <= max(axis_values):
+                    is_smallestperiod = True
                     is_oneperiod = False
                     is_antiperiod = False
                 else:
                     axis_values = axis.get_values(is_oneperiod=True)
-                    if min(self.input_data) >= min(axis_values) and max(self.input_data) <= max(axis_values):
-                        is_smallestperiod=False
+                    if min(self.input_data) >= min(axis_values) and max(
+                        self.input_data
+                    ) <= max(axis_values):
+                        is_smallestperiod = False
                         is_oneperiod = True
                         is_antiperiod = False
                         self.extension = "oneperiod"
                     else:
-                        is_smallestperiod=False
+                        is_smallestperiod = False
                         is_oneperiod = False
                         is_antiperiod = False
                         self.extension = "interval"
             else:
-                is_smallestperiod=False
+                is_smallestperiod = False
                 is_oneperiod = False
                 is_antiperiod = False
         # Get original values of the axis
