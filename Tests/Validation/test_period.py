@@ -185,11 +185,12 @@ def test_pattern():
     Slices = DataPattern(
         name="slice",
         unit="m",
-        values=np.array([-5, -3, -1, 1, 3, 5]),
-        unique_indices=np.array([0, 1, 3, 5, 7, 9]),
-        rebuild_indices=np.array([0, 1, 1, 2, 2, 3, 3, 4, 4, 5]),
+        values=np.array([-5, -3, -1, 1, 3]),
+        values_whole=np.array([-5, -3, -3, -1, -1, 1, 1, 3, 3, 5]),
+        unique_indices=np.array([0, 2, 4, 6, 8]),
+        rebuild_indices=np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4]),
     )
-    field = np.array([10, 20, 30, 40, 50, 60])
+    field = np.array([10, 20, 30, 40, 50])
     Field = DataTime(
         name="field",
         symbol="X",
@@ -197,14 +198,111 @@ def test_pattern():
         values=field,
     )
     assert_array_almost_equal(10, Slices.get_length())
-    assert_array_almost_equal(6, Slices.get_length(is_pattern=True))
+    assert_array_almost_equal(5, Slices.get_length(is_pattern=True))
     result = Field.get_along("slice")
     assert_array_almost_equal(
         np.array([-5, -3, -3, -1, -1, 1, 1, 3, 3, 5]), result["slice"]
     )
     assert_array_almost_equal(
-        np.array([10, 20, 20, 30, 30, 40, 40, 50, 50, 60]), result["X"]
+        np.array([10, 10, 20, 20, 30, 30, 40, 40, 50, 50]), result["X"]
     )
     result = Field.get_along("slice[pattern]")
-    assert_array_almost_equal(np.array([-5, -3, -1, 1, 3, 5]), result["slice"])
+    assert_array_almost_equal(np.array([-5, -3, -1, 1, 3]), result["slice"])
     assert_array_almost_equal(field, result["X"])
+    result = Field.get_along(
+        "slice=axis_data",
+        axis_data={"slice": np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])},
+    )
+    assert_array_almost_equal(
+        np.array([10, 10, 15, 20, 25, 30, 35, 40, 45, 50, 50]), result["X"]
+    )
+
+    Slices = DataPattern(
+        name="slice",
+        unit="m",
+        values=np.array([0]),
+        unique_indices=np.array([0]),
+        rebuild_indices=np.array([0]),
+    )
+    field = np.array([10])
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Slices],
+        values=field,
+    )
+    result = Field.get_along(
+        "slice=axis_data", axis_data={"slice": np.array([-2, -1, 0, 1, 2])}
+    )
+    assert_array_almost_equal(np.array([10, 10, 10, 10, 10]), result["X"])
+
+    Slices = DataPattern(
+        name="slice",
+        unit="m",
+        values=np.array([-5, -3, -1, 1, 3]),
+        values_whole=np.array([-5, -3, -3, -1, -1, 1, 1, 3, 3, 5]),
+        unique_indices=np.array([0, 2, 4, 6, 8]),
+        rebuild_indices=np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4]),
+    )
+    field = np.array([10, 20, 30, 20, 10])
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Slices],
+        values=field,
+    )
+    assert_array_almost_equal(10, Slices.get_length())
+    assert_array_almost_equal(5, Slices.get_length(is_pattern=True))
+    result = Field.get_along("slice")
+    assert_array_almost_equal(
+        np.array([-5, -3, -3, -1, -1, 1, 1, 3, 3, 5]), result["slice"]
+    )
+    assert_array_almost_equal(
+        np.array([10, 10, 20, 20, 30, 30, 20, 20, 10, 10]), result["X"]
+    )
+    result = Field.get_along("slice[pattern]")
+    assert_array_almost_equal(np.array([-5, -3, -1, 1, 3]), result["slice"])
+    assert_array_almost_equal(field, result["X"])
+    result = Field.get_along(
+        "slice=axis_data",
+        axis_data={"slice": np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])},
+    )
+    assert_array_almost_equal(
+        np.array([10, 10, 15, 20, 25, 30, 25, 20, 15, 10, 10]), result["X"]
+    )
+
+    Slices = DataPattern(
+        name="slice",
+        unit="m",
+        values=np.array([-5, -3, -1, 0]),
+        values_whole=np.array([-5, -3, -3, -1, -1, 0, 1, 1, 3, 3, 5]),
+        unique_indices=np.array([0, 1, 3, 5]),
+        rebuild_indices=np.array([0, 1, 1, 2, 2, 3, 2, 2, 1, 1, 0]),
+        is_step=False,
+    )
+    field = np.array([10, 20, 30, 35])
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Slices],
+        values=field,
+    )
+    assert_array_almost_equal(11, Slices.get_length())
+    assert_array_almost_equal(4, Slices.get_length(is_pattern=True))
+    result = Field.get_along("slice")
+    assert_array_almost_equal(
+        np.array([-5, -3, -3, -1, -1, 0, 1, 1, 3, 3, 5]), result["slice"]
+    )
+    assert_array_almost_equal(
+        np.array([10, 20, 20, 30, 30, 35, 30, 30, 20, 20, 10]), result["X"]
+    )
+    result = Field.get_along("slice[pattern]")
+    assert_array_almost_equal(np.array([-5, -3, -1, 0]), result["slice"])
+    assert_array_almost_equal(field, result["X"])
+    result = Field.get_along(
+        "slice=axis_data",
+        axis_data={"slice": np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])},
+    )
+    assert_array_almost_equal(
+        np.array([10, 15, 20, 25, 30, 35, 30, 25, 20, 15, 10]), result["X"]
+    )

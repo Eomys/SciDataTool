@@ -28,6 +28,7 @@ def interpolate(self, values, axes_list):
                 values,
                 axis_requested.values,
                 axis_requested.input_data,
+                is_step=axis_requested.is_step,
             )
             # Store new axis data into axis_requested.values
             axis_requested.values = axis_requested.input_data

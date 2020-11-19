@@ -35,4 +35,7 @@ def get_values(
     if is_smallestperiod or is_pattern:
         return values
     else:
-        return values[self.rebuild_indices]
+        if self.values_whole is not None:
+            return self.values_whole
+        else:
+            return values[self.rebuild_indices]

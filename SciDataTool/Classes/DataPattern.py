@@ -85,6 +85,7 @@ class DataPattern(Data):
         values=None,
         is_components=False,
         symmetries=-1,
+        values_whole=None,
         symbol="",
         name="",
         unit="",
@@ -119,6 +120,8 @@ class DataPattern(Data):
                 is_components = init_dict["is_components"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
+            if "values_whole" in list(init_dict.keys()):
+                values_whole = init_dict["values_whole"]
             if "symbol" in list(init_dict.keys()):
                 symbol = init_dict["symbol"]
             if "name" in list(init_dict.keys()):
@@ -134,6 +137,7 @@ class DataPattern(Data):
         self.values = values
         self.is_components = is_components
         self.symmetries = symmetries
+        self.values_whole = values_whole
         # Call Data init
         super(DataPattern, self).__init__(
             symbol=symbol, name=name, unit=unit, normalizations=normalizations
@@ -171,6 +175,13 @@ class DataPattern(Data):
         )
         DataPattern_str += "is_components = " + str(self.is_components) + linesep
         DataPattern_str += "symmetries = " + str(self.symmetries) + linesep
+        DataPattern_str += (
+            "values_whole = "
+            + linesep
+            + str(self.values_whole).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
         return DataPattern_str
 
     def __eq__(self, other):
@@ -193,6 +204,8 @@ class DataPattern(Data):
         if other.is_components != self.is_components:
             return False
         if other.symmetries != self.symmetries:
+            return False
+        if not array_equal(other.values_whole, self.values_whole):
             return False
         return True
 
@@ -218,6 +231,10 @@ class DataPattern(Data):
         DataPattern_dict["symmetries"] = (
             self.symmetries.copy() if self.symmetries is not None else None
         )
+        if self.values_whole is None:
+            DataPattern_dict["values_whole"] = None
+        else:
+            DataPattern_dict["values_whole"] = self.values_whole.tolist()
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataPattern_dict["__class__"] = "DataPattern"
@@ -232,6 +249,7 @@ class DataPattern(Data):
         self.values = None
         self.is_components = None
         self.symmetries = None
+        self.values_whole = None
         # Set to None the properties inherited from Data
         super(DataPattern, self)._set_None()
 
@@ -363,5 +381,30 @@ class DataPattern(Data):
         doc=u"""Dictionary of the symmetries along each axis, used to reduce storage
 
         :Type: dict
+        """,
+    )
+
+    def _get_values_whole(self):
+        """getter of values_whole"""
+        return self._values_whole
+
+    def _set_values_whole(self, value):
+        """setter of values_whole"""
+        if type(value) is int and value == -1:
+            value = array([])
+        elif type(value) is list:
+            try:
+                value = array(value)
+            except:
+                pass
+        check_var("values_whole", value, "ndarray")
+        self._values_whole = value
+
+    values_whole = property(
+        fget=_get_values_whole,
+        fset=_set_values_whole,
+        doc=u"""Complete axis
+
+        :Type: ndarray
         """,
     )

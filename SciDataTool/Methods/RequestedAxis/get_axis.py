@@ -19,6 +19,7 @@ def get_axis(self, axis):
     if isinstance(axis, DataPattern):
         self.is_pattern = True
         self.rebuild_indices = axis.rebuild_indices
+        self.is_step = axis.is_step
     is_components = getattr(axis, "is_components", False)
     if is_components:
         values = axis.get_values()
@@ -67,7 +68,7 @@ def get_axis(self, axis):
                 is_oneperiod = True
                 is_antiperiod = False
         elif self.extension == "axis_data":
-            is_smallestperiod = True
+            is_smallestperiod = False
             is_oneperiod = False
             is_antiperiod = False
         else:
@@ -127,9 +128,10 @@ def get_axis(self, axis):
                 self.input_data = None
             else:
                 if self.extension == "axis_data":
-                    self.input_data = get_common_base(
-                        self.input_data, values, is_downsample=True
-                    )
+                    self.input_data = self.input_data
+                    # self.input_data = get_common_base(
+                    #     self.input_data, values, is_downsample=True
+                    # )
                 else:
                     self.input_data = get_common_base(self.input_data, values)
                 self.values = values

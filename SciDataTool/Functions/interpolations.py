@@ -29,9 +29,6 @@ def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
     -------
     list of the common axis values
     """
-    # if len(values1) == 2:
-    #     return array([x for x in values2 if x >= values1[0] and x <= values1[-1]])
-    # else:
     if is_extrap:
         initial = min(values1[0], values2[0])
         final = max(values1[-1], values2[-1])
@@ -61,7 +58,7 @@ def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
     return linspace(initial, final, int(number), endpoint=True)
 
 
-def get_interpolation(values, axis_values, new_axis_values):
+def get_interpolation(values, axis_values, new_axis_values, is_step=False):
     """Returns the interpolated field along one axis, given the new axis
     Parameters
     ----------
@@ -90,6 +87,32 @@ def get_interpolation(values, axis_values, new_axis_values):
         return values[
             isin(around(axis_values, 5), around(new_axis_values, 5), assume_unique=True)
         ]
+    elif is_step:
+        if len(axis_values) == 1:
+            return array([values[0] for i in range(len(new_axis_values))])
+        else:
+            new_values = []
+            for i in range(len(new_axis_values)):
+                for j in range(len(axis_values) - 1):
+                    if (
+                        new_axis_values[i] == axis_values[j]
+                        and new_axis_values[i] == axis_values[j + 1]
+                    ):
+                        new_values.append((values[j] + values[j + 1]) / 2)
+                        break
+                    elif (
+                        new_axis_values[i] >= axis_values[j]
+                        and new_axis_values[i] < axis_values[j + 1]
+                    ):
+                        new_values.append(values[j])
+                        break
+                    elif (
+                        j == len(axis_values) - 2
+                        and new_axis_values[i] == axis_values[j + 1]
+                    ):
+                        new_values.append(values[j + 1])
+                        break
+            return array(new_values)
     else:
         f = interpolate.interp1d(axis_values, values)
         return f(new_axis_values)

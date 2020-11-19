@@ -57,6 +57,7 @@ class RequestedAxis(FrozenClass):
         transform=None,
         is_pattern=False,
         rebuild_indices=None,
+        is_step=False,
         init_dict=None,
         init_str=None,
     ):
@@ -101,6 +102,8 @@ class RequestedAxis(FrozenClass):
                 is_pattern = init_dict["is_pattern"]
             if "rebuild_indices" in list(init_dict.keys()):
                 rebuild_indices = init_dict["rebuild_indices"]
+            if "is_step" in list(init_dict.keys()):
+                is_step = init_dict["is_step"]
         # Set the properties (value check and convertion are done in setter)
         self.parent = None
         self.name = name
@@ -116,6 +119,7 @@ class RequestedAxis(FrozenClass):
         self.transform = transform
         self.is_pattern = is_pattern
         self.rebuild_indices = rebuild_indices
+        self.is_step = is_step
 
         # The class is frozen, for now it's impossible to add new properties
         self._freeze()
@@ -166,6 +170,7 @@ class RequestedAxis(FrozenClass):
             + linesep
             + linesep
         )
+        RequestedAxis_str += "is_step = " + str(self.is_step) + linesep
         return RequestedAxis_str
 
     def __eq__(self, other):
@@ -199,6 +204,8 @@ class RequestedAxis(FrozenClass):
             return False
         if not array_equal(other.rebuild_indices, self.rebuild_indices):
             return False
+        if other.is_step != self.is_step:
+            return False
         return True
 
     def as_dict(self):
@@ -229,6 +236,7 @@ class RequestedAxis(FrozenClass):
             RequestedAxis_dict["rebuild_indices"] = None
         else:
             RequestedAxis_dict["rebuild_indices"] = self.rebuild_indices.tolist()
+        RequestedAxis_dict["is_step"] = self.is_step
         # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
@@ -249,6 +257,7 @@ class RequestedAxis(FrozenClass):
         self.transform = None
         self.is_pattern = None
         self.rebuild_indices = None
+        self.is_step = None
 
     def _get_name(self):
         """getter of name"""
@@ -504,5 +513,23 @@ class RequestedAxis(FrozenClass):
         doc=u"""Indices to rebuild pattern
 
         :Type: ndarray
+        """,
+    )
+
+    def _get_is_step(self):
+        """getter of is_step"""
+        return self._is_step
+
+    def _set_is_step(self, value):
+        """setter of is_step"""
+        check_var("is_step", value, "bool")
+        self._is_step = value
+
+    is_step = property(
+        fget=_get_is_step,
+        fset=_set_is_step,
+        doc=u"""To indicate if the pattern axis is step (for interpolation)
+
+        :Type: bool
         """,
     )
