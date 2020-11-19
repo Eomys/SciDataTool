@@ -2,7 +2,6 @@
 from SciDataTool.Functions.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
-from SciDataTool.Functions import AxisError
 
 
 def rebuild_symmetries(
@@ -25,7 +24,13 @@ def rebuild_symmetries(
     """
 
     for axis in axes_list:
-        if axis.transform != "fft" and axis.extension in [
+        if (
+            axis.transform != "fft"
+            and axis.is_pattern
+            and axis.extension != "smallestperiod"
+        ):
+            values = values[axis.rebuild_indices]
+        elif axis.transform != "fft" and axis.extension in [
             "whole",
             "interval",
             "oneperiod",

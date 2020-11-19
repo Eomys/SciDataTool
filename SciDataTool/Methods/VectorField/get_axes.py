@@ -15,7 +15,7 @@ def get_axes(self, *args):
     """
 
     axes = self.components[list(self.components.keys())[0]].axes
-    
+
     if len(args) > 0:
         axes_list = []
         for name in args:
@@ -24,5 +24,5 @@ def get_axes(self, *args):
                     axes_list.append(axis)
     else:
         axes_list = axes
-    
+
     return axes_list

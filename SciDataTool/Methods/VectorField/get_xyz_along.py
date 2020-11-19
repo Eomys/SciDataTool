@@ -40,9 +40,7 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         field_c = resultphi[self.components["tangential"].symbol]
         shape = field_r.shape
         if "phi" not in resultr:
-            raise AxisError(
-                "ERROR: need phi axis to convert to cartesian coordinates"
-            )
+            raise AxisError("ERROR: need phi axis to convert to cartesian coordinates")
         phi = resultr["phi"]
         # Convert to cylindrical coordinates
         (field_x, field_y) = pol2cart(field_r, field_c, phi)

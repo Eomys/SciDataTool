@@ -55,6 +55,8 @@ class RequestedAxis(FrozenClass):
         operation=None,
         index=None,
         transform=None,
+        is_pattern=False,
+        rebuild_indices=None,
         init_dict=None,
         init_str=None,
     ):
@@ -95,6 +97,10 @@ class RequestedAxis(FrozenClass):
                 index = init_dict["index"]
             if "transform" in list(init_dict.keys()):
                 transform = init_dict["transform"]
+            if "is_pattern" in list(init_dict.keys()):
+                is_pattern = init_dict["is_pattern"]
+            if "rebuild_indices" in list(init_dict.keys()):
+                rebuild_indices = init_dict["rebuild_indices"]
         # Set the properties (value check and convertion are done in setter)
         self.parent = None
         self.name = name
@@ -108,6 +114,8 @@ class RequestedAxis(FrozenClass):
         self.operation = operation
         self.index = index
         self.transform = transform
+        self.is_pattern = is_pattern
+        self.rebuild_indices = rebuild_indices
 
         # The class is frozen, for now it's impossible to add new properties
         self._freeze()
@@ -150,6 +158,14 @@ class RequestedAxis(FrozenClass):
         RequestedAxis_str += 'operation = "' + str(self.operation) + '"' + linesep
         RequestedAxis_str += "index = " + str(self.index) + linesep
         RequestedAxis_str += 'transform = "' + str(self.transform) + '"' + linesep
+        RequestedAxis_str += "is_pattern = " + str(self.is_pattern) + linesep
+        RequestedAxis_str += (
+            "rebuild_indices = "
+            + linesep
+            + str(self.rebuild_indices).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
         return RequestedAxis_str
 
     def __eq__(self, other):
@@ -179,6 +195,10 @@ class RequestedAxis(FrozenClass):
             return False
         if other.transform != self.transform:
             return False
+        if other.is_pattern != self.is_pattern:
+            return False
+        if not array_equal(other.rebuild_indices, self.rebuild_indices):
+            return False
         return True
 
     def as_dict(self):
@@ -204,6 +224,11 @@ class RequestedAxis(FrozenClass):
         RequestedAxis_dict["operation"] = self.operation
         RequestedAxis_dict["index"] = self.index
         RequestedAxis_dict["transform"] = self.transform
+        RequestedAxis_dict["is_pattern"] = self.is_pattern
+        if self.rebuild_indices is None:
+            RequestedAxis_dict["rebuild_indices"] = None
+        else:
+            RequestedAxis_dict["rebuild_indices"] = self.rebuild_indices.tolist()
         # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
@@ -222,6 +247,8 @@ class RequestedAxis(FrozenClass):
         self.operation = None
         self.index = None
         self.transform = None
+        self.is_pattern = None
+        self.rebuild_indices = None
 
     def _get_name(self):
         """getter of name"""
@@ -434,5 +461,48 @@ class RequestedAxis(FrozenClass):
         doc=u"""Transform to perform on the axis (fft, ifft)
 
         :Type: str
+        """,
+    )
+
+    def _get_is_pattern(self):
+        """getter of is_pattern"""
+        return self._is_pattern
+
+    def _set_is_pattern(self, value):
+        """setter of is_pattern"""
+        check_var("is_pattern", value, "bool")
+        self._is_pattern = value
+
+    is_pattern = property(
+        fget=_get_is_pattern,
+        fset=_set_is_pattern,
+        doc=u"""To indicate if the axis is a DataPattern
+
+        :Type: bool
+        """,
+    )
+
+    def _get_rebuild_indices(self):
+        """getter of rebuild_indices"""
+        return self._rebuild_indices
+
+    def _set_rebuild_indices(self, value):
+        """setter of rebuild_indices"""
+        if type(value) is int and value == -1:
+            value = array([])
+        elif type(value) is list:
+            try:
+                value = array(value)
+            except:
+                pass
+        check_var("rebuild_indices", value, "ndarray")
+        self._rebuild_indices = value
+
+    rebuild_indices = property(
+        fget=_get_rebuild_indices,
+        fset=_set_rebuild_indices,
+        doc=u"""Indices to rebuild pattern
+
+        :Type: ndarray
         """,
     )

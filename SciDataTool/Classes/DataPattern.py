@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-# File generated according to Generator/ClassesRef/Data1D.csv
+# File generated according to Generator/ClassesRef/DataPattern.csv
 # WARNING! All changes made in this file will be lost!
-"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Data1D
+"""Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataPattern
 """
 
 from os import linesep
@@ -15,97 +15,73 @@ from .Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.Data1D.get_values import get_values
+    from ..Methods.DataPattern.get_values import get_values
 except ImportError as error:
     get_values = error
 
 try:
-    from ..Methods.Data1D.get_length import get_length
+    from ..Methods.DataPattern.get_length import get_length
 except ImportError as error:
     get_length = error
 
 try:
-    from ..Methods.Data1D.get_axis_periodic import get_axis_periodic
-except ImportError as error:
-    get_axis_periodic = error
-
-try:
-    from ..Methods.Data1D.has_period import has_period
+    from ..Methods.DataPattern.has_period import has_period
 except ImportError as error:
     has_period = error
-
-try:
-    from ..Methods.Data1D.get_periodicity import get_periodicity
-except ImportError as error:
-    get_periodicity = error
 
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
 
 
-class Data1D(Data):
+class DataPattern(Data):
     """Class for axes defined as vectors"""
 
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.Data1D.get_values
+    # cf Methods.DataPattern.get_values
     if isinstance(get_values, ImportError):
         get_values = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Data1D method get_values: " + str(get_values))
+                ImportError(
+                    "Can't use DataPattern method get_values: " + str(get_values)
+                )
             )
         )
     else:
         get_values = get_values
-    # cf Methods.Data1D.get_length
+    # cf Methods.DataPattern.get_length
     if isinstance(get_length, ImportError):
         get_length = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Data1D method get_length: " + str(get_length))
+                ImportError(
+                    "Can't use DataPattern method get_length: " + str(get_length)
+                )
             )
         )
     else:
         get_length = get_length
-    # cf Methods.Data1D.get_axis_periodic
-    if isinstance(get_axis_periodic, ImportError):
-        get_axis_periodic = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Data1D method get_axis_periodic: "
-                    + str(get_axis_periodic)
-                )
-            )
-        )
-    else:
-        get_axis_periodic = get_axis_periodic
-    # cf Methods.Data1D.has_period
+    # cf Methods.DataPattern.has_period
     if isinstance(has_period, ImportError):
         has_period = property(
             fget=lambda x: raise_(
-                ImportError("Can't use Data1D method has_period: " + str(has_period))
+                ImportError(
+                    "Can't use DataPattern method has_period: " + str(has_period)
+                )
             )
         )
     else:
         has_period = has_period
-    # cf Methods.Data1D.get_periodicity
-    if isinstance(get_periodicity, ImportError):
-        get_periodicity = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use Data1D method get_periodicity: " + str(get_periodicity)
-                )
-            )
-        )
-    else:
-        get_periodicity = get_periodicity
     # save and copy methods are available in all object
     save = save
     copy = copy
 
     def __init__(
         self,
+        rebuild_indices=None,
+        unique_indices=None,
+        is_step=True,
         values=None,
         is_components=False,
         symmetries=-1,
@@ -131,6 +107,12 @@ class Data1D(Data):
         if init_dict is not None:  # Initialisation by dict
             assert type(init_dict) is dict
             # Overwrite default value with init_dict content
+            if "rebuild_indices" in list(init_dict.keys()):
+                rebuild_indices = init_dict["rebuild_indices"]
+            if "unique_indices" in list(init_dict.keys()):
+                unique_indices = init_dict["unique_indices"]
+            if "is_step" in list(init_dict.keys()):
+                is_step = init_dict["is_step"]
             if "values" in list(init_dict.keys()):
                 values = init_dict["values"]
             if "is_components" in list(init_dict.keys()):
@@ -146,11 +128,14 @@ class Data1D(Data):
             if "normalizations" in list(init_dict.keys()):
                 normalizations = init_dict["normalizations"]
         # Set the properties (value check and convertion are done in setter)
+        self.rebuild_indices = rebuild_indices
+        self.unique_indices = unique_indices
+        self.is_step = is_step
         self.values = values
         self.is_components = is_components
         self.symmetries = symmetries
         # Call Data init
-        super(Data1D, self).__init__(
+        super(DataPattern, self).__init__(
             symbol=symbol, name=name, unit=unit, normalizations=normalizations
         )
         # The class is frozen (in Data init), for now it's impossible to
@@ -159,19 +144,34 @@ class Data1D(Data):
     def __str__(self):
         """Convert this object in a readeable string (for print)"""
 
-        Data1D_str = ""
+        DataPattern_str = ""
         # Get the properties inherited from Data
-        Data1D_str += super(Data1D, self).__str__()
-        Data1D_str += (
+        DataPattern_str += super(DataPattern, self).__str__()
+        DataPattern_str += (
+            "rebuild_indices = "
+            + linesep
+            + str(self.rebuild_indices).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
+        DataPattern_str += (
+            "unique_indices = "
+            + linesep
+            + str(self.unique_indices).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
+        DataPattern_str += "is_step = " + str(self.is_step) + linesep
+        DataPattern_str += (
             "values = "
             + linesep
             + str(self.values).replace(linesep, linesep + "\t")
             + linesep
             + linesep
         )
-        Data1D_str += "is_components = " + str(self.is_components) + linesep
-        Data1D_str += "symmetries = " + str(self.symmetries) + linesep
-        return Data1D_str
+        DataPattern_str += "is_components = " + str(self.is_components) + linesep
+        DataPattern_str += "symmetries = " + str(self.symmetries) + linesep
+        return DataPattern_str
 
     def __eq__(self, other):
         """Compare two objects (skip parent)"""
@@ -180,7 +180,13 @@ class Data1D(Data):
             return False
 
         # Check the properties inherited from Data
-        if not super(Data1D, self).__eq__(other):
+        if not super(DataPattern, self).__eq__(other):
+            return False
+        if not array_equal(other.rebuild_indices, self.rebuild_indices):
+            return False
+        if not array_equal(other.unique_indices, self.unique_indices):
+            return False
+        if other.is_step != self.is_step:
             return False
         if not array_equal(other.values, self.values):
             return False
@@ -194,28 +200,108 @@ class Data1D(Data):
         """Convert this object in a json seriable dict (can be use in __init__)"""
 
         # Get the properties inherited from Data
-        Data1D_dict = super(Data1D, self).as_dict()
-        if self.values is None:
-            Data1D_dict["values"] = None
+        DataPattern_dict = super(DataPattern, self).as_dict()
+        if self.rebuild_indices is None:
+            DataPattern_dict["rebuild_indices"] = None
         else:
-            Data1D_dict["values"] = self.values.tolist()
-        Data1D_dict["is_components"] = self.is_components
-        Data1D_dict["symmetries"] = (
+            DataPattern_dict["rebuild_indices"] = self.rebuild_indices.tolist()
+        if self.unique_indices is None:
+            DataPattern_dict["unique_indices"] = None
+        else:
+            DataPattern_dict["unique_indices"] = self.unique_indices.tolist()
+        DataPattern_dict["is_step"] = self.is_step
+        if self.values is None:
+            DataPattern_dict["values"] = None
+        else:
+            DataPattern_dict["values"] = self.values.tolist()
+        DataPattern_dict["is_components"] = self.is_components
+        DataPattern_dict["symmetries"] = (
             self.symmetries.copy() if self.symmetries is not None else None
         )
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
-        Data1D_dict["__class__"] = "Data1D"
-        return Data1D_dict
+        DataPattern_dict["__class__"] = "DataPattern"
+        return DataPattern_dict
 
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""
 
+        self.rebuild_indices = None
+        self.unique_indices = None
+        self.is_step = None
         self.values = None
         self.is_components = None
         self.symmetries = None
         # Set to None the properties inherited from Data
-        super(Data1D, self)._set_None()
+        super(DataPattern, self)._set_None()
+
+    def _get_rebuild_indices(self):
+        """getter of rebuild_indices"""
+        return self._rebuild_indices
+
+    def _set_rebuild_indices(self, value):
+        """setter of rebuild_indices"""
+        if type(value) is int and value == -1:
+            value = array([])
+        elif type(value) is list:
+            try:
+                value = array(value)
+            except:
+                pass
+        check_var("rebuild_indices", value, "ndarray")
+        self._rebuild_indices = value
+
+    rebuild_indices = property(
+        fget=_get_rebuild_indices,
+        fset=_set_rebuild_indices,
+        doc=u"""Indices to rebuild complete axis
+
+        :Type: ndarray
+        """,
+    )
+
+    def _get_unique_indices(self):
+        """getter of unique_indices"""
+        return self._unique_indices
+
+    def _set_unique_indices(self, value):
+        """setter of unique_indices"""
+        if type(value) is int and value == -1:
+            value = array([])
+        elif type(value) is list:
+            try:
+                value = array(value)
+            except:
+                pass
+        check_var("unique_indices", value, "ndarray")
+        self._unique_indices = value
+
+    unique_indices = property(
+        fget=_get_unique_indices,
+        fset=_set_unique_indices,
+        doc=u"""Indices which were taken from complete axis
+
+        :Type: ndarray
+        """,
+    )
+
+    def _get_is_step(self):
+        """getter of is_step"""
+        return self._is_step
+
+    def _set_is_step(self, value):
+        """setter of is_step"""
+        check_var("is_step", value, "bool")
+        self._is_step = value
+
+    is_step = property(
+        fget=_get_is_step,
+        fset=_set_is_step,
+        doc=u"""To indicate if the axis is defined by step or continuously
+
+        :Type: bool
+        """,
+    )
 
     def _get_values(self):
         """getter of values"""

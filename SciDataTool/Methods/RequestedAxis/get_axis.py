@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.conversions import convert
 from SciDataTool.Functions.interpolations import get_common_base
-from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
+from SciDataTool.Classes.DataPattern import DataPattern
+from SciDataTool.Functions import AxisError
 from numpy import array
 from importlib import import_module
 
@@ -15,6 +16,9 @@ def get_axis(self, axis):
     axis: Axis
         an Axis object
     """
+    if isinstance(axis, DataPattern):
+        self.is_pattern = True
+        self.rebuild_indices = axis.rebuild_indices
     is_components = getattr(axis, "is_components", False)
     if is_components:
         values = axis.get_values()
@@ -25,18 +29,43 @@ def get_axis(self, axis):
         else:
             self.values = values
     else:
-        if self.extension == "smallestperiod":
-            is_smallestperiod = True
-            is_oneperiod = False
-            is_antiperiod = False
+        if self.extension == "pattern":
+            if not self.is_pattern:
+                raise AxisError(
+                    "ERROR: [pattern] cannot be called with non DataPattern axis"
+                )
+            else:
+                is_smallestperiod = True
+                is_oneperiod = False
+                is_antiperiod = False
+                self.extension = "smallestperiod"
+        elif self.extension == "smallestperiod":
+            if isinstance(axis, DataPattern):
+                raise AxisError(
+                    "ERROR: [smallestperiod] cannot be called with DataPattern axis"
+                )
+            else:
+                is_smallestperiod = True
+                is_oneperiod = False
+                is_antiperiod = False
         elif self.extension == "antiperiod":
-            is_smallestperiod = False
-            is_oneperiod = False
-            is_antiperiod = True
+            if isinstance(axis, DataPattern):
+                raise AxisError(
+                    "ERROR: [antiperiod] cannot be called with DataPattern axis"
+                )
+            else:
+                is_smallestperiod = False
+                is_oneperiod = False
+                is_antiperiod = True
         elif self.extension == "oneperiod" or self.transform == "fft":
-            is_smallestperiod = False
-            is_oneperiod = True
-            is_antiperiod = False
+            if isinstance(axis, DataPattern):
+                raise AxisError(
+                    "ERROR: [oneperiod] cannot be called with DataPattern axis"
+                )
+            else:
+                is_smallestperiod = False
+                is_oneperiod = True
+                is_antiperiod = False
         elif self.extension == "axis_data":
             is_smallestperiod = True
             is_oneperiod = False

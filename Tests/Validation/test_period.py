@@ -1,5 +1,5 @@
 import pytest
-from SciDataTool import DataTime, Data1D, DataLinspace
+from SciDataTool import DataTime, Data1D, DataLinspace, DataPattern
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 
@@ -178,3 +178,33 @@ def test_period_2d():
     result = Field.get_along("time", "angle=[0,pi/4]")  # [0,2*pi]
     assert_array_almost_equal(time, result["time"])
     assert_array_almost_equal(angle[:3], result["angle"])
+
+
+@pytest.mark.validation
+def test_pattern():
+    Slices = DataPattern(
+        name="slice",
+        unit="m",
+        values=np.array([-5, -3, -1, 1, 3, 5]),
+        unique_indices=np.array([0, 1, 3, 5, 7, 9]),
+        rebuild_indices=np.array([0, 1, 1, 2, 2, 3, 3, 4, 4, 5]),
+    )
+    field = np.array([10, 20, 30, 40, 50, 60])
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Slices],
+        values=field,
+    )
+    assert_array_almost_equal(10, Slices.get_length())
+    assert_array_almost_equal(6, Slices.get_length(is_pattern=True))
+    result = Field.get_along("slice")
+    assert_array_almost_equal(
+        np.array([-5, -3, -3, -1, -1, 1, 1, 3, 3, 5]), result["slice"]
+    )
+    assert_array_almost_equal(
+        np.array([10, 20, 20, 30, 30, 40, 40, 50, 50, 60]), result["X"]
+    )
+    result = Field.get_along("slice[pattern]")
+    assert_array_almost_equal(np.array([-5, -3, -1, 1, 3, 5]), result["slice"])
+    assert_array_almost_equal(field, result["X"])
