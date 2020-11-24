@@ -12,6 +12,7 @@ from numpy import (
     imag,
     cos,
     sin,
+    ndarray,
     abs as np_abs,
     angle as np_angle,
 )
@@ -156,7 +157,11 @@ def to_dB(values, unit, ref_value=1.0):
     -------
     ndarray of the converted field
     """
-    values[values < ref_value] = ref_value
+    if isinstance(values, ndarray):
+        values[values < ref_value] = ref_value
+    else:
+        if values < ref_value:
+            values = ref_value
     try:
         convert(values, unit, "W")
         return 10.0 * log10(values / ref_value)

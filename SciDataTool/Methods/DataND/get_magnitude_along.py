@@ -47,7 +47,12 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         if "ref" in self.normalizations.keys():
             ref_value *= self.normalizations.get("ref")
         if "freqs" in return_dict.keys():
-            values = to_dBA(values, return_dict["freqs"], self.unit, ref_value)
+            for axis in return_dict["axes_list"]:
+                if axis.name == "freqs" or axis.corr_name == "freqs":
+                    index = axis.index
+            values = apply_along_axis(
+                to_dBA, index, values, return_dict["freqs"], self.unit, ref_value
+            )
         else:
             raise UnitError(
                 "ERROR: dBA conversion only available for fft with frequencies"
