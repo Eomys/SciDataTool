@@ -175,11 +175,13 @@ def comp_fftn(values, axes_list):
                 is_positive = True
             else:
                 is_positive = False
-            values = apply_along_axis(_comp_fft, axis.index, values, is_positive=is_positive)
+            values = apply_along_axis(
+                _comp_fft, axis.index, values, is_positive=is_positive
+            )
     return values
 
 
-def _comp_ifft(values, n=0):
+def _comp_ifft(values, is_positive=False):
     """Computes the Inverse Fourier Transform
     Parameters
     ----------
@@ -190,7 +192,7 @@ def _comp_ifft(values, n=0):
     IFT
     """
 
-    if n == 0:
+    if is_positive:
         values[0] *= 2
         values = ifftshift(values * len(values) / 2)
     else:
@@ -199,7 +201,7 @@ def _comp_ifft(values, n=0):
     return values_IFT
 
 
-def comp_ifftn(values, axes_list):
+def comp_ifftn(values, axes_list, orig_axes):
     """Computes the Inverse Fourier Transform
     Parameters
     ----------
@@ -210,11 +212,15 @@ def comp_ifftn(values, axes_list):
     IFT
     """
 
-    n = 0
     for axis in axes_list:
         if axis.transform == "ifft":
-            values = apply_along_axis(_comp_ifft, axis.index, values, n=n)
-            n = n + 1
+            if min(orig_axes[axis.index].values) >= 0:
+                is_positive = True
+            else:
+                is_positive = False
+            values = apply_along_axis(
+                _comp_ifft, axis.index, values, is_positive=is_positive
+            )
     return values
 
 

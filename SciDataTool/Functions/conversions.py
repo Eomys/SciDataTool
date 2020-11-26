@@ -206,7 +206,7 @@ def dB_to_dBA(values, freqs):
     ndarray of the converted field
     """
     freq2 = square(freqs)
-    freq2[freq2==0] = nan
+    freq2[freq2 == 0] = nan
     RA = (
         12200.0 ** 2
         * freq2 ** 2
@@ -217,7 +217,7 @@ def dB_to_dBA(values, freqs):
         )
     )
     Aweight = 2.0 + 20.0 * log10(RA)
-    Aweight[isnan(Aweight)]=-100  # replacing NaN by -100 dB
+    Aweight[isnan(Aweight)] = -100  # replacing NaN by -100 dB
     Aweight[
         values <= 0
     ] = 0  # avoiding to increase dB in dBA at frequencies where noise is already null
