@@ -136,7 +136,7 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
     return f_oct
 
 
-def _comp_fft(values, n=0):
+def _comp_fft(values, is_positive=False):
     """Computes the Fourier Transform
     Parameters
     ----------
@@ -147,7 +147,9 @@ def _comp_fft(values, n=0):
     Complex Fourier Transform
     """
     values_FT = fft(values)
-    if n == 0:
+    if is_positive:
+        if values.iscomplex():
+            print("WARNING: keeping only positive harmonics from complex raw data")
         values_FT[0] *= 0.5
         values_FT = 2.0 * fftshift(values_FT) / len(values)
     else:
@@ -166,11 +168,13 @@ def comp_fftn(values, axes_list):
     Complex Fourier Transform
     """
 
-    n = 0
     for axis in axes_list:
         if axis.transform == "fft":
-            values = apply_along_axis(_comp_fft, axis.index, values, n=n)
-            n = n + 1
+            if min(axis.values) >= 0:
+                is_positive = True
+            else:
+                is_positive = False
+            values = apply_along_axis(_comp_fft, axis.index, values, is_positive=is_positive)
     return values
 
 
