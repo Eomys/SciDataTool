@@ -5,6 +5,7 @@ from numpy import (
     pi,
     zeros,
     exp,
+    iscomplex,
     abs as np_abs,
     angle as np_angle,
 )
@@ -148,7 +149,7 @@ def _comp_fft(values, is_positive=False):
     """
     values_FT = fft(values)
     if is_positive:
-        if values.iscomplex():
+        if iscomplex(values).any():
             print("WARNING: keeping only positive harmonics from complex raw data")
         values_FT[0] *= 0.5
         values_FT = 2.0 * fftshift(values_FT) / len(values)
