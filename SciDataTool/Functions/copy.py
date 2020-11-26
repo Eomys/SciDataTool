@@ -1,6 +1,4 @@
-from copy import deepcopy
-
 
 def copy(self):
     """Return a copy of the class"""
-    return deepcopy(self)
+    return type(self)(init_dict=self.as_dict())
