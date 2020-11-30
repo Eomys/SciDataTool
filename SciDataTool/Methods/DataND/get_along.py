@@ -31,12 +31,12 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     values = self.get_field(axes_list)
     # Inverse fft
     if "ifft" in transforms:
-        values = comp_ifftn(values, axes_list, orig_axes=self.axes)
+        values = comp_ifftn(values, axes_list, is_real=self.is_real)
     # Slices along time/space axes
     values, axes_dict_other = self.extract_slices(values, axes_list)
     # fft
     if "fft" in transforms:
-        values = comp_fftn(values, axes_list)
+        values = comp_fftn(values, axes_list, is_real=self.is_real)
     # Slices along fft axes
     values = self.extract_slices_fft(values, axes_list)
     # Rebuild symmetries
