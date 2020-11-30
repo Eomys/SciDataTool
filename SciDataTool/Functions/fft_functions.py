@@ -16,7 +16,7 @@ from numpy import (
 )
 
 
-def comp_fft_freqs(time, is_time, is_positive):
+def comp_fft_freqs(time, is_time, is_real):
     """Computes the frequency/wavenumber vector from the time/space vector
     Parameters
     ----------
@@ -37,12 +37,9 @@ def comp_fft_freqs(time, is_time, is_positive):
         timestep = float(time[1] - time[0])  # Sample step
         fsampt = 1.0 / timestep  # Sample frequency
         freqscale = N_tot / fsampt
-        if is_positive:
-            freqs = [i for i in range(int(N_tot / 2) + 1)]
-        else:
-            freqs = [i - int(N_tot / 2) for i in range(int(N_tot))]
-            if N_tot % 2 == 0:
-                freqs.append(-freqs[0])
+        freqs = [i - int(N_tot / 2) for i in range(int(N_tot))]
+        if is_real and is_time and N_tot % 2 == 0:
+            freqs.append(-freqs[0])
         if is_time:
             freqs = [i / freqscale for i in freqs]
     return freqs
