@@ -24,20 +24,34 @@ def test_fft1d():
         values=field,
         unit="m",
     )
-    result = Field.get_along("freqs=[0,100]")
+
+    result = Field.get_along("freqs<100")
     assert_array_almost_equal(np.array([0, 50, 100]), result["freqs"])
     assert_array_almost_equal(
         np.array([0, 3 * np.cos(3 * np.pi / 4) * (1 - 1j), 0]), result["X"]
     )
 
-    result = Field.get_magnitude_along("freqs=[0,100]")
+    result = Field.get_magnitude_along("freqs<100")
     assert_array_almost_equal(np.array([0, 3, 0]), result["X"])
 
-    result = Field.get_phase_along("freqs=[0,100]")
+    result = Field.get_phase_along("freqs<100")
     assert_array_almost_equal(np.pi, result["X"][0])
 
+    Field2 = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time],
+        values=field,
+        unit="m",
+        is_real=False,
+    )
+    result = Field2.get_along("freqs")
+    result = Field.get_along("freqs")
+
     Field_FT = Field.time_to_freq()
-    assert_array_almost_equal(Field_FT.get_along("time")["X"], field)
+    result = Field_FT.get_along("time")
+    assert_array_almost_equal(result["X"], field)
+    assert_array_almost_equal(result["time"], time)
 
 
 @pytest.mark.validation

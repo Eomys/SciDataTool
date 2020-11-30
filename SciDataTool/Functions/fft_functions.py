@@ -2,10 +2,15 @@
 from numpy import mean, hanning, linspace, where, isclose, apply_along_axis
 from numpy.fft import fft, fftshift, ifft, ifftshift
 from numpy import (
+    array,
     pi,
     zeros,
     exp,
     iscomplex,
+    concatenate,
+    conjugate,
+    flip,
+    append,
     abs as np_abs,
     angle as np_angle,
 )
@@ -36,12 +41,14 @@ def comp_fft_freqs(time, is_time, is_positive):
             freqs = [i for i in range(int(N_tot / 2) + 1)]
         else:
             freqs = [i - int(N_tot / 2) for i in range(int(N_tot))]
+            if N_tot % 2 == 0:
+                freqs.append(-freqs[0])
         if is_time:
             freqs = [i / freqscale for i in freqs]
     return freqs
 
 
-def comp_fft_time(freqs, is_angle):
+def comp_fft_time(freqs, is_angle, is_real):
     """Computes the time/space vector from the frequency/wavenumber vector
     Parameters
     ----------
@@ -56,8 +63,12 @@ def comp_fft_time(freqs, is_angle):
     if freqs.size == 1:
         time = [0]
     else:
-        N_tot = len(freqs)  # Number of samples
-        fs = freqs[-1] / (N_tot - 1)
+        if is_real and not is_angle:
+            N_tot = 2 * (len(freqs) - 1)  # Number of samples
+            fs = freqs[-2] / (N_tot - 2)
+        else:
+            N_tot = len(freqs)  # Number of samples
+            fs = freqs[-1] / (N_tot - 1)
         tf = 1 / (fs * 2)
         time = linspace(0, tf, N_tot, endpoint=False)
         # fsampt = freqs[-1] * 2.0
@@ -153,6 +164,8 @@ def _comp_fft(values, is_positive=False):
             print("WARNING: keeping only positive harmonics from complex raw data")
         values_FT[0] *= 0.5
         values_FT = 2.0 * fftshift(values_FT) / len(values)
+        if len(values) % 2 == 0:
+            values_FT = append(values_FT, conjugate(values_FT[0]))
     else:
         values_FT = fftshift(values_FT) / len(values)
     return values_FT
@@ -194,7 +207,9 @@ def _comp_ifft(values, is_positive=False):
 
     if is_positive:
         values[0] *= 2
-        values = ifftshift(values * len(values) / 2)
+        values = concatenate((flip(conjugate(values))[:-1], values))[:-1]
+        values = values / 2
+        values = ifftshift(values) * len(values)
     else:
         values = ifftshift(values) * len(values)
     values_IFT = ifft(values)
