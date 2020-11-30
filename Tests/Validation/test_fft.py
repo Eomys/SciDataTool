@@ -83,14 +83,29 @@ def test_fft2d():
         axes=[Time, Angle],
         values=field,
         unit="m",
+        is_real=True, # Default value, store only positive frequencies to save memory space
     )
+    
+    
+    result = Field.get_along("freqs")
+    assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
+    
     result = Field.get_along("freqs=[0,100]")
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
-    assert_array_almost_equal(np.array([0, 5, 0]), result["X"])
-
+    assert_array_almost_equal(np.array([0, 5, 0]), result["X"]) 
+    
+    Field.is_real=False # Desactivate the storage of "real" time signal, such all the spectrum is stored
+    result = Field.get_along("freqs")
+    assert_array_almost_equal(np.array([-2*f, -f, 0, f, 2 * f]), result["freqs"])
+    
+    result = Field.get_along("freqs=[0,100]")
+    assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
+    assert_array_almost_equal(np.array([0, 5/2, 0]), result["X"]) #Half of the signal is still at -f
+    
+    Field.is_real=True
     result = Field.get_along("wavenumber=[0,4]")
     assert_array_almost_equal(np.array([0, 1, 2, 3, 4]), result["wavenumber"])
-    assert_array_almost_equal(np.array([0, 0, 0, 5, 0]), result["X"])
+    assert_array_almost_equal(np.array([0, 0, 0, 5/2, 0]), result["X"]) # Spatial FFT of the cosine, 2 harmonics  
 
     result = Field.get_along("freqs=[0,100]", "wavenumber=[-3,3]")
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
@@ -105,12 +120,15 @@ def test_fft2d():
     X = np.zeros((3, 5))
     X[
         1, 3
-    ] = 10  # The negative wavenumber -3 is folded on +3 to keep signal energy constant
+    ] = 5  # The negative wavenumber -3 is folded on +3 to keep signal energy constant
     assert_array_almost_equal(X, result["X"])
 
     Field_FT = Field.time_to_freq()
     assert_array_almost_equal(Field_FT.get_along("angle", "time")["X"], field)
-
+    
+    result = Field.get_along("wavenumber=[0,4]")
+    assert_array_almost_equal(np.array([0, 1, 2, 3, 4]), result["wavenumber"])
+    assert_array_almost_equal(np.array([0, 0, 0, 5/2, 0]), result["X"]) 
 
 @pytest.mark.validation
 def test_ifft1d():
