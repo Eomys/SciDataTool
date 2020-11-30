@@ -330,8 +330,7 @@ def rphiz_to_xyz_field(values, phi):
 
 def time_to_freqs(values, is_real):
     is_time = True
-    is_positive = False
-    return comp_fft_freqs(values, is_time, is_positive)
+    return comp_fft_freqs(values, is_time, is_real)
 
 
 def freqs_to_time(values, is_real):
@@ -341,8 +340,7 @@ def freqs_to_time(values, is_real):
 
 def angle_to_wavenumber(values, is_real):
     is_time = False
-    is_positive = False
-    return comp_fft_freqs(values, is_time, is_positive)
+    return comp_fft_freqs(values, is_time, is_real)
 
 
 def wavenumber_to_angle(values, is_real):
