@@ -49,6 +49,7 @@ class DataFreq(DataND):
         axes=None,
         FTparameters=-1,
         values=None,
+        is_real=True,
         symbol="",
         name="",
         unit="",
@@ -77,6 +78,8 @@ class DataFreq(DataND):
                 FTparameters = init_dict["FTparameters"]
             if "values" in list(init_dict.keys()):
                 values = init_dict["values"]
+            if "is_real" in list(init_dict.keys()):
+                is_real = init_dict["is_real"]
             if "symbol" in list(init_dict.keys()):
                 symbol = init_dict["symbol"]
             if "name" in list(init_dict.keys()):
@@ -91,6 +94,7 @@ class DataFreq(DataND):
             axes=axes,
             FTparameters=FTparameters,
             values=values,
+            is_real=is_real,
             symbol=symbol,
             name=name,
             unit=unit,

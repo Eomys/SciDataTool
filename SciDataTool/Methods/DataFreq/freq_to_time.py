@@ -72,4 +72,5 @@ def freq_to_time(self):
             symbol=self.symbol,
             axes=Axes,
             values=values,
+            is_real=self.is_real,
         )

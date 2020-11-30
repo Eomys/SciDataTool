@@ -7,7 +7,7 @@ from numpy import array
 from importlib import import_module
 
 
-def get_axis(self, axis):
+def get_axis(self, axis, is_real):
     """Computes the vector 'axis' in the unit required, using conversions and symmetries if needed.
     Parameters
     ----------
@@ -104,7 +104,8 @@ def get_axis(self, axis):
                         is_oneperiod=is_oneperiod,
                         is_antiperiod=is_antiperiod,
                         is_smallestperiod=is_smallestperiod,
-                    )
+                    ),
+                    is_real=is_real,
                 )
             )
         else:

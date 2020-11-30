@@ -66,12 +66,12 @@ def comp_axes(self, axes_list):
         for axis_requested in axes_list:
             if axis_requested.name == "freqs":
                 if axis_requested.input_data is not None:
-                    axis_requested.input_data = [
-                        x for x in axis_requested.input_data if x >= 0
-                    ]
+                    axis_requested.input_data = list(
+                        set([0] + [x for x in axis_requested.input_data if x >= 0])
+                    )
                 else:
                     axis_requested.input_data = [0, inf]
     # Extract the requested axes (symmetries + unit)
     for axis_requested in axes_list:
-        axis_requested.get_axis(self.axes[axis_requested.index])
+        axis_requested.get_axis(self.axes[axis_requested.index], is_real=self.is_real)
     return axes_list, transforms

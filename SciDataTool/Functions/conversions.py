@@ -328,26 +328,26 @@ def rphiz_to_xyz_field(values, phi):
     return column_stack((field_x, field_y, field_z))
 
 
-def time_to_freqs(values):
+def time_to_freqs(values, is_real):
     is_time = True
     is_positive = False
     return comp_fft_freqs(values, is_time, is_positive)
 
 
-def freqs_to_time(values):
+def freqs_to_time(values, is_real):
     is_angle = False
-    return comp_fft_time(values, is_angle)
+    return comp_fft_time(values, is_angle, is_real)
 
 
-def angle_to_wavenumber(values):
+def angle_to_wavenumber(values, is_real):
     is_time = False
     is_positive = False
     return comp_fft_freqs(values, is_time, is_positive)
 
 
-def wavenumber_to_angle(values):
+def wavenumber_to_angle(values, is_real):
     is_angle = True
-    return comp_fft_time(values, is_angle)
+    return comp_fft_time(values, is_angle, is_real)
 
 
 def xy_to_rphi(x, y):
