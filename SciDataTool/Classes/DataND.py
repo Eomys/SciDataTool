@@ -325,6 +325,7 @@ class DataND(Data):
         axes=None,
         FTparameters=-1,
         values=None,
+        is_real=True,
         symbol="",
         name="",
         unit="",
@@ -353,6 +354,8 @@ class DataND(Data):
                 FTparameters = init_dict["FTparameters"]
             if "values" in list(init_dict.keys()):
                 values = init_dict["values"]
+            if "is_real" in list(init_dict.keys()):
+                is_real = init_dict["is_real"]
             if "symbol" in list(init_dict.keys()):
                 symbol = init_dict["symbol"]
             if "name" in list(init_dict.keys()):
@@ -365,6 +368,7 @@ class DataND(Data):
         self.axes = axes
         self.FTparameters = FTparameters
         self.values = values
+        self.is_real = is_real
         # Call Data init
         super(DataND, self).__init__(
             symbol=symbol, name=name, unit=unit, normalizations=normalizations
@@ -387,6 +391,7 @@ class DataND(Data):
             + linesep
             + linesep
         )
+        DataND_str += "is_real = " + str(self.is_real) + linesep
         return DataND_str
 
     def __eq__(self, other):
@@ -403,6 +408,8 @@ class DataND(Data):
         if other.FTparameters != self.FTparameters:
             return False
         if not array_equal(other.values, self.values):
+            return False
+        if other.is_real != self.is_real:
             return False
         return True
 
@@ -424,6 +431,7 @@ class DataND(Data):
             DataND_dict["values"] = None
         else:
             DataND_dict["values"] = self.values.tolist()
+        DataND_dict["is_real"] = self.is_real
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataND_dict["__class__"] = "DataND"
@@ -435,6 +443,7 @@ class DataND(Data):
         self.axes = None
         self.FTparameters = None
         self.values = None
+        self.is_real = None
         # Set to None the properties inherited from Data
         super(DataND, self)._set_None()
 
@@ -499,5 +508,23 @@ class DataND(Data):
         doc=u"""Values of the field
 
         :Type: ndarray
+        """,
+    )
+
+    def _get_is_real(self):
+        """getter of is_real"""
+        return self._is_real
+
+    def _set_is_real(self, value):
+        """setter of is_real"""
+        check_var("is_real", value, "bool")
+        self._is_real = value
+
+    is_real = property(
+        fget=_get_is_real,
+        fset=_set_is_real,
+        doc=u"""To indicate if the signal is real (use only positive frequencies)
+
+        :Type: bool
         """,
     )

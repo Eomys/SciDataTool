@@ -158,7 +158,7 @@ def _comp_fft(values, is_positive=False):
     return values_FT
 
 
-def comp_fftn(values, axes_list):
+def comp_fftn(values, axes_list, is_real=True):
     """Computes the Fourier Transform
     Parameters
     ----------
@@ -171,7 +171,7 @@ def comp_fftn(values, axes_list):
 
     for axis in axes_list:
         if axis.transform == "fft":
-            if min(axis.values) >= 0:
+            if is_real and axis.name == "freqs":
                 is_positive = True
             else:
                 is_positive = False
@@ -201,7 +201,7 @@ def _comp_ifft(values, is_positive=False):
     return values_IFT
 
 
-def comp_ifftn(values, axes_list, orig_axes):
+def comp_ifftn(values, axes_list, is_real=True):
     """Computes the Inverse Fourier Transform
     Parameters
     ----------
@@ -214,7 +214,7 @@ def comp_ifftn(values, axes_list, orig_axes):
 
     for axis in axes_list:
         if axis.transform == "ifft":
-            if min(orig_axes[axis.index].values) >= 0:
+            if is_real and axis.name == "time":
                 is_positive = True
             else:
                 is_positive = False
