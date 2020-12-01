@@ -62,10 +62,16 @@ def comp_fft_time(freqs, is_angle, is_real):
     else:
         if is_real and not is_angle:
             N_tot = 2 * (len(freqs) - 1)  # Number of samples
-            fs = freqs[-2] / (N_tot - 2)
+            if N_tot == 2:
+                fs = freqs[-2]
+            else:
+                fs = freqs[-2] / (N_tot - 2)
         else:
             N_tot = len(freqs)  # Number of samples
-            fs = freqs[-1] / (N_tot - 1)
+            if N_tot == 2:
+                fs = freqs[-1]
+            else:
+                fs = freqs[-1] / (N_tot - 2)
         tf = 1 / (fs * 2)
         time = linspace(0, tf, N_tot, endpoint=False)
         # fsampt = freqs[-1] * 2.0
