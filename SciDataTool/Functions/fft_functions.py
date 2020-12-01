@@ -183,24 +183,28 @@ def comp_fftn(values, axes_list, is_real=True):
     """
 
     axes = []
+    shape = []
     is_onereal = False
     for axis in axes_list:
         if axis.transform == "fft":
             if is_real and axis.name == "freqs":
                 axes.append(axis.index)
+                shape.append(2 * values.shape[axis.index])
                 is_onereal = True
             else:
                 axes = [axis.index] + axes
-                is_positive = False
+                shape = [values.shape[axis.index]] + shape
+                # is_positive = False
             # values = apply_along_axis(
             #     _comp_fft, axis.index, values, is_positive=is_positive
             # )
+    size = array(shape).prod()
     if is_onereal:
         values_FT = rfftn(values, axes=axes)
-        values_FT = 2.0 * fftshift(values_FT, axes=axes[:-1]) / values.size
+        values_FT = 2.0 * fftshift(values_FT, axes=axes[:-1]) / (size/2)
     else:
         values_FT = fftn(values, axes=axes)
-        values_FT = fftshift(values_FT, axes=axes) / values.size
+        values_FT = fftshift(values_FT, axes=axes) / size
     return values_FT
 
 
@@ -249,15 +253,16 @@ def comp_ifftn(values, axes_list, is_real=True):
             else:
                 axes = [axis.index] + axes
                 shape = [values.shape[axis.index]] + shape
-                is_positive = False
+                # is_positive = False
             # values = apply_along_axis(
             #     _comp_ifft, axis.index, values, is_positive=is_positive
             # )
+    size = array(shape).prod()
     if is_onereal:
-        values = ifftshift(values, axes=axes[:-1]) * values.size
+        values = ifftshift(values, axes=axes[:-1]) * (size/2)
         values_IFT = irfftn(values, s=shape, axes=axes)
     else:
-        values = ifftshift(values, axes=axes) * values.size
+        values = ifftshift(values, axes=axes) * size
         values_IFT = ifftn(values, axes=axes)
     return values_IFT
 
