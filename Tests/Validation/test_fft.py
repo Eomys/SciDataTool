@@ -3,7 +3,7 @@ from SciDataTool import DataTime, DataFreq, DataLinspace, Data1D
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 
-
+    
 @pytest.mark.validation
 def test_fft1d():
     f = 50
@@ -62,13 +62,13 @@ def test_fft1d():
 @pytest.mark.validation
 def test_fft2d():
     f = 50
-    time = np.linspace(0, 1 / f, 5, endpoint=False)
+    time = np.linspace(0, 1 / f, 6, endpoint=False)
     Time = DataLinspace(
         name="time",
         unit="s",
         initial=0,
         final=1 / f,
-        number=5,
+        number=6,
         include_endpoint=False,
     )
     angle = np.linspace(0, 2 * np.pi, 10, endpoint=False)
@@ -101,7 +101,7 @@ def test_fft2d():
     
     Field.is_real=False # Desactivate the storage of "real" time signal, such all the spectrum is stored
     result = Field.get_along("freqs")
-    assert_array_almost_equal(np.array([-2*f, -f, 0, f, 2 * f]), result["freqs"])
+    assert_array_almost_equal(np.array([-3*f, -2*f, -f, 0, f, 2 * f]), result["freqs"])
     
     result = Field.get_along("freqs=[0,100]")
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
@@ -130,8 +130,9 @@ def test_fft2d():
     
     result = Field.get_along("wavenumber=[0,4]")
     assert_array_almost_equal(np.array([0, 1, 2, 3, 4]), result["wavenumber"])
-    assert_array_almost_equal(np.array([0, 0, 0, 5/2, 0]), result["X"]) 
-
+    assert_array_almost_equal(np.array([0, 0, 0, 5/2, 0]), result["X"]) # It is a 1d fft on angle, so there are two equal wavenumbers at +3 and -3
+    
+    # Warning: following only work for even sized time vector
     Field_FT = Field.time_to_freq()
     assert_array_almost_equal(Field_FT.get_along("angle", "time")["X"], field)
     
@@ -139,11 +140,11 @@ def test_fft2d():
 @pytest.mark.validation
 def test_ifft1d():
     f = 50
-    freqs = np.array([-100, -50, 0, 50, 100])
+    freqs = np.array([-150, -100, -50, 0, 50, 100])
     Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
 
     #%% Test1 : Random complex signal
-    field = np.random.random(5) + 1j * np.random.random(5)
+    field = np.random.random(6) + 1j * np.random.random(6)
     Field = DataFreq(
         name="field",
         symbol="X",
@@ -154,10 +155,10 @@ def test_ifft1d():
     )
     result = Field.get_along("time")
     time = result["time"]
-    assert_array_almost_equal(np.linspace(0, 1 / f, 5, endpoint=False), time)
+    assert_array_almost_equal(np.linspace(0, 1 / f, 6, endpoint=False), time)
 
     Nf = len(freqs)
-    field_ift = np.zeros((5))
+    field_ift = np.zeros((6))
     for ifrq in range(Nf):
         fit = freqs[ifrq]
         field_ift = field_ift + (field[ifrq] * np.exp(1j * (2 * np.pi * fit * time)))
@@ -170,6 +171,7 @@ def test_ifft1d():
     #%% Test2 : Real-time signal
     field = np.array(
         [
+            0,
             0,
             3 + 5 * 1j,
             0,
@@ -187,7 +189,7 @@ def test_ifft1d():
     )
     result = Field.get_along("time")
     time = result["time"]
-    assert_array_almost_equal(np.linspace(0, 1 / f, 5, endpoint=False), time)
+    assert_array_almost_equal(np.linspace(0, 1 / f, 6, endpoint=False), time)
 
     field_ift = abs(3 + 5 * 1j) * np.cos(
         -2 * np.pi * f * time + np.angle(3 + 5 * 1j)
@@ -199,33 +201,34 @@ def test_ifft1d():
     assert_array_almost_equal(Field_IFT.get_along("freqs")["X"], field)
 
 
-@pytest.mark.validation
+@pytest.mark.validations
 def test_ifft2d():
 
     #%% Test 1
     f = 50
-    freqs = np.array([-100, -50, 0, 50, 100])
+    freqs = np.array([0, 50, 100])
     Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
-    wavenumber = np.array([-4, -3, -2, -1, 0, 1, 2, 3, 4])
+    wavenumber = np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4])
     Wavenumber = Data1D(name="wavenumber", unit="dimless", values=wavenumber)
-    X = np.zeros((5, 9))
-    X[1, 1] = 5
-    X[3, 7] = 5
+    X = np.zeros((3, 10))
+    X[1, 2] = 5 # Only the positive frequency harmonic of the real signal
+    #X[4, 7] = 5
     Field = DataFreq(
         name="field",
         symbol="X",
         axes=[Freqs, Wavenumber],
         values=X,
         unit="m",
+        is_real=True,
     )
     result = Field.get_along("time", "angle")
     time = result["time"]
-    assert_array_almost_equal(np.linspace(0, 1 / f, 5, endpoint=False), time)
+    assert_array_almost_equal(np.linspace(0, 1 / f, 6, endpoint=False), time)
     angle = result["angle"]
-    assert_array_almost_equal(np.linspace(0, 2 * np.pi, 9, endpoint=False), angle)
+    assert_array_almost_equal(np.linspace(0, 2 * np.pi, 10, endpoint=False), angle)
     Xangle, Xtime = np.meshgrid(angle, time)
     field_ift = (
-        2 * 5 * np.cos(2 * np.pi * f * Xtime + 3 * Xangle)
+        5 * np.cos(2 * np.pi * f * Xtime - 3 * Xangle)
     )  # 2 times the real part
     assert_array_almost_equal(field_ift, result["X"])
 
@@ -236,8 +239,11 @@ def test_ifft2d():
     assert_array_almost_equal(Field_2.get_along("angle", "time")["X"], field_ift)
 
     #%% Test 2
-    X = np.random.random((5, 9)) + np.random.random((5, 9)) * 1j
-
+    X = np.random.random((6, 10)) + np.random.random((6, 10)) * 1j
+    freqs = np.array([-150, -100, -50, 0, 50, 100])
+    Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
+    wavenumber = np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4])
+    Wavenumber = Data1D(name="wavenumber", unit="dimless", values=wavenumber)
     # The signal is a complex conjugate along freqs axis, as mag field should be
     Field = DataFreq(
         name="field",
@@ -245,12 +251,18 @@ def test_ifft2d():
         axes=[Freqs, Wavenumber],
         values=X,
         unit="m",
+        is_real=False
     )
     result = Field.get_along("time", "angle")
-
+    time = result["time"]
+    assert_array_almost_equal(np.linspace(0, 1 / f, 6, endpoint=False), time)
+    angle = result["angle"]
+    assert_array_almost_equal(np.linspace(0, 2 * np.pi, 10, endpoint=False), angle)
+    Xangle, Xtime = np.meshgrid(angle, time)
+    
     Nr = len(wavenumber)
     Nf = len(freqs)
-    field_ift = np.zeros((5, 9))
+    field_ift = np.zeros((6, 10))
     for ir in range(Nr):
         r = wavenumber[ir]
         for ifrq in range(Nf):
@@ -287,7 +299,7 @@ def test_ifft2d():
 
     Nr = len(wavenumber)
     Nf = len(freqs)
-    field_ift = np.zeros((5, 9))
+    field_ift = np.zeros((6, 10))
 
     for ir in range(Nr):
         r = wavenumber[ir]
@@ -325,7 +337,7 @@ def test_fft2d_period():
 
     result = Field.get_along("wavenumber=[0,10]")
     assert_array_almost_equal(np.array([0, 4, 8]), result["wavenumber"])
-    assert_array_almost_equal(np.array([0, 5, 0]), result["X"])
+    assert_array_almost_equal(np.array([0, 5/2, 0]), result["X"]) # FFT spatial at 1 time -> Half of the signal
 
     result = Field.get_along("freqs=[0,100]", "wavenumber=[-10,10]")
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
