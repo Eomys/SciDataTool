@@ -39,11 +39,11 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         field_x = resultx[self.components["comp_x"].symbol]
         field_y = resulty[self.components["comp_y"].symbol]
         shape = field_x.shape
-        if "phi" not in resultx:
+        if "angle" not in resultx:
             raise AxisError(
-                "ERROR: need phi axis to convert to cylindrical coordinates"
+                "ERROR: need angle axis to convert to cylindrical coordinates"
             )
-        phi = resultx["phi"]
+        phi = resultx["angle"]
         # Convert to cylindrical coordinates
         (field_r, field_c) = cart2pol(field_x, field_y, phi)
         if "axial" in self.components.keys():
@@ -90,7 +90,7 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         del return_dict[self.components["radial"].symbol]
 
     elif "tangential" in self.components.keys():
-        resultphi = self.components["circumferential"].get_along(
+        resultphi = self.components["tangential"].get_along(
             args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
         field_c = resultphi[self.components["tangential"].symbol]
@@ -141,7 +141,7 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     else:
         raise AxisError(
-            "Vector_field object is empty (should contain at least radial, circumferential, axial, x, y or z"
+            "Vector_field object is empty (should contain at least radial, tangential, axial, comp_x, comp_y or comp_z"
         )
 
     return_dict["radial"] = field_r
