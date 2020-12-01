@@ -24,6 +24,11 @@ def test_fft1d():
         values=field,
         unit="m",
     )
+    
+    Field_FT = Field.time_to_freq()
+    result = Field_FT.get_along("time")
+    assert_array_almost_equal(result["X"], field)
+    assert_array_almost_equal(result["time"], time)
 
     result = Field.get_along("freqs<100")
     assert_array_almost_equal(np.array([0, 50, 100]), result["freqs"])
@@ -45,10 +50,10 @@ def test_fft1d():
         unit="m",
         is_real=False,
     )
+    
     result = Field2.get_along("freqs")
-    result = Field.get_along("freqs")
 
-    Field_FT = Field.time_to_freq()
+    Field_FT = Field2.time_to_freq()
     result = Field_FT.get_along("time")
     assert_array_almost_equal(result["X"], field)
     assert_array_almost_equal(result["time"], time)
@@ -122,13 +127,14 @@ def test_fft2d():
         1, 3
     ] = 5  # The negative wavenumber -3 is folded on +3 to keep signal energy constant
     assert_array_almost_equal(X, result["X"])
-
-    Field_FT = Field.time_to_freq()
-    assert_array_almost_equal(Field_FT.get_along("angle", "time")["X"], field)
     
     result = Field.get_along("wavenumber=[0,4]")
     assert_array_almost_equal(np.array([0, 1, 2, 3, 4]), result["wavenumber"])
     assert_array_almost_equal(np.array([0, 0, 0, 5/2, 0]), result["X"]) 
+
+    Field_FT = Field.time_to_freq()
+    assert_array_almost_equal(Field_FT.get_along("angle", "time")["X"], field)
+    
 
 @pytest.mark.validation
 def test_ifft1d():
@@ -144,6 +150,7 @@ def test_ifft1d():
         axes=[Freqs],
         values=field,
         unit="m",
+        is_real=False
     )
     result = Field.get_along("time")
     time = result["time"]
@@ -176,6 +183,7 @@ def test_ifft1d():
         axes=[Freqs],
         values=field,
         unit="m",
+        is_real=False
     )
     result = Field.get_along("time")
     time = result["time"]
