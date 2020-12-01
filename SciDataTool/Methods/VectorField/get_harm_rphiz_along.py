@@ -28,36 +28,38 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
 
-    if "x" in self.components.keys() and "y" in self.components.keys():
+    if "comp_x" in self.components.keys() and "comp_y" in self.components.keys():
         # Extract from DataND
-        resultx = self.components["x"].get_harmonics(
+        resultx = self.components["comp_x"].get_harmonics(
             N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-        resulty = self.components["y"].get_harmonics(
+        resulty = self.components["comp_y"].get_harmonics(
             N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-        field_x = resultx[self.components["x"].symbol]
-        field_y = resulty[self.components["y"].symbol]
+        field_x = resultx[self.components["comp_x"].symbol]
+        field_y = resulty[self.components["comp_y"].symbol]
         shape = field_x.shape
-        x = resultx["x"]
-        y = resultx["y"]
+        if "angle" not in resultx:
+            raise AxisError(
+                "ERROR: need angle axis to convert to cylindrical coordinates"
+            )
+        phi = resultx["angle"]
         # Convert to cylindrical coordinates
-        (r, phi) = xy_to_rphi(x, y)
-        (field_r, field_t) = cart2pol(field_x, field_y, phi)
+        (field_r, field_c) = cart2pol(field_x, field_y, phi)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_harmonics(
                 N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
             field_z = resultz[self.components["axial"].symbol]
-        elif "z" in self.components.keys():
-            resultz = self.components["z"].get_harmonics(
+        elif "comp_z" in self.components.keys():
+            resultz = self.components["comp_z"].get_harmonics(
                 N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
-            field_z = resultz[self.components["z"].symbol]
+            field_z = resultz[self.components["comp_z"].symbol]
         else:
             field_z = zeros(shape)
         return_dict = dict(resultx)
-        del return_dict[self.components["x"].symbol]
+        del return_dict[self.components["comp_x"].symbol]
 
     elif "radial" in self.components.keys():
         resultr = self.components["radial"].get_harmonics(
@@ -77,11 +79,11 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
                 N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
             field_z = resultz[self.components["axial"].symbol]
-        elif "z" in self.components.keys():
-            resultz = self.components["z"].get_harmonics(
+        elif "comp_z" in self.components.keys():
+            resultz = self.components["comp_z"].get_harmonics(
                 N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
-            field_z = resultz[self.components["z"].symbol]
+            field_z = resultz[self.components["comp_z"].symbol]
         else:
             field_z = zeros(shape)
         return_dict = dict(resultr)
@@ -105,11 +107,11 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
                 N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
             field_z = resultz[self.components["axial"].symbol]
-        elif "z" in self.components.keys():
-            resultz = self.components["z"].get_harmonics(
+        elif "comp_z" in self.components.keys():
+            resultz = self.components["comp_z"].get_harmonics(
                 N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
-            field_z = resultz[self.components["z"].symbol]
+            field_z = resultz[self.components["comp_z"].symbol]
         else:
             field_z = zeros(shape)
         return_dict = dict(resultphi)
@@ -126,24 +128,24 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
         return_dict = dict(resultz)
         del return_dict[self.components["axial"].symbol]
 
-    elif "z" in self.components.keys():
+    elif "comp_z" in self.components.keys():
         resultz = self.components["z"].get_harmonics(
             N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-        field_z = resultz[self.components["z"].symbol]
+        field_z = resultz[self.components["comp_z"].symbol]
         shape = field_z.shape
         field_r = zeros(shape)
         field_t = zeros(shape)
         return_dict = resultz
-        del return_dict[self.components["z"].symbol]
+        del return_dict[self.components["comp_z"].symbol]
 
     else:
         raise AxisError(
-            "Vector_field object is empty (should contain at least radial, tangential, axial, x, y or z"
+            "Vector_field object is empty (should contain at least radial, tangential, axial, comp_x, comp_y or comp_z"
         )
 
-    return_dict[self.symbol + "_r"] = field_r
-    return_dict[self.symbol + "_t"] = field_t
-    return_dict[self.symbol + "_z"] = field_z
+    return_dict["radial"] = field_r
+    return_dict["tangential"] = field_t
+    return_dict["axial"] = field_z
 
     return return_dict
