@@ -64,7 +64,7 @@ def test_norm():
     )
     result = Field.get_along("freqs->elec_order=[0,100]", is_norm=True)
     assert_array_almost_equal(1 / (7 * 10), result["freqs"][1])
-    assert_array_almost_equal(1 / 0.2, result["X"][0])
+    assert_array_almost_equal(2 / 0.2, result["X"][0])
 
     angle = np.linspace(0, 2 * np.pi, 10, endpoint=False)
     Angle = DataLinspace(
