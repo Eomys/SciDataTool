@@ -1,8 +1,8 @@
 import pytest
-from SciDataTool import DataTime, DataFreq, DataLinspace, Data1D
+from SciDataTool import DataTime, DataFreq, DataLinspace, Data1D, VectorField
 import numpy as np
 from numpy.testing import assert_array_almost_equal
-
+from numpy import zeros, exp, real, pi
     
 @pytest.mark.validation
 def test_fft1d():
@@ -61,6 +61,8 @@ def test_fft1d():
 
 @pytest.mark.validation
 def test_fft2d():
+    
+    #%% Test&
     f = 50
     time = np.linspace(0, 1 / f, 6, endpoint=False)
     Time = DataLinspace(
@@ -91,7 +93,7 @@ def test_fft2d():
         is_real=True, # Default value, store only positive frequencies to save memory space
     )
     
-    
+
     result = Field.get_along("freqs")
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
     
@@ -136,7 +138,8 @@ def test_fft2d():
     Field_FT = Field.time_to_freq()
     assert_array_almost_equal(Field_FT.get_along("angle", "time")["X"], field)
     
-
+    
+    
 @pytest.mark.validation
 def test_ifft1d():
     f = 50
@@ -295,7 +298,6 @@ def test_ifft2d():
     result_fft = Field.get_along("freqs>0", "wavenumber")
     X_test = result_fft["X"]
     freqs_test = result_fft["freqs"]
-    wavenumber_test = result_fft["wavenumber"]
 
     Nr = len(wavenumber)
     Nf = len(freqs)
@@ -312,7 +314,113 @@ def test_ifft2d():
 
     assert_array_almost_equal(field_ift, result["X"])
 
+@pytest.mark.validations
+def test_ifft2d_vector():
+    
+    f = 50
+    time = np.linspace(0, 1 / f, 6, endpoint=False)
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=6,
+        include_endpoint=False,
+    )
+    angle = np.linspace(0, 2 * np.pi, 10, endpoint=False)
+    at, ta = np.meshgrid(angle, time)
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=2 * np.pi,
+        number=10,
+        include_endpoint=False,
+    )
+    
+    field = 5 * np.cos(2 * np.pi * f * ta + 3 * at) +  2 * np.cos(-2 * np.pi * f * ta + at)
+    
+    Rad = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time, Angle],
+        values=field,
+        unit="m",
+    )
+    
+    arg_list = ["freqs", "angle"]
+    result_freq = Rad.get_along(*arg_list)
+    X_w = result_freq["X"]
+    freqs= result_freq["freqs"]
+    Nf = len(freqs)
+    XP = zeros(field.shape)
+    Xangle, Xtime = np.meshgrid(angle, time)
 
+    # Since only positive frequency were extracted, the correct sum must be on the the real part
+    for ifrq in range(Nf):
+        frq = freqs[ifrq]
+        XP = XP + real(X_w[ifrq, :] * exp(1j * 2 * pi * frq * Xtime))
+
+    assert_array_almost_equal(XP, field, decimal=5)
+    
+    Tan = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time, Angle],
+        values=0*field,
+        unit="m",
+    )
+    
+    Vector = VectorField(
+        name="Air gap Surface Force",
+        symbol="AGSF",
+    )
+    # Radial component
+    Vector.components["radial"] = Rad
+    # Tangential component
+    Vector.components["tangential"] = Tan
+    
+    arg_list = ["time", "angle"]
+    result = Vector.get_rphiz_along(*arg_list)
+    X = result["radial"]
+    time = result["time"]
+
+    arg_list = ["freqs", "angle"]
+    result_freq = Vector.get_rphiz_along(*arg_list)
+    X_w = result_freq["radial"]
+    freqs= result_freq["freqs"]
+    Nf = len(freqs)
+
+    XP = zeros(X.shape)
+    Xangle, Xtime = np.meshgrid(angle, time)
+
+    # Since only positive frequency were extracted, the correct sum must be on the the real part
+    for ifrq in range(Nf):
+        frq = freqs[ifrq]
+        XP = XP + real(X_w[ifrq, :] * exp(1j * 2 * pi * frq * Xtime))
+
+    assert_array_almost_equal(XP, X, decimal=5)
+    
+    result_fft = Vector.get_rphiz_along("freqs", "wavenumber")
+    X_test = result_fft["radial"]
+    freqs_test = result_fft["freqs"]
+    wavenumber = result_fft["wavenumber"]
+
+    Nr = len(wavenumber)
+    Nf = len(freqs)
+    field_ift = np.zeros((6, 10))
+
+    for ir in range(Nr):
+        r = wavenumber[ir]
+
+        for ifrq in range(len(freqs_test)):
+            fit = freqs_test[ifrq]
+            field_ift = field_ift + abs(X_test[ifrq, ir]) * np.cos(
+                (2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir]))
+            )
+
+    assert_array_almost_equal(field_ift, X)
+    
 @pytest.mark.validation
 def test_fft2d_period():
     f = 50
