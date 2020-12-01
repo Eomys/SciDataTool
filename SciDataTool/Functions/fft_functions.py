@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from numpy import mean, hanning, linspace, where, isclose, apply_along_axis
-from numpy.fft import fft, fftshift, ifft, ifftshift
+from numpy.fft import fft, fftshift, ifft, ifftshift, rfftn, irfftn, fftn, ifftn
 from numpy import (
     array,
     pi,
@@ -39,7 +39,8 @@ def comp_fft_freqs(time, is_time, is_real):
         freqscale = N_tot / fsampt
         freqs = [i - int(N_tot / 2) for i in range(int(N_tot))]
         if is_real and is_time and N_tot % 2 == 0:
-            freqs.append(-freqs[0])
+            freqs = [i for i in range(int(N_tot / 2))]
+            # freqs.append(-freqs[0])
         if is_time:
             freqs = [i / freqscale for i in freqs]
     return freqs
@@ -61,17 +62,13 @@ def comp_fft_time(freqs, is_angle, is_real):
         time = [0]
     else:
         if is_real and not is_angle:
-            N_tot = 2 * (len(freqs) - 1)  # Number of samples
-            if N_tot == 2:
-                fs = freqs[-2]
-            else:
-                fs = freqs[-2] / (N_tot - 2)
+            N_tot = 2 * (len(freqs))  # Number of samples
         else:
             N_tot = len(freqs)  # Number of samples
-            if N_tot == 2:
-                fs = freqs[-1]
-            else:
-                fs = freqs[-1] / (N_tot - 2)
+        if N_tot == 2:
+            fs = freqs[-1]
+        else:
+            fs = freqs[-1] / (N_tot - 2)
         tf = 1 / (fs * 2)
         time = linspace(0, tf, N_tot, endpoint=False)
         # fsampt = freqs[-1] * 2.0
@@ -185,16 +182,26 @@ def comp_fftn(values, axes_list, is_real=True):
     Complex Fourier Transform
     """
 
+    axes = []
+    is_onereal = False
     for axis in axes_list:
         if axis.transform == "fft":
             if is_real and axis.name == "freqs":
-                is_positive = True
+                axes.append(axis.index)
+                is_onereal = True
             else:
+                axes = [axis.index] + axes
                 is_positive = False
-            values = apply_along_axis(
-                _comp_fft, axis.index, values, is_positive=is_positive
-            )
-    return values
+            # values = apply_along_axis(
+            #     _comp_fft, axis.index, values, is_positive=is_positive
+            # )
+    if is_onereal:
+        values_FT = rfftn(values, axes=axes)
+        values_FT = 2.0 * fftshift(values_FT, axes=axes[:-1]) / values.size
+    else:
+        values_FT = fftn(values, axes=axes)
+        values_FT = fftshift(values_FT, axes=axes) / values.size
+    return values_FT
 
 
 def _comp_ifft(values, is_positive=False):
@@ -230,16 +237,29 @@ def comp_ifftn(values, axes_list, is_real=True):
     IFT
     """
 
+    axes = []
+    shape = []
+    is_onereal = False
     for axis in axes_list:
         if axis.transform == "ifft":
             if is_real and axis.name == "time":
-                is_positive = True
+                axes.append(axis.index)
+                shape.append(2 * values.shape[axis.index])
+                is_onereal = True
             else:
+                axes = [axis.index] + axes
+                shape = [values.shape[axis.index]] + shape
                 is_positive = False
-            values = apply_along_axis(
-                _comp_ifft, axis.index, values, is_positive=is_positive
-            )
-    return values
+            # values = apply_along_axis(
+            #     _comp_ifft, axis.index, values, is_positive=is_positive
+            # )
+    if is_onereal:
+        values = ifftshift(values, axes=axes[:-1]) * values.size
+        values_IFT = irfftn(values, s=shape, axes=axes)
+    else:
+        values = ifftshift(values, axes=axes) * values.size
+        values_IFT = ifftn(values, axes=axes)
+    return values_IFT
 
 
 def comp_magnitude(values):
