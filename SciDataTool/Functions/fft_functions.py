@@ -38,7 +38,7 @@ def comp_fft_freqs(time, is_time, is_real):
         fsampt = 1.0 / timestep  # Sample frequency
         freqscale = N_tot / fsampt
         freqs = [i - int(N_tot / 2) for i in range(int(N_tot))]
-        if is_real and is_time and N_tot % 2 == 0:
+        if is_real and is_time:
             freqs = [i for i in range(int(N_tot / 2))]
             # freqs.append(-freqs[0])
         if is_time:
