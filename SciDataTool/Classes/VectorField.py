@@ -5,6 +5,7 @@
 """
 
 from os import linesep
+from sys import getsizeof
 from ._check import check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -203,6 +204,17 @@ class VectorField(FrozenClass):
         if other.components != self.components:
             return False
         return True
+
+    def __sizeof__(self):
+        """Return the size in memory of the object (including all subobject)"""
+
+        S = 0  # Full size of the object
+        S += getsizeof(self.name)
+        S += getsizeof(self.symbol)
+        if self.components is not None:
+            for key, value in self.components.items():
+                S += getsizeof(value) + getsizeof(key)
+        return S
 
     def as_dict(self):
         """Convert this object in a json seriable dict (can be use in __init__)"""

@@ -5,6 +5,7 @@
 """
 
 from os import linesep
+from sys import getsizeof
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -189,6 +190,20 @@ class Data1D(Data):
         if other.symmetries != self.symmetries:
             return False
         return True
+
+    def __sizeof__(self):
+        """Return the size in memory of the object (including all subobject)"""
+
+        S = 0  # Full size of the object
+
+        # Get size of the properties inherited from Data
+        S += super(Data1D, self).__sizeof__()
+        S += getsizeof(self.values)
+        S += getsizeof(self.is_components)
+        if self.symmetries is not None:
+            for key, value in self.symmetries.items():
+                S += getsizeof(value) + getsizeof(key)
+        return S
 
     def as_dict(self):
         """Convert this object in a json seriable dict (can be use in __init__)"""

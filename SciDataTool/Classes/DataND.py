@@ -5,6 +5,7 @@
 """
 
 from os import linesep
+from sys import getsizeof
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -412,6 +413,23 @@ class DataND(Data):
         if other.is_real != self.is_real:
             return False
         return True
+
+    def __sizeof__(self):
+        """Return the size in memory of the object (including all subobject)"""
+
+        S = 0  # Full size of the object
+
+        # Get size of the properties inherited from Data
+        S += super(DataND, self).__sizeof__()
+        if self.axes is not None:
+            for value in self.axes:
+                S += getsizeof(value)
+        if self.FTparameters is not None:
+            for key, value in self.FTparameters.items():
+                S += getsizeof(value) + getsizeof(key)
+        S += getsizeof(self.values)
+        S += getsizeof(self.is_real)
+        return S
 
     def as_dict(self):
         """Convert this object in a json seriable dict (can be use in __init__)"""
