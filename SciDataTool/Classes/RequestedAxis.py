@@ -5,6 +5,7 @@
 """
 
 from os import linesep
+from sys import getsizeof
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -207,6 +208,28 @@ class RequestedAxis(FrozenClass):
         if other.is_step != self.is_step:
             return False
         return True
+
+    def __sizeof__(self):
+        """Return the size in memory of the object (including all subobject)"""
+
+        S = 0  # Full size of the object
+        S += getsizeof(self.name)
+        S += getsizeof(self.corr_name)
+        S += getsizeof(self.unit)
+        S += getsizeof(self.corr_unit)
+        S += getsizeof(self.extension)
+        S += getsizeof(self.values)
+        if self.indices is not None:
+            for value in self.indices:
+                S += getsizeof(value)
+        S += getsizeof(self.input_data)
+        S += getsizeof(self.operation)
+        S += getsizeof(self.index)
+        S += getsizeof(self.transform)
+        S += getsizeof(self.is_pattern)
+        S += getsizeof(self.rebuild_indices)
+        S += getsizeof(self.is_step)
+        return S
 
     def as_dict(self):
         """Convert this object in a json seriable dict (can be use in __init__)"""
