@@ -11,6 +11,9 @@ from numpy import (
     conjugate,
     flip,
     append,
+    take,
+    insert,
+    delete,
     abs as np_abs,
     angle as np_angle,
 )
@@ -38,7 +41,7 @@ def comp_fft_freqs(time, is_time, is_real):
         fsampt = 1.0 / timestep  # Sample frequency
         freqscale = N_tot / fsampt
         freqs = [i - int(N_tot / 2) for i in range(int(N_tot))]
-        if is_real and is_time and N_tot % 2 == 0:
+        if is_real and is_time:
             freqs = [i for i in range(int(N_tot / 2))]
             # freqs.append(-freqs[0])
         if is_time:
@@ -189,7 +192,7 @@ def comp_fftn(values, axes_list, is_real=True):
         if axis.transform == "fft":
             if is_real and axis.name == "freqs":
                 axes.append(axis.index)
-                shape.append(2 * values.shape[axis.index])
+                shape.append(values.shape[axis.index])
                 is_onereal = True
             else:
                 axes = [axis.index] + axes
@@ -201,7 +204,11 @@ def comp_fftn(values, axes_list, is_real=True):
     size = array(shape).prod()
     if is_onereal:
         values_FT = rfftn(values, axes=axes)
-        values_FT = 2.0 * fftshift(values_FT, axes=axes[:-1]) / (size/2)
+        slice_0 = take(values_FT, 0, axis=axes[-1])
+        slice_0 *= 0.5
+        other_values = delete(values_FT, 0, axis=axes[-1])
+        values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
+        values_FT = 2.0 * fftshift(values_FT, axes=axes[:-1]) / size
     else:
         values_FT = fftn(values, axes=axes)
         values_FT = fftshift(values_FT, axes=axes) / size
@@ -259,7 +266,13 @@ def comp_ifftn(values, axes_list, is_real=True):
             # )
     size = array(shape).prod()
     if is_onereal:
-        values = ifftshift(values, axes=axes[:-1]) * (size/2)
+        values = values * size / 2
+        values = ifftshift(values, axes=axes[:-1])
+        slice_0 = take(values, 0, axis=axes[-1])
+        slice_0 *= 2
+        other_values = delete(values, 0, axis=axes[-1])
+        values = insert(other_values, 0, slice_0, axis=axes[-1])
+        # values = ifftshift(values/2, axes=axes[:-1]) * size
         values_IFT = irfftn(values, s=shape, axes=axes)
     else:
         values = ifftshift(values, axes=axes) * size

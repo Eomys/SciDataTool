@@ -5,6 +5,7 @@
 """
 
 from os import linesep
+from sys import getsizeof
 from ._check import check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -94,6 +95,18 @@ class Data(FrozenClass):
         if other.normalizations != self.normalizations:
             return False
         return True
+
+    def __sizeof__(self):
+        """Return the size in memory of the object (including all subobject)"""
+
+        S = 0  # Full size of the object
+        S += getsizeof(self.symbol)
+        S += getsizeof(self.name)
+        S += getsizeof(self.unit)
+        if self.normalizations is not None:
+            for key, value in self.normalizations.items():
+                S += getsizeof(value) + getsizeof(key)
+        return S
 
     def as_dict(self):
         """Convert this object in a json seriable dict (can be use in __init__)"""
