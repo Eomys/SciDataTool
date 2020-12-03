@@ -11,6 +11,9 @@ from numpy import (
     conjugate,
     flip,
     append,
+    take,
+    insert,
+    delete,
     abs as np_abs,
     angle as np_angle,
 )
@@ -201,6 +204,10 @@ def comp_fftn(values, axes_list, is_real=True):
     size = array(shape).prod()
     if is_onereal:
         values_FT = rfftn(values, axes=axes)
+        slice_0 = take(values_FT, 0, axis=axes[-1])
+        slice_0 *= 0.5
+        other_values = delete(values_FT, 0, axis=axes[-1])
+        values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
         values_FT = 2.0 * fftshift(values_FT, axes=axes[:-1]) / size
     else:
         values_FT = fftn(values, axes=axes)
@@ -259,7 +266,13 @@ def comp_ifftn(values, axes_list, is_real=True):
             # )
     size = array(shape).prod()
     if is_onereal:
-        values = ifftshift(values/2, axes=axes[:-1]) * size
+        values = values * size / 2
+        values = ifftshift(values, axes=axes[:-1])
+        slice_0 = take(values, 0, axis=axes[-1])
+        slice_0 *= 2
+        other_values = delete(values, 0, axis=axes[-1])
+        values = insert(other_values, 0, slice_0, axis=axes[-1])
+        # values = ifftshift(values/2, axes=axes[:-1]) * size
         values_IFT = irfftn(values, s=shape, axes=axes)
     else:
         values = ifftshift(values, axes=axes) * size
