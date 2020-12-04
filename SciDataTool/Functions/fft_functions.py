@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 from numpy import mean, hanning, linspace, where, isclose, apply_along_axis
-from numpy.fft import fft, fftshift, ifft, ifftshift, rfftn, irfftn, fftn, ifftn, rfftfreq
+from numpy.fft import (
+    fft,
+    fftshift,
+    ifft,
+    ifftshift,
+    rfftn,
+    irfftn,
+    fftn,
+    ifftn,
+    rfftfreq,
+)
 from numpy import (
     array,
     pi,
@@ -66,11 +76,11 @@ def comp_fft_time(freqs, is_angle, is_real):
         time = [0]
     else:
         if is_real and not is_angle:
-            N_tot = 2 * (len(freqs)-1)  # Number of samples
+            N_tot = 2 * (len(freqs) - 1)  # Number of samples
             fs = freqs[-1] / (N_tot)
         else:
             N_tot = len(freqs)  # Number of samples
-            fs = freqs[-1] / (N_tot-2)
+            fs = freqs[-1] / (N_tot - 2)
         tf = 1 / (fs * 2)
         time = linspace(0, tf, N_tot, endpoint=False)
         # fsampt = freqs[-1] * 2.0
@@ -254,7 +264,7 @@ def comp_ifftn(values, axes_list, is_real=True):
         if axis.transform == "ifft":
             if is_real and axis.name == "time":
                 axes.append(axis.index)
-                shape.append(2 * (values.shape[axis.index]-1))
+                shape.append(2 * (values.shape[axis.index] - 1))
                 is_onereal = True
             else:
                 axes = [axis.index] + axes

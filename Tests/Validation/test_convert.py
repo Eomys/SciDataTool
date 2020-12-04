@@ -45,7 +45,7 @@ def test_units():
 def test_norm():
     f = 50
     time = np.linspace(0, 1 / f, 10, endpoint=False)
-    
+
     Time = DataLinspace(
         name="time",
         unit="s",

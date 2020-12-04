@@ -5,7 +5,6 @@
 """
 
 from os import linesep
-from sys import getsizeof
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -157,13 +156,11 @@ class DataPattern(Data):
             + linesep
             + str(self.rebuild_indices).replace(linesep, linesep + "\t")
             + linesep
-            + linesep
         )
         DataPattern_str += (
             "unique_indices = "
             + linesep
             + str(self.unique_indices).replace(linesep, linesep + "\t")
-            + linesep
             + linesep
         )
         DataPattern_str += "is_step = " + str(self.is_step) + linesep
@@ -194,9 +191,9 @@ class DataPattern(Data):
         # Check the properties inherited from Data
         if not super(DataPattern, self).__eq__(other):
             return False
-        if not array_equal(other.rebuild_indices, self.rebuild_indices):
+        if other.rebuild_indices != self.rebuild_indices:
             return False
-        if not array_equal(other.unique_indices, self.unique_indices):
+        if other.unique_indices != self.unique_indices:
             return False
         if other.is_step != self.is_step:
             return False
@@ -210,37 +207,17 @@ class DataPattern(Data):
             return False
         return True
 
-    def __sizeof__(self):
-        """Return the size in memory of the object (including all subobject)"""
-
-        S = 0  # Full size of the object
-
-        # Get size of the properties inherited from Data
-        S += super(DataPattern, self).__sizeof__()
-        S += getsizeof(self.rebuild_indices)
-        S += getsizeof(self.unique_indices)
-        S += getsizeof(self.is_step)
-        S += getsizeof(self.values)
-        S += getsizeof(self.is_components)
-        if self.symmetries is not None:
-            for key, value in self.symmetries.items():
-                S += getsizeof(value) + getsizeof(key)
-        S += getsizeof(self.values_whole)
-        return S
-
     def as_dict(self):
         """Convert this object in a json seriable dict (can be use in __init__)"""
 
         # Get the properties inherited from Data
         DataPattern_dict = super(DataPattern, self).as_dict()
-        if self.rebuild_indices is None:
-            DataPattern_dict["rebuild_indices"] = None
-        else:
-            DataPattern_dict["rebuild_indices"] = self.rebuild_indices.tolist()
-        if self.unique_indices is None:
-            DataPattern_dict["unique_indices"] = None
-        else:
-            DataPattern_dict["unique_indices"] = self.unique_indices.tolist()
+        DataPattern_dict["rebuild_indices"] = (
+            self.rebuild_indices.copy() if self.rebuild_indices is not None else None
+        )
+        DataPattern_dict["unique_indices"] = (
+            self.unique_indices.copy() if self.unique_indices is not None else None
+        )
         DataPattern_dict["is_step"] = self.is_step
         if self.values is None:
             DataPattern_dict["values"] = None
@@ -279,13 +256,8 @@ class DataPattern(Data):
     def _set_rebuild_indices(self, value):
         """setter of rebuild_indices"""
         if type(value) is int and value == -1:
-            value = array([])
-        elif type(value) is list:
-            try:
-                value = array(value)
-            except:
-                pass
-        check_var("rebuild_indices", value, "ndarray")
+            value = list()
+        check_var("rebuild_indices", value, "list")
         self._rebuild_indices = value
 
     rebuild_indices = property(
@@ -293,7 +265,7 @@ class DataPattern(Data):
         fset=_set_rebuild_indices,
         doc=u"""Indices to rebuild complete axis
 
-        :Type: ndarray
+        :Type: list
         """,
     )
 
@@ -304,13 +276,8 @@ class DataPattern(Data):
     def _set_unique_indices(self, value):
         """setter of unique_indices"""
         if type(value) is int and value == -1:
-            value = array([])
-        elif type(value) is list:
-            try:
-                value = array(value)
-            except:
-                pass
-        check_var("unique_indices", value, "ndarray")
+            value = list()
+        check_var("unique_indices", value, "list")
         self._unique_indices = value
 
     unique_indices = property(
@@ -318,7 +285,7 @@ class DataPattern(Data):
         fset=_set_unique_indices,
         doc=u"""Indices which were taken from complete axis
 
-        :Type: ndarray
+        :Type: list
         """,
     )
 
