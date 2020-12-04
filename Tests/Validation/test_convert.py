@@ -43,7 +43,9 @@ def test_units():
 
 @pytest.mark.validation
 def test_norm():
-    time = np.linspace(0, 10, 10, endpoint=False)
+    f = 50
+    time = np.linspace(0, 1 / f, 10, endpoint=False)
+    
     Time = DataLinspace(
         name="time",
         unit="s",
@@ -53,7 +55,7 @@ def test_norm():
         include_endpoint=False,
         normalizations={"elec_order": 7},
     )
-    field = np.cos(2 * np.pi * 100 * time)
+    field = np.cos(2 * np.pi * 2 * f * time)
     Field = DataTime(
         name="field",
         symbol="X",
@@ -64,7 +66,7 @@ def test_norm():
     )
     result = Field.get_along("freqs->elec_order=[0,100]", is_norm=True)
     assert_array_almost_equal(1 / (7 * 10), result["freqs"][1])
-    assert_array_almost_equal(1 / 0.2, result["X"][0])
+    assert_array_almost_equal(1 / 0.2, result["X"][2])
 
     angle = np.linspace(0, 2 * np.pi, 10, endpoint=False)
     Angle = DataLinspace(
