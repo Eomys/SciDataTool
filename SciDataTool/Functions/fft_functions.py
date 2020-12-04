@@ -67,9 +67,10 @@ def comp_fft_time(freqs, is_angle, is_real):
     else:
         if is_real and not is_angle:
             N_tot = 2 * (len(freqs)-1)  # Number of samples
+            fs = freqs[-1] / (N_tot)
         else:
             N_tot = len(freqs)  # Number of samples
-        fs = freqs[-1] / (N_tot)
+            fs = freqs[-1] / (N_tot-2)
         tf = 1 / (fs * 2)
         time = linspace(0, tf, N_tot, endpoint=False)
         # fsampt = freqs[-1] * 2.0
@@ -81,72 +82,72 @@ def comp_fft_time(freqs, is_angle, is_real):
     return time.tolist()
 
 
-def comp_nthoctave_axis(noct, freqmin, freqmax):
-    """Computes the frequency vector between freqmin and freqmax for the 1/n octave
-    Parameters
-    ----------
-    noct: int
-        kind of octave band (1/3, etc)
-    freqmin: float
-        minimum frequency
-    freqmax: float
-        maximum frequency
-    Returns
-    -------
-    Frequency vector
-    """
-    if noct == 3:
-        table = [
-            10,
-            12.5,
-            16,
-            20,
-            25,
-            31.5,
-            40,
-            50,
-            63,
-            80,
-            100,
-            125,
-            160,
-            200,
-            250,
-            315,
-            400,
-            500,
-            630,
-            800,
-            1000,
-            1250,
-            1600,
-            2000,
-            2500,
-            3150,
-            4000,
-            5000,
-            6300,
-            8000,
-            10000,
-            12500,
-            16000,
-            20000,
-        ]
-        f_oct = [f for f in table if (f >= freqmin and f <= freqmax)]
-    else:
-        f0 = 1000
-        f_oct = [f0]
-        i = 1
-        while f_oct[-1] <= freqmax:
-            f_oct.append(f0 * 2.0 ** (i / noct))
-            i = i + 1
-        f_oct = f_oct[:-2]
-        i = -1
-        while f_oct[0] > freqmin:
-            f_oct.insert(0, f0 * 2.0 ** (i / noct))
-            i = i - 1
-        f_oct = f_oct[1:]
-    return f_oct
+# def comp_nthoctave_axis(noct, freqmin, freqmax):
+#     """Computes the frequency vector between freqmin and freqmax for the 1/n octave
+#     Parameters
+#     ----------
+#     noct: int
+#         kind of octave band (1/3, etc)
+#     freqmin: float
+#         minimum frequency
+#     freqmax: float
+#         maximum frequency
+#     Returns
+#     -------
+#     Frequency vector
+#     """
+#     if noct == 3:
+#         table = [
+#             10,
+#             12.5,
+#             16,
+#             20,
+#             25,
+#             31.5,
+#             40,
+#             50,
+#             63,
+#             80,
+#             100,
+#             125,
+#             160,
+#             200,
+#             250,
+#             315,
+#             400,
+#             500,
+#             630,
+#             800,
+#             1000,
+#             1250,
+#             1600,
+#             2000,
+#             2500,
+#             3150,
+#             4000,
+#             5000,
+#             6300,
+#             8000,
+#             10000,
+#             12500,
+#             16000,
+#             20000,
+#         ]
+#         f_oct = [f for f in table if (f >= freqmin and f <= freqmax)]
+#     else:
+#         f0 = 1000
+#         f_oct = [f0]
+#         i = 1
+#         while f_oct[-1] <= freqmax:
+#             f_oct.append(f0 * 2.0 ** (i / noct))
+#             i = i + 1
+#         f_oct = f_oct[:-2]
+#         i = -1
+#         while f_oct[0] > freqmin:
+#             f_oct.insert(0, f0 * 2.0 ** (i / noct))
+#             i = i - 1
+#         f_oct = f_oct[1:]
+#     return f_oct
 
 
 # def _comp_fft(values, is_positive=False):
@@ -271,7 +272,8 @@ def comp_ifftn(values, axes_list, is_real=True):
         other_values = delete(values_shift, 0, axis=axes[-1])
         values = insert(other_values, 0, slice_0, axis=axes[-1])
         # values = ifftshift(values/2, axes=axes[:-1]) * size
-        values_IFT = irfftn(values, s=shape, axes=axes)
+        # values_IFT = irfftn(values, s=shape, axes=axes)
+        values_IFT = irfftn(values, axes=axes)
     else:
         values_shift = ifftshift(values, axes=axes) * size
         values_IFT = ifftn(values_shift, axes=axes)
