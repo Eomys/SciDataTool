@@ -270,11 +270,11 @@ def test_ifft2d():
 
     #%% Test 1
     f = 50
-    freqs = np.array([0, 50, 100])
+    freqs = np.array([0, 50, 100, 150])
     Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
     wavenumber = np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4])
     Wavenumber = Data1D(name="wavenumber", unit="dimless", values=wavenumber)
-    X = np.zeros((3, 10))
+    X = np.zeros((4, 10))
     X[1, 2] = 5 # Only the positive frequency harmonic of the real signal
     #X[4, 7] = 5
     Field = DataFreq(
