@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from numpy import mean, hanning, linspace, where, isclose, apply_along_axis
-from numpy.fft import fft, fftshift, ifft, ifftshift, rfftn, irfftn, fftn, ifftn
+from numpy.fft import fft, fftshift, ifft, ifftshift, rfftn, irfftn, fftn, ifftn, rfftfreq
 from numpy import (
     array,
     pi,
@@ -42,7 +42,8 @@ def comp_fft_freqs(time, is_time, is_real):
         freqscale = N_tot / fsampt
         freqs = [i - int(N_tot / 2) for i in range(int(N_tot))]
         if is_real and is_time:
-            freqs = [i for i in range(int(N_tot / 2))]
+            # freqs = rfftfreq(N_tot, 1/(N_tot*fsampt))
+            freqs = [i for i in range(int(N_tot / 2) + 1)]
             # freqs.append(-freqs[0])
         if is_time:
             freqs = [i / freqscale for i in freqs]
@@ -65,13 +66,10 @@ def comp_fft_time(freqs, is_angle, is_real):
         time = [0]
     else:
         if is_real and not is_angle:
-            N_tot = 2 * (len(freqs))  # Number of samples
+            N_tot = 2 * (len(freqs)-1)  # Number of samples
         else:
             N_tot = len(freqs)  # Number of samples
-        if N_tot == 2:
-            fs = freqs[-1]
-        else:
-            fs = freqs[-1] / (N_tot - 2)
+        fs = freqs[-1] / (N_tot)
         tf = 1 / (fs * 2)
         time = linspace(0, tf, N_tot, endpoint=False)
         # fsampt = freqs[-1] * 2.0
@@ -151,27 +149,27 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
     return f_oct
 
 
-def _comp_fft(values, is_positive=False):
-    """Computes the Fourier Transform
-    Parameters
-    ----------
-    values: ndarray
-        ndarray of the field
-    Returns
-    -------
-    Complex Fourier Transform
-    """
-    values_FT = fft(values)
-    if is_positive:
-        if iscomplex(values).any():
-            print("WARNING: keeping only positive harmonics from complex raw data")
-        values_FT[0] *= 0.5
-        values_FT = 2.0 * fftshift(values_FT) / len(values)
-        if len(values) % 2 == 0:
-            values_FT = append(values_FT, conjugate(values_FT[0]))
-    else:
-        values_FT = fftshift(values_FT) / len(values)
-    return values_FT
+# def _comp_fft(values, is_positive=False):
+#     """Computes the Fourier Transform
+#     Parameters
+#     ----------
+#     values: ndarray
+#         ndarray of the field
+#     Returns
+#     -------
+#     Complex Fourier Transform
+#     """
+#     values_FT = fft(values)
+#     if is_positive:
+#         if iscomplex(values).any():
+#             print("WARNING: keeping only positive harmonics from complex raw data")
+#         values_FT[0] *= 0.5
+#         values_FT = 2.0 * fftshift(values_FT) / len(values)
+#         if len(values) % 2 == 0:
+#             values_FT = append(values_FT, conjugate(values_FT[0]))
+#     else:
+#         values_FT = fftshift(values_FT) / len(values)
+#     return values_FT
 
 
 def comp_fftn(values, axes_list, is_real=True):
@@ -208,33 +206,33 @@ def comp_fftn(values, axes_list, is_real=True):
         slice_0 *= 0.5
         other_values = delete(values_FT, 0, axis=axes[-1])
         values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
-        values_FT = 2.0 * fftshift(values_FT, axes=axes[:-1]) / size
+        values_FT2 = 2.0 * fftshift(values_FT, axes=axes[:-1]) / size
     else:
         values_FT = fftn(values, axes=axes)
-        values_FT = fftshift(values_FT, axes=axes) / size
-    return values_FT
+        values_FT2 = fftshift(values_FT, axes=axes) / size
+    return values_FT2
 
 
-def _comp_ifft(values, is_positive=False):
-    """Computes the Inverse Fourier Transform
-    Parameters
-    ----------
-    values: ndarray
-        ndarray of the FT
-    Returns
-    -------
-    IFT
-    """
+# def _comp_ifft(values, is_positive=False):
+#     """Computes the Inverse Fourier Transform
+#     Parameters
+#     ----------
+#     values: ndarray
+#         ndarray of the FT
+#     Returns
+#     -------
+#     IFT
+#     """
 
-    if is_positive:
-        values[0] *= 2
-        values = concatenate((flip(conjugate(values))[:-1], values))[:-1]
-        values = values / 2
-        values = ifftshift(values) * len(values)
-    else:
-        values = ifftshift(values) * len(values)
-    values_IFT = ifft(values)
-    return values_IFT
+#     if is_positive:
+#         values[0] *= 2
+#         values = concatenate((flip(conjugate(values))[:-1], values))[:-1]
+#         values = values / 2
+#         values = ifftshift(values) * len(values)
+#     else:
+#         values = ifftshift(values) * len(values)
+#     values_IFT = ifft(values)
+#     return values_IFT
 
 
 def comp_ifftn(values, axes_list, is_real=True):
@@ -255,7 +253,7 @@ def comp_ifftn(values, axes_list, is_real=True):
         if axis.transform == "ifft":
             if is_real and axis.name == "time":
                 axes.append(axis.index)
-                shape.append(2 * values.shape[axis.index])
+                shape.append(2 * (values.shape[axis.index]-1))
                 is_onereal = True
             else:
                 axes = [axis.index] + axes
@@ -267,16 +265,16 @@ def comp_ifftn(values, axes_list, is_real=True):
     size = array(shape).prod()
     if is_onereal:
         values = values * size / 2
-        values = ifftshift(values, axes=axes[:-1])
-        slice_0 = take(values, 0, axis=axes[-1])
+        values_shift = ifftshift(values, axes=axes[:-1])
+        slice_0 = take(values_shift, 0, axis=axes[-1])
         slice_0 *= 2
-        other_values = delete(values, 0, axis=axes[-1])
+        other_values = delete(values_shift, 0, axis=axes[-1])
         values = insert(other_values, 0, slice_0, axis=axes[-1])
         # values = ifftshift(values/2, axes=axes[:-1]) * size
         values_IFT = irfftn(values, s=shape, axes=axes)
     else:
-        values = ifftshift(values, axes=axes) * size
-        values_IFT = ifftn(values, axes=axes)
+        values_shift = ifftshift(values, axes=axes) * size
+        values_IFT = ifftn(values_shift, axes=axes)
     return values_IFT
 
 
