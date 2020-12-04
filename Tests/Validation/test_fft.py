@@ -173,8 +173,9 @@ def test_fft2d():
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
     assert_array_almost_equal(np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4]), result["wavenumber"])
     X = np.zeros((3, 10))
-    X[1, 9] = 5  # The negative freq -f is folded on +f to keep signal energy constant
-    X[0, 4] = -2 
+    X[1, 8] = 5  # The negative freq -f is folded on +f to keep signal energy constant
+    X[0, 4] = -1 
+    X[0, 6] = -1 
     assert_array_almost_equal(X, result["X"])
 
     result = Field.get_along("freqs=[0,100]", "wavenumber=[0,4]")
@@ -184,11 +185,15 @@ def test_fft2d():
     X[
         1, 3
     ] = 5  # The negative wavenumber -3 is folded on +3 to keep signal energy constant
+        
+    X[
+        0, 1
+    ] = -1
     assert_array_almost_equal(X, result["X"])
     
     result = Field.get_along("wavenumber=[0,4]")
     assert_array_almost_equal(np.array([0, 1, 2, 3, 4]), result["wavenumber"])
-    assert_array_almost_equal(np.array([0, 0, 0, 5/2, 0]), result["X"]) # It is a 1d fft on angle, so there are two equal wavenumbers at +3 and -3
+    assert_array_almost_equal(np.array([0, -1, 0, 5/2, 0]), result["X"]) # It is a 1d fft on angle, so there are two equal wavenumbers at +3 and -3
     
     # Warning: following only work for even sized time vector
     Field_FT = Field.time_to_freq()
