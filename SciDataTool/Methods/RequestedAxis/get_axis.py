@@ -90,6 +90,10 @@ def get_axis(self, axis, is_real):
                         is_oneperiod = False
                         is_antiperiod = False
                         self.extension = "interval"
+            elif self.transform == "ifft":  # Ignore symmetries in ifft case
+                is_smallestperiod = True
+                is_oneperiod = False
+                is_antiperiod = False
             else:
                 is_smallestperiod = False
                 is_oneperiod = False

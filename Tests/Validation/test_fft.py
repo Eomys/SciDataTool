@@ -595,4 +595,6 @@ def test_fft2d_period():
     assert_array_almost_equal(X, result["X"])
 
     Field_FT = Field.time_to_freq()
-    assert_array_almost_equal(Field_FT.get_along("angle", "time")["X"], field)
+    assert_array_almost_equal(
+        Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
+    )

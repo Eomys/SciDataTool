@@ -187,8 +187,8 @@ def test_pattern():
         unit="m",
         values=np.array([-5, -3, -1, 1, 3]),
         values_whole=np.array([-5, -3, -3, -1, -1, 1, 1, 3, 3, 5]),
-        unique_indices=np.array([0, 2, 4, 6, 8]),
-        rebuild_indices=np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4]),
+        unique_indices=[0, 2, 4, 6, 8],
+        rebuild_indices=[0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
     )
     field = np.array([10, 20, 30, 40, 50])
     Field = DataTime(
@@ -221,8 +221,8 @@ def test_pattern():
         name="slice",
         unit="m",
         values=np.array([0]),
-        unique_indices=np.array([0]),
-        rebuild_indices=np.array([0]),
+        unique_indices=[0],
+        rebuild_indices=[0],
     )
     field = np.array([10])
     Field = DataTime(
@@ -241,8 +241,8 @@ def test_pattern():
         unit="m",
         values=np.array([-5, -3, -1, 1, 3]),
         values_whole=np.array([-5, -3, -3, -1, -1, 1, 1, 3, 3, 5]),
-        unique_indices=np.array([0, 2, 4, 6, 8]),
-        rebuild_indices=np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4]),
+        unique_indices=[0, 2, 4, 6, 8],
+        rebuild_indices=[0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
     )
     field = np.array([10, 20, 30, 20, 10])
     Field = DataTime(
@@ -276,8 +276,8 @@ def test_pattern():
         unit="m",
         values=np.array([-5, -3, -1, 0]),
         values_whole=np.array([-5, -3, -3, -1, -1, 0, 1, 1, 3, 3, 5]),
-        unique_indices=np.array([0, 1, 3, 5]),
-        rebuild_indices=np.array([0, 1, 1, 2, 2, 3, 2, 2, 1, 1, 0]),
+        unique_indices=[0, 1, 3, 5],
+        rebuild_indices=[0, 1, 1, 2, 2, 3, 2, 2, 1, 1, 0],
         is_step=False,
     )
     field = np.array([10, 20, 30, 35])
