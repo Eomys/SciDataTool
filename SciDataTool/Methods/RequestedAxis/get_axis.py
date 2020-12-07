@@ -67,6 +67,10 @@ def get_axis(self, axis, is_real):
                 is_smallestperiod = False
                 is_oneperiod = True
                 is_antiperiod = False
+        elif self.extension == "rms" or self.extension == "sum":
+            is_smallestperiod = False
+            is_oneperiod = False
+            is_antiperiod = False
         else:
             if self.input_data is not None:
                 axis_values = axis.get_values(is_smallestperiod=True)
@@ -163,3 +167,5 @@ def get_axis(self, axis, is_real):
                 self.values = values
         if self.indices is not None:
             self.values = values[self.indices]
+            if self.extension == "sum" or self.extension == "rms":
+                self.indices = None
