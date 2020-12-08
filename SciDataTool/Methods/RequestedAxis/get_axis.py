@@ -148,11 +148,19 @@ def get_axis(self, axis, is_real):
             self.values = values
         else:
             if len(self.input_data) == 2 and self.extension != "axis_data":
-                self.indices = [
+                indices = [
                     i
                     for i, x in enumerate(values)
                     if x >= self.input_data[0] and x <= self.input_data[-1]
                 ]
+                if self.indices is None:
+                    self.indices = indices
+                else:
+                    indices_new = []
+                    for i in self.indices:
+                        if i in indices:
+                            indices_new.append(i)
+                    self.indices = indices_new
                 self.input_data = None
             else:
                 if self.extension == "axis_data":
