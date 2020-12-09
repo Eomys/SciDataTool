@@ -23,9 +23,9 @@ def freq_to_time(self):
         if axis.is_components:
             axis_str = axis.name + str(list(range(len(axis.values))))
         elif axis.name == "freqs":
-            axis_str = "time"
+            axis_str = "time[smallestperiod]"
         elif axis.name == "wavenumber":
-            axis_str = "angle"
+            axis_str = "angle[smallestperiod]"
         else:
             axis_str = axis.name
         axes_str.append(axis_str)
