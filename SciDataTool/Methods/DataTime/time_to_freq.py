@@ -58,13 +58,17 @@ def time_to_freq(self):
                 is_components = False
                 axis_values = results[axis.name]
                 unit = axis.unit
+            if "antiperiod" in axis.symmetries:
+                symmetries = {"period": int(axis.symmetries["antiperiod"] / 2)}
+            else:
+                symmetries = axis.symmetries.copy()
             Axes.append(
                 Data1D(
                     name=name,
                     unit=unit,
                     values=axis_values,
                     is_components=is_components,
-                    symmetries=axis.symmetries,
+                    symmetries=symmetries,
                 )
             )
         return DataFreq(

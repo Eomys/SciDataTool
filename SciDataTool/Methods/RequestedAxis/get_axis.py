@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.conversions import convert
 from SciDataTool.Functions.interpolations import get_common_base
+from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
 from SciDataTool.Classes.DataPattern import DataPattern
 from SciDataTool.Functions import AxisError
 from numpy import array
@@ -142,6 +143,17 @@ def get_axis(self, axis, is_real):
                     values = values * axis.symmetries["period"]
             elif "antiperiod" in axis.symmetries:
                 if axis.name != "time":
+                    values = values * axis.symmetries["antiperiod"] / 2
+        # Rebuild symmetries in ifft case
+        if self.transform == "ifft":
+            # if "antiperiod" in axis.symmetries:
+            #     axis.symmetries["antiperiod"] = int(axis.symmetries["antiperiod"]/2)
+            values = rebuild_symmetries_axis(values, axis.symmetries)
+            if "period" in axis.symmetries:
+                if axis.name != "freqs":
+                    values = values * axis.symmetries["period"]
+            elif "antiperiod" in axis.symmetries:
+                if axis.name != "freqs":
                     values = values * axis.symmetries["antiperiod"] / 2
         # Interpolate axis with input data
         if self.input_data is None:

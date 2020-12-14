@@ -64,7 +64,7 @@ def freq_to_time(self):
                     unit=unit,
                     values=axis_values,
                     is_components=is_components,
-                    symmetries=axis.symmetries,
+                    symmetries=axis.symmetries.copy(),
                 )
             )
         return DataTime(
