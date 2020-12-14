@@ -148,7 +148,12 @@ def get_axis(self, axis, is_real):
         if self.transform == "ifft":
             # if "antiperiod" in axis.symmetries:
             #     axis.symmetries["antiperiod"] = int(axis.symmetries["antiperiod"]/2)
-            values = rebuild_symmetries_axis(values, axis.symmetries)
+            if (
+                self.extension != "smallestperiod"
+                and self.extension != "oneperiod"
+                and self.extension != "antiperiod"
+            ):
+                values = rebuild_symmetries_axis(values, axis.symmetries)
             if "period" in axis.symmetries:
                 if axis.name != "freqs":
                     values = values * axis.symmetries["period"]
