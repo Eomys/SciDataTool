@@ -693,3 +693,8 @@ def test_fft2_anti_period():
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
     )
+    
+    Field_FT = Field_FT.freq_to_time()
+    assert_array_almost_equal(
+        Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
+    )
