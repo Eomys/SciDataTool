@@ -560,6 +560,7 @@ def test_ifft1d_random():
 
 @pytest.mark.validation
 def test_fft2d_period():
+    # %%
     f = 50
     time = np.linspace(0, 1 / f, 10, endpoint=False)
     Time = Data1D(name="time", unit="s", values=time, symmetries={"period": 5})
@@ -601,7 +602,7 @@ def test_fft2d_period():
     
 @pytest.mark.validations
 def test_init_new_object():
-
+    # %%
     f = 50
     nt = 7 * 2
     na = 7 * 2
@@ -653,16 +654,15 @@ def test_init_new_object():
 
 @pytest.mark.validations
 def test_fft2_anti_period():
-
+    # %%
     f = 50
-    time = np.linspace(0, 1 / f, 10, endpoint=False)
+    time = np.linspace(0, 1 / (2 * f), 10, endpoint=False)
     Time = Data1D(name="time", unit="s", values=time, symmetries={"antiperiod": 4})
     angle = np.linspace(0, 2 * np.pi, 20, endpoint=False)
 
     at, ta = np.meshgrid(angle, time)
     Angle = Data1D(name="angle", unit="rad", values=angle, symmetries={"period": 4})
-    field = 2 + 5 * np.cos(2 * np.pi * f * ta + at)
-    # field = 5*np.cos(2*np.pi*f*time)
+    field = 5 * np.cos(2 * np.pi * f * ta + at)
     Field = DataTime(
         name="field",
         symbol="X",
@@ -670,14 +670,15 @@ def test_fft2_anti_period():
         values=field,
         unit="m",
     )
+    
     result = Field.get_magnitude_along("freqs=[0,100]")
-    assert_array_almost_equal(np.array([0, f/2, f]), result["freqs"])
-    assert_array_almost_equal(np.array([2, 5, 0]), result["X"])
-
+    assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
+    assert_array_almost_equal(np.array([0, 5, 0]), result["X"])
+    
     result = Field.get_along("wavenumber=[0,10]")
     assert_array_almost_equal(np.array([0, 4, 8]), result["wavenumber"])
     assert_array_almost_equal(
-        np.array([2, 5 / 2, 0]), result["X"]
+        np.array([0, 5 / 2, 0]), result["X"]
     )  # FFT spatial at 1 time -> Half of the signal
 
     result = Field.get_along("freqs=[0,100]", "wavenumber=[-10,10]")
@@ -685,7 +686,7 @@ def test_fft2_anti_period():
     assert_array_almost_equal(np.array([-8, -4, 0, 4, 8]), result["wavenumber"])
     X = np.zeros((3, 5))
     X[1, 3] = 5
-    X[0, 2] = 2
+
     assert_array_almost_equal(X, result["X"])
 
     Field_FT = Field.time_to_freq()
