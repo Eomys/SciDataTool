@@ -698,3 +698,36 @@ def test_fft2_anti_period():
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
     )
+    
+@pytest.mark.validations
+def test_fft2_anti_period_random():
+    # %%
+    f = 50
+    time = np.linspace(0, 1 / (2 * f), 10, endpoint=False)
+    Time = Data1D(name="time", unit="s", values=time, symmetries={"antiperiod": 4})
+    angle = np.linspace(0, 2 * np.pi, 20, endpoint=False)
+    Angle = Data1D(name="angle", unit="rad", values=angle, symmetries={"period": 4})
+    
+    field = np.random.random((10,20))
+    
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time, Angle],
+        values=field,
+        unit="m",
+    )
+    
+    Field_FT = Field.time_to_freq()
+    assert_array_almost_equal(
+        Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
+    )
+    
+    assert_array_almost_equal(
+        Field_FT.get_along("angle", "time")["time"], Field.get_along("angle", "time")["time"]
+    )
+    
+    Field_FT = Field_FT.freq_to_time()
+    assert_array_almost_equal(
+        Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
+    )
