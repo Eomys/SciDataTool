@@ -61,16 +61,6 @@ def comp_axes(self, axes_list):
             else:
                 # Axis does not exist and is ignored
                 axes_list.remove(axis_requested)
-    # Reduce to positive values for fft freqs with is_real
-    if self.is_real:
-        for axis_requested in axes_list:
-            if axis_requested.name == "freqs":
-                if axis_requested.input_data is not None:
-                    axis_requested.input_data = list(
-                        set([0] + [x for x in axis_requested.input_data if x >= 0])
-                    )
-                else:
-                    axis_requested.input_data = [0, inf]
     # Extract the requested axes (symmetries + unit)
     for axis_requested in axes_list:
         axis_requested.get_axis(self.axes[axis_requested.index], is_real=self.is_real)
