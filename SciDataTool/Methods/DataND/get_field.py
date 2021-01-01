@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import sum as np_sum, sqrt
+from numpy import sum as np_sum, mean as np_mean, sqrt
 from SciDataTool.Functions.symmetries import rebuild_symmetries
 
 
@@ -26,13 +26,18 @@ def get_field(self, axes_list):
         elif axis_requested.transform == "fft" and "antiperiod" in axis_symmetries:
             nper = axis_symmetries["antiperiod"]
             axis_symmetries["antiperiod"] = 2
-            values = rebuild_symmetries(values, axis_requested.index, axis_symmetries)
+            values = rebuild_symmetries(
+                values, axis_requested.index, axis_symmetries)
             axis_symmetries["antiperiod"] = nper
 
-        # Sum over sum axes
+        # sum over sum axes
         if axis_requested.extension == "sum":
             values = np_sum(values, axis=axis_requested.index, keepdims=True)
-        # RMS over sum axes
+        # mean value over mean axes
+        elif axis_requested.extension == "mean":
+            values = np_mean(values, axis=axis_requested.index, keepdims=True)
+        # RMS over rms axes
         elif axis_requested.extension == "rms":
-            values = sqrt(np_sum(values ** 2, axis=axis_requested.index, keepdims=True))
+            values = sqrt(
+                np_sum(values ** 2, axis=axis_requested.index, keepdims=True))
     return values
