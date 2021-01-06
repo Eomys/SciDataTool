@@ -262,7 +262,7 @@ def test_ifft1d():
     assert_array_almost_equal(Field_IFT.get_along("freqs")["X"], field)
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_ifft2d():
 
     #%% Test 1
@@ -371,7 +371,7 @@ def test_ifft2d():
     assert_array_almost_equal(field_ift, result["X"])
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_ifft2d_vector():
 
     f = 50
@@ -493,7 +493,7 @@ def test_ifft2d_vector():
     assert_array_almost_equal(field_ift, X)
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_ifft2d_random():
 
     f = 50
@@ -530,7 +530,7 @@ def test_ifft2d_random():
     assert_array_almost_equal(Field_FT.get_along(*arg_list)["X"], field)
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_ifft1d_random():
     # %%
     f = 50
@@ -599,8 +599,9 @@ def test_fft2d_period():
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
     )
-    
-@pytest.mark.validations
+
+
+@pytest.mark.validation
 def test_init_new_object():
     # %%
     f = 50
@@ -637,22 +638,20 @@ def test_init_new_object():
     X_FT = result["X"]
     freqs = result["freqs"]
     wavenumber = result["wavenumber"]
-    
+
     Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
     Wavenumber = Data1D(name="wavenumber", unit="", values=wavenumber)
     new_Field = DataTime(
-        name="field2",
-        unit="m",
-        symbol="XX",
-        axes=[Freqs, Wavenumber],
-        values=X_FT)
-    
-    assert_array_almost_equal(
-        new_Field.get_along("angle", "time")["XX"], Field.get_along("angle", "time")["X"]
+        name="field2", unit="m", symbol="XX", axes=[Freqs, Wavenumber], values=X_FT
     )
-    
 
-@pytest.mark.validations
+    assert_array_almost_equal(
+        new_Field.get_along("angle", "time")["XX"],
+        Field.get_along("angle", "time")["X"],
+    )
+
+
+@pytest.mark.validation
 def test_fft2_anti_period():
     # %%
     f = 50
@@ -670,11 +669,11 @@ def test_fft2_anti_period():
         values=field,
         unit="m",
     )
-    
+
     result = Field.get_magnitude_along("freqs=[0,100]")
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
     assert_array_almost_equal(np.array([0, 5, 0]), result["X"])
-    
+
     result = Field.get_along("wavenumber=[0,10]")
     assert_array_almost_equal(np.array([0, 4, 8]), result["wavenumber"])
     assert_array_almost_equal(
@@ -693,13 +692,14 @@ def test_fft2_anti_period():
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
     )
-    
+
     Field_FT = Field_FT.freq_to_time()
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
     )
-    
-@pytest.mark.validations
+
+
+@pytest.mark.validation
 def test_fft2_anti_period_random():
     # %%
     f = 50
@@ -707,9 +707,9 @@ def test_fft2_anti_period_random():
     Time = Data1D(name="time", unit="s", values=time, symmetries={"antiperiod": 4})
     angle = np.linspace(0, 2 * np.pi, 20, endpoint=False)
     Angle = Data1D(name="angle", unit="rad", values=angle, symmetries={"period": 4})
-    
-    field = np.random.random((10,20))
-    
+
+    field = np.random.random((10, 20))
+
     Field = DataTime(
         name="field",
         symbol="X",
@@ -717,16 +717,17 @@ def test_fft2_anti_period_random():
         values=field,
         unit="m",
     )
-    
+
     Field_FT = Field.time_to_freq()
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
     )
-    
+
     assert_array_almost_equal(
-        Field_FT.get_along("angle", "time")["time"], Field.get_along("angle", "time")["time"]
+        Field_FT.get_along("angle", "time")["time"],
+        Field.get_along("angle", "time")["time"],
     )
-    
+
     Field_FT = Field_FT.freq_to_time()
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
