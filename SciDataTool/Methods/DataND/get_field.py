@@ -26,8 +26,7 @@ def get_field(self, axes_list):
         elif axis_requested.transform == "fft" and "antiperiod" in axis_symmetries:
             nper = axis_symmetries["antiperiod"]
             axis_symmetries["antiperiod"] = 2
-            values = rebuild_symmetries(
-                values, axis_requested.index, axis_symmetries)
+            values = rebuild_symmetries(values, axis_requested.index, axis_symmetries)
             axis_symmetries["antiperiod"] = nper
 
         # sum over sum axes
@@ -39,5 +38,6 @@ def get_field(self, axes_list):
         # RMS over rms axes
         elif axis_requested.extension == "rms":
             values = sqrt(
-                np_sum(values ** 2, axis=axis_requested.index, keepdims=True))
+                np_mean(values ** 2, axis=axis_requested.index, keepdims=True)
+            )
     return values
