@@ -110,6 +110,11 @@ try:
 except ImportError as error:
     get_axes = error
 
+try:
+    from ..Methods.DataND.get_data_along import get_data_along
+except ImportError as error:
+    get_data_along = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -317,6 +322,17 @@ class DataND(Data):
         )
     else:
         get_axes = get_axes
+    # cf Methods.DataND.get_data_along
+    if isinstance(get_data_along, ImportError):
+        get_data_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method get_data_along: " + str(get_data_along)
+                )
+            )
+        )
+    else:
+        get_data_along = get_data_along
     # save and copy methods are available in all object
     save = save
     copy = copy

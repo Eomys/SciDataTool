@@ -7,6 +7,88 @@ from numpy.fft import rfftn, irfftn, fftshift, fftn, ifftshift, ifftn
 
 
 @pytest.mark.validation
+def test_fft2_remove_periodicity():
+    f = 50
+    Nt_tot = 16
+    Na_tot = 20
+    time = np.linspace(0, 1 / (2 * f), Nt_tot, endpoint=False)
+    Time = Data1D(name="time", unit="s", values=time, symmetries={"antiperiod": 4})
+    angle = np.linspace(0, 2 * np.pi, Na_tot, endpoint=False)
+    Angle = Data1D(name="angle", unit="rad", values=angle, symmetries={"period": 4})
+
+    field = np.random.random((Nt_tot, Na_tot))
+
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time, Angle],
+        values=field,
+        unit="m",
+    )
+
+    angle_new = Angle.get_values(is_oneperiod=True, is_antiperiod=False)
+
+    time_new = Time.get_values(
+        is_oneperiod=False,
+        is_antiperiod=False,
+    )
+
+    # Load magnetic flux
+    field_new = Field.get_along(
+        "time=axis_data",
+        "angle=axis_data",
+        axis_data={"time": time_new, "angle": angle_new},
+    )["X"]
+
+    Time2 = Data1D(name="time", unit="s", values=time_new, symmetries={"period": 2})
+    Angle2 = Data1D(name="angle", unit="rad", values=angle_new)
+
+    Field_new = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time2, Angle2],
+        values=field_new,
+        unit="m",
+    )
+
+    result_fft = Field_new.get_along("freqs", "wavenumber")
+    X_test = result_fft["X"]
+    freqs = result_fft["freqs"]
+    wavenumber = result_fft["wavenumber"]
+
+    Nr = len(wavenumber)
+    Nf = len(freqs)
+
+    # Check the FFT2 reconstruction of the new object
+    field_ift = np.zeros((len(time_new), len(angle_new)))
+    Xangle, Xtime = np.meshgrid(angle_new, time_new)
+
+    for ir in range(Nr):
+        r = wavenumber[ir]
+        for ifrq in range(Nf):
+            fit = freqs[ifrq]
+            field_ift = field_ift + abs(X_test[ifrq, ir]) * np.cos(
+                (2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir]))
+            )
+
+    assert_array_almost_equal(field_ift, field_new)
+
+    # Compare with the initial field
+    field_ift = np.zeros((len(time), len(angle)))
+    Xangle, Xtime = np.meshgrid(angle, time)
+
+    for ir in range(Nr):
+        r = wavenumber[ir]
+        for ifrq in range(Nf):
+            fit = freqs[ifrq]
+            field_ift = field_ift + abs(X_test[ifrq, ir]) * np.cos(
+                (2 * np.pi * fit * Xtime + r * Xangle + np.angle(X_test[ifrq, ir]))
+            )
+
+    assert_array_almost_equal(field_ift, field)
+
+
+@pytest.mark.validation
 def test_compare_rfft_fft_irfft_ifft():
 
     Nt = 20
