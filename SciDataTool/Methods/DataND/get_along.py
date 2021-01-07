@@ -50,6 +50,8 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     for axis_requested in axes_list:
         if axis_requested.extension == "sum":
             return_dict[axis_requested.name] = "sum"
+        elif axis_requested.extension == "mean":
+            return_dict[axis_requested.name] = "mean"
         elif axis_requested.extension == "rms":
             return_dict[axis_requested.name] = "rms"
         else:

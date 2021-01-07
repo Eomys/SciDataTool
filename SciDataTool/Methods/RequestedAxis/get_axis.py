@@ -24,7 +24,7 @@ def get_axis(self, axis, is_real):
     is_components = getattr(axis, "is_components", False)
     if is_components:
         values = axis.get_values()
-        if self.extension != "sum" and self.extension != "rms":
+        if not self.extension in ["sum", "rms", "mean"]:
             self.extension = "list"
         if self.indices is not None:
             self.values = values[self.indices]
@@ -68,7 +68,7 @@ def get_axis(self, axis, is_real):
                 is_smallestperiod = False
                 is_oneperiod = True
                 is_antiperiod = False
-        elif self.extension == "rms" or self.extension == "sum":
+        elif self.extension in ["sum", "rms", "mean"]:
             is_smallestperiod = False
             is_oneperiod = False
             is_antiperiod = False
@@ -133,7 +133,8 @@ def get_axis(self, axis, is_real):
             if axis.normalizations.get(unit) == "indices":
                 values = array([i for i in range(len(values))])
             else:
-                values = array([v / axis.normalizations.get(unit) for v in values])
+                values = array([v / axis.normalizations.get(unit)
+                                for v in values])
         else:
             values = convert(values, self.corr_unit, unit)
         # Rebuild symmetries in fft case
@@ -192,5 +193,5 @@ def get_axis(self, axis, is_real):
                 self.values = values
         if self.indices is not None:
             self.values = values[self.indices]
-            if self.extension == "sum" or self.extension == "rms":
+            if self.extension in ["sum", "rms", "mean"]:
                 self.indices = None

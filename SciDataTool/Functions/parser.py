@@ -47,6 +47,11 @@ def read_input_strings(args, axis_data):
             elems = axis_str.split("=sum")
             name = elems[0]
             extension = "sum"
+        # Detect mean
+        elif "mean" in axis_str:
+            elems = axis_str.split("=mean")
+            name = elems[0]
+            extension = "mean"
         # Detect rms
         elif "rms" in axis_str:
             elems = axis_str.split("=rms")
@@ -123,7 +128,8 @@ def read_input_strings(args, axis_data):
             if ":" in ind_str:
                 elems2 = ind_str.split(":")
                 extension = "interval"
-                indices = [i for i in range(int(elems2[0]), int(elems2[1]) + 1)]
+                indices = [i for i in range(
+                    int(elems2[0]), int(elems2[1]) + 1)]
             # List of indices
             elif "," in ind_str:
                 extension = "list"
