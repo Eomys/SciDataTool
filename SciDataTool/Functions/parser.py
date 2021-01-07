@@ -129,7 +129,7 @@ def read_input_strings(args, axis_data):
                 elems2 = ind_str.split(":")
                 extension = "interval"
                 indices = [i for i in range(
-                    int(elems2[0]), int(elems2[1]) + 1)]
+                    int(elems2[0]), int(elems2[1]))]
             # List of indices
             elif "," in ind_str:
                 extension = "list"
