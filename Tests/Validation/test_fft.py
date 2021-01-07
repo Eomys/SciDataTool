@@ -344,7 +344,7 @@ def test_ifft1d():
     assert_array_almost_equal(Field_IFT.get_along("freqs")["X"], field)
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_ifft2d():
 
     #%% Test 1
@@ -453,7 +453,7 @@ def test_ifft2d():
     assert_array_almost_equal(field_ift, result["X"])
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_ifft2d_vector():
 
     f = 50
@@ -575,7 +575,7 @@ def test_ifft2d_vector():
     assert_array_almost_equal(field_ift, X)
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_ifft2d_random():
 
     f = 50
@@ -612,7 +612,7 @@ def test_ifft2d_random():
     assert_array_almost_equal(Field_FT.get_along(*arg_list)["X"], field)
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_ifft1d_random():
     # %%
     f = 50
@@ -683,7 +683,7 @@ def test_fft2d_period():
     )
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_init_new_object():
     # %%
     f = 50
@@ -733,7 +733,7 @@ def test_init_new_object():
     )
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_fft2_anti_period():
     # %%
     f = 50
@@ -781,7 +781,7 @@ def test_fft2_anti_period():
     )
 
 
-@pytest.mark.validations
+@pytest.mark.validation
 def test_fft2_anti_period_random():
     # %%
     f = 50
