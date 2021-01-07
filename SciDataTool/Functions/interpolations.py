@@ -9,8 +9,8 @@ from numpy import (
     around,
     all,
     abs as np_abs,
+    interp,
 )
-from scipy import interpolate
 
 
 def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
@@ -82,10 +82,10 @@ def get_interpolation(values, axis_values, new_axis_values, is_step=False):
     ):  # Same axes -> no interpolation
         return values
     elif isin(
-        around(new_axis_values, 5), around(axis_values, 5), assume_unique=True
+        around(new_axis_values, 5), around(axis_values, 5)
     ).all():  # New axis is subset -> no interpolation
         return values[
-            isin(around(axis_values, 5), around(new_axis_values, 5), assume_unique=True)
+            isin(around(axis_values, 5), around(new_axis_values, 5))
         ]
     elif is_step:
         if len(axis_values) == 1:
@@ -114,5 +114,4 @@ def get_interpolation(values, axis_values, new_axis_values, is_step=False):
                         break
             return array(new_values)
     else:
-        f = interpolate.interp1d(axis_values, values)
-        return f(new_axis_values)
+        return interp(new_axis_values, axis_values, values)
