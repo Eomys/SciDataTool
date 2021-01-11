@@ -32,14 +32,14 @@ def get_field(self, axes_list):
         # sum over sum axes
         if axis_requested.extension == "sum":
             values = np_sum(values, axis=axis_requested.index, keepdims=True)
-        # RMS sum over rms axes
-        elif axis_requested.extension == "sum_rms":
+        # root sum square over rss axes
+        elif axis_requested.extension == "rss":
             values = sqrt(np_sum(values ** 2, axis=axis_requested.index, keepdims=True))
         # mean value over mean axes
         elif axis_requested.extension == "mean":
             values = np_mean(values, axis=axis_requested.index, keepdims=True)
-        # RMS mean over rms axes
-        elif axis_requested.extension == "mean_rms":
+        # RMS over rms axes
+        elif axis_requested.extension == "rms":
             values = sqrt(
                 np_mean(values ** 2, axis=axis_requested.index, keepdims=True)
             )

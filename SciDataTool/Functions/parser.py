@@ -43,20 +43,20 @@ def read_input_strings(args, axis_data):
             name = elems[0]
             axis_str = axis_str.replace("->" + unit, "")
         # Detect rms sum
-        if "sum_rms" in axis_str:
-            elems = axis_str.split("=sum_rms")
+        if "rss" in axis_str:
+            elems = axis_str.split("=rss")
             name = elems[0]
-            extension = "sum_rms"
+            extension = "rss"
         # Detect sum
         elif "sum" in axis_str:
             elems = axis_str.split("=sum")
             name = elems[0]
             extension = "sum"
         # Detect rms mean
-        elif "mean_rms" in axis_str:
-            elems = axis_str.split("=mean_rms")
+        elif "rms" in axis_str:
+            elems = axis_str.split("=rms")
             name = elems[0]
-            extension = "mean_rms"
+            extension = "rms"
         # Detect mean
         elif "mean" in axis_str:
             elems = axis_str.split("=mean")

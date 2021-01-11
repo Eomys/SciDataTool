@@ -41,7 +41,7 @@ def test_slice():
     assert_array_almost_equal(expected, result["Z"])
 
     # rms value 'X=rms'
-    result = Field.get_along("X=mean_rms", "Y")
+    result = Field.get_along("X=rms", "Y")
     expected = (field ** 2).mean(axis=0) ** (1 / 2)
     assert_array_almost_equal(expected, result["Z"])
 
