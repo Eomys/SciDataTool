@@ -84,9 +84,7 @@ def get_interpolation(values, axis_values, new_axis_values, is_step=False):
     elif isin(
         around(new_axis_values, 5), around(axis_values, 5)
     ).all():  # New axis is subset -> no interpolation
-        return values[
-            isin(around(axis_values, 5), around(new_axis_values, 5))
-        ]
+        return values[isin(around(axis_values, 5), around(new_axis_values, 5))]
     elif is_step:
         if len(axis_values) == 1:
             return array([values[0] for i in range(len(new_axis_values))])

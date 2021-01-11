@@ -42,21 +42,26 @@ def read_input_strings(args, axis_data):
                 unit = elems[1]
             name = elems[0]
             axis_str = axis_str.replace("->" + unit, "")
+        # Detect rms sum
+        if "sum_rms" in axis_str:
+            elems = axis_str.split("=sum_rms")
+            name = elems[0]
+            extension = "sum_rms"
         # Detect sum
-        if "sum" in axis_str:
+        elif "sum" in axis_str:
             elems = axis_str.split("=sum")
             name = elems[0]
             extension = "sum"
+        # Detect rms mean
+        elif "mean_rms" in axis_str:
+            elems = axis_str.split("=mean_rms")
+            name = elems[0]
+            extension = "mean_rms"
         # Detect mean
         elif "mean" in axis_str:
             elems = axis_str.split("=mean")
             name = elems[0]
             extension = "mean"
-        # Detect rms
-        elif "rms" in axis_str:
-            elems = axis_str.split("=rms")
-            name = elems[0]
-            extension = "rms"
         # Detect periods
         elif "oneperiod" in axis_str:
             elems = axis_str.split("[")
@@ -128,8 +133,7 @@ def read_input_strings(args, axis_data):
             if ":" in ind_str:
                 elems2 = ind_str.split(":")
                 extension = "interval"
-                indices = [i for i in range(
-                    int(elems2[0]), int(elems2[1]))]
+                indices = [i for i in range(int(elems2[0]), int(elems2[1]))]
             # List of indices
             elif "," in ind_str:
                 extension = "list"
