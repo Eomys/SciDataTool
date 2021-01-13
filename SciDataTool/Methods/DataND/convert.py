@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from numpy import abs as np_abs
+
 from SciDataTool.Functions import NormError
-from SciDataTool.Functions.conversions import convert as convert_unit
+from SciDataTool.Functions.conversions import convert as convert_unit, to_dB
 
 
 def convert(self, values, unit, is_norm):
@@ -20,8 +22,7 @@ def convert(self, values, unit, is_norm):
     values: ndarray
         values of the field
     """
-
-    # Convert into right unit
+    
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
@@ -30,8 +31,15 @@ def convert(self, values, unit, is_norm):
                 raise NormError(
                     "ERROR: Reference value not specified for normalization"
                 )
+    elif unit == "dB":
+        ref_value = 1.0
+        if "ref" in self.normalizations.keys():
+            ref_value *= self.normalizations.get("ref")
+        values = to_dB(np_abs(values), self.unit, ref_value)
     elif unit in self.normalizations:
         values = values / self.normalizations.get(unit)
     else:
         values = convert_unit(values, self.unit, unit)
+    
     return values
+
