@@ -22,7 +22,7 @@ def convert(self, values, unit, is_norm):
     values: ndarray
         values of the field
     """
-    
+
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
@@ -40,6 +40,5 @@ def convert(self, values, unit, is_norm):
         values = values / self.normalizations.get(unit)
     else:
         values = convert_unit(values, self.unit, unit)
-    
-    return values
 
+    return values
