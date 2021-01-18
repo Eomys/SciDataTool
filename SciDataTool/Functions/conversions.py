@@ -159,11 +159,11 @@ def to_dB(values, unit, ref_value=1.0):
     -------
     ndarray of the converted field
     """
-    if isinstance(values, ndarray):
-        values[values < ref_value] = ref_value
-    else:
-        if values < ref_value:
-            values = ref_value
+    # if isinstance(values, ndarray):
+    #     values[values < ref_value] = ref_value
+    # else:
+    #     if values < ref_value:
+    #         values = ref_value
     try:
         convert(values, unit, "W")
         return 10.0 * log10(values / ref_value)
