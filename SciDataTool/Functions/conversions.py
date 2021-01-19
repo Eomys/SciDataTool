@@ -17,6 +17,7 @@ from numpy import (
     isnan,
     abs as np_abs,
     angle as np_angle,
+    where,
 )
 
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"
@@ -164,11 +165,12 @@ def to_dB(values, unit, ref_value=1.0):
     # else:
     #     if values < ref_value:
     #         values = ref_value
+    mask = values!=0
     try:
         convert(values, unit, "W")
-        return 10.0 * log10(values / ref_value)
+        return 10.0 * where(mask, log10(values / ref_value, where=mask), 0)
     except:
-        return 20.0 * log10(values / ref_value)
+        return 20.0 * where(mask, log10(values / ref_value, where=mask), 0)
 
 
 def to_dBA(values, freqs, unit, ref_value=1.0):
