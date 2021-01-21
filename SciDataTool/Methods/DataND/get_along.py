@@ -44,7 +44,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
     # Conversions
-    values = self.convert(values, unit, is_norm)
+    values = self.convert(values, unit, is_norm, axes_list)
     # Return axes and values
     return_dict = {}
     for axis_requested in axes_list:

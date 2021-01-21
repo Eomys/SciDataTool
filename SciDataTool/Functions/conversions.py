@@ -165,7 +165,7 @@ def to_dB(values, unit, ref_value=1.0):
     # else:
     #     if values < ref_value:
     #         values = ref_value
-    mask = values!=0
+    mask = values != 0
     try:
         convert(values, unit, "W")
         return 10.0 * where(mask, log10(values / ref_value, where=mask), 0)
