@@ -6,3 +6,5 @@ components,,Dict of the components,,{SciDataTool.Classes.DataND},-1,,,,,,get_mag
 ,,,,,,,,,,,get_harm_rphiz_along,,,,
 ,,,,,,,,,,,get_harm_xyz_along,,,,
 ,,,,,,,,,,,get_axes,,,,
+,,,,,,,,,,,time_to_freq,,,,
+,,,,,,,,,,,freq_to_time,,,,

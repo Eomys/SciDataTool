@@ -69,6 +69,7 @@ def time_to_freq(self):
                     values=axis_values,
                     is_components=is_components,
                     symmetries=symmetries,
+                    normalizations=axis.normalizations.copy(),
                 )
             )
         return DataFreq(

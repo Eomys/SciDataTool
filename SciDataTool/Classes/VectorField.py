@@ -50,6 +50,16 @@ try:
 except ImportError as error:
     get_axes = error
 
+try:
+    from ..Methods.VectorField.time_to_freq import time_to_freq
+except ImportError as error:
+    time_to_freq = error
+
+try:
+    from ..Methods.VectorField.freq_to_time import freq_to_time
+except ImportError as error:
+    freq_to_time = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -140,6 +150,28 @@ class VectorField(FrozenClass):
         )
     else:
         get_axes = get_axes
+    # cf Methods.VectorField.time_to_freq
+    if isinstance(time_to_freq, ImportError):
+        time_to_freq = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method time_to_freq: " + str(time_to_freq)
+                )
+            )
+        )
+    else:
+        time_to_freq = time_to_freq
+    # cf Methods.VectorField.freq_to_time
+    if isinstance(freq_to_time, ImportError):
+        freq_to_time = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method freq_to_time: " + str(freq_to_time)
+                )
+            )
+        )
+    else:
+        freq_to_time = freq_to_time
     # save and copy methods are available in all object
     save = save
     copy = copy
