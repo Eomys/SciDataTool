@@ -27,8 +27,9 @@ def rebuild_symmetries(
         if (
             axis.transform != "fft"
             and axis.is_pattern
-            and axis.extension != "smallestperiod"
+            and axis.extension not in ["single", "smallestperiod"]
         ):
+            
             values = values[axis.rebuild_indices]
         elif axis.transform != "fft" and axis.extension in [
             "whole",
