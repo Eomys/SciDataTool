@@ -94,7 +94,7 @@ def get_axis(self, axis, is_real):
                         is_smallestperiod = False
                         is_oneperiod = False
                         is_antiperiod = False
-                        if self.extension != "axis_data":
+                        if not self.is_pattern:
                             self.extension = "interval"
             elif self.transform == "ifft":  # Ignore symmetries in ifft case
                 is_smallestperiod = True
