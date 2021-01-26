@@ -3,6 +3,8 @@ from SciDataTool.Functions.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
 
+from numpy import take
+
 
 def rebuild_symmetries(
     self,
@@ -29,8 +31,7 @@ def rebuild_symmetries(
             and axis.is_pattern
             and (axis.extension != "smallestperiod" and axis.indices is None)
         ):
-            
-            values = values[axis.rebuild_indices]
+            values = take(values, axis.rebuild_indices, axis.index)
         elif axis.transform != "fft" and axis.extension in [
             "whole",
             "interval",
