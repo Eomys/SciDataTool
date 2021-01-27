@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from SciDataTool.Functions.interpolations import get_interpolation
+from SciDataTool.Functions.interpolations import (
+    get_interpolation,
+    get_interpolation_step,
+)
 from numpy import apply_along_axis, squeeze
 
 
@@ -22,14 +25,21 @@ def interpolate(self, values, axes_list):
     # Interpolate over axis values
     for axis_requested in axes_list:
         if axis_requested.input_data is not None:
-            values = apply_along_axis(
-                get_interpolation,
-                axis_requested.index,
-                values,
-                axis_requested.values,
-                axis_requested.input_data,
-                is_step=axis_requested.is_step,
-            )
+            if axis_requested.is_step:
+                values = apply_along_axis(
+                    get_interpolation_step,
+                    axis_requested.index,
+                    values,
+                    axis_requested.values,
+                    axis_requested.input_data,
+                )
+            else:
+                values = get_interpolation(
+                    values,
+                    axis_requested.values,
+                    axis_requested.input_data,
+                    axis_requested.index,
+                )
             # Store new axis data into axis_requested.values
             axis_requested.values = axis_requested.input_data
     return squeeze(values)

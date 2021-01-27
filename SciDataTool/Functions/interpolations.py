@@ -11,6 +11,7 @@ from numpy import (
     abs as np_abs,
     interp,
 )
+from scipy.interpolate import interp1d
 
 
 def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
@@ -58,7 +59,45 @@ def get_common_base(values1, values2, is_extrap=False, is_downsample=False):
     return linspace(initial, final, int(number), endpoint=True)
 
 
-def get_interpolation(values, axis_values, new_axis_values, is_step=False):
+def get_interpolation(values, axis_values, new_axis_values, index):
+    """Returns the interpolated field along one axis, given the new axis
+    Parameters
+    ----------
+    values: ndarray
+        1Darray of a field along one axis
+    axis_values: list
+        values of the original axis
+    new_axis_values: list
+        values of the new axis
+    index : int
+        index of the axis
+    Returns
+    -------
+    ndarray of the interpolated field
+    """
+    if str(axis_values) == "whole":  # Whole axis -> no interpolation
+        return values
+    elif len(new_axis_values) == 1:  # Single point -> use argmin
+        idx = argmin(np_abs(axis_values - new_axis_values[0]))
+        return take(values, [idx], axis=index)
+    elif len(axis_values) == len(new_axis_values) and all(
+        isclose(axis_values, new_axis_values, rtol=1e-03)
+    ):  # Same axes -> no interpolation
+        return values
+    elif isin(
+        around(new_axis_values, 5), around(axis_values, 5)
+    ).all():  # New axis is subset -> no interpolation
+        return take(
+            values,
+            [isin(around(axis_values, 5), around(new_axis_values, 5))],
+            axis=index,
+        )
+    else:
+        f = interp1d(axis_values, values, axis=index, fill_value="extrapolate")
+        return f(new_axis_values)
+
+
+def get_interpolation_step(values, axis_values, new_axis_values):
     """Returns the interpolated field along one axis, given the new axis
     Parameters
     ----------
@@ -85,7 +124,7 @@ def get_interpolation(values, axis_values, new_axis_values, is_step=False):
         around(new_axis_values, 5), around(axis_values, 5)
     ).all():  # New axis is subset -> no interpolation
         return values[isin(around(axis_values, 5), around(new_axis_values, 5))]
-    elif is_step:
+    else:
         if len(axis_values) == 1:
             return array([values[0] for i in range(len(new_axis_values))])
         else:
@@ -111,5 +150,3 @@ def get_interpolation(values, axis_values, new_axis_values, is_step=False):
                         new_values.append(values[j + 1])
                         break
             return array(new_values)
-    else:
-        return interp(new_axis_values, axis_values, values)
