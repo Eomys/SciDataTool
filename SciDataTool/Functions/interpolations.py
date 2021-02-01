@@ -88,17 +88,15 @@ def get_interpolation(values, axis_values, new_axis_values, index):
     elif isin(
         around(new_axis_values, 5), around(axis_values, 5)
     ).all():  # New axis is subset -> no interpolation
-        
-        indice_take = list()
-        for ii in range(len(new_axis_values)):
-                indice_take.append(where(axis_values == new_axis_values[ii])[0][0])
-        
+
+        indice_take = where(isin(around(axis_values, 5), around(new_axis_values, 5)))[0]
+
         return take(
             values,
             indice_take,
             axis=index,
         )
-    
+
     else:
         f = interp1d(axis_values, values, axis=index, fill_value="extrapolate")
         return f(new_axis_values)
