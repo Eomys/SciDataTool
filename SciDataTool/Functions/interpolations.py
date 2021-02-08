@@ -86,10 +86,10 @@ def get_interpolation(values, axis_values, new_axis_values, index):
     ):  # Same axes -> no interpolation
         return values
     elif isin(
-        around(new_axis_values, 5), around(axis_values, 5)
+        new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
 
-        indice_take = where(isin(around(axis_values, 5), around(new_axis_values, 5)))[0]
+        indice_take = where(isin(axis_values, new_axis_values))[0]
 
         return take(
             values,
