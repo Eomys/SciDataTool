@@ -126,9 +126,9 @@ def get_interpolation_step(values, axis_values, new_axis_values):
     ):  # Same axes -> no interpolation
         return values
     elif isin(
-        around(new_axis_values, 5), around(axis_values, 5)
+        new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
-        return values[isin(around(axis_values, 5), around(new_axis_values, 5))]
+        return values[isin(axis_values, new_axis_values)]
     else:
         if len(axis_values) == 1:
             return array([values[0] for i in range(len(new_axis_values))])
