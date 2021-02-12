@@ -115,6 +115,16 @@ try:
 except ImportError as error:
     get_data_along = error
 
+try:
+    from ..Methods.DataND.plot_2D_Data import plot_2D_Data
+except ImportError as error:
+    plot_2D_Data = error
+
+try:
+    from ..Methods.DataND.plot_3D_Data import plot_3D_Data
+except ImportError as error:
+    plot_3D_Data = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -333,6 +343,28 @@ class DataND(Data):
         )
     else:
         get_data_along = get_data_along
+    # cf Methods.DataND.plot_2D_Data
+    if isinstance(plot_2D_Data, ImportError):
+        plot_2D_Data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method plot_2D_Data: " + str(plot_2D_Data)
+                )
+            )
+        )
+    else:
+        plot_2D_Data = plot_2D_Data
+    # cf Methods.DataND.plot_3D_Data
+    if isinstance(plot_3D_Data, ImportError):
+        plot_3D_Data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method plot_3D_Data: " + str(plot_3D_Data)
+                )
+            )
+        )
+    else:
+        plot_3D_Data = plot_3D_Data
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -457,7 +489,10 @@ class DataND(Data):
         else:
             DataND_dict["axes"] = list()
             for obj in self.axes:
-                DataND_dict["axes"].append(obj.as_dict())
+                if obj is not None:
+                    DataND_dict["axes"].append(obj.as_dict())
+                else:
+                    DataND_dict["axes"].append(None)
         DataND_dict["FTparameters"] = (
             self.FTparameters.copy() if self.FTparameters is not None else None
         )
@@ -498,6 +533,8 @@ class DataND(Data):
                         "SciDataTool.Classes", obj.get("__class__"), "axes"
                     )
                     value[ii] = class_obj(init_dict=obj)
+                if value[ii] is not None:
+                    value[ii].parent = self
         if value == -1:
             value = list()
         check_var("axes", value, "[Data]")

@@ -60,6 +60,16 @@ try:
 except ImportError as error:
     freq_to_time = error
 
+try:
+    from ..Methods.VectorField.plot_2D_Data import plot_2D_Data
+except ImportError as error:
+    plot_2D_Data = error
+
+try:
+    from ..Methods.VectorField.plot_3D_Data import plot_3D_Data
+except ImportError as error:
+    plot_3D_Data = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -172,6 +182,28 @@ class VectorField(FrozenClass):
         )
     else:
         freq_to_time = freq_to_time
+    # cf Methods.VectorField.plot_2D_Data
+    if isinstance(plot_2D_Data, ImportError):
+        plot_2D_Data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method plot_2D_Data: " + str(plot_2D_Data)
+                )
+            )
+        )
+    else:
+        plot_2D_Data = plot_2D_Data
+    # cf Methods.VectorField.plot_3D_Data
+    if isinstance(plot_3D_Data, ImportError):
+        plot_3D_Data = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method plot_3D_Data: " + str(plot_3D_Data)
+                )
+            )
+        )
+    else:
+        plot_3D_Data = plot_3D_Data
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -259,7 +291,10 @@ class VectorField(FrozenClass):
         else:
             VectorField_dict["components"] = dict()
             for key, obj in self.components.items():
-                VectorField_dict["components"][key] = obj.as_dict()
+                if obj is not None:
+                    VectorField_dict["components"][key] = obj.as_dict()
+                else:
+                    VectorField_dict["components"][key] = None
         # The class name is added to the dict for deserialisation purpose
         VectorField_dict["__class__"] = "VectorField"
         return VectorField_dict

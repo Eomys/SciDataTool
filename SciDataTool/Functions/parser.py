@@ -111,13 +111,18 @@ def read_input_strings(args, axis_data):
         elif "=[" in axis_str:
             elems = axis_str.split("=[")
             elems2 = elems[1].split(",")
-            init_str = elems2[0]
-            interval_init = eval(init_str)
-            final_str = elems2[1].strip("]")
-            interval_final = eval(final_str)
-            name = elems[0]
-            extension = "interval"
-            input_data = [interval_init, interval_final]
+            if len(elems2) > 2:
+                extension = "list"
+                name = elems[0]
+                input_data = [eval(elem.strip("]")) for elem in elems2]
+            else:
+                init_str = elems2[0]
+                interval_init = eval(init_str)
+                final_str = elems2[1].strip("]")
+                interval_final = eval(final_str)
+                name = elems[0]
+                extension = "interval"
+                input_data = [interval_init, interval_final]
         # Detect single value
         elif "=" in axis_str:
             elems = axis_str.split("=")
