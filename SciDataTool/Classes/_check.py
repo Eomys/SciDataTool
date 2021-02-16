@@ -352,15 +352,11 @@ def check_dimensions(values, axes):
     for axis in axes:
         if hasattr(axis, "values"):
             axes_shape.append(axis.values.size)
-            # if axis.value.size==1:
-            #     axes_shape.append(1)
-            # else:
-            #     axes_shape.append(len(squeeze(axis.values)))
         else:
             try:
                 axes_shape.append(int(axis.number))
             except:
-                axes_shape.append(int((axis.final - axis.initial) / axis.step))
+                axes_shape.append(round((axis.final - axis.initial) / axis.step))
 
     if values_shape != tuple(axes_shape):
         for i, s in enumerate(axes_shape):
