@@ -18,7 +18,7 @@ def get_length(self, is_oneperiod=False, is_antiperiod=False):
     """
 
     if self.number is None:
-        N = round(self.final - self.initial + self.step) / self.step
+        N = round((self.final - self.initial + self.step) / self.step)
     else:
         N = self.number
 
