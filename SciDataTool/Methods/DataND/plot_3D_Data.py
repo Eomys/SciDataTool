@@ -175,7 +175,7 @@ def plot_3D_Data(
         name = axes_dict[axis.name]
     else:
         name = axis.name
-    title2 = "over " + axis.name.lower()
+    title2 = "over " + name.lower()
     if axis.unit == "SI":
         unit = unit_dict[axis.name]
         xlabel = name.capitalize() + " [" + unit + "]"
