@@ -118,9 +118,9 @@ def get_interpolation_step(values, axis_values, new_axis_values):
     """
     if str(axis_values) == "whole":  # Whole axis -> no interpolation
         return values
-    elif len(new_axis_values) == 1:  # Single point -> use argmin
-        idx = argmin(np_abs(axis_values - new_axis_values[0]))
-        return take(values, [idx])
+    # elif len(new_axis_values) == 1:  # Single point -> use argmin
+    #     idx = argmin(np_abs(axis_values - new_axis_values[0]))
+    #     return take(values, [idx])
     elif len(axis_values) == len(new_axis_values) and all(
         isclose(axis_values, new_axis_values, rtol=1e-03)
     ):  # Same axes -> no interpolation

@@ -3,7 +3,7 @@ from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifftn
 
 
-def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True):
     """Returns the ndarray of the field, using conversions and symmetries if needed.
     Parameters
     ----------
@@ -42,7 +42,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Rebuild symmetries
     values = self.rebuild_symmetries(values, axes_list)
     # Interpolate over axis values
-    values = self.interpolate(values, axes_list)
+    values = self.interpolate(values, axes_list, is_squeeze=is_squeeze)
     # Conversions
     values = self.convert(values, unit, is_norm, axes_list)
     # Return axes and values

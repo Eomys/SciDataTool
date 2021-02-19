@@ -6,7 +6,9 @@ from SciDataTool.Functions.conversions import xy_to_rphi, cart2pol
 from SciDataTool.Functions import AxisError
 
 
-def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_rphiz_along(
+    self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True
+):
     """Returns the list of the cylindrical (r,phi,z) components of the field, using conversions and symmetries if needed.
     Parameters
     ----------
@@ -31,10 +33,10 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     if "comp_x" in self.components.keys() and "comp_y" in self.components.keys():
         # Extract from DataND
         resultx = self.components["comp_x"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         resulty = self.components["comp_y"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_x = resultx[self.components["comp_x"].symbol]
         field_y = resulty[self.components["comp_y"].symbol]
@@ -48,12 +50,20 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         (field_r, field_c) = cart2pol(field_x, field_y, phi)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["axial"].symbol]
         elif "comp_z" in self.components.keys():
             resultz = self.components["comp_z"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
@@ -63,25 +73,37 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     elif "radial" in self.components.keys():
         resultr = self.components["radial"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_r = resultr[self.components["radial"].symbol]
         shape = field_r.shape
         if "tangential" in self.components.keys():
             resultphi = self.components["tangential"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_c = resultphi[self.components["tangential"].symbol]
         else:
             field_c = zeros(shape)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["axial"].symbol]
         elif "comp_z" in self.components.keys():
             resultz = self.components["comp_z"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
@@ -91,25 +113,37 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     elif "tangential" in self.components.keys():
         resultphi = self.components["tangential"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_c = resultphi[self.components["tangential"].symbol]
         shape = field_c.shape
         if "radial" in self.components.keys():
             resultr = self.components["radial"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_r = resultphi[self.components["radial"].symbol]
         else:
             field_r = zeros(shape)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["axial"].symbol]
         elif "comp_z" in self.components.keys():
             resultz = self.components["comp_z"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
@@ -119,7 +153,7 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     elif "axial" in self.components.keys():
         resultz = self.components["axial"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_z = resultz[self.components["axial"].symbol]
         shape = field_z.shape
@@ -130,7 +164,7 @@ def get_rphiz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     elif "comp_z" in self.components.keys():
         resultz = self.components["comp_z"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_z = resultz[self.components["comp_z"].symbol]
         shape = field_z.shape

@@ -152,7 +152,7 @@ def plot_2D(
         linestyle_list = linestyles
     if len(linestyle_list) < ndatas:
         # Repeat linestyles
-        m = int(ceil(n / len(linestyle_list)))
+        m = int(ceil(ndatas / len(linestyle_list)))
         linestyle_list = linestyle_list * m
     if len(linewidth_list) < ndatas:
         # Repeat linewidths

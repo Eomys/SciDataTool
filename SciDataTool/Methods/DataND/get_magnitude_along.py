@@ -4,7 +4,9 @@ from SciDataTool.Functions.conversions import convert, to_dB, to_dBA
 from numpy import apply_along_axis, abs as np_abs
 
 
-def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_magnitude_along(
+    self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True
+):
     """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.
     Parameters
     ----------
@@ -24,7 +26,7 @@ def get_magnitude_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
-    return_dict = self.get_along(args, axis_data=axis_data)
+    return_dict = self.get_along(args, axis_data=axis_data, is_squeeze=is_squeeze)
     values = return_dict[self.symbol]
     # Compute magnitude
     values = np_abs(values)

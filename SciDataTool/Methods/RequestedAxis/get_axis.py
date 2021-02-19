@@ -73,7 +73,7 @@ def get_axis(self, axis, is_real):
             is_oneperiod = False
             is_antiperiod = False
         else:
-            if self.input_data is not None:
+            if self.input_data is not None and not self.is_step:
                 axis_values = axis.get_values(is_smallestperiod=True)
                 if min(self.input_data) >= min(axis_values) and max(
                     self.input_data
@@ -165,6 +165,8 @@ def get_axis(self, axis, is_real):
         if self.input_data is None:
             self.values = values
         else:
+            # if self.is_step:
+            #     values = values[axis.rebuild_indices]
             if len(self.input_data) == 2 and self.extension != "axis_data":
                 indices = [
                     i
