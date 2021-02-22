@@ -1,6 +1,6 @@
 import pytest
-from SciDataTool import DataLinspace, DataTime
-from numpy import meshgrid
+from SciDataTool import DataLinspace, DataTime, DataPattern
+from numpy import meshgrid, linspace, array
 from numpy.testing import assert_array_almost_equal
 
 
@@ -48,6 +48,26 @@ def test_slice():
     # Extract data by indices
     result = Field.get_along("X[1:5]", "Y[2:8]")
     expected = field[1:5, 2:8]
+    assert_array_almost_equal(expected, result["Z"])
+
+    # Integral value 'X=integrate'
+    result = Field.get_along("X=integrate", "Y")
+    expected = 50 + 10 * linspace(0, 100, 11)
+    assert_array_almost_equal(expected, result["Z"])
+    # Step axis
+    X = DataPattern(
+        name="X",
+        unit="m",
+        values=array([-0.5, -0.3, -0.1, 0.1, 0.3]),
+        values_whole=array([-0.5, -0.3, -0.3, -0.1, -0.1, 0.1, 0.1, 0.3, 0.3, 0.5]),
+        rebuild_indices=[0, 0, 1, 1, 2, 2, 3, 3, 4, 4],
+    )
+    field = array([20, 40, 60, 80, 100])
+    y, field_x = meshgrid(Y.get_values(), field)
+    field = field_x + y
+    Field = DataTime(name="Example field", symbol="Z", axes=[X, Y], values=field)
+    result = Field.get_along("X=integrate", "Y")
+    expected = 300 * 0.2 + linspace(0, 100, 11)
     assert_array_almost_equal(expected, result["Z"])
 
 

@@ -29,7 +29,11 @@ def rebuild_symmetries(
         if (
             axis.transform != "fft"
             and axis.is_pattern
-            and (axis.extension != "smallestperiod" and axis.indices is None)
+            and (
+                axis.extension
+                not in ["sum", "rss", "mean", "rms", "integrate", "smallestperiod"]
+                and axis.indices is None
+            )
         ):
             values = take(values, axis.rebuild_indices, axis.index)
         elif axis.transform != "fft" and axis.extension in [

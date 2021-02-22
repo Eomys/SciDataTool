@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import sum as np_sum, mean as np_mean, sqrt
+from numpy import sum as np_sum, mean as np_mean, sqrt, trapz, take
 from SciDataTool.Functions.symmetries import rebuild_symmetries
 
 
@@ -21,8 +21,13 @@ def get_field(self, axes_list):
     for axis_requested in axes_list:
         # Rebuild symmetries for fft case
         axis_symmetries = self.axes[axis_requested.index].symmetries
-        if axis_requested.transform == "fft" and axis_requested.is_pattern:
-            values = values[axis_requested.rebuild_indices]
+        if (
+            axis_requested.transform == "fft"
+            and axis_requested.is_pattern
+            or axis_requested.extension in ["sum", "rss", "mean", "rms", "integrate"]
+            and axis_requested.is_pattern
+        ):
+            values = take(values, axis_requested.rebuild_indices, axis_requested.index)
         elif axis_requested.transform == "fft" and "antiperiod" in axis_symmetries:
             nper = axis_symmetries["antiperiod"]
             axis_symmetries["antiperiod"] = 2
@@ -43,4 +48,7 @@ def get_field(self, axes_list):
             values = sqrt(
                 np_mean(values ** 2, axis=axis_requested.index, keepdims=True)
             )
+        # integration over integration axes
+        elif axis_requested.extension == "integrate":
+            values = trapz(values, x=axis_requested.values, axis=axis_requested.index)
     return values
