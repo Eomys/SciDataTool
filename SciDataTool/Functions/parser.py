@@ -62,6 +62,11 @@ def read_input_strings(args, axis_data):
             elems = axis_str.split("=mean")
             name = elems[0]
             extension = "mean"
+        # Detect integrate
+        elif "integrate" in axis_str:
+            elems = axis_str.split("=integrate")
+            name = elems[0]
+            extension = "integrate"
         # Detect periods
         elif "oneperiod" in axis_str:
             elems = axis_str.split("[")

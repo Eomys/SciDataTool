@@ -48,7 +48,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=Tr
     # Return axes and values
     return_dict = {}
     for axis_requested in axes_list:
-        if axis_requested.extension in ["sum", "rss", "mean", "rms"]:
+        if axis_requested.extension in ["sum", "rss", "mean", "rms", "integrate"]:
             return_dict[axis_requested.name] = axis_requested.extension
         else:
             return_dict[axis_requested.name] = axis_requested.values
