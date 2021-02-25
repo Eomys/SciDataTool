@@ -175,6 +175,10 @@ def plot_2D_Data(
     title3 = " for "
     for axis in axes_list:
         # Title part 2
+        if axis.name in axes_dict:
+            name = axes_dict[axis.name]
+        else:
+            name = axis.name
         if axis.extension in [
             "whole",
             "interval",
@@ -182,11 +186,7 @@ def plot_2D_Data(
             "antiperiod",
             "smallestperiod",
         ]:
-            if axis.name in axes_dict:
-                name = axes_dict[axis.name]
-            else:
-                name = axis.name
-            title2 = "over " + axis.name.lower()
+            title2 = "over " + name.lower()
             if axis.unit == "SI":
                 unit = unit_dict[axis.name]
                 xlabel = name.capitalize() + " [" + unit + "]"
@@ -220,7 +220,7 @@ def plot_2D_Data(
             if len(result_0[axis.name]) == 1:
                 axis_str = axis_str.strip("[]")
 
-            title3 += axis.name + "=" + axis_str.rstrip(", ") + " " + unit + ", "
+            title3 += name + "=" + axis_str.rstrip(", ") + " " + unit + ", "
 
     # Title part 4 containing axes that are here but not involved in requested axes
     title4 = ""

@@ -10,6 +10,7 @@ unit_dict = {
     "loadcases": "",
     "eccentricity": "%",
     "order": "",
+    "cr_band": "Bark",
 }
 
 norm_dict = {
@@ -22,6 +23,7 @@ norm_dict = {
 
 axes_dict = {
     "freqs": "frequency",
+    "cr_band": "critical band rate",
 }
 
 fft_dict = {
