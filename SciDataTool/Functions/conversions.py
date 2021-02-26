@@ -113,36 +113,45 @@ def convert(values, unit1, unit2):
     -------
     ndarray of the converted field
     """
-    unit1_save = unit1
-    unit2_save = unit2
-    # Format the strings
-    unit1 = unit1.replace("*", "").replace(" ", "").replace("^", "")
-    unit2 = unit2.replace("*", "").replace(" ", "").replace("^", "")
-    # Unit1 parsing
-    if "/" in unit1:
-        dim1_denom, prefix1_denom = get_dim_prefix(unit1.split("/")[1])
-        unit1 = unit1.split("/")[0]
+    # Critical band to frequency conversion (for acoustic loudness)
+    # Traunmüller, H. (1990). "Analytical expressions for the tonotopic sensory scale". 
+    # The Journal of the Acoustical Society of America. 88: 97. doi:10.1121/1.399849
+    if unit1 == "Bark" and unit2 == "Hz":
+        return 1960 * (values + 0.53) / (26.28 - values)
+    elif unit1 == "Hz" and unit2 == "Bark":
+        return ( 26.81 * values / (1960 + values) ) - 0.53 
+    # Generic conversion
     else:
-        dim1_denom = [0, 0, 0, 0, 0, 0]
-        prefix1_denom = 1.0
-    dim1_num, prefix1_num = get_dim_prefix(unit1)
-    # Unit2 parsing
-    if "/" in unit2:
-        dim2_denom, prefix2_denom = get_dim_prefix(unit2.split("/")[1])
-        unit2 = unit2.split("/")[0]
-    else:
-        dim2_denom = [0, 0, 0, 0, 0, 0]
-        prefix2_denom = 1.0
-    dim2_num, prefix2_num = get_dim_prefix(unit2)
-    # Check compatibility
-    dim1 = [i - j for i, j in zip(dim1_num, dim1_denom)]
-    dim2 = [i - j for i, j in zip(dim2_num, dim2_denom)]
-    if dim1 != dim2:
-        raise UnitError(
-            "ERROR: Units " + unit1_save + " and " + unit2_save + " do not match"
-        )
-    else:
-        return values * (prefix1_num / prefix1_denom) / (prefix2_num / prefix2_denom)
+        unit1_save = unit1
+        unit2_save = unit2
+        # Format the strings
+        unit1 = unit1.replace("*", "").replace(" ", "").replace("^", "")
+        unit2 = unit2.replace("*", "").replace(" ", "").replace("^", "")
+        # Unit1 parsing
+        if "/" in unit1:
+            dim1_denom, prefix1_denom = get_dim_prefix(unit1.split("/")[1])
+            unit1 = unit1.split("/")[0]
+        else:
+            dim1_denom = [0, 0, 0, 0, 0, 0]
+            prefix1_denom = 1.0
+        dim1_num, prefix1_num = get_dim_prefix(unit1)
+        # Unit2 parsing
+        if "/" in unit2:
+            dim2_denom, prefix2_denom = get_dim_prefix(unit2.split("/")[1])
+            unit2 = unit2.split("/")[0]
+        else:
+            dim2_denom = [0, 0, 0, 0, 0, 0]
+            prefix2_denom = 1.0
+        dim2_num, prefix2_num = get_dim_prefix(unit2)
+        # Check compatibility
+        dim1 = [i - j for i, j in zip(dim1_num, dim1_denom)]
+        dim2 = [i - j for i, j in zip(dim2_num, dim2_denom)]
+        if dim1 != dim2:
+            raise UnitError(
+                "ERROR: Units " + unit1_save + " and " + unit2_save + " do not match"
+            )
+        else:
+            return values * (prefix1_num / prefix1_denom) / (prefix2_num / prefix2_denom)
 
 
 def to_dB(values, unit, ref_value=1.0):
