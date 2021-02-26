@@ -175,7 +175,9 @@ def plot_2D_Data(
     title3 = " for "
     for axis in axes_list:
         # Title part 2
-        if axis.name in axes_dict:
+        if axis.unit in norm_dict:
+            name = norm_dict[axis.unit].split(" [")[0]
+        elif axis.name in axes_dict:
             name = axes_dict[axis.name]
         else:
             name = axis.name
