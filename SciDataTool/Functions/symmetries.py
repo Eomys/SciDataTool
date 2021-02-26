@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions import AxisError
-from numpy import tile, concatenate, negative, ones
+from numpy import tile, concatenate, negative, ones, append
 
 
 def rebuild_symmetries(values, axis_index, symmetries):
@@ -43,15 +43,17 @@ def rebuild_symmetries_axis(values, symmetries):
     """
     values_new = values
     if "period" in symmetries.keys():
-        if len(values) == 1:
-            if "delta" in symmetries.keys():
-                values_new = concatenate(values_new, values + symmetries["delta"])
+        for i in range(symmetries.get("period") - 1):
+            if len(values) == 1:
+                if "delta" in symmetries.keys():
+                    values_new = append(
+                        values_new, values_new[-1] + symmetries["delta"]
+                    )
+                else:
+                    raise AxisError(
+                        "ERROR: must provide delta for symmetries with one sample"
+                    )
             else:
-                raise AxisError(
-                    "ERROR: must provide delta for symmetries with one sample"
-                )
-        else:
-            for i in range(symmetries.get("period") - 1):
                 values_new = concatenate(
                     (
                         values_new,
@@ -59,15 +61,17 @@ def rebuild_symmetries_axis(values, symmetries):
                     )
                 )
     elif "antiperiod" in symmetries.keys():
-        if len(values) == 1:
-            if "delta" in symmetries.keys():
-                values_new = concatenate((values_new, values + symmetries["delta"]))
+        for i in range(symmetries.get("antiperiod") - 1):
+            if len(values) == 1:
+                if "delta" in symmetries.keys():
+                    values_new = append(
+                        values_new, values_new[-1] + symmetries["delta"]
+                    )
+                else:
+                    raise AxisError(
+                        "ERROR: must provide delta for symmetries with one sample"
+                    )
             else:
-                raise AxisError(
-                    "ERROR: must provide delta for symmetries with one sample"
-                )
-        else:
-            for i in range(symmetries.get("antiperiod") - 1):
                 values_new = concatenate(
                     (
                         values_new,
