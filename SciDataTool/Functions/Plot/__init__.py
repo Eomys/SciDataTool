@@ -20,6 +20,8 @@ norm_dict = {
     "distance": "Distance [m]",
     "angle_rotor": "Rotor mechanical angle [°]",
     "rpm": "Speed [rpm]",
+    "Hz": "Frequency [Hz]",
+    "Bark": "Critical band rate [Bark]",
 }
 
 axes_dict = {
