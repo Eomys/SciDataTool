@@ -316,7 +316,7 @@ def test_period_single():
         final=0,
         number=1,
         include_endpoint=False,
-        symmetries={"antiperiod": 2, "delta": 3},
+        symmetries={"antiperiod": 6, "delta": 3},
     )
     field = np.array([10])
     Field = DataTime(
@@ -326,8 +326,8 @@ def test_period_single():
         values=field,
     )
     result = Field.get_along("time")
-    assert_array_almost_equal(np.array([0, 3]), result["time"])
-    assert_array_almost_equal(np.array([10, -10]), result["X"])
+    assert_array_almost_equal(np.array([0, 3, 6, 9, 12, 15]), result["time"])
+    assert_array_almost_equal(np.array([10, -10, 10, -10, 10, -10]), result["X"])
 
 
 if __name__ == "__main__":
