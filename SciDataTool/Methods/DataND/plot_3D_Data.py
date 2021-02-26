@@ -231,10 +231,9 @@ def plot_3D_Data(
                 result[axis.name],
                 formatter={"float_kind": "{:.2g}".format},
             ).replace(" ", ", ")
-            # + array2string(result[axis.name], formatter={float: lambda x: "%.2g" % x})
-            + " "
+            + " ["
             + unit
-            + ", "
+            + "], "
         )
     title5 = ""
     for axis_name in axes_dict_other:
@@ -245,9 +244,9 @@ def plot_3D_Data(
                 axes_dict_other[axis_name][0],
                 formatter={"float_kind": "{:.2g}".format},
             ).replace(" ", ", ")
-            + " "
+            + " ["
             + axes_dict_other[axis_name][1]
-            + ", "
+            + "], "
         )
 
     if title4 == " for " and title5 == "":

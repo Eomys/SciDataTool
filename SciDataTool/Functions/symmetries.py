@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from SciDataTool.Functions import AxisError
 from numpy import tile, concatenate, negative, ones
 
 
@@ -42,21 +43,37 @@ def rebuild_symmetries_axis(values, symmetries):
     """
     values_new = values
     if "period" in symmetries.keys():
-        for i in range(symmetries.get("period") - 1):
-            values_new = concatenate(
-                (
-                    values_new,
-                    values + (values_new[-1] - values_new[-2]) + values_new[-1],
+        if len(values) == 1:
+            if "delta" in symmetries.keys():
+                values_new = concatenate(values_new, values + symmetries["delta"])
+            else:
+                raise AxisError(
+                    "ERROR: must provide delta for symmetries with one sample"
                 )
-            )
+        else:
+            for i in range(symmetries.get("period") - 1):
+                values_new = concatenate(
+                    (
+                        values_new,
+                        values + (values_new[-1] - values_new[-2]) + values_new[-1],
+                    )
+                )
     elif "antiperiod" in symmetries.keys():
-        for i in range(symmetries.get("antiperiod") - 1):
-            values_new = concatenate(
-                (
-                    values_new,
-                    values + (values_new[-1] - values_new[-2]) + values_new[-1],
+        if len(values) == 1:
+            if "delta" in symmetries.keys():
+                values_new = concatenate((values_new, values + symmetries["delta"]))
+            else:
+                raise AxisError(
+                    "ERROR: must provide delta for symmetries with one sample"
                 )
-            )
+        else:
+            for i in range(symmetries.get("antiperiod") - 1):
+                values_new = concatenate(
+                    (
+                        values_new,
+                        values + (values_new[-1] - values_new[-2]) + values_new[-1],
+                    )
+                )
     return values_new
 
 

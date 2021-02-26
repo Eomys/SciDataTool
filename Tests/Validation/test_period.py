@@ -175,9 +175,9 @@ def test_period_2d():
         axes=[Angle_periodic, Time_periodic],
         values=field,
     )
-    result = Field.get_along("time", "angle=[0,pi/4]")  # [0,2*pi]
+    result = Field.get_along("time", "angle=[0,2*pi]")
     assert_array_almost_equal(time, result["time"])
-    assert_array_almost_equal(angle[:3], result["angle"])
+    assert_array_almost_equal(angle, result["angle"])
 
 
 @pytest.mark.validation
@@ -306,3 +306,29 @@ def test_pattern():
     assert_array_almost_equal(
         np.array([10, 15, 20, 25, 30, 35, 30, 25, 20, 15, 10]), result["X"]
     )
+
+
+def test_period_single():
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=0,
+        number=1,
+        include_endpoint=False,
+        symmetries={"antiperiod": 2, "delta": 3},
+    )
+    field = np.array([10])
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time],
+        values=field,
+    )
+    result = Field.get_along("time")
+    assert_array_almost_equal(np.array([0, 3]), result["time"])
+    assert_array_almost_equal(np.array([10, -10]), result["X"])
+
+
+if __name__ == "__main__":
+    test_period_single()
