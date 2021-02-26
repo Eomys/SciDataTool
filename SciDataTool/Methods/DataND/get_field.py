@@ -19,7 +19,7 @@ def get_field(self, axes_list):
 
     values = self.values
     for axis_requested in axes_list:
-        # Rebuild symmetries for fft case
+        # Rebuild symmetries when needed
         axis_symmetries = self.axes[axis_requested.index].symmetries
         if (
             axis_requested.transform == "fft"
@@ -33,6 +33,15 @@ def get_field(self, axes_list):
             axis_symmetries["antiperiod"] = 2
             values = rebuild_symmetries(values, axis_requested.index, axis_symmetries)
             axis_symmetries["antiperiod"] = nper
+        elif axis_requested.indices is not None:
+            if (
+                axis_requested.extension in ["sum", "rss", "mean", "rms", "integrate"]
+                or max(axis_requested.indices) > values.shape[axis_requested.index]
+            ):
+                values = rebuild_symmetries(
+                    values, axis_requested.index, axis_symmetries
+                )
+                self.axes[axis_requested.index].symmetries = dict()
 
         # sum over sum axes
         if axis_requested.extension == "sum":
