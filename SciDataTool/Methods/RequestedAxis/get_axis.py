@@ -134,7 +134,7 @@ def get_axis(self, axis, is_real):
             if axis.normalizations.get(unit) == "indices":
                 values = array([i for i in range(len(values))])
             else:
-                values = array([v / axis.normalizations.get(unit) for v in values])
+                values = values / axis.normalizations.get(unit)
         else:
             values = convert(values, self.corr_unit, unit)
         # Rebuild symmetries in fft case

@@ -19,6 +19,7 @@ norm_dict = {
     "space_order": "Space order []",
     "distance": "Distance [m]",
     "angle_rotor": "Rotor mechanical angle [°]",
+    "rpm": "Speed [rpm]",
 }
 
 axes_dict = {
