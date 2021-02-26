@@ -33,7 +33,7 @@ def plot_2D_Data(
     is_disp_title=True,
     is_grid=True,
     is_auto_ticks=True,
-    is_auto_range=False,
+    is_auto_range=True,
     fig=None,
     ax=None,
     barwidth=100,
@@ -179,13 +179,17 @@ def plot_2D_Data(
             name = axes_dict[axis.name]
         else:
             name = axis.name
-        if axis.extension in [
-            "whole",
-            "interval",
-            "oneperiod",
-            "antiperiod",
-            "smallestperiod",
-        ]:
+        if (
+            axis.extension
+            in [
+                "whole",
+                "interval",
+                "oneperiod",
+                "antiperiod",
+                "smallestperiod",
+            ]
+            and len(axis.values) > 1
+        ):
             title2 = "over " + name.lower()
             if axis.unit == "SI":
                 unit = unit_dict[axis.name]
@@ -378,6 +382,10 @@ def plot_2D_Data(
             fund_harm=fund_harm,
             is_show_fig=is_show_fig,
             win_title=win_title,
+            font_name=font_name,
+            font_size_title=font_size_title,
+            font_size_label=font_size_label,
+            font_size_legend=font_size_legend,
         )
 
     else:
@@ -411,4 +419,8 @@ def plot_2D_Data(
             save_path=save_path,
             is_show_fig=is_show_fig,
             win_title=win_title,
+            font_name=font_name,
+            font_size_title=font_size_title,
+            font_size_label=font_size_label,
+            font_size_legend=font_size_legend,
         )
