@@ -220,7 +220,7 @@ def plot_2D_Data(
             if len(result_0[axis.name]) == 1:
                 axis_str = axis_str.strip("[]")
 
-            title3 += name + "=" + axis_str.rstrip(", ") + " " + unit + ", "
+            title3 += name + "=" + axis_str.rstrip(", ") + " [" + unit + "], "
 
     # Title part 4 containing axes that are here but not involved in requested axes
     title4 = ""
@@ -232,9 +232,9 @@ def plot_2D_Data(
                 axes_dict_other[axis_name][0],
                 formatter={"float_kind": "{:.2g}".format},
             ).replace(" ", ", ")
-            + " "
+            + " ["
             + axes_dict_other[axis_name][1]
-            + ", "
+            + "], "
         )
 
     if title3 == " for " and title4 == "":
