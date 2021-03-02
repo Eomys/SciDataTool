@@ -4,7 +4,7 @@ from SciDataTool.Functions.interpolations import get_common_base
 from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
 from SciDataTool.Classes.DataPattern import DataPattern
 from SciDataTool.Functions import AxisError
-from numpy import array
+from numpy import array, ndarray
 from importlib import import_module
 
 
@@ -133,6 +133,8 @@ def get_axis(self, axis, is_real):
         elif unit in axis.normalizations:
             if axis.normalizations.get(unit) == "indices":
                 values = array([i for i in range(len(values))])
+            elif isinstance(axis.normalizations.get(unit), ndarray):
+                values = axis.normalizations.get(unit)
             else:
                 values = values / axis.normalizations.get(unit)
         else:
