@@ -4,6 +4,7 @@ from numpy import min as np_min, max as np_max
 
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.art3d as art3d
+from matplotlib.image import NonUniformImage
 
 from SciDataTool.Functions.Plot.init_fig import init_fig
 from SciDataTool.Functions.Plot import COLORS
@@ -195,14 +196,18 @@ def plot_3D(
         if is_logscale_z:
             ax.zscale("log")
     elif type_plot == "pcolor":
-        c = ax.imshow(
-            Zdata.T,
-            cmap=colormap,
-            extent=(x_min, x_max, y_max, y_min),
-            aspect="auto",
-            interpolation="spline16",
-        )
-        clb = fig.colorbar(c, ax=ax)
+        im = NonUniformImage(ax, interpolation="bilinear", extent=(x_min, x_max, y_max, y_min),
+            cmap=colormap)
+        im.set_data(Xdata, Ydata, Zdata.T)
+        ax.images.append(im)
+        # c = ax.imshow(
+        #     Zdata.T,
+        #     cmap=colormap,
+        #     extent=(x_min, x_max, y_max, y_min),
+        #     aspect="auto",
+        #     interpolation="spline16",
+        # )
+        clb = fig.colorbar(im, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
         for l in clb.ax.yaxis.get_ticklabels():
