@@ -1,6 +1,6 @@
 import pytest
 from SciDataTool import DataLinspace, DataTime
-from SciDataTool import save_validation_path
+from Tests import save_validation_path
 from SciDataTool.Functions.Plot.plot_2D import plot_2D
 from numpy import meshgrid, pi, linspace, zeros, sin, split, sum
 from os.path import join
