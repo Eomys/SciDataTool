@@ -114,12 +114,12 @@ def convert(values, unit1, unit2):
     ndarray of the converted field
     """
     # Critical band to frequency conversion (for acoustic loudness)
-    # Traunmüller, H. (1990). "Analytical expressions for the tonotopic sensory scale". 
+    # Traunmüller, H. (1990). "Analytical expressions for the tonotopic sensory scale".
     # The Journal of the Acoustical Society of America. 88: 97. doi:10.1121/1.399849
     if unit1 == "Bark" and unit2 == "Hz":
         return 1960 * (values + 0.53) / (26.28 - values)
     elif unit1 == "Hz" and unit2 == "Bark":
-        return ( 26.81 * values / (1960 + values) ) - 0.53 
+        return (26.81 * values / (1960 + values)) - 0.53
     # Generic conversion
     else:
         unit1_save = unit1
@@ -151,7 +151,9 @@ def convert(values, unit1, unit2):
                 "ERROR: Units " + unit1_save + " and " + unit2_save + " do not match"
             )
         else:
-            return values * (prefix1_num / prefix1_denom) / (prefix2_num / prefix2_denom)
+            return (
+                values * (prefix1_num / prefix1_denom) / (prefix2_num / prefix2_denom)
+            )
 
 
 def to_dB(values, unit, ref_value=1.0):

@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
-from numpy import sum as np_sum, mean as np_mean, sqrt, trapz, take
+from numpy import (
+    sum as np_sum,
+    mean as np_mean,
+    sqrt,
+    trapz,
+    take,
+    min as np_min,
+    max as np_max,
+)
 from SciDataTool.Functions.symmetries import rebuild_symmetries
 
 
@@ -59,5 +67,7 @@ def get_field(self, axes_list):
             )
         # integration over integration axes
         elif axis_requested.extension == "integrate":
-            values = trapz(values, x=axis_requested.values, axis=axis_requested.index)
+            values = trapz(
+                values, x=axis_requested.values, axis=axis_requested.index
+            ) / (np_max(axis_requested.values) - np_min(axis_requested.values))
     return values

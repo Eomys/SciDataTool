@@ -196,8 +196,12 @@ def plot_3D(
         if is_logscale_z:
             ax.zscale("log")
     elif type_plot == "pcolor":
-        im = NonUniformImage(ax, interpolation="bilinear", extent=(x_min, x_max, y_max, y_min),
-            cmap=colormap)
+        im = NonUniformImage(
+            ax,
+            interpolation="bilinear",
+            extent=(x_min, x_max, y_max, y_min),
+            cmap=colormap,
+        )
         im.set_data(Xdata, Ydata, Zdata.T)
         ax.images.append(im)
         # c = ax.imshow(
