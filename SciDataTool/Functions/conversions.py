@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions import UnitError
-from SciDataTool.Functions.fft_functions import comp_fft_freqs, comp_fft_time
+from SciDataTool.Functions.fft_functions import (
+    comp_fft_freqs,
+    comp_fft_time,
+    comp_nthoctave_axis,
+)
 from numpy import (
     pi,
     log10,
@@ -16,8 +20,14 @@ from numpy import (
     nan,
     isnan,
     abs as np_abs,
+    sum as np_sum,
     angle as np_angle,
     where,
+    argwhere,
+    array,
+    take,
+    zeros,
+    floor,
 )
 
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"
@@ -240,6 +250,55 @@ def dB_to_dBA(values, freqs):
         return values
     except:
         raise UnitError("ERROR: dBA conversion only available for 1D fft")
+
+
+def to_noct(values, freqs, noct=3):
+    """Converts values into 1/nth octave band (requires frequency vector)
+
+    Parameters
+    ----------
+    values: array
+        Values of the field to convert (must be 1D)
+    freqs: array
+        Frequency vector
+    noct: int
+        Requested octave band
+    Returns
+    -------
+    ndarray of the converted field
+    """
+    # Compute the 1/n octave axis
+    f_oct = comp_nthoctave_axis(noct, freqs[0], freqs[-1])
+    # Compute sum over each interval
+    freqbds = [f / (2 ** (1.0 / (2.0 * noct))) for f in f_oct]
+    freqbds.append(freqbds[-1])
+    # freqbds = [0] + f_oct
+    values_oct = []
+    N = zeros(len(freqbds) - 1)
+    for i in range(len(freqbds) - 1):
+        f1 = freqbds[i]
+        f2 = freqbds[i + 1]
+        indices = argwhere((freqs >= f1) & (freqs <= f2))
+        N[i] = len(indices)
+        if len(indices) == 0:
+            values_oct.append(0)
+        else:
+            values2 = take(values, indices)
+            if np_sum(values2) == 0:
+                values_oct.append(0)
+            else:
+                values_oct.append(sqrt(np_sum(values2 ** 2)))
+    values = array(values_oct)
+    # Apply bin correction factor for when centre frequencies are not integer
+    # multiples of the bandwicth (BW)
+    df_fft = freqs[1] - freqs[0]
+    BW = zeros(len(freqbds) - 1)
+    for i in range(len(freqbds) - 1):
+        BW[i] = freqbds[i + 1] - freqbds[i]
+    for i in range(len(freqbds) - 1):
+        if (N[i] != 0) and (floor(BW[i] / df_fft) <= N[i]):
+            values[i] = values[i] * (BW[i] / (df_fft * N[i])) ** 0.5
+    return [values, array(f_oct)]
 
 
 def xyz_to_rphiz(values):

@@ -156,6 +156,12 @@ def read_input_strings(args, axis_data):
         else:
             name = axis_str
             extension = "whole"
+        # Detect 1/nth octave band
+        if "oct" in unit:
+            noct = int(unit.split("oct")[0].split("/")[1])
+            unit = "SI"
+        else:
+            noct = None
         # RequestedAxis object creation
         axis = RequestedAxis(
             name=name,
@@ -164,6 +170,7 @@ def read_input_strings(args, axis_data):
             values=values,
             indices=indices,
             input_data=input_data,
+            noct=noct,
         )
         axes_list.append(axis)
     return axes_list

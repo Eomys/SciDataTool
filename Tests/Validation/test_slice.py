@@ -52,7 +52,7 @@ def test_slice():
 
     # Integral value 'X=integrate'
     result = Field.get_along("X=integrate", "Y")
-    expected = (50 + 10 * linspace(0, 100, 11))/10
+    expected = (50 + 10 * linspace(0, 100, 11)) / 10
     assert_array_almost_equal(expected, result["Z"])
     # Step axis
     X = DataPattern(
@@ -67,7 +67,7 @@ def test_slice():
     field = field_x + y
     Field = DataTime(name="Example field", symbol="Z", axes=[X, Y], values=field)
     result = Field.get_along("X=integrate", "Y")
-    expected = (300 * 0.2 + linspace(0, 100, 11))
+    expected = 300 * 0.2 + linspace(0, 100, 11)
     assert_array_almost_equal(expected, result["Z"])
 
 

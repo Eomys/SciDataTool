@@ -1,7 +1,10 @@
 import pytest
-from SciDataTool import DataTime, DataLinspace
+from SciDataTool import DataTime, DataLinspace, Data1D, DataFreq
+from Tests import DATA_DIR
 import numpy as np
 from numpy.testing import assert_array_almost_equal
+from os.path import join
+import matplotlib.pyplot as plt
 
 
 @pytest.mark.validation
@@ -88,3 +91,44 @@ def test_norm():
     )
     result = Field.get_along("angle->tooth_id")
     assert_array_almost_equal(np.linspace(0, 10, 10, endpoint=False), result["angle"])
+
+
+@pytest.mark.validation
+def test_noct():
+    data = np.load(join(DATA_DIR, "pinknoise_fine_band.npy"))
+    freqs = data[1, :]
+    field = data[0, :]
+    data_oct = np.load(join(DATA_DIR, "pinknoise_third_oct.npy"))
+    foct = data_oct[1, :]
+    field_oct = data_oct[0, :]
+
+    Freqs = Data1D(name="freqs", unit="Hz", values=freqs)
+    Field = DataFreq(
+        name="pink noise",
+        symbol="X",
+        unit="Pa",
+        values=field,
+        axes=[Freqs],
+        normalizations={"ref": 2e-5},
+    )
+    F_oct = Data1D(name="freqs", unit="Hz", values=foct)
+    Field_oct = DataFreq(
+        name="pink noise",
+        symbol="X",
+        unit="Pa",
+        values=field_oct,
+        axes=[F_oct],
+        normalizations={"ref": 2e-5},
+    )
+
+    Field.plot_2D_Data("freqs=[24,20000]->1/3oct", unit="dB")
+    fig = plt.gcf()
+    ax = plt.gca()
+    Field_oct.plot_2D_Data(
+        "freqs",
+        unit="dB",
+        fig=fig,
+        ax=ax,
+        legend_list=["SciDataTool", "Reference"],
+        color_list=["tab:red"],
+    )
