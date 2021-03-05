@@ -109,7 +109,6 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
     """
     if noct == 3:
         table = [
-            10,
             12.5,
             16,
             20,
