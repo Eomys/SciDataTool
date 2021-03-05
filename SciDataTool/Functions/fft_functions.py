@@ -16,6 +16,7 @@ from numpy import (
     pi,
     zeros,
     exp,
+    ceil,
     iscomplex,
     concatenate,
     conjugate,
@@ -144,17 +145,34 @@ def comp_nthoctave_axis(noct, freqmin, freqmax):
             20000,
         ]
         f_oct = [f for f in table if (f >= freqmin and f <= freqmax)]
+    elif noct == 1:
+        table = [
+            16,
+            31.5,
+            63,
+            125,
+            250,
+            500,
+            1000,
+            2000,
+            4000,
+            8000,
+            16000,
+        ]
+        f_oct = [f for f in table if (f >= freqmin and f <= freqmax)]
     else:
         f0 = 1000
         f_oct = [f0]
         i = 1
         while f_oct[-1] <= freqmax:
-            f_oct.append(f0 * 2.0 ** (i / noct))
+            f = f0 * 2.0 ** (i / noct)
+            f_oct.append(0.5 * ceil(2.0 * f))
             i = i + 1
-        f_oct = f_oct[:-2]
+        f_oct = f_oct[:-1]
         i = -1
         while f_oct[0] > freqmin:
-            f_oct.insert(0, f0 * 2.0 ** (i / noct))
+            f = f0 * 2.0 ** (i / noct)
+            f_oct = [0.5 * ceil(2.0 * f)] + f_oct
             i = i - 1
         f_oct = f_oct[1:]
     return f_oct
