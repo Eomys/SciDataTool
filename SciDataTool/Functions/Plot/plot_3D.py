@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import min as np_min, max as np_max
+from numpy import min as np_min, max as np_max, abs as np_abs, log10
 
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.art3d as art3d
@@ -121,6 +121,13 @@ def plot_3D(
         z_min = np_min(Zdata)
     if z_max is None:
         z_max = np_max(Zdata)
+    
+    # Check logscale on z axis
+    if is_logscale_z:
+        Zdata = 10 * log10(np_abs(Zdata))
+        clb_format = "%0.0f"
+    else:
+        clb_format = "%.4g"
 
     # Switch axes
     if is_switch_axes:
@@ -204,14 +211,7 @@ def plot_3D(
         )
         im.set_data(Xdata, Ydata, Zdata.T)
         ax.images.append(im)
-        # c = ax.imshow(
-        #     Zdata.T,
-        #     cmap=colormap,
-        #     extent=(x_min, x_max, y_max, y_min),
-        #     aspect="auto",
-        #     interpolation="spline16",
-        # )
-        clb = fig.colorbar(im, ax=ax)
+        clb = fig.colorbar(im, ax=ax, format=clb_format)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
         for l in clb.ax.yaxis.get_ticklabels():

@@ -108,6 +108,9 @@ def plot_2D_Data(
     # Extract arg_list it the function called from another script with *arg_list
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]
+    
+    if color_list == []:
+        color_list = COLORS
 
     # Set unit
     if unit == "SI":
@@ -260,7 +263,6 @@ def plot_2D_Data(
     else:
         legend_list = ["[" + leg + "] " for leg in legend_list]
     legends = []
-    colors = []
     linestyle_list = []
     # Prepare colors
     if curve_colors is None:
@@ -283,29 +285,28 @@ def plot_2D_Data(
                     unit = norm_dict[axis.unit]
                 else:
                     unit = axis.unit
-                legends += [
-                    legend_list[i]
-                    + axis.name
-                    + "="
-                    + "%.2g" % axis.values.tolist()[j]
-                    + " "
-                    + unit
-                    for j in range(n_curves)
-                ]
-                colors += [
-                    phase_colors[(i * n_curves + j) % len(phase_colors)]
-                    for j in range(n_curves)
-                ]
-                linestyle_list += [linestyles[i] for j in range(n_curves)]
+                if len(d.axes[axis.index].get_values()) > 1:
+                    legends += [
+                        legend_list[i]
+                        + axis.name
+                        + "="
+                        + axis.values.tolist()[j]
+                        + " "
+                        + unit
+                        if isinstance(axis.values.tolist()[j], str)
+                        else legend_list[i]
+                        + axis.name
+                        + "="
+                        + "%.2g" % axis.values.tolist()[j]
+                        + " "
+                        + unit
+                        for j in range(n_curves)
+                    ]
+                else:
+                    legends += [legend_list[i]]
 
         if not is_overlay:
             legends += [legend_list[i]]
-            colors += [curve_colors[i]]
-            linestyle_list += [linestyles[i]]
-
-    # Set colors_list to colors that has just been built
-    if color_list is None:
-        color_list = colors
 
     # Split Ydatas if the plot overlays several curves
     if is_overlay:
