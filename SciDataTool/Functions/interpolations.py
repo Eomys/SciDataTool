@@ -11,6 +11,7 @@ from numpy import (
     abs as np_abs,
     interp,
     where,
+    zeros
 )
 from scipy.interpolate import interp1d
 
@@ -142,25 +143,30 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
         if len(axis_values) == 1:
             return array([take(values, 0, axis=index) for i in range(len(new_axis_values))])
         else:
-            new_values = []
+            new_shape = list(values.shape)
+            new_shape[index] = len(new_axis_values)
+            new_values = zeros(tuple(new_shape))
             for i in range(len(new_axis_values)):
                 for j in range(len(axis_values) - 1):
                     if (
                         new_axis_values[i] == axis_values[j]
                         and new_axis_values[i] == axis_values[j + 1]
                     ):
-                        new_values.append((take(values, j, axis=index) + take(values, j+1, axis=index)) / 2)
+                        new_values[(slice(None),) * index + (i,)] = (take(values, j, axis=index) + take(values, j+1, axis=index)) / 2
+                        # new_values.append((take(values, j, axis=index) + take(values, j+1, axis=index)) / 2)
                         break
                     elif (
                         new_axis_values[i] >= axis_values[j]
                         and new_axis_values[i] < axis_values[j + 1]
                     ):
-                        new_values.append(take(values, j, axis=index))
+                        new_values[(slice(None),) * index + (i,)] = take(values, j, axis=index)
+                        # new_values.append(take(values, j, axis=index))
                         break
                     elif (
                         j == len(axis_values) - 2
                         and new_axis_values[i] == axis_values[j + 1]
                     ):
-                        new_values.append(take(values, j+1, axis=index))
+                        new_values[(slice(None),) * index + (i,)] = take(values, j+1, axis=index)
+                        # new_values.append(take(values, j+1, axis=index))
                         break
             return array(new_values)
