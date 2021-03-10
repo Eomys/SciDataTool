@@ -121,7 +121,7 @@ def plot_3D(
         z_min = np_min(Zdata)
     if z_max is None:
         z_max = np_max(Zdata)
-    
+
     # Check logscale on z axis
     if is_logscale_z:
         Zdata = 10 * log10(np_abs(Zdata))

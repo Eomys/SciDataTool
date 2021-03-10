@@ -11,7 +11,7 @@ from numpy import (
     abs as np_abs,
     interp,
     where,
-    zeros
+    zeros,
 )
 from scipy.interpolate import interp1d
 
@@ -66,7 +66,7 @@ def get_interpolation(values, axis_values, new_axis_values, index):
     Parameters
     ----------
     values: ndarray
-        1Darray of a field along one axis
+        array of a field
     axis_values: list
         values of the original axis
     new_axis_values: list
@@ -108,7 +108,7 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
     Parameters
     ----------
     values: ndarray
-        1Darray of a field along one axis
+        array of a field
     axis_values: list
         values of the original axis
     new_axis_values: list
@@ -136,12 +136,12 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
             indice_take,
             axis=index,
         )
-    
-    
-        # return values[isin(axis_values, new_axis_values)]
+
     else:
         if len(axis_values) == 1:
-            return array([take(values, 0, axis=index) for i in range(len(new_axis_values))])
+            return array(
+                [take(values, 0, axis=index) for i in range(len(new_axis_values))]
+            )
         else:
             new_shape = list(values.shape)
             new_shape[index] = len(new_axis_values)
@@ -152,21 +152,25 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
                         new_axis_values[i] == axis_values[j]
                         and new_axis_values[i] == axis_values[j + 1]
                     ):
-                        new_values[(slice(None),) * index + (i,)] = (take(values, j, axis=index) + take(values, j+1, axis=index)) / 2
-                        # new_values.append((take(values, j, axis=index) + take(values, j+1, axis=index)) / 2)
+                        new_values[(slice(None),) * index + (i,)] = (
+                            take(values, j, axis=index)
+                            + take(values, j + 1, axis=index)
+                        ) / 2
                         break
                     elif (
                         new_axis_values[i] >= axis_values[j]
                         and new_axis_values[i] < axis_values[j + 1]
                     ):
-                        new_values[(slice(None),) * index + (i,)] = take(values, j, axis=index)
-                        # new_values.append(take(values, j, axis=index))
+                        new_values[(slice(None),) * index + (i,)] = take(
+                            values, j, axis=index
+                        )
                         break
                     elif (
                         j == len(axis_values) - 2
                         and new_axis_values[i] == axis_values[j + 1]
                     ):
-                        new_values[(slice(None),) * index + (i,)] = take(values, j+1, axis=index)
-                        # new_values.append(take(values, j+1, axis=index))
+                        new_values[(slice(None),) * index + (i,)] = take(
+                            values, j + 1, axis=index
+                        )
                         break
             return array(new_values)

@@ -108,7 +108,7 @@ def plot_2D_Data(
     # Extract arg_list it the function called from another script with *arg_list
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]
-    
+
     if color_list == []:
         color_list = COLORS
 
