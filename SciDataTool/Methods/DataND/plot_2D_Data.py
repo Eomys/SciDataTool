@@ -263,12 +263,12 @@ def plot_2D_Data(
     else:
         legend_list = ["[" + leg + "] " for leg in legend_list]
     legends = []
-    linestyle_list = []
     # Prepare colors
     if curve_colors is None:
         curve_colors = COLORS
     if linestyles is None:
         linestyles = LINESTYLES
+    linestyle_list = linestyles
     for i, d in enumerate(data_list2):
         is_overlay = False
         for axis in axes_list:

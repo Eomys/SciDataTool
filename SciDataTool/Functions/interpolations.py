@@ -102,7 +102,7 @@ def get_interpolation(values, axis_values, new_axis_values, index):
         return f(new_axis_values)
 
 
-def get_interpolation_step(values, axis_values, new_axis_values):
+def get_interpolation_step(values, axis_values, new_axis_values, index):
     """Returns the interpolated field along one axis, given the new axis
     Parameters
     ----------
@@ -128,10 +128,19 @@ def get_interpolation_step(values, axis_values, new_axis_values):
     elif isin(
         new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
-        return values[isin(axis_values, new_axis_values)]
+        indice_take = where(isin(axis_values, new_axis_values))[0]
+
+        return take(
+            values,
+            indice_take,
+            axis=index,
+        )
+    
+    
+        # return values[isin(axis_values, new_axis_values)]
     else:
         if len(axis_values) == 1:
-            return array([values[0] for i in range(len(new_axis_values))])
+            return array([take(values, 0, axis=index) for i in range(len(new_axis_values))])
         else:
             new_values = []
             for i in range(len(new_axis_values)):
@@ -140,18 +149,18 @@ def get_interpolation_step(values, axis_values, new_axis_values):
                         new_axis_values[i] == axis_values[j]
                         and new_axis_values[i] == axis_values[j + 1]
                     ):
-                        new_values.append((values[j] + values[j + 1]) / 2)
+                        new_values.append((take(values, j, axis=index) + take(values, j+1, axis=index)) / 2)
                         break
                     elif (
                         new_axis_values[i] >= axis_values[j]
                         and new_axis_values[i] < axis_values[j + 1]
                     ):
-                        new_values.append(values[j])
+                        new_values.append(take(values, j, axis=index))
                         break
                     elif (
                         j == len(axis_values) - 2
                         and new_axis_values[i] == axis_values[j + 1]
                     ):
-                        new_values.append(values[j + 1])
+                        new_values.append(take(values, j+1, axis=index))
                         break
             return array(new_values)
