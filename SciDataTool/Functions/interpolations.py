@@ -149,8 +149,8 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
             for i in range(len(new_axis_values)):
                 for j in range(len(axis_values) - 1):
                     if (
-                        new_axis_values[i] == axis_values[j]
-                        and new_axis_values[i] == axis_values[j + 1]
+                        isclose(new_axis_values[i], axis_values[j], rtol=1e-03)
+                        and isclose(new_axis_values[i], axis_values[j+1], rtol=1e-03)
                     ):
                         new_values[(slice(None),) * index + (i,)] = (
                             take(values, j, axis=index)
@@ -160,6 +160,7 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
                     elif (
                         new_axis_values[i] >= axis_values[j]
                         and new_axis_values[i] < axis_values[j + 1]
+                        and not isclose(new_axis_values[i], axis_values[j+1], rtol=1e-03)
                     ):
                         new_values[(slice(None),) * index + (i,)] = take(
                             values, j, axis=index
