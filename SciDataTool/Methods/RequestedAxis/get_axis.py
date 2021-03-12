@@ -26,6 +26,9 @@ def get_axis(self, axis, is_real):
         values = axis.get_values()
         if not self.extension in ["sum", "rss", "mean", "rms", "integrate"]:
             self.extension = "list"
+        if self.input_data is not None:
+            self.indices = self.input_data.tolist()
+            self.input_data = None
         if self.indices is not None:
             self.values = values[self.indices]
         else:
