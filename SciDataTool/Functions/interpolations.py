@@ -137,14 +137,14 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
         )
 
     else:
+        new_shape = list(values.shape)
+        new_shape[index] = len(new_axis_values)
+        new_values = zeros(tuple(new_shape), dtype=values.dtype)
         if len(axis_values) == 1:
-            return array(
-                [take(values, 0, axis=index) for i in range(len(new_axis_values))]
-            )
+            for i in range(len(new_axis_values)):
+                new_values[(slice(None),) * index + (i,)] = take(values, 0, axis=index)
+            return new_values
         else:
-            new_shape = list(values.shape)
-            new_shape[index] = len(new_axis_values)
-            new_values = zeros(tuple(new_shape), dtype=values.dtype)
             for i in range(len(new_axis_values)):
                 for j in range(len(axis_values) - 1):
                     if isclose(
