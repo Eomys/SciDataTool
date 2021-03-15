@@ -214,19 +214,26 @@ def comp_fftn(values, axes_list, is_real=True):
     axes = []
     shape = []
     is_onereal = False
+    is_twice = False
+    axis_names = [axis.name for axis in axes_list]
     for axis in axes_list:
         if axis.transform == "fft":
             if is_real and axis.name == "freqs":
                 axes.append(axis.index)
                 shape.append(values.shape[axis.index])
                 is_onereal = True
+            elif (
+                is_real
+                and axis.name == "wavenumber"
+                and "freqs" not in axis_names
+                and min(axis.values) >= 0
+            ):
+                axes.append(axis.index)
+                shape.append(values.shape[axis.index])
+                is_twice = True
             else:
                 axes = [axis.index] + axes
                 shape = [values.shape[axis.index]] + shape
-                # is_positive = False
-            # values = apply_along_axis(
-            #     _comp_fft, axis.index, values, is_positive=is_positive
-            # )
     size = array(shape).prod()
     if is_onereal:
         values_FT = rfftn(values, axes=axes)
@@ -235,6 +242,13 @@ def comp_fftn(values, axes_list, is_real=True):
         other_values = delete(values_FT, 0, axis=axes[-1])
         values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
         values_FT2 = 2.0 * fftshift(values_FT, axes=axes[:-1]) / size
+    elif is_twice:
+        values_FT = fftn(values, axes=axes)
+        slice_0 = take(values_FT, 0, axis=axes[-1])
+        slice_0 *= 0.5
+        other_values = delete(values_FT, 0, axis=axes[-1])
+        values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
+        values_FT2 = 2.0 * fftshift(values_FT, axes=axes) / size
     else:
         values_FT = fftn(values, axes=axes)
         values_FT2 = fftshift(values_FT, axes=axes) / size
@@ -277,19 +291,21 @@ def comp_ifftn(values, axes_list, is_real=True):
     axes = []
     shape = []
     is_onereal = False
+    is_half = False
+    axis_names = [axis.name for axis in axes_list]
     for axis in axes_list:
         if axis.transform == "ifft":
             if is_real and axis.name == "time":
                 axes.append(axis.index)
                 shape.append(2 * (values.shape[axis.index] - 1))
                 is_onereal = True
+            elif is_real and axis.name == "angle" and "time" not in axis_names:
+                axes.append(axis.index)
+                shape.append(values.shape[axis.index])
+                is_half = True
             else:
                 axes = [axis.index] + axes
                 shape = [values.shape[axis.index]] + shape
-                # is_positive = False
-            # values = apply_along_axis(
-            #     _comp_ifft, axis.index, values, is_positive=is_positive
-            # )
     size = array(shape).prod()
     if is_onereal:
         values = values * size / 2
@@ -298,9 +314,15 @@ def comp_ifftn(values, axes_list, is_real=True):
         slice_0 *= 2
         other_values = delete(values_shift, 0, axis=axes[-1])
         values = insert(other_values, 0, slice_0, axis=axes[-1])
-        # values = ifftshift(values/2, axes=axes[:-1]) * size
-        # values_IFT = irfftn(values, s=shape, axes=axes)
         values_IFT = irfftn(values, axes=axes)
+    elif is_half:
+        values = values * size / 2
+        values_shift = ifftshift(values, axes=axes[:-1])
+        slice_0 = take(values_shift, 0, axis=axes[-1])
+        slice_0 *= 2
+        other_values = delete(values_shift, 0, axis=axes[-1])
+        values = insert(other_values, 0, slice_0, axis=axes[-1])
+        values_IFT = ifftn(values, axes=axes)
     else:
         values_shift = ifftshift(values, axes=axes) * size
         values_IFT = ifftn(values_shift, axes=axes)

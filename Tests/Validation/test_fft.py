@@ -254,7 +254,7 @@ def test_fft2d():
     result = Field.get_along("wavenumber=[0,4]")
     assert_array_almost_equal(np.array([0, 1, 2, 3, 4]), result["wavenumber"])
     assert_array_almost_equal(
-        np.array([0, -1, 0, 5 / 2, 0]), result["X"]
+        np.array([0, -2, 0, 5, 0]), result["X"]
     )  # Spatial FFT of the cosine, 2 harmonics
 
     result = Field.get_along("freqs=[0,100]", "wavenumber")
@@ -282,7 +282,7 @@ def test_fft2d():
     result = Field.get_along("wavenumber=[0,4]")
     assert_array_almost_equal(np.array([0, 1, 2, 3, 4]), result["wavenumber"])
     assert_array_almost_equal(
-        np.array([0, -1, 0, 5 / 2, 0]), result["X"]
+        np.array([0, -2, 0, 5, 0]), result["X"]
     )  # It is a 1d fft on angle, so there are two equal wavenumbers at +3 and -3
 
     # Warning: following only work for even sized time vector
@@ -666,7 +666,7 @@ def test_fft2d_period():
     result = Field.get_along("wavenumber=[0,10]")
     assert_array_almost_equal(np.array([0, 4, 8]), result["wavenumber"])
     assert_array_almost_equal(
-        np.array([2, 5 / 2, 0]), result["X"]
+        np.array([2, 5, 0]), result["X"]
     )  # FFT spatial at 1 time -> Half of the signal
 
     result = Field.get_along("freqs=[0,100]", "wavenumber=[-10,10]")
@@ -740,7 +740,7 @@ def test_fft2_anti_period():
     time = np.linspace(0, 1 / (2 * f), 10, endpoint=False)
     Time = Data1D(name="time", unit="s", values=time, symmetries={"antiperiod": 4})
     angle = np.linspace(0, 2 * np.pi, 20, endpoint=False)
-
+    
     at, ta = np.meshgrid(angle, time)
     Angle = Data1D(name="angle", unit="rad", values=angle, symmetries={"period": 4})
     field = 5 * np.cos(2 * np.pi * f * ta + at)
@@ -751,30 +751,30 @@ def test_fft2_anti_period():
         values=field,
         unit="m",
     )
-
+    
     result = Field.get_magnitude_along("freqs=[0,100]")
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
     assert_array_almost_equal(np.array([0, 5, 0]), result["X"])
-
+    
     result = Field.get_along("wavenumber=[0,10]")
     assert_array_almost_equal(np.array([0, 4, 8]), result["wavenumber"])
     assert_array_almost_equal(
-        np.array([0, 5 / 2, 0]), result["X"]
+        np.array([0, 5, 0]), result["X"]
     )  # FFT spatial at 1 time -> Half of the signal
-
+    
     result = Field.get_along("freqs=[0,100]", "wavenumber=[-10,10]")
     assert_array_almost_equal(np.array([0, f, 2 * f]), result["freqs"])
     assert_array_almost_equal(np.array([-8, -4, 0, 4, 8]), result["wavenumber"])
     X = np.zeros((3, 5))
     X[1, 3] = 5
-
+    
     assert_array_almost_equal(X, result["X"])
-
+    
     Field_FT = Field.time_to_freq()
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
     )
-
+    
     Field_FT = Field_FT.freq_to_time()
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
