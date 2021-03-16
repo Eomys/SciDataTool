@@ -72,6 +72,11 @@ def get_axis(self, axis, is_real):
             is_smallestperiod = False
             is_oneperiod = False
             is_antiperiod = False
+        # Ignore symmetries if fft axis
+        elif self.name == "freqs" or self.name == "wavenumber":
+            is_smallestperiod = True
+            is_oneperiod = False
+            is_antiperiod = False
         else:
             if self.input_data is not None and not self.is_step:
                 axis_values = axis.get_values(is_smallestperiod=True)
