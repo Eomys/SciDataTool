@@ -162,12 +162,12 @@ def get_axis(self, axis, is_real):
                 and self.extension != "antiperiod"
             ):
                 values = rebuild_symmetries_axis(values, axis.symmetries)
-            if "period" in axis.symmetries:
-                if axis.name != "freqs":
-                    values = values * axis.symmetries["period"]
-            elif "antiperiod" in axis.symmetries:
-                if axis.name != "freqs":
-                    values = values * axis.symmetries["antiperiod"] / 2
+            # if "period" in axis.symmetries:
+            #     if axis.name != "freqs":
+            #         values = values * axis.symmetries["period"]
+            # elif "antiperiod" in axis.symmetries:
+            #     if axis.name != "freqs":
+            #         values = values * axis.symmetries["antiperiod"] / 2
         # Interpolate axis with input data
         if self.input_data is None:
             self.values = values
