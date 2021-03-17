@@ -131,7 +131,7 @@ def plot_2D(
     if color_list is None:
         color_list = COLORS
     if linestyle_list is None:
-        linestyle_list = LINESTYLES
+        linestyle_list = ["solid" for i in range(ndatas)]
     if len(color_list) < ndatas:
         # Repeat colors and change linestyles
         l = len(color_list)

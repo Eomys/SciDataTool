@@ -38,6 +38,7 @@ def plot_4D(
     save_path=None,
     is_show_fig=None,
     is_switch_axes=False,
+    win_title=None,
     font_name="arial",
     font_size_title=12,
     font_size_label=10,
@@ -240,3 +241,6 @@ def plot_4D(
 
     if is_show_fig:
         fig.show()
+    
+    if win_title:
+        fig.canvas.set_window_title(win_title)

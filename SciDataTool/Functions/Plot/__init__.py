@@ -27,6 +27,7 @@ norm_dict = {
 axes_dict = {
     "freqs": "frequency",
     "cr_band": "critical band rate",
+    "z": "axial direction",
 }
 
 fft_dict = {

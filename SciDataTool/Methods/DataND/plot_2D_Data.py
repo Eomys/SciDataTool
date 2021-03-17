@@ -127,7 +127,7 @@ def plot_2D_Data(
         else:
             unit_str = "[" + unit + "]"
         if self.symbol == "Magnitude":
-            ylabel = "Magnitude " + unit_str
+            ylabel = "Magnitude " + r"$[" + unit + "]$"
         else:
             ylabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
         if data_list == []:
@@ -146,7 +146,10 @@ def plot_2D_Data(
                 r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\, [" + unit + "]$"
             )
         else:
-            ylabel = r"$" + self.symbol + "\, [" + unit + "]$"
+            if self.symbol == "Magnitude":
+                ylabel = "Magnitude " + r"$[" + unit + "]$"
+            else:
+                ylabel = r"$" + self.symbol + "\, [" + unit + "]$"
 
     # Extract field and axes
     Xdatas = []
@@ -254,6 +257,10 @@ def plot_2D_Data(
 
     # Remove last coma due to title3 or title4
     title = title.rstrip(", ")
+    
+    # Remove dimless and quotes
+    title = title.replace("[]", "")
+    title = title.replace("'", "")
 
     # Detect how many curves are overlaid, build legend and color lists
     if legend_list == [] and data_list != []:
@@ -266,8 +273,6 @@ def plot_2D_Data(
     # Prepare colors
     if curve_colors is None:
         curve_colors = COLORS
-    if linestyles is None:
-        linestyles = LINESTYLES
     linestyle_list = linestyles
     for i, d in enumerate(data_list2):
         is_overlay = False
