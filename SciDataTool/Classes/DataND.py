@@ -125,6 +125,11 @@ try:
 except ImportError as error:
     plot_3D_Data = error
 
+try:
+    from ..Methods.DataND.export_along import export_along
+except ImportError as error:
+    export_along = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -365,6 +370,17 @@ class DataND(Data):
         )
     else:
         plot_3D_Data = plot_3D_Data
+    # cf Methods.DataND.export_along
+    if isinstance(export_along, ImportError):
+        export_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method export_along: " + str(export_along)
+                )
+            )
+        )
+    else:
+        export_along = export_along
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -462,6 +478,38 @@ class DataND(Data):
             return False
         return True
 
+    def compare(self, other, name="self"):
+        """Compare two objects and return list of differences"""
+
+        if type(other) != type(self):
+            return ["type(" + name + ")"]
+        diff_list = list()
+
+        # Check the properties inherited from Data
+        diff_list.extend(super(DataND, self).compare(other, name=name))
+        if (other.axes is None and self.axes is not None) or (
+            other.axes is not None and self.axes is None
+        ):
+            diff_list.append(name + ".axes None mismatch")
+        elif self.axes is None:
+            pass
+        elif len(other.axes) != len(self.axes):
+            diff_list.append("len(" + name + ".axes)")
+        else:
+            for ii in range(len(other.axes)):
+                diff_list.extend(
+                    self.axes[ii].compare(
+                        other.axes[ii], name=name + ".axes[" + str(ii) + "]"
+                    )
+                )
+        if other._FTparameters != self._FTparameters:
+            diff_list.append(name + ".FTparameters")
+        if not array_equal(other.values, self.values):
+            diff_list.append(name + ".values")
+        if other._is_real != self._is_real:
+            diff_list.append(name + ".is_real")
+        return diff_list
+
     def __sizeof__(self):
         """Return the size in memory of the object (including all subobject)"""
 
@@ -479,11 +527,15 @@ class DataND(Data):
         S += getsizeof(self.is_real)
         return S
 
-    def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+    def as_dict(self, **kwargs):
+        """
+        Convert this object in a json serializable dict (can be use in __init__).
+        Optional keyword input parameter is for internal use only
+        and may prevent json serializability.
+        """
 
         # Get the properties inherited from Data
-        DataND_dict = super(DataND, self).as_dict()
+        DataND_dict = super(DataND, self).as_dict(**kwargs)
         if self.axes is None:
             DataND_dict["axes"] = None
         else:
