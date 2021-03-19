@@ -257,7 +257,7 @@ def plot_2D_Data(
 
     # Remove last coma due to title3 or title4
     title = title.rstrip(", ")
-    
+
     # Remove dimless and quotes
     title = title.replace("[]", "")
     title = title.replace("'", "")

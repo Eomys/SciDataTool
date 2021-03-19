@@ -241,6 +241,6 @@ def plot_4D(
 
     if is_show_fig:
         fig.show()
-    
+
     if win_title:
         fig.canvas.set_window_title(win_title)

@@ -5,6 +5,7 @@ from numpy import min as np_min, max as np_max, abs as np_abs, log10
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.art3d as art3d
 from matplotlib.image import NonUniformImage
+import matplotlib
 
 from SciDataTool.Functions.Plot.init_fig import init_fig
 from SciDataTool.Functions.Plot import COLORS
@@ -147,6 +148,7 @@ def plot_3D(
 
     # Plot
     if type_plot == "stem":
+        cmap = matplotlib.cm.get_cmap(colormap)
         for xi, yi, zi in zip(Xdata, Ydata, Zdata):
             line = art3d.Line3D(
                 *zip((xi, yi, 0), (xi, yi, zi)),
@@ -154,7 +156,7 @@ def plot_3D(
                 marker="o",
                 markersize=3.0,
                 markevery=(1, 1),
-                color=COLORS[0]
+                color=cmap(0)
             )
             ax.add_line(line)
         ax.set_xlim3d(x_max, x_min)
@@ -275,6 +277,6 @@ def plot_3D(
 
     if is_show_fig:
         fig.show()
-        
+
     if win_title:
         fig.canvas.set_window_title(win_title)
