@@ -43,6 +43,7 @@ def plot_4D(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
+    is_grid=False,
 ):
     """Plots a 4D graph
 
@@ -146,7 +147,7 @@ def plot_4D(
 
     if is_same_size:
         Sdata = zeros_like(Zdata)
-        Sdata[Zdata > z_max / 1e4] = 20
+        Sdata[Zdata > z_max / 1e4] = 40
     elif Sdata is None:
         Sdata = 500 * Zdata / z_max
 
@@ -233,6 +234,9 @@ def plot_4D(
             item.set_fontname(font_name)
     ax.title.set_fontsize(font_size_title)
     ax.title.set_fontname(font_name)
+
+    if is_grid:
+        ax.grid()
 
     if save_path is not None:
         save_path = save_path.replace("\\", "/")

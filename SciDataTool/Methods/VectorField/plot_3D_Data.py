@@ -111,6 +111,7 @@ def plot_3D_Data(
             y_max=y_max,
             z_min=z_min,
             z_max=z_max,
+            colormap=colormap,
             is_auto_ticks=is_auto_ticks,
             is_auto_range=is_auto_range,
             is_2D_view=is_2D_view,

@@ -316,6 +316,7 @@ def plot_3D_Data(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
+                is_grid=True,
             )
         else:
             plot_3D(
