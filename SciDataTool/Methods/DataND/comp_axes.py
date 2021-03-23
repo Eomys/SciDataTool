@@ -26,8 +26,9 @@ def comp_axes(self, axes_list):
                 axis_requested.index = index
                 axis_requested.corr_name = axis_name
                 axis_requested.corr_unit = axis.unit
-                # if axis_name in axes_dict.keys():
-                #     axis_requested.transform = axes_dict[axis_name][1]
+                if axis_name in rev_axes_dict.keys():
+                    axis_requested.transform = "fft_axis"
+                    transforms.append("fft")
         if axis_requested.index is None:
             # Check if requested axis is in correspondance dicts
             if axis_name in axes_dict.keys():

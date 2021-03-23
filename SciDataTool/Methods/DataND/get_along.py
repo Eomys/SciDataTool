@@ -29,12 +29,33 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=Tr
     axes_list, transforms = self.comp_axes(axes_list)
     # Get the field
     values = self.get_field(axes_list)
+    # If DataFreq + 1 ifft axis + 1 fft axis: perform ifft on all axes then fft
+    save_transforms = None
+    save_names = None
+    if "ifft" in transforms and "fft" in transforms:
+        save_transforms = [axis.transform for axis in axes_list]
+        save_names = [axis.name for axis in axes_list]
+        for axis in axes_list:
+            if axis.name == "freqs":
+                axis.transform = "ifft"
+                axis.name = "time"
+            elif axis.name == "wavenumber":
+                axis.transform = "ifft"
+                axis.name = "angle"
     # Inverse fft
     if "ifft" in transforms:
         values = comp_ifftn(values, axes_list, is_real=self.is_real)
     # Slices along time/space axes
     values, axes_dict_other = self.extract_slices(values, axes_list)
     # fft
+    if save_transforms is not None:
+        for i, transform in enumerate(save_transforms):
+            axes_list[i].name = save_names[i]
+            if transform == "fft_axis":
+                axes_list[i].transform = "fft"
+                save_transforms[i] = "fft"
+            else:
+                axes_list[i].transform = transform
     if "fft" in transforms:
         values = comp_fftn(values, axes_list, is_real=self.is_real)
     # Slices along fft axes
