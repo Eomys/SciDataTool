@@ -26,6 +26,11 @@ def plot_3D_Data(
     thresh=0.02,
     is_switch_axes=False,
     colormap="RdBu_r",
+    win_title=None,
+    font_name="arial",
+    font_size_title=12,
+    font_size_label=10,
+    font_size_legend=8,
 ):
     """Plots a field as a function of time
 
@@ -106,6 +111,7 @@ def plot_3D_Data(
             y_max=y_max,
             z_min=z_min,
             z_max=z_max,
+            colormap=colormap,
             is_auto_ticks=is_auto_ticks,
             is_auto_range=is_auto_range,
             is_2D_view=is_2D_view,
@@ -119,4 +125,9 @@ def plot_3D_Data(
             is_logscale_z=is_logscale_z,
             thresh=thresh,
             is_switch_axes=is_switch_axes,
+            win_title=win_title,
+            font_name=font_name,
+            font_size_title=font_size_title,
+            font_size_label=font_size_label,
+            font_size_legend=font_size_legend,
         )

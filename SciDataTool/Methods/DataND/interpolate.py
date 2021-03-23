@@ -26,12 +26,18 @@ def interpolate(self, values, axes_list, is_squeeze=True):
     for axis_requested in axes_list:
         if axis_requested.input_data is not None:
             if axis_requested.is_step:
-                values = apply_along_axis(
-                    get_interpolation_step,
-                    axis_requested.index,
+                # values = apply_along_axis(
+                #     get_interpolation_step,
+                #     axis_requested.index,
+                #     values,
+                #     axis_requested.values,
+                #     axis_requested.input_data,
+                # )
+                values = get_interpolation_step(
                     values,
                     axis_requested.values,
                     axis_requested.input_data,
+                    axis_requested.index,
                 )
             else:
                 values = get_interpolation(

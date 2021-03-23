@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions import NormError, UnitError
-from SciDataTool.Functions.conversions import convert, to_dB, to_dBA
+from SciDataTool.Functions.conversions import convert, to_dB, to_dBA, to_noct
 from numpy import apply_along_axis, abs as np_abs
 
 
@@ -30,6 +30,15 @@ def get_magnitude_along(
     values = return_dict[self.symbol]
     # Compute magnitude
     values = np_abs(values)
+    # 1/nth octave band
+    for axis in return_dict["axes_list"]:
+        if axis.name == "freqs" or axis.corr_name == "freqs":
+            index = axis.index
+            if axis.noct is not None:
+                (values, foct) = apply_along_axis(
+                    to_noct, index, values, return_dict["freqs"], noct=axis.noct
+                )
+                return_dict[axis.name] = foct
     # Convert into right unit (apart because of dBA conversion)
     if unit == self.unit or unit == "SI":
         if is_norm:

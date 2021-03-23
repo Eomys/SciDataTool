@@ -59,6 +59,7 @@ class RequestedAxis(FrozenClass):
         is_pattern=False,
         rebuild_indices=None,
         is_step=False,
+        noct=None,
         init_dict=None,
         init_str=None,
     ):
@@ -105,6 +106,8 @@ class RequestedAxis(FrozenClass):
                 rebuild_indices = init_dict["rebuild_indices"]
             if "is_step" in list(init_dict.keys()):
                 is_step = init_dict["is_step"]
+            if "noct" in list(init_dict.keys()):
+                noct = init_dict["noct"]
         # Set the properties (value check and convertion are done in setter)
         self.parent = None
         self.name = name
@@ -121,6 +124,7 @@ class RequestedAxis(FrozenClass):
         self.is_pattern = is_pattern
         self.rebuild_indices = rebuild_indices
         self.is_step = is_step
+        self.noct = noct
 
         # The class is frozen, for now it's impossible to add new properties
         self._freeze()
@@ -172,6 +176,7 @@ class RequestedAxis(FrozenClass):
             + linesep
         )
         RequestedAxis_str += "is_step = " + str(self.is_step) + linesep
+        RequestedAxis_str += "noct = " + str(self.noct) + linesep
         return RequestedAxis_str
 
     def __eq__(self, other):
@@ -207,6 +212,8 @@ class RequestedAxis(FrozenClass):
             return False
         if other.is_step != self.is_step:
             return False
+        if other.noct != self.noct:
+            return False
         return True
 
     def __sizeof__(self):
@@ -229,6 +236,7 @@ class RequestedAxis(FrozenClass):
         S += getsizeof(self.is_pattern)
         S += getsizeof(self.rebuild_indices)
         S += getsizeof(self.is_step)
+        S += getsizeof(self.noct)
         return S
 
     def as_dict(self):
@@ -260,6 +268,7 @@ class RequestedAxis(FrozenClass):
         else:
             RequestedAxis_dict["rebuild_indices"] = self.rebuild_indices.tolist()
         RequestedAxis_dict["is_step"] = self.is_step
+        RequestedAxis_dict["noct"] = self.noct
         # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
@@ -281,6 +290,7 @@ class RequestedAxis(FrozenClass):
         self.is_pattern = None
         self.rebuild_indices = None
         self.is_step = None
+        self.noct = None
 
     def _get_name(self):
         """getter of name"""
@@ -554,5 +564,23 @@ class RequestedAxis(FrozenClass):
         doc=u"""To indicate if the pattern axis is step (for interpolation)
 
         :Type: bool
+        """,
+    )
+
+    def _get_noct(self):
+        """getter of noct"""
+        return self._noct
+
+    def _set_noct(self, value):
+        """setter of noct"""
+        check_var("noct", value, "int")
+        self._noct = value
+
+    noct = property(
+        fget=_get_noct,
+        fset=_set_noct,
+        doc=u"""To store 1/nth octave band
+
+        :Type: int
         """,
     )

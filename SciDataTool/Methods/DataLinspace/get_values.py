@@ -39,6 +39,10 @@ def get_values(
     if unit != "SI" and unit != self.unit:
         values = convert(values, self.unit, unit)
 
+    # Ignore symmetries if fft axis
+    if self.name == "freqs" or self.name == "wavenumber":
+        is_smallestperiod = True
+
     # Rebuild symmetries
     if is_smallestperiod:
         return values

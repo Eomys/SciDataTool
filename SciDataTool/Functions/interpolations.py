@@ -11,6 +11,7 @@ from numpy import (
     abs as np_abs,
     interp,
     where,
+    zeros,
 )
 from scipy.interpolate import interp1d
 
@@ -65,7 +66,7 @@ def get_interpolation(values, axis_values, new_axis_values, index):
     Parameters
     ----------
     values: ndarray
-        1Darray of a field along one axis
+        array of a field
     axis_values: list
         values of the original axis
     new_axis_values: list
@@ -88,7 +89,6 @@ def get_interpolation(values, axis_values, new_axis_values, index):
     elif isin(
         new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
-
         indice_take = where(isin(axis_values, new_axis_values))[0]
 
         return take(
@@ -102,12 +102,12 @@ def get_interpolation(values, axis_values, new_axis_values, index):
         return f(new_axis_values)
 
 
-def get_interpolation_step(values, axis_values, new_axis_values):
+def get_interpolation_step(values, axis_values, new_axis_values, index):
     """Returns the interpolated field along one axis, given the new axis
     Parameters
     ----------
     values: ndarray
-        1Darray of a field along one axis
+        array of a field
     axis_values: list
         values of the original axis
     new_axis_values: list
@@ -128,30 +128,50 @@ def get_interpolation_step(values, axis_values, new_axis_values):
     elif isin(
         new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
-        return values[isin(axis_values, new_axis_values)]
+        indice_take = where(isin(axis_values, new_axis_values))[0]
+
+        return take(
+            values,
+            indice_take,
+            axis=index,
+        )
+
     else:
-        if len(axis_values) == 1:
-            return array([values[0] for i in range(len(new_axis_values))])
+        new_shape = list(values.shape)
+        new_shape[index] = len(new_axis_values)
+        new_values = zeros(tuple(new_shape), dtype=values.dtype)
+        if len(axis_values) == 1 or all(axis_values == axis_values[0]):
+            for i in range(len(new_axis_values)):
+                new_values[(slice(None),) * index + (i,)] = take(values, 0, axis=index)
+            return new_values
         else:
-            new_values = []
             for i in range(len(new_axis_values)):
                 for j in range(len(axis_values) - 1):
-                    if (
-                        new_axis_values[i] == axis_values[j]
-                        and new_axis_values[i] == axis_values[j + 1]
-                    ):
-                        new_values.append((values[j] + values[j + 1]) / 2)
+                    if isclose(
+                        new_axis_values[i], axis_values[j], rtol=1e-03
+                    ) and isclose(new_axis_values[i], axis_values[j + 1], rtol=1e-03):
+                        new_values[(slice(None),) * index + (i,)] = (
+                            take(values, j, axis=index)
+                            + take(values, j + 1, axis=index)
+                        ) / 2
                         break
                     elif (
                         new_axis_values[i] >= axis_values[j]
                         and new_axis_values[i] < axis_values[j + 1]
+                        and not isclose(
+                            new_axis_values[i], axis_values[j + 1], rtol=1e-03
+                        )
                     ):
-                        new_values.append(values[j])
+                        new_values[(slice(None),) * index + (i,)] = take(
+                            values, j, axis=index
+                        )
                         break
                     elif (
                         j == len(axis_values) - 2
                         and new_axis_values[i] == axis_values[j + 1]
                     ):
-                        new_values.append(values[j + 1])
+                        new_values[(slice(None),) * index + (i,)] = take(
+                            values, j + 1, axis=index
+                        )
                         break
             return array(new_values)

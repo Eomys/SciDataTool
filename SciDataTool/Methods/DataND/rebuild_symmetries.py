@@ -55,6 +55,11 @@ def rebuild_symmetries(
                 is_smallestperiod = False
                 is_oneperiod = True
                 is_antiperiod = False
+            # Ignore symmetries if fft axis
+            elif axis.name == "freqs" or axis.name == "wavenumber":
+                is_smallestperiod = True
+                is_oneperiod = False
+                is_antiperiod = False
             else:
                 is_smallestperiod = False
                 is_oneperiod = False

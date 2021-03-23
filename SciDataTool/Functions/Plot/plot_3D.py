@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from numpy import min as np_min, max as np_max
+from numpy import min as np_min, max as np_max, abs as np_abs, log10
 
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.art3d as art3d
 from matplotlib.image import NonUniformImage
+import matplotlib
 
 from SciDataTool.Functions.Plot.init_fig import init_fig
 from SciDataTool.Functions.Plot import COLORS
@@ -38,6 +39,7 @@ def plot_3D(
     save_path=None,
     is_show_fig=None,
     is_switch_axes=False,
+    win_title=None,
     font_name="arial",
     font_size_title=12,
     font_size_label=10,
@@ -122,6 +124,13 @@ def plot_3D(
     if z_max is None:
         z_max = np_max(Zdata)
 
+    # Check logscale on z axis
+    if is_logscale_z:
+        Zdata = 10 * log10(np_abs(Zdata))
+        clb_format = "%0.0f"
+    else:
+        clb_format = "%.4g"
+
     # Switch axes
     if is_switch_axes:
         Xdata, Ydata = Ydata, Xdata
@@ -139,6 +148,7 @@ def plot_3D(
 
     # Plot
     if type_plot == "stem":
+        cmap = matplotlib.cm.get_cmap(colormap)
         for xi, yi, zi in zip(Xdata, Ydata, Zdata):
             line = art3d.Line3D(
                 *zip((xi, yi, 0), (xi, yi, zi)),
@@ -146,7 +156,7 @@ def plot_3D(
                 marker="o",
                 markersize=3.0,
                 markevery=(1, 1),
-                color=COLORS[0]
+                color=cmap(0)
             )
             ax.add_line(line)
         ax.set_xlim3d(x_max, x_min)
@@ -204,14 +214,7 @@ def plot_3D(
         )
         im.set_data(Xdata, Ydata, Zdata.T)
         ax.images.append(im)
-        # c = ax.imshow(
-        #     Zdata.T,
-        #     cmap=colormap,
-        #     extent=(x_min, x_max, y_max, y_min),
-        #     aspect="auto",
-        #     interpolation="spline16",
-        # )
-        clb = fig.colorbar(im, ax=ax)
+        clb = fig.colorbar(im, ax=ax, format=clb_format)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
         for l in clb.ax.yaxis.get_ticklabels():
@@ -274,3 +277,6 @@ def plot_3D(
 
     if is_show_fig:
         fig.show()
+
+    if win_title:
+        fig.canvas.set_window_title(win_title)

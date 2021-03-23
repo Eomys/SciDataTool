@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions import UnitError
-from SciDataTool.Functions.fft_functions import comp_fft_freqs, comp_fft_time
+from SciDataTool.Functions.fft_functions import (
+    comp_fft_freqs,
+    comp_fft_time,
+    comp_nthoctave_axis,
+)
 from numpy import (
     pi,
     log10,
@@ -16,8 +20,14 @@ from numpy import (
     nan,
     isnan,
     abs as np_abs,
+    sum as np_sum,
     angle as np_angle,
     where,
+    argwhere,
+    array,
+    take,
+    zeros,
+    floor,
 )
 
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"
@@ -206,7 +216,7 @@ def to_dBA(values, freqs, unit, ref_value=1.0):
     return dB_to_dBA(values, freqs)
 
 
-def dB_to_dBA(values, freqs):
+def dB_to_dBA(values, freqs, noct=None):
     """Converts values from dB into dBA (requires frequency vector)
 
     Parameters
@@ -219,27 +229,150 @@ def dB_to_dBA(values, freqs):
     -------
     ndarray of the converted field
     """
-    freq2 = square(freqs)
-    freq2[freq2 == 0] = nan
-    RA = (
-        12200.0 ** 2
-        * freq2 ** 2
-        / (
-            (freq2 + 20.6 ** 2)
-            * sqrt((freq2 + 107.7 ** 2) * (freq2 + 737.0 ** 2))
-            * (freq2 + 12200.0 ** 2)
+    if noct is not None:
+        freqs_ref = [
+            12.5,
+            16,
+            20,
+            25,
+            31.5,
+            40,
+            50,
+            63,
+            80,
+            100,
+            125,
+            160,
+            200,
+            250,
+            315,
+            400,
+            500,
+            630,
+            800,
+            1000,
+            1250,
+            1600,
+            2000,
+            2500,
+            3150,
+            4000,
+            5000,
+            6300,
+            8000,
+            10000,
+            12500,
+            16000,
+            20000,
+        ]
+        Aweight = [
+            -63.4,
+            -56.7,
+            -50.5,
+            -44.7,
+            -39.4,
+            -34.6,
+            -30.2,
+            -26.2,
+            -22.5,
+            -19.1,
+            -16.1,
+            -13.4,
+            -10.9,
+            -8.6,
+            -6.6,
+            -4.8,
+            -3.2,
+            -1.9,
+            -0.8,
+            0,
+            0.6,
+            1,
+            1.2,
+            1.3,
+            1.2,
+            1,
+            0.5,
+            -0.1,
+            -1.1,
+            -2.5,
+            -4.3,
+            -6.6,
+            -9.3,
+        ]
+        mask = argwhere(freqs in freqs_ref)
+        Aweight = take(Aweight, mask)
+    else:
+        freq2 = square(freqs)
+        freq2[freq2 == 0] = nan
+        RA = (
+            12200.0 ** 2
+            * freq2 ** 2
+            / (
+                (freq2 + 20.6 ** 2)
+                * sqrt((freq2 + 107.7 ** 2) * (freq2 + 737.0 ** 2))
+                * (freq2 + 12200.0 ** 2)
+            )
         )
-    )
-    Aweight = 2.0 + 20.0 * log10(RA)
-    Aweight[isnan(Aweight)] = -100  # replacing NaN by -100 dB
-    Aweight[
-        values <= 0
-    ] = 0  # avoiding to increase dB in dBA at frequencies where noise is already null
+        Aweight = 2.0 + 20.0 * log10(RA)
+        Aweight[isnan(Aweight)] = -100  # replacing NaN by -100 dB
+        Aweight[
+            values <= 0
+        ] = 0  # avoiding to increase dB in dBA at frequencies where noise is already null
     try:
         values += Aweight
         return values
     except:
         raise UnitError("ERROR: dBA conversion only available for 1D fft")
+
+
+def to_noct(values, freqs, noct=3):
+    """Converts values into 1/nth octave band (requires frequency vector)
+
+    Parameters
+    ----------
+    values: array
+        Values of the field to convert (must be 1D)
+    freqs: array
+        Frequency vector
+    noct: int
+        Requested octave band
+    Returns
+    -------
+    ndarray of the converted field
+    """
+    # Compute the 1/n octave axis
+    f_oct = comp_nthoctave_axis(noct, freqs[0], freqs[-1])
+    # Compute sum over each interval
+    freqbds = [f / (2 ** (1.0 / (2.0 * noct))) for f in f_oct]
+    freqbds.append(freqbds[-1])
+    # freqbds = [0] + f_oct
+    values_oct = []
+    N = zeros(len(freqbds) - 1)
+    for i in range(len(freqbds) - 1):
+        f1 = freqbds[i]
+        f2 = freqbds[i + 1]
+        indices = argwhere((freqs >= f1) & (freqs <= f2))
+        N[i] = len(indices)
+        if len(indices) == 0:
+            values_oct.append(0)
+        else:
+            values2 = take(values, indices)
+            if np_sum(values2) == 0:
+                values_oct.append(0)
+            else:
+                values_oct.append(sqrt(np_sum(values2 ** 2)))
+    values = array(values_oct)
+    # Apply bin correction factor for when centre frequencies are not integer
+    # multiples of the bandwicth (BW)
+    df_fft = freqs[1] - freqs[0]
+    BW = zeros(len(freqbds) - 1)
+    for i in range(len(freqbds) - 1):
+        BW[i] = freqbds[i + 1] - freqbds[i]
+    for i in range(len(freqbds) - 1):
+        if (N[i] != 0) and (floor(BW[i] / df_fft) <= N[i]):
+            values[i] = values[i] * (BW[i] / (df_fft * N[i])) ** 0.5
+    return [values, array(f_oct)]
 
 
 def xyz_to_rphiz(values):

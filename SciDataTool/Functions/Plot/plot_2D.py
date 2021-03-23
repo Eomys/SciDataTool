@@ -131,7 +131,7 @@ def plot_2D(
     if color_list is None:
         color_list = COLORS
     if linestyle_list is None:
-        linestyle_list = LINESTYLES
+        linestyle_list = ["solid" for i in range(ndatas)]
     if len(color_list) < ndatas:
         # Repeat colors and change linestyles
         l = len(color_list)
@@ -158,7 +158,7 @@ def plot_2D(
         # Repeat linewidths
         m = int(ceil(ndatas / len(linewidth_list)))
         linewidth_list = linewidth_list * m
-    if 1 == len(legend_list) < ndatas:
+    if 1 == len(legend_list) < ndatas or len(legend_list) == 0:
         # Set no legend for all curves
         legend_list = list(repeat("", ndatas))
         no_legend = True

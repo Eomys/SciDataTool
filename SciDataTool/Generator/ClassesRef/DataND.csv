@@ -21,3 +21,4 @@ is_real,,To indicate if the signal is real (use only positive frequencies),,bool
 ,,,,,,,,,,,get_data_along,,,,
 ,,,,,,,,,,,plot_2D_Data,,,,
 ,,,,,,,,,,,plot_3D_Data,,,,
+,,,,,,,,,,,export_along,,,,

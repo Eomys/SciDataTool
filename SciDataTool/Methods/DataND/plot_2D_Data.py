@@ -109,6 +109,9 @@ def plot_2D_Data(
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]
 
+    if color_list == []:
+        color_list = COLORS
+
     # Set unit
     if unit == "SI":
         unit = self.unit
@@ -124,7 +127,7 @@ def plot_2D_Data(
         else:
             unit_str = "[" + unit + "]"
         if self.symbol == "Magnitude":
-            ylabel = "Magnitude " + unit_str
+            ylabel = "Magnitude " + r"$[" + unit + "]$"
         else:
             ylabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
         if data_list == []:
@@ -143,7 +146,10 @@ def plot_2D_Data(
                 r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\, [" + unit + "]$"
             )
         else:
-            ylabel = r"$" + self.symbol + "\, [" + unit + "]$"
+            if self.symbol == "Magnitude":
+                ylabel = "Magnitude " + r"$[" + unit + "]$"
+            else:
+                ylabel = r"$" + self.symbol + "\, [" + unit + "]$"
 
     # Extract field and axes
     Xdatas = []
@@ -252,6 +258,10 @@ def plot_2D_Data(
     # Remove last coma due to title3 or title4
     title = title.rstrip(", ")
 
+    # Remove dimless and quotes
+    title = title.replace("[]", "")
+    title = title.replace("'", "")
+
     # Detect how many curves are overlaid, build legend and color lists
     if legend_list == [] and data_list != []:
         legend_list = ["[" + d.name + "] " for d in data_list2]
@@ -260,13 +270,10 @@ def plot_2D_Data(
     else:
         legend_list = ["[" + leg + "] " for leg in legend_list]
     legends = []
-    colors = []
-    linestyle_list = []
     # Prepare colors
     if curve_colors is None:
         curve_colors = COLORS
-    if linestyles is None:
-        linestyles = LINESTYLES
+    linestyle_list = linestyles
     for i, d in enumerate(data_list2):
         is_overlay = False
         for axis in axes_list:
@@ -283,29 +290,28 @@ def plot_2D_Data(
                     unit = norm_dict[axis.unit]
                 else:
                     unit = axis.unit
-                legends += [
-                    legend_list[i]
-                    + axis.name
-                    + "="
-                    + "%.2g" % axis.values.tolist()[j]
-                    + " "
-                    + unit
-                    for j in range(n_curves)
-                ]
-                colors += [
-                    phase_colors[(i * n_curves + j) % len(phase_colors)]
-                    for j in range(n_curves)
-                ]
-                linestyle_list += [linestyles[i] for j in range(n_curves)]
+                if len(d.axes[axis.index].get_values()) > 1:
+                    legends += [
+                        legend_list[i]
+                        + axis.name
+                        + "="
+                        + axis.values.tolist()[j]
+                        + " "
+                        + unit
+                        if isinstance(axis.values.tolist()[j], str)
+                        else legend_list[i]
+                        + axis.name
+                        + "="
+                        + "%.2g" % axis.values.tolist()[j]
+                        + " "
+                        + unit
+                        for j in range(n_curves)
+                    ]
+                else:
+                    legends += [legend_list[i]]
 
         if not is_overlay:
             legends += [legend_list[i]]
-            colors += [curve_colors[i]]
-            linestyle_list += [linestyles[i]]
-
-    # Set colors_list to colors that has just been built
-    if color_list is None:
-        color_list = colors
 
     # Split Ydatas if the plot overlays several curves
     if is_overlay:

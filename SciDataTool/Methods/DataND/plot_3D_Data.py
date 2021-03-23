@@ -33,6 +33,11 @@ def plot_3D_Data(
     thresh=0.02,
     is_switch_axes=False,
     colormap="RdBu_r",
+    win_title=None,
+    font_name="arial",
+    font_size_title=12,
+    font_size_label=10,
+    font_size_legend=8,
 ):
     """Plots a field as a function of two axes
 
@@ -120,7 +125,10 @@ def plot_3D_Data(
                 r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\, [" + unit + "]$"
             )
         else:
-            zlabel = r"$" + self.symbol + "\, [" + unit + "]$"
+            if self.symbol == "Magnitude":
+                zlabel = "Magnitude " + r"$[" + unit + "]$"
+            else:
+                zlabel = r"$" + self.symbol + "\, [" + unit + "]$"
         title1 = "Surface plot of " + self.name.lower() + " "
 
     # Extract field and axes
@@ -303,6 +311,12 @@ def plot_3D_Data(
                 is_logscale_z=is_logscale_z,
                 is_switch_axes=is_switch_axes,
                 colormap=colormap,
+                win_title=win_title,
+                font_name=font_name,
+                font_size_title=font_size_title,
+                font_size_label=font_size_label,
+                font_size_legend=font_size_legend,
+                is_grid=True,
             )
         else:
             plot_3D(
@@ -331,6 +345,11 @@ def plot_3D_Data(
                 is_logscale_z=is_logscale_z,
                 is_switch_axes=is_switch_axes,
                 colormap=colormap,
+                win_title=win_title,
+                font_name=font_name,
+                font_size_title=font_size_title,
+                font_size_label=font_size_label,
+                font_size_legend=font_size_legend,
             )
     else:
         if is_2D_view:
@@ -360,6 +379,11 @@ def plot_3D_Data(
                 is_logscale_z=is_logscale_z,
                 is_switch_axes=is_switch_axes,
                 colormap=colormap,
+                win_title=win_title,
+                font_name=font_name,
+                font_size_title=font_size_title,
+                font_size_label=font_size_label,
+                font_size_legend=font_size_legend,
             )
         else:
             plot_3D(
@@ -387,4 +411,9 @@ def plot_3D_Data(
                 is_logscale_z=is_logscale_z,
                 is_switch_axes=is_switch_axes,
                 colormap=colormap,
+                win_title=win_title,
+                font_name=font_name,
+                font_size_title=font_size_title,
+                font_size_label=font_size_label,
+                font_size_legend=font_size_legend,
             )

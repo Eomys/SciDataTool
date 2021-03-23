@@ -16,6 +16,7 @@ from numpy import (
     pi,
     zeros,
     exp,
+    ceil,
     iscomplex,
     concatenate,
     conjugate,
@@ -92,72 +93,88 @@ def comp_fft_time(freqs, is_angle, is_real):
     return time.tolist()
 
 
-# def comp_nthoctave_axis(noct, freqmin, freqmax):
-#     """Computes the frequency vector between freqmin and freqmax for the 1/n octave
-#     Parameters
-#     ----------
-#     noct: int
-#         kind of octave band (1/3, etc)
-#     freqmin: float
-#         minimum frequency
-#     freqmax: float
-#         maximum frequency
-#     Returns
-#     -------
-#     Frequency vector
-#     """
-#     if noct == 3:
-#         table = [
-#             10,
-#             12.5,
-#             16,
-#             20,
-#             25,
-#             31.5,
-#             40,
-#             50,
-#             63,
-#             80,
-#             100,
-#             125,
-#             160,
-#             200,
-#             250,
-#             315,
-#             400,
-#             500,
-#             630,
-#             800,
-#             1000,
-#             1250,
-#             1600,
-#             2000,
-#             2500,
-#             3150,
-#             4000,
-#             5000,
-#             6300,
-#             8000,
-#             10000,
-#             12500,
-#             16000,
-#             20000,
-#         ]
-#         f_oct = [f for f in table if (f >= freqmin and f <= freqmax)]
-#     else:
-#         f0 = 1000
-#         f_oct = [f0]
-#         i = 1
-#         while f_oct[-1] <= freqmax:
-#             f_oct.append(f0 * 2.0 ** (i / noct))
-#             i = i + 1
-#         f_oct = f_oct[:-2]
-#         i = -1
-#         while f_oct[0] > freqmin:
-#             f_oct.insert(0, f0 * 2.0 ** (i / noct))
-#             i = i - 1
-#         f_oct = f_oct[1:]
-#     return f_oct
+def comp_nthoctave_axis(noct, freqmin, freqmax):
+    """Computes the frequency vector between freqmin and freqmax for the 1/n octave
+    Parameters
+    ----------
+    noct: int
+        kind of octave band (1/3, etc)
+    freqmin: float
+        minimum frequency
+    freqmax: float
+        maximum frequency
+    Returns
+    -------
+    Frequency vector
+    """
+    if noct == 3:
+        table = [
+            12.5,
+            16,
+            20,
+            25,
+            31.5,
+            40,
+            50,
+            63,
+            80,
+            100,
+            125,
+            160,
+            200,
+            250,
+            315,
+            400,
+            500,
+            630,
+            800,
+            1000,
+            1250,
+            1600,
+            2000,
+            2500,
+            3150,
+            4000,
+            5000,
+            6300,
+            8000,
+            10000,
+            12500,
+            16000,
+            20000,
+        ]
+        f_oct = [f for f in table if (f >= freqmin and f <= freqmax)]
+    elif noct == 1:
+        table = [
+            16,
+            31.5,
+            63,
+            125,
+            250,
+            500,
+            1000,
+            2000,
+            4000,
+            8000,
+            16000,
+        ]
+        f_oct = [f for f in table if (f >= freqmin and f <= freqmax)]
+    else:
+        f0 = 1000
+        f_oct = [f0]
+        i = 1
+        while f_oct[-1] <= freqmax:
+            f = f0 * 2.0 ** (i / noct)
+            f_oct.append(0.5 * ceil(2.0 * f))
+            i = i + 1
+        f_oct = f_oct[:-1]
+        i = -1
+        while f_oct[0] > freqmin:
+            f = f0 * 2.0 ** (i / noct)
+            f_oct = [0.5 * ceil(2.0 * f)] + f_oct
+            i = i - 1
+        f_oct = f_oct[1:]
+    return f_oct
 
 
 # def _comp_fft(values, is_positive=False):
@@ -197,19 +214,26 @@ def comp_fftn(values, axes_list, is_real=True):
     axes = []
     shape = []
     is_onereal = False
+    is_twice = False
+    axis_names = [axis.name for axis in axes_list]
     for axis in axes_list:
         if axis.transform == "fft":
             if is_real and axis.name == "freqs":
                 axes.append(axis.index)
                 shape.append(values.shape[axis.index])
                 is_onereal = True
+            elif (
+                is_real
+                and axis.name == "wavenumber"
+                and "freqs" not in axis_names
+                and min(axis.values) >= 0
+            ):
+                axes.append(axis.index)
+                shape.append(values.shape[axis.index])
+                is_twice = True
             else:
                 axes = [axis.index] + axes
                 shape = [values.shape[axis.index]] + shape
-                # is_positive = False
-            # values = apply_along_axis(
-            #     _comp_fft, axis.index, values, is_positive=is_positive
-            # )
     size = array(shape).prod()
     if is_onereal:
         values_FT = rfftn(values, axes=axes)
@@ -218,6 +242,13 @@ def comp_fftn(values, axes_list, is_real=True):
         other_values = delete(values_FT, 0, axis=axes[-1])
         values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
         values_FT2 = 2.0 * fftshift(values_FT, axes=axes[:-1]) / size
+    elif is_twice:
+        values_FT = fftn(values, axes=axes)
+        slice_0 = take(values_FT, 0, axis=axes[-1])
+        slice_0 *= 0.5
+        other_values = delete(values_FT, 0, axis=axes[-1])
+        values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
+        values_FT2 = 2.0 * fftshift(values_FT, axes=axes) / size
     else:
         values_FT = fftn(values, axes=axes)
         values_FT2 = fftshift(values_FT, axes=axes) / size
@@ -260,19 +291,21 @@ def comp_ifftn(values, axes_list, is_real=True):
     axes = []
     shape = []
     is_onereal = False
+    is_half = False
+    axis_names = [axis.name for axis in axes_list]
     for axis in axes_list:
         if axis.transform == "ifft":
             if is_real and axis.name == "time":
                 axes.append(axis.index)
                 shape.append(2 * (values.shape[axis.index] - 1))
                 is_onereal = True
+            elif is_real and axis.name == "angle" and "time" not in axis_names:
+                axes.append(axis.index)
+                shape.append(values.shape[axis.index])
+                is_half = True
             else:
                 axes = [axis.index] + axes
                 shape = [values.shape[axis.index]] + shape
-                # is_positive = False
-            # values = apply_along_axis(
-            #     _comp_ifft, axis.index, values, is_positive=is_positive
-            # )
     size = array(shape).prod()
     if is_onereal:
         values = values * size / 2
@@ -281,9 +314,15 @@ def comp_ifftn(values, axes_list, is_real=True):
         slice_0 *= 2
         other_values = delete(values_shift, 0, axis=axes[-1])
         values = insert(other_values, 0, slice_0, axis=axes[-1])
-        # values = ifftshift(values/2, axes=axes[:-1]) * size
-        # values_IFT = irfftn(values, s=shape, axes=axes)
         values_IFT = irfftn(values, axes=axes)
+    elif is_half:
+        values = values * size / 2
+        values_shift = ifftshift(values, axes=axes[:-1])
+        slice_0 = take(values_shift, 0, axis=axes[-1])
+        slice_0 *= 2
+        other_values = delete(values_shift, 0, axis=axes[-1])
+        values = insert(other_values, 0, slice_0, axis=axes[-1])
+        values_IFT = ifftn(values, axes=axes)
     else:
         values_shift = ifftshift(values, axes=axes) * size
         values_IFT = ifftn(values_shift, axes=axes)

@@ -6,7 +6,7 @@ from SciDataTool.Functions.conversions import pol2cart
 from SciDataTool.Functions import AxisError
 
 
-def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True):
     """Returns the list of the cartesian (comp_x,comp_y,comp_z) components of the field, using conversions and symmetries if needed.
     Parameters
     ----------
@@ -31,10 +31,14 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     if "radial" in self.components.keys() and "tangential" in self.components.keys():
         # Extract from DataND
         resultr = self.components["radial"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args,
+            unit=unit,
+            is_norm=is_norm,
+            axis_data=axis_data,
+            is_squeeze=is_squeeze,
         )
         resultphi = self.components["tangential"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_r = resultr[self.components["radial"].symbol]
         field_c = resultphi[self.components["tangential"].symbol]
@@ -48,12 +52,20 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         (field_x, field_y) = pol2cart(field_r, field_c, phi)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["axial"].symbol]
         elif "comp_z" in self.components.keys():
             resultz = self.components["comp_z"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
@@ -63,25 +75,37 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     elif "comp_x" in self.components.keys():
         resultx = self.components["comp_x"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_x = resultx[self.components["comp_x"].symbol]
         shape = field_x.shape
         if "comp_y" in self.components.keys():
             resulty = self.components["comp_y"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_y = resulty[self.components["comp_y"].symbol]
         else:
             field_y = zeros(shape)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["axial"].symbol]
         elif "comp_z" in self.components.keys():
             resultz = self.components["comp_z"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
@@ -91,25 +115,37 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     elif "comp_y" in self.components.keys():
         resulty = self.components["comp_y"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_y = resultphi[self.components["comp_y"].symbol]
         shape = field_y.shape
         if "comp_x" in self.components.keys():
             resultx = self.components["comp_x"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_x = resultphi[self.components["comp_x"].symbol]
         else:
             field_x = zeros(shape)
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["axial"].symbol]
         elif "comp_z" in self.components.keys():
             resultz = self.components["comp_z"].get_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+                is_squeeze=is_squeeze,
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
@@ -119,7 +155,7 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     elif "axial" in self.components.keys():
         resultz = self.components["axial"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_z = resultz[self.components["axial"].symbol]
         shape = field_z.shape
@@ -130,7 +166,7 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
 
     elif "comp_z" in self.components.keys():
         resultz = self.components["comp_z"].get_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            args, unit=unit, is_norm=is_norm, axis_data=axis_data, is_squeeze=is_squeeze
         )
         field_z = resultz[self.components["comp_z"].symbol]
         shape = field_z.shape
