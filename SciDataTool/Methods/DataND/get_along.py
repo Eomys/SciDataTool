@@ -45,9 +45,7 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=Tr
     # Inverse fft
     if "ifft" in transforms:
         values = comp_ifftn(values, axes_list, is_real=self.is_real)
-    # Slices along time/space axes
-    values, axes_dict_other = self.extract_slices(values, axes_list)
-    # fft
+    # Prepare fft in ifft/fft case
     if save_transforms is not None:
         for i, transform in enumerate(save_transforms):
             axes_list[i].name = save_names[i]
@@ -56,6 +54,9 @@ def get_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=Tr
                 save_transforms[i] = "fft"
             else:
                 axes_list[i].transform = transform
+    # Slices along time/space axes
+    values, axes_dict_other = self.extract_slices(values, axes_list)
+    # fft
     if "fft" in transforms:
         values = comp_fftn(values, axes_list, is_real=self.is_real)
     # Slices along fft axes
