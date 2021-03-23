@@ -9,6 +9,7 @@ unit_dict = {
     "distance": "m",
     "loadcases": "",
     "eccentricity": "%",
+    "frequency": "Hz",
     "order": "",
     "cr_band": "Bark",
 }
