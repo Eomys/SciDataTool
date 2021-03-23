@@ -114,7 +114,7 @@ def find_num_value(prop_dict, is_int_return):
 
 
 def is_type_list(type_name):
-    """Check if the type_name is a list of pyleecan objects "[class_name]"
+    """Check if the type_name is a list of SciDataTool objects "[class_name]"
     Parameters
     ----------
     type_name : str
@@ -122,13 +122,13 @@ def is_type_list(type_name):
     Returns
     -------
     is_list : bool
-        True if the type is a list of pyleecan objects
+        True if the type is a list of SciDataTool objects
     """
     return type_name[0] == "[" and type_name[-1] == "]"
 
 
 def is_type_dict(type_name):
-    """Check if the type_name is a dict of pyleecan objects "{class_name}"
+    """Check if the type_name is a dict of SciDataTool objects "{class_name}"
     Parameters
     ----------
     type_name : str
@@ -136,7 +136,7 @@ def is_type_dict(type_name):
     Returns
     -------
     is_list : bool
-        True if the type is a dict of pyleecan objects
+        True if the type is a dict of SciDataTool objects
     """
     return type_name[0] == "{" and type_name[-1] == "}"
 

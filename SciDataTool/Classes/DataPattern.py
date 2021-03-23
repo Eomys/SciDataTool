@@ -5,6 +5,7 @@
 """
 
 from os import linesep
+from sys import getsizeof
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -15,14 +16,14 @@ from .Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.DataPattern.get_values import get_values
-except ImportError as error:
-    get_values = error
-
-try:
     from ..Methods.DataPattern.get_length import get_length
 except ImportError as error:
     get_length = error
+
+try:
+    from ..Methods.DataPattern.get_values import get_values
+except ImportError as error:
+    get_values = error
 
 try:
     from ..Methods.DataPattern.has_period import has_period
@@ -40,17 +41,6 @@ class DataPattern(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.DataPattern.get_values
-    if isinstance(get_values, ImportError):
-        get_values = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataPattern method get_values: " + str(get_values)
-                )
-            )
-        )
-    else:
-        get_values = get_values
     # cf Methods.DataPattern.get_length
     if isinstance(get_length, ImportError):
         get_length = property(
@@ -62,6 +52,17 @@ class DataPattern(Data):
         )
     else:
         get_length = get_length
+    # cf Methods.DataPattern.get_values
+    if isinstance(get_values, ImportError):
+        get_values = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataPattern method get_values: " + str(get_values)
+                )
+            )
+        )
+    else:
+        get_values = get_values
     # cf Methods.DataPattern.has_period
     if isinstance(has_period, ImportError):
         has_period = property(
@@ -207,11 +208,62 @@ class DataPattern(Data):
             return False
         return True
 
-    def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+    def compare(self, other, name="self"):
+        """Compare two objects and return list of differences"""
+
+        if type(other) != type(self):
+            return ["type(" + name + ")"]
+        diff_list = list()
+
+        # Check the properties inherited from Data
+        diff_list.extend(super(DataPattern, self).compare(other, name=name))
+        if other._rebuild_indices != self._rebuild_indices:
+            diff_list.append(name + ".rebuild_indices")
+        if other._unique_indices != self._unique_indices:
+            diff_list.append(name + ".unique_indices")
+        if other._is_step != self._is_step:
+            diff_list.append(name + ".is_step")
+        if not array_equal(other.values, self.values):
+            diff_list.append(name + ".values")
+        if other._is_components != self._is_components:
+            diff_list.append(name + ".is_components")
+        if other._symmetries != self._symmetries:
+            diff_list.append(name + ".symmetries")
+        if not array_equal(other.values_whole, self.values_whole):
+            diff_list.append(name + ".values_whole")
+        return diff_list
+
+    def __sizeof__(self):
+        """Return the size in memory of the object (including all subobject)"""
+
+        S = 0  # Full size of the object
+
+        # Get size of the properties inherited from Data
+        S += super(DataPattern, self).__sizeof__()
+        if self.rebuild_indices is not None:
+            for value in self.rebuild_indices:
+                S += getsizeof(value)
+        if self.unique_indices is not None:
+            for value in self.unique_indices:
+                S += getsizeof(value)
+        S += getsizeof(self.is_step)
+        S += getsizeof(self.values)
+        S += getsizeof(self.is_components)
+        if self.symmetries is not None:
+            for key, value in self.symmetries.items():
+                S += getsizeof(value) + getsizeof(key)
+        S += getsizeof(self.values_whole)
+        return S
+
+    def as_dict(self, **kwargs):
+        """
+        Convert this object in a json serializable dict (can be use in __init__).
+        Optional keyword input parameter is for internal use only
+        and may prevent json serializability.
+        """
 
         # Get the properties inherited from Data
-        DataPattern_dict = super(DataPattern, self).as_dict()
+        DataPattern_dict = super(DataPattern, self).as_dict(**kwargs)
         DataPattern_dict["rebuild_indices"] = (
             self.rebuild_indices.copy() if self.rebuild_indices is not None else None
         )

@@ -16,24 +16,14 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
-    from ..Methods.VectorField.get_rphiz_along import get_rphiz_along
+    from ..Methods.VectorField.freq_to_time import freq_to_time
 except ImportError as error:
-    get_rphiz_along = error
+    freq_to_time = error
 
 try:
-    from ..Methods.VectorField.get_xyz_along import get_xyz_along
+    from ..Methods.VectorField.get_axes import get_axes
 except ImportError as error:
-    get_xyz_along = error
-
-try:
-    from ..Methods.VectorField.get_mag_rphiz_along import get_mag_rphiz_along
-except ImportError as error:
-    get_mag_rphiz_along = error
-
-try:
-    from ..Methods.VectorField.get_mag_xyz_along import get_mag_xyz_along
-except ImportError as error:
-    get_mag_xyz_along = error
+    get_axes = error
 
 try:
     from ..Methods.VectorField.get_harm_rphiz_along import get_harm_rphiz_along
@@ -46,19 +36,24 @@ except ImportError as error:
     get_harm_xyz_along = error
 
 try:
-    from ..Methods.VectorField.get_axes import get_axes
+    from ..Methods.VectorField.get_mag_rphiz_along import get_mag_rphiz_along
 except ImportError as error:
-    get_axes = error
+    get_mag_rphiz_along = error
 
 try:
-    from ..Methods.VectorField.time_to_freq import time_to_freq
+    from ..Methods.VectorField.get_mag_xyz_along import get_mag_xyz_along
 except ImportError as error:
-    time_to_freq = error
+    get_mag_xyz_along = error
 
 try:
-    from ..Methods.VectorField.freq_to_time import freq_to_time
+    from ..Methods.VectorField.get_rphiz_along import get_rphiz_along
 except ImportError as error:
-    freq_to_time = error
+    get_rphiz_along = error
+
+try:
+    from ..Methods.VectorField.get_xyz_along import get_xyz_along
+except ImportError as error:
+    get_xyz_along = error
 
 try:
     from ..Methods.VectorField.plot_2D_Data import plot_2D_Data
@@ -70,6 +65,11 @@ try:
 except ImportError as error:
     plot_3D_Data = error
 
+try:
+    from ..Methods.VectorField.time_to_freq import time_to_freq
+except ImportError as error:
+    time_to_freq = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -80,53 +80,26 @@ class VectorField(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
-    # cf Methods.VectorField.get_rphiz_along
-    if isinstance(get_rphiz_along, ImportError):
-        get_rphiz_along = property(
+    # cf Methods.VectorField.freq_to_time
+    if isinstance(freq_to_time, ImportError):
+        freq_to_time = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use VectorField method get_rphiz_along: "
-                    + str(get_rphiz_along)
+                    "Can't use VectorField method freq_to_time: " + str(freq_to_time)
                 )
             )
         )
     else:
-        get_rphiz_along = get_rphiz_along
-    # cf Methods.VectorField.get_xyz_along
-    if isinstance(get_xyz_along, ImportError):
-        get_xyz_along = property(
+        freq_to_time = freq_to_time
+    # cf Methods.VectorField.get_axes
+    if isinstance(get_axes, ImportError):
+        get_axes = property(
             fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_xyz_along: " + str(get_xyz_along)
-                )
+                ImportError("Can't use VectorField method get_axes: " + str(get_axes))
             )
         )
     else:
-        get_xyz_along = get_xyz_along
-    # cf Methods.VectorField.get_mag_rphiz_along
-    if isinstance(get_mag_rphiz_along, ImportError):
-        get_mag_rphiz_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_mag_rphiz_along: "
-                    + str(get_mag_rphiz_along)
-                )
-            )
-        )
-    else:
-        get_mag_rphiz_along = get_mag_rphiz_along
-    # cf Methods.VectorField.get_mag_xyz_along
-    if isinstance(get_mag_xyz_along, ImportError):
-        get_mag_xyz_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_mag_xyz_along: "
-                    + str(get_mag_xyz_along)
-                )
-            )
-        )
-    else:
-        get_mag_xyz_along = get_mag_xyz_along
+        get_axes = get_axes
     # cf Methods.VectorField.get_harm_rphiz_along
     if isinstance(get_harm_rphiz_along, ImportError):
         get_harm_rphiz_along = property(
@@ -151,37 +124,53 @@ class VectorField(FrozenClass):
         )
     else:
         get_harm_xyz_along = get_harm_xyz_along
-    # cf Methods.VectorField.get_axes
-    if isinstance(get_axes, ImportError):
-        get_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use VectorField method get_axes: " + str(get_axes))
-            )
-        )
-    else:
-        get_axes = get_axes
-    # cf Methods.VectorField.time_to_freq
-    if isinstance(time_to_freq, ImportError):
-        time_to_freq = property(
+    # cf Methods.VectorField.get_mag_rphiz_along
+    if isinstance(get_mag_rphiz_along, ImportError):
+        get_mag_rphiz_along = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use VectorField method time_to_freq: " + str(time_to_freq)
+                    "Can't use VectorField method get_mag_rphiz_along: "
+                    + str(get_mag_rphiz_along)
                 )
             )
         )
     else:
-        time_to_freq = time_to_freq
-    # cf Methods.VectorField.freq_to_time
-    if isinstance(freq_to_time, ImportError):
-        freq_to_time = property(
+        get_mag_rphiz_along = get_mag_rphiz_along
+    # cf Methods.VectorField.get_mag_xyz_along
+    if isinstance(get_mag_xyz_along, ImportError):
+        get_mag_xyz_along = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use VectorField method freq_to_time: " + str(freq_to_time)
+                    "Can't use VectorField method get_mag_xyz_along: "
+                    + str(get_mag_xyz_along)
                 )
             )
         )
     else:
-        freq_to_time = freq_to_time
+        get_mag_xyz_along = get_mag_xyz_along
+    # cf Methods.VectorField.get_rphiz_along
+    if isinstance(get_rphiz_along, ImportError):
+        get_rphiz_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_rphiz_along: "
+                    + str(get_rphiz_along)
+                )
+            )
+        )
+    else:
+        get_rphiz_along = get_rphiz_along
+    # cf Methods.VectorField.get_xyz_along
+    if isinstance(get_xyz_along, ImportError):
+        get_xyz_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_xyz_along: " + str(get_xyz_along)
+                )
+            )
+        )
+    else:
+        get_xyz_along = get_xyz_along
     # cf Methods.VectorField.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(
@@ -204,6 +193,17 @@ class VectorField(FrozenClass):
         )
     else:
         plot_3D_Data = plot_3D_Data
+    # cf Methods.VectorField.time_to_freq
+    if isinstance(time_to_freq, ImportError):
+        time_to_freq = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method time_to_freq: " + str(time_to_freq)
+                )
+            )
+        )
+    else:
+        time_to_freq = time_to_freq
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -269,6 +269,33 @@ class VectorField(FrozenClass):
             return False
         return True
 
+    def compare(self, other, name="self"):
+        """Compare two objects and return list of differences"""
+
+        if type(other) != type(self):
+            return ["type(" + name + ")"]
+        diff_list = list()
+        if other._name != self._name:
+            diff_list.append(name + ".name")
+        if other._symbol != self._symbol:
+            diff_list.append(name + ".symbol")
+        if (other.components is None and self.components is not None) or (
+            other.components is not None and self.components is None
+        ):
+            diff_list.append(name + ".components None mismatch")
+        elif self.components is None:
+            pass
+        elif len(other.components) != len(self.components):
+            diff_list.append("len(" + name + "components)")
+        else:
+            for key in self.components:
+                diff_list.extend(
+                    self.components[key].compare(
+                        other.components[key], name=name + ".components"
+                    )
+                )
+        return diff_list
+
     def __sizeof__(self):
         """Return the size in memory of the object (including all subobject)"""
 
@@ -280,8 +307,12 @@ class VectorField(FrozenClass):
                 S += getsizeof(value) + getsizeof(key)
         return S
 
-    def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+    def as_dict(self, **kwargs):
+        """
+        Convert this object in a json serializable dict (can be use in __init__).
+        Optional keyword input parameter is for internal use only
+        and may prevent json serializability.
+        """
 
         VectorField_dict = dict()
         VectorField_dict["name"] = self.name

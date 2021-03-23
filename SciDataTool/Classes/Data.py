@@ -96,6 +96,22 @@ class Data(FrozenClass):
             return False
         return True
 
+    def compare(self, other, name="self"):
+        """Compare two objects and return list of differences"""
+
+        if type(other) != type(self):
+            return ["type(" + name + ")"]
+        diff_list = list()
+        if other._symbol != self._symbol:
+            diff_list.append(name + ".symbol")
+        if other._name != self._name:
+            diff_list.append(name + ".name")
+        if other._unit != self._unit:
+            diff_list.append(name + ".unit")
+        if other._normalizations != self._normalizations:
+            diff_list.append(name + ".normalizations")
+        return diff_list
+
     def __sizeof__(self):
         """Return the size in memory of the object (including all subobject)"""
 
@@ -108,8 +124,12 @@ class Data(FrozenClass):
                 S += getsizeof(value) + getsizeof(key)
         return S
 
-    def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+    def as_dict(self, **kwargs):
+        """
+        Convert this object in a json serializable dict (can be use in __init__).
+        Optional keyword input parameter is for internal use only
+        and may prevent json serializability.
+        """
 
         Data_dict = dict()
         Data_dict["symbol"] = self.symbol

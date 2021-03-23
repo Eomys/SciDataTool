@@ -216,6 +216,44 @@ class RequestedAxis(FrozenClass):
             return False
         return True
 
+    def compare(self, other, name="self"):
+        """Compare two objects and return list of differences"""
+
+        if type(other) != type(self):
+            return ["type(" + name + ")"]
+        diff_list = list()
+        if other._name != self._name:
+            diff_list.append(name + ".name")
+        if other._corr_name != self._corr_name:
+            diff_list.append(name + ".corr_name")
+        if other._unit != self._unit:
+            diff_list.append(name + ".unit")
+        if other._corr_unit != self._corr_unit:
+            diff_list.append(name + ".corr_unit")
+        if other._extension != self._extension:
+            diff_list.append(name + ".extension")
+        if not array_equal(other.values, self.values):
+            diff_list.append(name + ".values")
+        if other._indices != self._indices:
+            diff_list.append(name + ".indices")
+        if not array_equal(other.input_data, self.input_data):
+            diff_list.append(name + ".input_data")
+        if other._operation != self._operation:
+            diff_list.append(name + ".operation")
+        if other._index != self._index:
+            diff_list.append(name + ".index")
+        if other._transform != self._transform:
+            diff_list.append(name + ".transform")
+        if other._is_pattern != self._is_pattern:
+            diff_list.append(name + ".is_pattern")
+        if not array_equal(other.rebuild_indices, self.rebuild_indices):
+            diff_list.append(name + ".rebuild_indices")
+        if other._is_step != self._is_step:
+            diff_list.append(name + ".is_step")
+        if other._noct != self._noct:
+            diff_list.append(name + ".noct")
+        return diff_list
+
     def __sizeof__(self):
         """Return the size in memory of the object (including all subobject)"""
 
@@ -239,8 +277,12 @@ class RequestedAxis(FrozenClass):
         S += getsizeof(self.noct)
         return S
 
-    def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+    def as_dict(self, **kwargs):
+        """
+        Convert this object in a json serializable dict (can be use in __init__).
+        Optional keyword input parameter is for internal use only
+        and may prevent json serializability.
+        """
 
         RequestedAxis_dict = dict()
         RequestedAxis_dict["name"] = self.name
