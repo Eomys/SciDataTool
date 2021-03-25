@@ -191,6 +191,23 @@ class Data1D(Data):
             return False
         return True
 
+    def compare(self, other, name="self"):
+        """Compare two objects and return list of differences"""
+
+        if type(other) != type(self):
+            return ["type(" + name + ")"]
+        diff_list = list()
+
+        # Check the properties inherited from Data
+        diff_list.extend(super(Data1D, self).compare(other, name=name))
+        if not array_equal(other.values, self.values):
+            diff_list.append(name + ".values")
+        if other._is_components != self._is_components:
+            diff_list.append(name + ".is_components")
+        if other._symmetries != self._symmetries:
+            diff_list.append(name + ".symmetries")
+        return diff_list
+
     def __sizeof__(self):
         """Return the size in memory of the object (including all subobject)"""
 
@@ -205,11 +222,15 @@ class Data1D(Data):
                 S += getsizeof(value) + getsizeof(key)
         return S
 
-    def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+    def as_dict(self, **kwargs):
+        """
+        Convert this object in a json serializable dict (can be use in __init__).
+        Optional keyword input parameter is for internal use only
+        and may prevent json serializability.
+        """
 
         # Get the properties inherited from Data
-        Data1D_dict = super(Data1D, self).as_dict()
+        Data1D_dict = super(Data1D, self).as_dict(**kwargs)
         if self.values is None:
             Data1D_dict["values"] = None
         else:
