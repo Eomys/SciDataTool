@@ -111,9 +111,9 @@ def plot_3D_Data(
                 ref = self.normalizations["ref"]
             else:
                 ref = 1
-            unit_str = "[" + unit + " re. " + str(ref) + self.unit + "]"
+            unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
         else:
-            unit_str = "[" + unit + "]"
+            unit_str = r"$[" + unit + "]$"
         if self.symbol == "Magnitude":
             zlabel = "Magnitude " + unit_str
         else:
