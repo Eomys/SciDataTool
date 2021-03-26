@@ -16,6 +16,16 @@ from .Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.DataND._set_values import _set_values
+except ImportError as error:
+    _set_values = error
+
+try:
+    from ..Methods.DataND.comp_axes import comp_axes
+except ImportError as error:
+    comp_axes = error
+
+try:
     from ..Methods.DataND.compare_along import compare_along
 except ImportError as error:
     compare_along = error
@@ -36,19 +46,14 @@ except ImportError as error:
     compress = error
 
 try:
-    from ..Methods.DataND.set_Ftparameters import set_Ftparameters
-except ImportError as error:
-    set_Ftparameters = error
-
-try:
-    from ..Methods.DataND.comp_axes import comp_axes
-except ImportError as error:
-    comp_axes = error
-
-try:
     from ..Methods.DataND.convert import convert
 except ImportError as error:
     convert = error
+
+try:
+    from ..Methods.DataND.export_along import export_along
+except ImportError as error:
+    export_along = error
 
 try:
     from ..Methods.DataND.extract_slices import extract_slices
@@ -61,49 +66,9 @@ except ImportError as error:
     extract_slices_fft = error
 
 try:
-    from ..Methods.DataND.get_field import get_field
-except ImportError as error:
-    get_field = error
-
-try:
-    from ..Methods.DataND.rebuild_symmetries import rebuild_symmetries
-except ImportError as error:
-    rebuild_symmetries = error
-
-try:
-    from ..Methods.DataND.interpolate import interpolate
-except ImportError as error:
-    interpolate = error
-
-try:
     from ..Methods.DataND.get_along import get_along
 except ImportError as error:
     get_along = error
-
-try:
-    from ..Methods.DataND.get_magnitude_along import get_magnitude_along
-except ImportError as error:
-    get_magnitude_along = error
-
-try:
-    from ..Methods.DataND.get_phase_along import get_phase_along
-except ImportError as error:
-    get_phase_along = error
-
-try:
-    from ..Methods.DataND.get_harmonics import get_harmonics
-except ImportError as error:
-    get_harmonics = error
-
-try:
-    from ..Methods.DataND._set_values import _set_values
-except ImportError as error:
-    _set_values = error
-
-try:
-    from ..Methods.DataND.has_period import has_period
-except ImportError as error:
-    has_period = error
 
 try:
     from ..Methods.DataND.get_axes import get_axes
@@ -116,6 +81,36 @@ except ImportError as error:
     get_data_along = error
 
 try:
+    from ..Methods.DataND.get_field import get_field
+except ImportError as error:
+    get_field = error
+
+try:
+    from ..Methods.DataND.get_harmonics import get_harmonics
+except ImportError as error:
+    get_harmonics = error
+
+try:
+    from ..Methods.DataND.get_magnitude_along import get_magnitude_along
+except ImportError as error:
+    get_magnitude_along = error
+
+try:
+    from ..Methods.DataND.get_phase_along import get_phase_along
+except ImportError as error:
+    get_phase_along = error
+
+try:
+    from ..Methods.DataND.has_period import has_period
+except ImportError as error:
+    has_period = error
+
+try:
+    from ..Methods.DataND.interpolate import interpolate
+except ImportError as error:
+    interpolate = error
+
+try:
     from ..Methods.DataND.plot_2D_Data import plot_2D_Data
 except ImportError as error:
     plot_2D_Data = error
@@ -126,9 +121,14 @@ except ImportError as error:
     plot_3D_Data = error
 
 try:
-    from ..Methods.DataND.export_along import export_along
+    from ..Methods.DataND.rebuild_symmetries import rebuild_symmetries
 except ImportError as error:
-    export_along = error
+    rebuild_symmetries = error
+
+try:
+    from ..Methods.DataND.set_Ftparameters import set_Ftparameters
+except ImportError as error:
+    set_Ftparameters = error
 
 
 from numpy import array, array_equal
@@ -141,6 +141,24 @@ class DataND(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.DataND._set_values
+    if isinstance(_set_values, ImportError):
+        _set_values = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method _set_values: " + str(_set_values))
+            )
+        )
+    else:
+        _set_values = _set_values
+    # cf Methods.DataND.comp_axes
+    if isinstance(comp_axes, ImportError):
+        comp_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method comp_axes: " + str(comp_axes))
+            )
+        )
+    else:
+        comp_axes = comp_axes
     # cf Methods.DataND.compare_along
     if isinstance(compare_along, ImportError):
         compare_along = property(
@@ -185,26 +203,6 @@ class DataND(Data):
         )
     else:
         compress = compress
-    # cf Methods.DataND.set_Ftparameters
-    if isinstance(set_Ftparameters, ImportError):
-        set_Ftparameters = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method set_Ftparameters: " + str(set_Ftparameters)
-                )
-            )
-        )
-    else:
-        set_Ftparameters = set_Ftparameters
-    # cf Methods.DataND.comp_axes
-    if isinstance(comp_axes, ImportError):
-        comp_axes = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method comp_axes: " + str(comp_axes))
-            )
-        )
-    else:
-        comp_axes = comp_axes
     # cf Methods.DataND.convert
     if isinstance(convert, ImportError):
         convert = property(
@@ -214,6 +212,17 @@ class DataND(Data):
         )
     else:
         convert = convert
+    # cf Methods.DataND.export_along
+    if isinstance(export_along, ImportError):
+        export_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method export_along: " + str(export_along)
+                )
+            )
+        )
+    else:
+        export_along = export_along
     # cf Methods.DataND.extract_slices
     if isinstance(extract_slices, ImportError):
         extract_slices = property(
@@ -237,36 +246,6 @@ class DataND(Data):
         )
     else:
         extract_slices_fft = extract_slices_fft
-    # cf Methods.DataND.get_field
-    if isinstance(get_field, ImportError):
-        get_field = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method get_field: " + str(get_field))
-            )
-        )
-    else:
-        get_field = get_field
-    # cf Methods.DataND.rebuild_symmetries
-    if isinstance(rebuild_symmetries, ImportError):
-        rebuild_symmetries = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method rebuild_symmetries: "
-                    + str(rebuild_symmetries)
-                )
-            )
-        )
-    else:
-        rebuild_symmetries = rebuild_symmetries
-    # cf Methods.DataND.interpolate
-    if isinstance(interpolate, ImportError):
-        interpolate = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method interpolate: " + str(interpolate))
-            )
-        )
-    else:
-        interpolate = interpolate
     # cf Methods.DataND.get_along
     if isinstance(get_along, ImportError):
         get_along = property(
@@ -276,6 +255,46 @@ class DataND(Data):
         )
     else:
         get_along = get_along
+    # cf Methods.DataND.get_axes
+    if isinstance(get_axes, ImportError):
+        get_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method get_axes: " + str(get_axes))
+            )
+        )
+    else:
+        get_axes = get_axes
+    # cf Methods.DataND.get_data_along
+    if isinstance(get_data_along, ImportError):
+        get_data_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method get_data_along: " + str(get_data_along)
+                )
+            )
+        )
+    else:
+        get_data_along = get_data_along
+    # cf Methods.DataND.get_field
+    if isinstance(get_field, ImportError):
+        get_field = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method get_field: " + str(get_field))
+            )
+        )
+    else:
+        get_field = get_field
+    # cf Methods.DataND.get_harmonics
+    if isinstance(get_harmonics, ImportError):
+        get_harmonics = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method get_harmonics: " + str(get_harmonics)
+                )
+            )
+        )
+    else:
+        get_harmonics = get_harmonics
     # cf Methods.DataND.get_magnitude_along
     if isinstance(get_magnitude_along, ImportError):
         get_magnitude_along = property(
@@ -299,26 +318,6 @@ class DataND(Data):
         )
     else:
         get_phase_along = get_phase_along
-    # cf Methods.DataND.get_harmonics
-    if isinstance(get_harmonics, ImportError):
-        get_harmonics = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method get_harmonics: " + str(get_harmonics)
-                )
-            )
-        )
-    else:
-        get_harmonics = get_harmonics
-    # cf Methods.DataND._set_values
-    if isinstance(_set_values, ImportError):
-        _set_values = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method _set_values: " + str(_set_values))
-            )
-        )
-    else:
-        _set_values = _set_values
     # cf Methods.DataND.has_period
     if isinstance(has_period, ImportError):
         has_period = property(
@@ -328,26 +327,15 @@ class DataND(Data):
         )
     else:
         has_period = has_period
-    # cf Methods.DataND.get_axes
-    if isinstance(get_axes, ImportError):
-        get_axes = property(
+    # cf Methods.DataND.interpolate
+    if isinstance(interpolate, ImportError):
+        interpolate = property(
             fget=lambda x: raise_(
-                ImportError("Can't use DataND method get_axes: " + str(get_axes))
+                ImportError("Can't use DataND method interpolate: " + str(interpolate))
             )
         )
     else:
-        get_axes = get_axes
-    # cf Methods.DataND.get_data_along
-    if isinstance(get_data_along, ImportError):
-        get_data_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method get_data_along: " + str(get_data_along)
-                )
-            )
-        )
-    else:
-        get_data_along = get_data_along
+        interpolate = interpolate
     # cf Methods.DataND.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(
@@ -370,17 +358,29 @@ class DataND(Data):
         )
     else:
         plot_3D_Data = plot_3D_Data
-    # cf Methods.DataND.export_along
-    if isinstance(export_along, ImportError):
-        export_along = property(
+    # cf Methods.DataND.rebuild_symmetries
+    if isinstance(rebuild_symmetries, ImportError):
+        rebuild_symmetries = property(
             fget=lambda x: raise_(
                 ImportError(
-                    "Can't use DataND method export_along: " + str(export_along)
+                    "Can't use DataND method rebuild_symmetries: "
+                    + str(rebuild_symmetries)
                 )
             )
         )
     else:
-        export_along = export_along
+        rebuild_symmetries = rebuild_symmetries
+    # cf Methods.DataND.set_Ftparameters
+    if isinstance(set_Ftparameters, ImportError):
+        set_Ftparameters = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method set_Ftparameters: " + str(set_Ftparameters)
+                )
+            )
+        )
+    else:
+        set_Ftparameters = set_Ftparameters
     # save and copy methods are available in all object
     save = save
     copy = copy

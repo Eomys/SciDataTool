@@ -219,6 +219,31 @@ class DataLinspace(Data):
             return False
         return True
 
+    def compare(self, other, name="self"):
+        """Compare two objects and return list of differences"""
+
+        if type(other) != type(self):
+            return ["type(" + name + ")"]
+        diff_list = list()
+
+        # Check the properties inherited from Data
+        diff_list.extend(super(DataLinspace, self).compare(other, name=name))
+        if other._initial != self._initial:
+            diff_list.append(name + ".initial")
+        if other._final != self._final:
+            diff_list.append(name + ".final")
+        if other._step != self._step:
+            diff_list.append(name + ".step")
+        if other._number != self._number:
+            diff_list.append(name + ".number")
+        if other._include_endpoint != self._include_endpoint:
+            diff_list.append(name + ".include_endpoint")
+        if other._is_components != self._is_components:
+            diff_list.append(name + ".is_components")
+        if other._symmetries != self._symmetries:
+            diff_list.append(name + ".symmetries")
+        return diff_list
+
     def __sizeof__(self):
         """Return the size in memory of the object (including all subobject)"""
 
@@ -237,11 +262,15 @@ class DataLinspace(Data):
                 S += getsizeof(value) + getsizeof(key)
         return S
 
-    def as_dict(self):
-        """Convert this object in a json seriable dict (can be use in __init__)"""
+    def as_dict(self, **kwargs):
+        """
+        Convert this object in a json serializable dict (can be use in __init__).
+        Optional keyword input parameter is for internal use only
+        and may prevent json serializability.
+        """
 
         # Get the properties inherited from Data
-        DataLinspace_dict = super(DataLinspace, self).as_dict()
+        DataLinspace_dict = super(DataLinspace, self).as_dict(**kwargs)
         DataLinspace_dict["initial"] = self.initial
         DataLinspace_dict["final"] = self.final
         DataLinspace_dict["step"] = self.step
