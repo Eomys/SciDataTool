@@ -3,6 +3,7 @@
 from itertools import repeat
 
 import matplotlib.pyplot as plt
+
 from numpy import (
     ceil,
     argmin,
@@ -204,6 +205,7 @@ def plot_2D(
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
             plt.xticks(rotation=90, ha="center", va="top")
+
     elif type_plot == "barchart":
         for i in range(ndatas):
             if i == 0:
@@ -228,9 +230,10 @@ def plot_2D(
                 )
         plt.xticks(
             range(len(Xdatas[i_Xdatas[i]])),
-            [str(f) for f in Xdatas[i_Xdatas[i]]],
+            ["{:.2f}".format(f) for f in Xdatas[i_Xdatas[i]]],
             rotation=90,
         )
+
     elif type_plot == "quiver":
         for i in range(ndatas):
             x = [e[0] for e in Xdatas[i_Xdatas[i]]]
