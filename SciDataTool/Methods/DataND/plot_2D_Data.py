@@ -205,7 +205,10 @@ def plot_2D_Data(
                 main_axis_name = name
             elif axis.unit in norm_dict:
                 xlabel = norm_dict[axis.unit]
-                main_axis_name = axis.unit
+                if axis.unit == "Hz":
+                    main_axis_name = "frequency"
+                else:
+                    main_axis_name = axis.unit
             else:
                 unit = axis.unit
                 xlabel = name.capitalize() + " [" + unit + "]"
@@ -227,7 +230,7 @@ def plot_2D_Data(
                 unit = axis.unit
 
             axis_str = array2string(
-                result_0[axis.name], formatter={"float_kind": "{:.2g}".format}
+                result_0[axis.name], formatter={"float_kind": "{:.3g}".format}
             ).replace(" ", ", ")
             if len(result_0[axis.name]) == 1:
                 axis_str = axis_str.strip("[]")
@@ -242,7 +245,7 @@ def plot_2D_Data(
             + "="
             + array2string(
                 axes_dict_other[axis_name][0],
-                formatter={"float_kind": "{:.2g}".format},
+                formatter={"float_kind": "{:.3g}".format},
             ).replace(" ", ", ")
             + " ["
             + axes_dict_other[axis_name][1]
@@ -302,7 +305,7 @@ def plot_2D_Data(
                         else legend_list[i]
                         + axis.name
                         + "="
-                        + "%.2g" % axis.values.tolist()[j]
+                        + "%.3g" % axis.values.tolist()[j]
                         + " "
                         + unit
                         for j in range(n_curves)
@@ -422,6 +425,7 @@ def plot_2D_Data(
             is_disp_title=is_disp_title,
             is_grid=is_grid,
             xticks=xticks,
+            barwidth=barwidth,
             linestyle_list=linestyle_list,
             linewidth_list=linewidth_list,
             save_path=save_path,

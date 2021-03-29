@@ -237,7 +237,7 @@ def plot_3D_Data(
             + "="
             + array2string(
                 result[axis.name],
-                formatter={"float_kind": "{:.2g}".format},
+                formatter={"float_kind": "{:.3g}".format},
             ).replace(" ", ", ")
             + " ["
             + unit
@@ -250,7 +250,7 @@ def plot_3D_Data(
             + "="
             + array2string(
                 axes_dict_other[axis_name][0],
-                formatter={"float_kind": "{:.2g}".format},
+                formatter={"float_kind": "{:.3g}".format},
             ).replace(" ", ", ")
             + " ["
             + axes_dict_other[axis_name][1]

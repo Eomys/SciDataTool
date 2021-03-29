@@ -227,7 +227,15 @@ def plot_3D(
         ax.set_ylim([y_min, y_max])
     elif type_plot == "scatter":
         c = ax.scatter(
-            Xdata, Ydata, c=Zdata, marker="s", cmap=colormap, vmin=z_min, vmax=z_max
+            Xdata,
+            Ydata,
+            c=Zdata,
+            marker="s",
+            cmap=colormap,
+            vmin=z_min,
+            vmax=z_max,
+            picker=True,
+            pickradius=5,
         )
         clb = fig.colorbar(c, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)

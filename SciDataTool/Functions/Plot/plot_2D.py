@@ -175,6 +175,8 @@ def plot_2D(
                 label=legend_list[i],
                 linewidth=linewidth_list[i],
                 ls=linestyle_list[i],
+                picker=True,
+                pickradius=5,
             )
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
@@ -192,6 +194,7 @@ def plot_2D(
                 color=color_list[i],
                 width=width,
                 label=legend_list[i],
+                picker=True,
             )
             if fund_harm is not None:  # Find fundamental
                 imax = argmin(abs(Xdatas[i] - fund_harm))
@@ -210,6 +213,7 @@ def plot_2D(
                     color=color_list[i],
                     width=0.5,
                     label=legend_list[i],
+                    picker=True,
                 )
             else:
                 ax.bar(
@@ -220,6 +224,7 @@ def plot_2D(
                     fc="None",
                     lw=1,
                     label=legend_list[i],
+                    picker=True,
                 )
         plt.xticks(
             range(len(Xdatas[i_Xdatas[i]])),
@@ -241,6 +246,8 @@ def plot_2D(
                 color=color_list[i],
                 label=legend_list[i],
                 linewidth=linewidth_list[i],
+                picker=True,
+                pickradius=5,
             )
             ax.plot(
                 Xdatas[i_Xdatas[i]],
@@ -249,6 +256,8 @@ def plot_2D(
                 markerfacecolor=color_list[i],
                 markeredgecolor=color_list[i],
                 markersize=10,
+                picker=True,
+                pickradius=5,
             )
     elif type_plot == "point":
         for i in range(ndatas):
@@ -259,6 +268,8 @@ def plot_2D(
                 markerfacecolor=color_list[i],
                 markeredgecolor=color_list[i],
                 markersize=10,
+                picker=True,
+                pickradius=5,
             )
     elif type_plot == "barStackResultant":
         data = Ydatas[0:-1]
@@ -286,6 +297,7 @@ def plot_2D(
                 color=color_list[i],
                 label=legend_list[i],
                 width=barwidth,
+                picker=True,
             )
 
         ax.bar(
@@ -294,6 +306,7 @@ def plot_2D(
             width=barwidth,
             color=["k"],
             label="Resultant",
+            picker=True,
         )
 
         ax.legend()

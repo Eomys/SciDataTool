@@ -178,6 +178,8 @@ def plot_4D(
             cmap=colormap,
             vmin=z_min,
             vmax=z_max,
+            picker=True,
+            pickradius=5,
         )
         clb = fig.colorbar(c, ax=ax, format=clb_format)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)

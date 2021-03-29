@@ -19,6 +19,7 @@ norm_dict = {
     "space_order": "Space order []",
     "distance": "Distance [m]",
     "angle_rotor": "Rotor mechanical angle [°]",
+    "tooth_id": "Stator tooth number []",
     "rpm": "Speed [rpm]",
     "Hz": "Frequency [Hz]",
     "Bark": "Critical band rate [Bark]",
