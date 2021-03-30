@@ -238,7 +238,10 @@ def plot_3D_Data(
             + array2string(
                 result[axis.name],
                 formatter={"float_kind": "{:.3g}".format},
-            ).replace(" ", ", ")
+            )
+            .replace(" ", ", ")
+            .replace("[", "")
+            .replace("]", "")
             + " ["
             + unit
             + "], "
