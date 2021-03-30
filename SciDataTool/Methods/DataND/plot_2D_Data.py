@@ -8,7 +8,16 @@ from SciDataTool.Functions.Plot import (
     COLORS,
     LINESTYLES,
 )
-from numpy import squeeze, split, array, where, unique, max as np_max, array2string
+from numpy import (
+    squeeze,
+    split,
+    array,
+    where,
+    unique,
+    max as np_max,
+    array2string,
+    insert,
+)
 
 
 def plot_2D_Data(
@@ -341,7 +350,7 @@ def plot_2D_Data(
             for ind, y in enumerate(Ydatas[0])
             if abs(y) > abs(0.02 * np_max(Ydatas[0]))
         ]
-        xticks = unique(freqs[indices])
+        xticks = unique(insert(0, 0, freqs[indices]))
 
         if is_auto_range:
             if len(xticks) > 0:
