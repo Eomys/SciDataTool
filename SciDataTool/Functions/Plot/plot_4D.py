@@ -249,4 +249,5 @@ def plot_4D(
         fig.show()
 
     if win_title:
-        fig.canvas.set_window_title(win_title)
+        manager = plt.get_current_fig_manager()
+        manager.set_window_title(win_title)

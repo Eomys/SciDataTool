@@ -211,9 +211,11 @@ def plot_3D(
             interpolation="bilinear",
             extent=(x_min, x_max, y_max, y_min),
             cmap=colormap,
+            picker=True,
         )
         im.set_data(Xdata, Ydata, Zdata.T)
         ax.images.append(im)
+        ax.picker = True
         clb = fig.colorbar(im, ax=ax, format=clb_format)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
@@ -287,4 +289,5 @@ def plot_3D(
         fig.show()
 
     if win_title:
-        fig.canvas.set_window_title(win_title)
+        manager = plt.get_current_fig_manager()
+        manager.set_window_title(win_title)
