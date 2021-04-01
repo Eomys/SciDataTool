@@ -360,4 +360,5 @@ def plot_2D(
 
     if win_title:
         manager = plt.get_current_fig_manager()
-        manager.set_window_title(win_title)
+        if manager is not None:
+            manager.set_window_title(win_title)
