@@ -12,6 +12,7 @@ unit_dict = {
     "frequency": "Hz",
     "order": "",
     "cr_band": "Bark",
+    "speed": "rpm",
 }
 
 norm_dict = {
