@@ -3,6 +3,7 @@
 from itertools import repeat
 
 import matplotlib.pyplot as plt
+
 from numpy import (
     ceil,
     argmin,
@@ -175,6 +176,8 @@ def plot_2D(
                 label=legend_list[i],
                 linewidth=linewidth_list[i],
                 ls=linestyle_list[i],
+                picker=True,
+                pickradius=5,
             )
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
@@ -192,15 +195,21 @@ def plot_2D(
                 color=color_list[i],
                 width=width,
                 label=legend_list[i],
+                picker=True,
             )
             if fund_harm is not None:  # Find fundamental
                 imax = argmin(abs(Xdatas[i] - fund_harm))
-                barlist[imax].set_edgecolor("k")
-                barlist[imax].set_facecolor("k")
+                if ndatas < 3 and len(color_list) > 2:
+                    fund_color = color_list[2]
+                else:
+                    fund_color = "k"
+                barlist[imax].set_edgecolor(fund_color)
+                barlist[imax].set_facecolor(fund_color)
 
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
             plt.xticks(rotation=90, ha="center", va="top")
+
     elif type_plot == "barchart":
         for i in range(ndatas):
             if i == 0:
@@ -210,6 +219,7 @@ def plot_2D(
                     color=color_list[i],
                     width=0.5,
                     label=legend_list[i],
+                    picker=True,
                 )
             else:
                 ax.bar(
@@ -220,12 +230,14 @@ def plot_2D(
                     fc="None",
                     lw=1,
                     label=legend_list[i],
+                    picker=True,
                 )
         plt.xticks(
             range(len(Xdatas[i_Xdatas[i]])),
-            [str(f) for f in Xdatas[i_Xdatas[i]]],
+            ["{:.2f}".format(f) for f in Xdatas[i_Xdatas[i]]],
             rotation=90,
         )
+
     elif type_plot == "quiver":
         for i in range(ndatas):
             x = [e[0] for e in Xdatas[i_Xdatas[i]]]
@@ -241,6 +253,8 @@ def plot_2D(
                 color=color_list[i],
                 label=legend_list[i],
                 linewidth=linewidth_list[i],
+                picker=True,
+                pickradius=5,
             )
             ax.plot(
                 Xdatas[i_Xdatas[i]],
@@ -249,6 +263,8 @@ def plot_2D(
                 markerfacecolor=color_list[i],
                 markeredgecolor=color_list[i],
                 markersize=10,
+                picker=True,
+                pickradius=5,
             )
     elif type_plot == "point":
         for i in range(ndatas):
@@ -259,6 +275,8 @@ def plot_2D(
                 markerfacecolor=color_list[i],
                 markeredgecolor=color_list[i],
                 markersize=10,
+                picker=True,
+                pickradius=5,
             )
     elif type_plot == "barStackResultant":
         data = Ydatas[0:-1]
@@ -286,6 +304,7 @@ def plot_2D(
                 color=color_list[i],
                 label=legend_list[i],
                 width=barwidth,
+                picker=True,
             )
 
         ax.bar(
@@ -294,6 +313,7 @@ def plot_2D(
             width=barwidth,
             color=["k"],
             label="Resultant",
+            picker=True,
         )
 
         ax.legend()
@@ -339,4 +359,6 @@ def plot_2D(
         fig.show()
 
     if win_title:
-        fig.canvas.set_window_title(win_title)
+        manager = plt.get_current_fig_manager()
+        if manager is not None:
+            manager.set_window_title(win_title)

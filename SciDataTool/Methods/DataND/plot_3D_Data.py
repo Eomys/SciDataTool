@@ -111,9 +111,9 @@ def plot_3D_Data(
                 ref = self.normalizations["ref"]
             else:
                 ref = 1
-            unit_str = "[" + unit + " re. " + str(ref) + self.unit + "]"
+            unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
         else:
-            unit_str = "[" + unit + "]"
+            unit_str = r"$[" + unit + "]$"
         if self.symbol == "Magnitude":
             zlabel = "Magnitude " + unit_str
         else:
@@ -237,8 +237,11 @@ def plot_3D_Data(
             + "="
             + array2string(
                 result[axis.name],
-                formatter={"float_kind": "{:.2g}".format},
-            ).replace(" ", ", ")
+                formatter={"float_kind": "{:.3g}".format},
+            )
+            .replace(" ", ", ")
+            .replace("[", "")
+            .replace("]", "")
             + " ["
             + unit
             + "], "
@@ -250,7 +253,7 @@ def plot_3D_Data(
             + "="
             + array2string(
                 axes_dict_other[axis_name][0],
-                formatter={"float_kind": "{:.2g}".format},
+                formatter={"float_kind": "{:.3g}".format},
             ).replace(" ", ", ")
             + " ["
             + axes_dict_other[axis_name][1]

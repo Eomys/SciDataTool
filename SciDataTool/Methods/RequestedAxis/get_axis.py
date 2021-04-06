@@ -17,6 +17,9 @@ def get_axis(self, axis, is_real):
     axis: Axis
         an Axis object
     """
+    if self.operation is not None:
+        module = import_module("SciDataTool.Functions.conversions")
+        func = getattr(module, self.operation)  # Conversion function
     if isinstance(axis, DataPattern):
         self.is_pattern = True
         self.rebuild_indices = axis.rebuild_indices
@@ -79,7 +82,18 @@ def get_axis(self, axis, is_real):
             is_antiperiod = False
         else:
             if self.input_data is not None and not self.is_step:
-                axis_values = axis.get_values(is_smallestperiod=True)
+                # Check if symmetries need to be reconstructed to match input_data
+                if self.operation is not None:
+                    axis_values = func(
+                        axis.get_values(
+                            is_smallestperiod=True,
+                        ),
+                        is_real=is_real,
+                    )
+                else:
+                    axis_values = axis.get_values(
+                        is_smallestperiod=True,
+                    )
                 if min(self.input_data) >= min(axis_values) and max(
                     self.input_data
                 ) <= max(axis_values):
@@ -87,7 +101,17 @@ def get_axis(self, axis, is_real):
                     is_oneperiod = False
                     is_antiperiod = False
                 else:
-                    axis_values = axis.get_values(is_oneperiod=True)
+                    if self.operation is not None:
+                        axis_values = func(
+                            axis.get_values(
+                                is_oneperiod=True,
+                            ),
+                            is_real=is_real,
+                        )
+                    else:
+                        axis_values = axis.get_values(
+                            is_oneperiod=True,
+                        )
                     if min(self.input_data) >= min(axis_values) and max(
                         self.input_data
                     ) <= max(axis_values):
@@ -111,8 +135,6 @@ def get_axis(self, axis, is_real):
                 is_antiperiod = False
         # Get original values of the axis
         if self.operation is not None:
-            module = import_module("SciDataTool.Functions.conversions")
-            func = getattr(module, self.operation)  # Conversion function
             values = array(
                 func(
                     axis.get_values(

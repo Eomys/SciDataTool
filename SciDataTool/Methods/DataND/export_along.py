@@ -51,7 +51,16 @@ def export_along(
         args = tuple(arg_list)
 
     # Get requested data
-    results = self.get_along(*args, unit=unit, is_norm=is_norm, axis_data=axis_data)
+    is_fft = False
+    for arg in args:
+        if "freqs" in arg or "wavenumber" in arg:
+            is_fft = True
+    if is_fft:
+        results = self.get_magnitude_along(
+            *args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
+    else:
+        results = self.get_along(*args, unit=unit, is_norm=is_norm, axis_data=axis_data)
     axes_list = results["axes_list"]
 
     # Remove slice axes
