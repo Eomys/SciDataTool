@@ -3,6 +3,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open("requirements.txt", "r") as file:
+    requirements = file.readlines()
+    install_requires = "".join(
+        requirements
+    ).splitlines()  # remove endline in each element
+
 setuptools.setup(
     name="SciDataTool",
     version="1.3.8",
@@ -20,5 +26,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=2.7",
-    install_requires=["numpy", "scipy", "matplotlib"],
+    install_requires=install_requires,
 )
