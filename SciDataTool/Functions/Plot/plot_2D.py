@@ -51,6 +51,7 @@ def plot_2D(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
+    is_show_legend=True,
 ):
     """Plots a 2D graph (curve, bargraph or barchart) comparing fields in Ydatas
 
@@ -340,6 +341,9 @@ def plot_2D(
 
     if ndatas > 1 and not no_legend:
         ax.legend(prop={"family": font_name, "size": font_size_legend})
+
+    if not is_show_legend:
+        ax.get_legend().remove()
 
     plt.tight_layout()
     for item in (
