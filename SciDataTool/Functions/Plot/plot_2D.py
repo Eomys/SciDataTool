@@ -273,6 +273,7 @@ def plot_2D(
                 Xdatas[i_Xdatas[i]],
                 Ydatas[i],
                 ".",
+                label=legend_list[i],
                 markerfacecolor=color_list[i],
                 markeredgecolor=color_list[i],
                 markersize=10,
