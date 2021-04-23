@@ -245,8 +245,9 @@ def plot_3D(
         c = ax.scatter(
             Xdata,
             Ydata,
+            # s=10,
             c=Zdata,
-            marker="s",
+            marker=".",
             cmap=colormap,
             vmin=z_min,
             vmax=z_max,
