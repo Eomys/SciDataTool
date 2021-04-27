@@ -116,7 +116,7 @@ def plot_2D_Data(
             Xdatas = rphiz_to_xyz(rphi)
         Ydatas = column_stack((result["comp_x"], result["comp_y"]))
         # Normalize Ydatas
-        Ydatas = Ydatas / np_max(Ydatas) * 0.05 * radius
+        # Ydatas = Ydatas / (np_max(Ydatas) * 0.001 * radius)
         plot_2D(
             [Xdatas],
             [Ydatas],
@@ -136,6 +136,7 @@ def plot_2D_Data(
             font_size_title=font_size_title,
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
+            is_grid=False,
         )
 
     else:

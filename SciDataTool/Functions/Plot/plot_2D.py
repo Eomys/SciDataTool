@@ -14,6 +14,7 @@ from numpy import (
     cumsum,
     zeros,
     shape,
+    max as np_max,
 )
 
 from SciDataTool.Functions.Plot.init_fig import init_fig
@@ -243,7 +244,16 @@ def plot_2D(
         for i in range(ndatas):
             x = [e[0] for e in Xdatas[i_Xdatas[i]]]
             y = [e[1] for e in Xdatas[i_Xdatas[i]]]
-            ax.quiver(x, y, Ydatas[0][:, 0], Ydatas[0][:, 1], color=color_list[i])
+            ax.quiver(
+                x,
+                y,
+                Ydatas[0][:, 0],
+                Ydatas[0][:, 1],
+                color=color_list[i],
+                scale_units="x",
+                scale=25 * (np_max(Ydatas[0])),
+                minshaft=2,
+            )
             ax.axis("equal")
 
     elif type_plot == "curve_point":
