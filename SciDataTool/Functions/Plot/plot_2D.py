@@ -243,9 +243,9 @@ def plot_2D(
         for i in range(ndatas):
             x = [e[0] for e in Xdatas[i_Xdatas[i]]]
             y = [e[1] for e in Xdatas[i_Xdatas[i]]]
-            vect_list = split(Ydatas[i], 2)
-            ax.quiver(x, y, squeeze(vect_list[0]), squeeze(vect_list[1]))
+            ax.quiver(x, y, Ydatas[0][:, 0], Ydatas[0][:, 1], color=color_list[i])
             ax.axis("equal")
+
     elif type_plot == "curve_point":
         for i in range(ndatas):
             ax.plot(
