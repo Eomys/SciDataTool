@@ -1,15 +1,28 @@
 # -*- coding: utf-8 -*-
 
 
-def get_axes(self):
-    """Return axes list.
+def get_axes(self, *args):
+    """Returns the list of axes.
     Parameters
     ----------
-    self: DataND
-        a DataND object
+    self: Data
+        a Data object
+    args : list
+        list of axes names
     Returns
     -------
-    axes_list
+    axes_list : list of axes (Data)
     """
 
-    return self.axes
+    axes = self.axes
+
+    if len(args) > 0:
+        axes_list = []
+        for name in args:
+            for axis in axes:
+                if axis.name == name:
+                    axes_list.append(axis)
+    else:
+        axes_list = axes
+
+    return axes_list
