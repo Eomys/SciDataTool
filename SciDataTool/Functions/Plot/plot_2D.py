@@ -253,6 +253,8 @@ def plot_2D(
                 scale_units="x",
                 scale=25 * (np_max(Ydatas[0])),
                 minshaft=2,
+                zorder=10,
+                label=legend_list[i],
             )
             ax.axis("equal")
 
@@ -350,7 +352,8 @@ def plot_2D(
     if is_grid:
         ax.grid()
 
-    if ndatas > 1 and not no_legend:
+    # if ndatas > 1 and not no_legend:
+    if not no_legend:
         ax.legend(prop={"family": font_name, "size": font_size_legend})
 
     if not is_show_legend:

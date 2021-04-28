@@ -124,6 +124,7 @@ def plot_2D_Data(
             linestyle_list=linestyles,
             linewidth_list=linewidth_list,
             title=self.name.capitalize() + " quiver plot",
+            legend_list=[self.name],
             xlabel="[m]",
             ylabel="[m]",
             fig=fig,
