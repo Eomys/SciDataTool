@@ -61,6 +61,11 @@ except ImportError as error:
     plot_2D_Data = error
 
 try:
+    from ..Methods.VectorField.plot_2D_Data_Animated import plot_2D_Data_Animated
+except ImportError as error:
+    plot_2D_Data_Animated = error
+
+try:
     from ..Methods.VectorField.plot_3D_Data import plot_3D_Data
 except ImportError as error:
     plot_3D_Data = error
@@ -182,6 +187,18 @@ class VectorField(FrozenClass):
         )
     else:
         plot_2D_Data = plot_2D_Data
+    # cf Methods.VectorField.plot_2D_Data_Animated
+    if isinstance(plot_2D_Data_Animated, ImportError):
+        plot_2D_Data_Animated = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method plot_2D_Data_Animated: "
+                    + str(plot_2D_Data_Animated)
+                )
+            )
+        )
+    else:
+        plot_2D_Data_Animated = plot_2D_Data_Animated
     # cf Methods.VectorField.plot_3D_Data
     if isinstance(plot_3D_Data, ImportError):
         plot_3D_Data = property(
@@ -207,10 +224,9 @@ class VectorField(FrozenClass):
     # save and copy methods are available in all object
     save = save
     copy = copy
+   
 
-    def __init__(
-        self, name="", symbol="", components=-1, init_dict=None, init_str=None
-    ):
+    def __init__(self, name="", symbol="", components=-1, init_dict = None, init_str = None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
@@ -248,12 +264,10 @@ class VectorField(FrozenClass):
         if self.parent is None:
             VectorField_str += "parent = None " + linesep
         else:
-            VectorField_str += (
-                "parent = " + str(type(self.parent)) + " object" + linesep
-            )
+            VectorField_str += "parent = " + str(type(self.parent)) + " object" + linesep
         VectorField_str += 'name = "' + str(self.name) + '"' + linesep
         VectorField_str += 'symbol = "' + str(self.symbol) + '"' + linesep
-        VectorField_str += "components = " + str(self.components) + linesep + linesep
+        VectorField_str += "components = "+ str(self.components) + linesep + linesep
         return VectorField_str
 
     def __eq__(self, other):
@@ -269,31 +283,25 @@ class VectorField(FrozenClass):
             return False
         return True
 
-    def compare(self, other, name="self"):
+    def compare(self, other, name='self'):
         """Compare two objects and return list of differences"""
 
         if type(other) != type(self):
-            return ["type(" + name + ")"]
+            return ['type('+name+')']
         diff_list = list()
         if other._name != self._name:
-            diff_list.append(name + ".name")
+            diff_list.append(name+'.name')
         if other._symbol != self._symbol:
-            diff_list.append(name + ".symbol")
-        if (other.components is None and self.components is not None) or (
-            other.components is not None and self.components is None
-        ):
-            diff_list.append(name + ".components None mismatch")
+            diff_list.append(name+'.symbol')
+        if (other.components is None and self.components is not None) or (other.components is not None and self.components is None):
+            diff_list.append(name+'.components None mismatch')
         elif self.components is None:
             pass
         elif len(other.components) != len(self.components):
-            diff_list.append("len(" + name + "components)")
+            diff_list.append('len('+name+'components)')
         else:
             for key in self.components:
-                diff_list.extend(
-                    self.components[key].compare(
-                        other.components[key], name=name + ".components"
-                    )
-                )
+                diff_list.extend(self.components[key].compare(other.components[key],name=name+'.components'))
         return diff_list
 
     def __sizeof__(self):
@@ -310,7 +318,7 @@ class VectorField(FrozenClass):
     def as_dict(self, **kwargs):
         """
         Convert this object in a json serializable dict (can be use in __init__).
-        Optional keyword input parameter is for internal use only
+        Optional keyword input parameter is for internal use only 
         and may prevent json serializability.
         """
 
@@ -386,9 +394,7 @@ class VectorField(FrozenClass):
         if type(value) is dict:
             for key, obj in value.items():
                 if type(obj) is dict:
-                    class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "components"
-                    )
+                    class_obj = import_class('SciDataTool.Classes', obj.get('__class__'), 'components')
                     value[key] = class_obj(init_dict=obj)
         if type(value) is int and value == -1:
             value = dict()
