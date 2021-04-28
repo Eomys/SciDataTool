@@ -20,13 +20,19 @@ def plot_2D_Data_Animated(
     """
     # The list of images used to build the gif
     images = list()
-    value_max = np.max(self.get_axes(animated_axis)[0].get_values())
-    value_min = np.min(self.get_axes(animated_axis)[0].get_values())
-    value_variation_step = (value_max - value_min) / nb_frames
+    result = self.get_along(animated_axis, *param_list)
+    value_max = np.max(result[animated_axis])
+    value_min = np.min(result[animated_axis])
+    variation_step = (value_max - value_min) / nb_frames
 
-    param_dict['y_min'] = np.min(self.values)
-    param_dict['y_max'] = np.max(self.values)
-    param_dict['is_show_fig'] = False
+    y_max = np.max(result[self.symbol])
+    y_min = np.min(result[self.symbol])
+    marge = (
+        y_max - y_min
+    ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
+    param_dict["y_min"] = np.max(result[self.symbol]) + abs(marge)
+    param_dict["y_max"] = np.min(result[self.symbol]) - abs(marge)
+    param_dict["is_show_fig"] = False
     # Getting the name of the gif
     save_path = param_dict["save_path"].replace(".png", ".gif")
     param_dict["save_path"] = None
@@ -42,6 +48,6 @@ def plot_2D_Data_Animated(
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
         images.append(image)
         plt.close(fig)
-        value_min += value_variation_step
+        value_min += variation_step
     # Creating the gif
     imageio.mimsave(save_path, images, format="GIF-PIL", fps=fps)
