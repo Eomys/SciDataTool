@@ -23,6 +23,10 @@ def plot_2D_Data_Animated(
     value_max = np.max(self.get_axes(animated_axis)[0].get_values())
     value_min = np.min(self.get_axes(animated_axis)[0].get_values())
     value_variation_step = (value_max - value_min) / nb_frames
+
+    param_dict['y_min'] = np.min(self.values)
+    param_dict['y_max'] = np.max(self.values)
+    param_dict['is_show_fig'] = False
     # Getting the name of the gif
     save_path = param_dict["save_path"].replace(".png", ".gif")
     param_dict["save_path"] = None
