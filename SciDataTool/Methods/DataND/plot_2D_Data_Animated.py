@@ -20,7 +20,11 @@ def plot_2D_Data_Animated(
     """
     # The list of images used to build the gif
     images = list()
-    result = self.get_along(animated_axis, *param_list)
+    if "freqs" in param_list or "wavenumber" in param_list:
+        result = self.get_magnitude_along(animated_axis, *param_list)
+    else:
+        result = self.get_along(animated_axis, *param_list)
+
     value_max = np.max(result[animated_axis])
     value_min = np.min(result[animated_axis])
     variation_step = (value_max - value_min) / nb_frames
@@ -30,8 +34,8 @@ def plot_2D_Data_Animated(
     marge = (
         y_max - y_min
     ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
-    param_dict["y_min"] = np.max(result[self.symbol]) + abs(marge)
-    param_dict["y_max"] = np.min(result[self.symbol]) - abs(marge)
+    param_dict["y_min"] = np.min(result[self.symbol]) - abs(marge)
+    param_dict["y_max"] = np.max(result[self.symbol]) + abs(marge)
     param_dict["is_show_fig"] = False
     # Getting the name of the gif
     save_path = param_dict["save_path"].replace(".png", ".gif")
