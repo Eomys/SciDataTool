@@ -148,8 +148,8 @@ def plot_2D_Data(
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
             is_grid=False,
-            scale_units="x",
-            scale=None,
+            scale_units=scale_units,
+            scale=scale,
             width=width,
         )
 

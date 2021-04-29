@@ -256,6 +256,8 @@ def plot_2D(
             y = [e[1] for e in Xdatas[i_Xdatas[i]]]
             if scale == None :
                 scale=25 * (np_max(Ydatas[0]))
+            else:
+                scale=25 * (np_max(Ydatas[0])) / scale
             ax.quiver(
                 x,
                 y,
