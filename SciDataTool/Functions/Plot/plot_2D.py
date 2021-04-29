@@ -53,6 +53,10 @@ def plot_2D(
     font_size_label=10,
     font_size_legend=8,
     is_show_legend=True,
+    scale_units="x",
+    scale=None,
+    width=0.005,
+
 ):
     """Plots a 2D graph (curve, bargraph or barchart) comparing fields in Ydatas
 
@@ -108,6 +112,12 @@ def plot_2D(
         True to show figure after plot
     win_title : str
         Title of the plot window
+    scale_units : str
+        arrow lenght scale factor reference {'width', 'height', 'dots', 'pouces', 'x', 'y', 'xy'}
+    scale : float
+        arrow lenght factor
+    width : float
+        arrow width factor 
     """
 
     # Set is_show_fig if is None
@@ -244,17 +254,22 @@ def plot_2D(
         for i in range(ndatas):
             x = [e[0] for e in Xdatas[i_Xdatas[i]]]
             y = [e[1] for e in Xdatas[i_Xdatas[i]]]
+            if scale == None :
+                scale=25 * (np_max(Ydatas[0]))
             ax.quiver(
                 x,
                 y,
                 Ydatas[0][:, 0],
                 Ydatas[0][:, 1],
                 color=color_list[i],
-                scale_units="x",
-                scale=25 * (np_max(Ydatas[0])),
+                scale_units=scale_units,
+                scale=scale,
+                width=width,
                 minshaft=2,
                 zorder=10,
                 label=legend_list[i],
+                headwidth=2,
+                headlength=4,
             )
             ax.axis("equal")
 
