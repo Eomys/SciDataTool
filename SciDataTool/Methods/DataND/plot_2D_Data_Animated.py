@@ -20,7 +20,6 @@ def plot_2D_Data_Animated(
     """
     # The list of images used to build the gif
     images = list()
-    print(param_list)
     if "freqs" in param_list or "wavenumber" in param_list:
         result = self.get_magnitude_along(animated_axis, *param_list)
     else:
