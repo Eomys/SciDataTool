@@ -60,6 +60,7 @@ class RequestedAxis(FrozenClass):
         rebuild_indices=None,
         is_step=False,
         noct=None,
+        corr_values=None,
         init_dict=None,
         init_str=None,
     ):
@@ -108,6 +109,8 @@ class RequestedAxis(FrozenClass):
                 is_step = init_dict["is_step"]
             if "noct" in list(init_dict.keys()):
                 noct = init_dict["noct"]
+            if "corr_values" in list(init_dict.keys()):
+                corr_values = init_dict["corr_values"]
         # Set the properties (value check and convertion are done in setter)
         self.parent = None
         self.name = name
@@ -125,6 +128,7 @@ class RequestedAxis(FrozenClass):
         self.rebuild_indices = rebuild_indices
         self.is_step = is_step
         self.noct = noct
+        self.corr_values = corr_values
 
         # The class is frozen, for now it's impossible to add new properties
         self._freeze()
@@ -177,6 +181,13 @@ class RequestedAxis(FrozenClass):
         )
         RequestedAxis_str += "is_step = " + str(self.is_step) + linesep
         RequestedAxis_str += "noct = " + str(self.noct) + linesep
+        RequestedAxis_str += (
+            "corr_values = "
+            + linesep
+            + str(self.corr_values).replace(linesep, linesep + "\t")
+            + linesep
+            + linesep
+        )
         return RequestedAxis_str
 
     def __eq__(self, other):
@@ -213,6 +224,8 @@ class RequestedAxis(FrozenClass):
         if other.is_step != self.is_step:
             return False
         if other.noct != self.noct:
+            return False
+        if not array_equal(other.corr_values, self.corr_values):
             return False
         return True
 
@@ -252,6 +265,8 @@ class RequestedAxis(FrozenClass):
             diff_list.append(name + ".is_step")
         if other._noct != self._noct:
             diff_list.append(name + ".noct")
+        if not array_equal(other.corr_values, self.corr_values):
+            diff_list.append(name + ".corr_values")
         return diff_list
 
     def __sizeof__(self):
@@ -275,6 +290,7 @@ class RequestedAxis(FrozenClass):
         S += getsizeof(self.rebuild_indices)
         S += getsizeof(self.is_step)
         S += getsizeof(self.noct)
+        S += getsizeof(self.corr_values)
         return S
 
     def as_dict(self, **kwargs):
@@ -311,6 +327,10 @@ class RequestedAxis(FrozenClass):
             RequestedAxis_dict["rebuild_indices"] = self.rebuild_indices.tolist()
         RequestedAxis_dict["is_step"] = self.is_step
         RequestedAxis_dict["noct"] = self.noct
+        if self.corr_values is None:
+            RequestedAxis_dict["corr_values"] = None
+        else:
+            RequestedAxis_dict["corr_values"] = self.corr_values.tolist()
         # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
@@ -333,6 +353,7 @@ class RequestedAxis(FrozenClass):
         self.rebuild_indices = None
         self.is_step = None
         self.noct = None
+        self.corr_values = None
 
     def _get_name(self):
         """getter of name"""
@@ -624,5 +645,30 @@ class RequestedAxis(FrozenClass):
         doc=u"""To store 1/nth octave band
 
         :Type: int
+        """,
+    )
+
+    def _get_corr_values(self):
+        """getter of corr_values"""
+        return self._corr_values
+
+    def _set_corr_values(self, value):
+        """setter of corr_values"""
+        if type(value) is int and value == -1:
+            value = array([])
+        elif type(value) is list:
+            try:
+                value = array(value)
+            except:
+                pass
+        check_var("corr_values", value, "ndarray")
+        self._corr_values = value
+
+    corr_values = property(
+        fget=_get_corr_values,
+        fset=_set_corr_values,
+        doc=u"""To store original axis values (useful in case of non uniform fft)
+
+        :Type: ndarray
         """,
     )
