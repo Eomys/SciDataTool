@@ -108,7 +108,7 @@ def plot_2D_Data(
     scale_units : str
         arrow lenght scale factor reference {'width', 'height', 'dots', 'pouces', 'x', 'y', 'xy'}
     scale : float
-        arrow lenght factor
+        arrow length factor
     width : float
         arrow width factor 
     """
@@ -148,8 +148,8 @@ def plot_2D_Data(
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
             is_grid=False,
-            scale_units="x",
-            scale=None,
+            scale_units=scale_units,
+            scale=scale,
             width=width,
         )
 

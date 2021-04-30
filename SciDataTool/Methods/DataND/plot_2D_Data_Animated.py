@@ -18,6 +18,7 @@ def plot_2D_Data_Animated(
     fps: int
         frames displayed per second
     """
+
     # The list of images used to build the gif
     images = list()
     if "freqs" in param_list or "wavenumber" in param_list:
