@@ -187,15 +187,15 @@ def plot_2D_Data_Animated(
             image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
             image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
             images.append(image)
-            plt.close(fig)
+            
             # Fig and ax reset to default for background
-            (fig, ax, _, _) = init_fig()
             fig = copy_fig(deepcopy_fig)
             ax = fig.axes[0]
             # While conidtion incrementation
             value_min += variation_step
 
         # Creating the gif
+        plt.close(fig)
         imageio.mimsave(save_path_gif, images, format="GIF-PIL", fps=fps)
 
         
