@@ -2,10 +2,12 @@ from logging import getLogger
 from typing import Dict, List
 
 import numpy as np
+from numpy import all as np_all
 from numpy import allclose, exp, linspace
 from numpy import max as np_max
+from numpy import mean
 from numpy import min as np_min
-from numpy import moveaxis, ndarray, outer, pi, tensordot
+from numpy import moveaxis, ndarray, outer, pi, tensordot, where
 
 
 def matrice_D(t: ndarray, f: ndarray) -> ndarray:
@@ -37,14 +39,14 @@ def nudftn(a: ndarray, axes_dict: Dict[int, List[ndarray]]) -> ndarray:
         if idx_axe not in axes_fft:  # Check if DFT has to be performed
             # Extract space sampling and frequency sampling
             s, f = axes
-            assert np.all()
+
             # Check aliasing with criteria frequency < 1/2*mean(spacestep)
             # Other criteria may be used with min instead of mean : max(f)>(1/(2*min(space)))
             space = s[1:] - s[:-1]
-            if max(f) > (1 / (2 * mean(space))):
+            if np_max(f) > (1 / (2 * mean(space))):
                 # Display warning
                 print(
-                    f"The maximum frequency ({max(f)}) is greater than the 1/(2*mean of each timestep) ({1/(2*mean(space))}), aliasing may occur."
+                    f"The maximum frequency ({np_max(f)}) is greater than the 1/(2*mean of each timestep) ({1/(2*mean(space))}), aliasing may occur."
                 )
 
             # TODO criteria to have only positive freq or approximatively 50% of negative frequencies
@@ -60,7 +62,7 @@ def nudftn(a: ndarray, axes_dict: Dict[int, List[ndarray]]) -> ndarray:
             res /= len(s)
 
             # Check if every frequency is >=0 (rfft equivalent)
-            if all(f >= 0):
+            if np_all(f >= 0):
                 idx = where(f != 0)
                 slice_list = tuple(
                     slice(None) if i != idx_axe else idx[0] for i in range(res.ndim)
