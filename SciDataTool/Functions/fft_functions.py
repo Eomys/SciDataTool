@@ -357,12 +357,15 @@ def comp_ifftn(values, axes_list, is_real=True):
                         axis.input_data,
                         axis.corr_values,
                     ]
+                    # Keep only interpolation data
+                    axis.values = axis.input_data
+                    axis.input_data = None
                 elif axis.corr_values is not None:
                     # Compare frequencies of interest with fft frequencies
                     freqs = comp_fft_freqs(
                         axis.input_data, axis.name == "time", is_real
                     )
-                    if len(freqs) == len(axis.corr_values) and not allclose(
+                    if len(freqs) != len(axis.corr_values) or not allclose(
                         freqs,
                         axis.corr_values,
                         rtol=1e-5,
@@ -380,7 +383,9 @@ def comp_ifftn(values, axes_list, is_real=True):
                             axis.input_data,
                             frequencies,
                         ]
-
+                        # Keep only interpolation data
+                        axis.values = axis.input_data
+                        axis.input_data = None
     # Compute non uniform inverse Fourier Transform for axes
     if axes_dict_non_uniform:
         values = inudftn(values, axes_dict=axes_dict_non_uniform)
@@ -401,30 +406,33 @@ def comp_ifftn(values, axes_list, is_real=True):
             else:
                 axes = [axis.index] + axes
                 shape = [values.shape[axis.index]] + shape
-    size = array(shape).prod()
-    if is_onereal:
-        values = values * size / 2
-        if is_half:
-            values *= 0.5
-        values_shift = ifftshift(values, axes=axes[:-1])
-        slice_0 = take(values_shift, 0, axis=axes[-1])
-        slice_0 *= 2
-        if is_half:
+    if axes:  # Check if ifftn has to be called
+        size = array(shape).prod()
+        if is_onereal:
+            values = values * size / 2
+            if is_half:
+                values *= 0.5
+            values_shift = ifftshift(values, axes=axes[:-1])
+            slice_0 = take(values_shift, 0, axis=axes[-1])
             slice_0 *= 2
-        other_values = delete(values_shift, 0, axis=axes[-1])
-        values = insert(other_values, 0, slice_0, axis=axes[-1])
-        values_IFT = irfftn(values, axes=axes)
-    elif is_half:
-        values = values * size / 2
-        values_shift = ifftshift(values, axes=axes[:-1])
-        slice_0 = take(values_shift, 0, axis=axes[-1])
-        slice_0 *= 2
-        other_values = delete(values_shift, 0, axis=axes[-1])
-        values = insert(other_values, 0, slice_0, axis=axes[-1])
-        values_IFT = ifftn(values, axes=axes)
+            if is_half:
+                slice_0 *= 2
+            other_values = delete(values_shift, 0, axis=axes[-1])
+            values = insert(other_values, 0, slice_0, axis=axes[-1])
+            values_IFT = irfftn(values, axes=axes)
+        elif is_half:
+            values = values * size / 2
+            values_shift = ifftshift(values, axes=axes[:-1])
+            slice_0 = take(values_shift, 0, axis=axes[-1])
+            slice_0 *= 2
+            other_values = delete(values_shift, 0, axis=axes[-1])
+            values = insert(other_values, 0, slice_0, axis=axes[-1])
+            values_IFT = ifftn(values, axes=axes)
+        else:
+            values_shift = ifftshift(values, axes=axes) * size
+            values_IFT = ifftn(values_shift, axes=axes)
     else:
-        values_shift = ifftshift(values, axes=axes) * size
-        values_IFT = ifftn(values_shift, axes=axes)
+        values_IFT = values
     return values_IFT
 
 

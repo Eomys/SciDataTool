@@ -5,7 +5,7 @@ import numpy as np
 from numpy import allclose, exp, linspace
 from numpy import max as np_max
 from numpy import min as np_min
-from numpy import moveaxis, ndarray, outer, tensordot
+from numpy import moveaxis, ndarray, outer, pi, tensordot
 
 
 def matrice_D(t: ndarray, f: ndarray) -> ndarray:
