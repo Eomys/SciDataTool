@@ -318,3 +318,70 @@ def test_nudft_2d_wavenumber():
 
     # Compare values between field and reconstructed field
     np.testing.assert_array_almost_equal(field, result_idft["X"].real)
+
+
+def test_non_uniform_time_1d():
+    """
+    Perform inudft on a uniform spectrum to construct non uniform time serie
+    """
+    # Fix seed to avoid problem due to random non uniform sampling generation
+    np.random.seed(5)
+
+    def f_1d(x: np.ndarray) -> np.ndarray:
+        """
+        Create a 1D function with following Fourier transform coefficients:
+        - 1 at 0 Hz
+        - 5 at 2 Hz
+        - 3 at 10 Hz
+        - 8 at 13 Hz
+        """
+        return (
+            12.5
+            - 30 * np.sin(2 * 2 * np.pi * x)
+            + 40 * np.sin(10 * 2 * np.pi * x)
+            + 18.9 * np.sin(13 * 2 * np.pi * x)
+        )
+
+    # Define time discretization 200 samples
+    time_vect = np.linspace(0, 1, 200)
+    time = Data1D(name="time", unit="s", values=time_vect)
+
+    # Define data
+    data = f_1d(time.get_values())
+
+    data_time = DataTime(
+        name="field",
+        symbol="X",
+        axes=[time],
+        values=data,
+        unit="dimless",
+    )
+
+    # Compute non uniform discrete Fourier transform
+    result_nudft = data_time.get_along("freqs")
+
+    # Define the spectral exis
+    frequencies = Data1D(name="freqs", unit="Hz", values=result_nudft["freqs"])
+
+    # Define the spectrum over the axis frequencies
+    data_freq = DataFreq(
+        name="field",
+        symbol="X",
+        axes=[frequencies],
+        values=result_nudft["X"],
+        unit="dimless",
+    )
+    time_vect_non_unif = time_vect[::2] + np.random.normal(
+        scale=1 / (10 * len(time_vect)), size=time_vect[::2].shape
+    )
+
+    # Compute inudftn
+    result_inudft = data_freq.get_along(
+        "time=axis_data", axis_data={"time": time_vect_non_unif}
+    )
+
+    # Compare initial time serie with inudftn(nudftn) with a large tolerance
+    np.testing.assert_array_almost_equal(
+        result_inudft["X"].real, f_1d(time_vect_non_unif), decimal=0
+    )
+    assert np.allclose(result_inudft["X"].real, f_1d(time_vect_non_unif), rtol=1e-1)
