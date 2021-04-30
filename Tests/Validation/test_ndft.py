@@ -1,8 +1,9 @@
-import numpy as np
 import random as rd
-import pytest
 
-from SciDataTool import Data1D, DataTime
+import matplotlib.pyplot as plt
+import numpy as np
+import pytest
+from SciDataTool import Data1D, DataTime, DataFreq
 
 
 @pytest.mark.validation
@@ -27,7 +28,7 @@ def test_nudft_1d():
         )
 
     # Define time discretization 200 samples
-    time = Data1D(name="time", unit="s", values=np.linspace(0, 1, 200))
+    time = Data1D(name="time", unit="s", values=np.linspace(0, 1, 10000))
 
     # Define data
     data = f_1d(time.values)
@@ -44,20 +45,20 @@ def test_nudft_1d():
         "freqs=axis_data", axis_data={"freqs": np.array([0, 4, 6, 50])}
     )
 
-    # Create results dict to check nudft amplitude coefficient
-    theoretical_amplitude_dict = {0: 4, 4: 20, 6: 16, 20: 10}
+    # Create results to check nudft amplitude coefficient
+    theoretical_amplitude = np.array([4, 20, 16, 10], np.float64)
 
     # Check amplitudes
-    for freq, val_fft in zip(result_nudft["freqs"], result_nudft["X"]):
-        assert (
-            np.abs(val_fft) == theoretical_amplitude_dict[freq]
-        ), f"Non uniform dft amplitude is different from the theoretical one : {np.abs(val_fft)}!={theoretical_amplitude_dict[freq]}"
+    np.testing.assert_array_almost_equal(
+        np.abs(result_nudft["X"]), theoretical_amplitude, decimal=1
+    )
 
 
 @pytest.mark.validation
 def test_inudft_1d():
     """
-    Test iDFT on non-uniform frequencies
+    Test iDFT on non-uniform frequencies, use nudft and inudft
+    to compare with initial time series
     """
 
     def f_1d(x: np.ndarray) -> np.ndarray:
@@ -69,19 +70,20 @@ def test_inudft_1d():
         - 8 at 13 Hz
         """
         return (
-            1
-            + 5 * np.sin(2 * 2 * np.pi * x)
-            + 3 * np.sin(10 * 2 * np.pi * x)
-            + 8 * np.sin(13 * 2 * np.pi * x)
+            12.5
+            - 30 * np.sin(2 * 2 * np.pi * x)
+            + 40 * np.sin(10 * 2 * np.pi * x)
+            + 18.9 * np.sin(13 * 2 * np.pi * x)
         )
 
-    # Define time discretization 200 samples
-    time = Data1D(name="time", unit="s", values=np.linspace(0, 1, 200))
+    # Define time discretization 10000 samples
+    time_vect = np.linspace(0, 1, 20_000)
+    time = Data1D(name="time", unit="s", values=time_vect)
 
     # Define data
     data = f_1d(time.get_values())
 
-    field = DataTime(
+    data_time = DataTime(
         name="field",
         symbol="X",
         axes=[time],
@@ -90,7 +92,7 @@ def test_inudft_1d():
     )
 
     # Compute non uniform discrete Fourier transform
-    result_nudft = field.get_along(
+    result_nudft = data_time.get_along(
         "freqs=axis_data", axis_data={"freqs": np.array([0, 2, 10, 13])}
     )
 
@@ -98,7 +100,7 @@ def test_inudft_1d():
     frequencies = Data1D(name="freqs", unit="Hz", values=result_nudft["freqs"])
 
     # Define the spectrum over the axis frequencies
-    field = DataTime(
+    data_freq = DataFreq(
         name="field",
         symbol="X",
         axes=[frequencies],
@@ -106,11 +108,13 @@ def test_inudft_1d():
         unit="dimless",
     )
 
-    result_inudft = field.get_along(
-        "time=axis_data", axis_data={"time": np.linspace(0, 1, 200)}
-    )
+    # Compute inudftn
+    result_inudft = data_freq.get_along("time=axis_data", axis_data={"time": time_vect})
 
-    np.testing.assert_array_almost_equal(result_inudft["X"], data)
+    # Compare initial time serie with inudftn(nudftn) with a large tolerance
+    np.testing.assert_array_almost_equal(
+        result_inudft["X"].real, data_time.values, decimal=1
+    )
 
 
 @pytest.mark.validation
@@ -143,12 +147,10 @@ def test_force_nudft_1d():
         unit="dimless",
     )
 
-    freqs = [i for i in range(200)]
+    freqs = np.arange(200)
 
     # Compute discrete Fourier transform
-    result_fft = field.get_along(
-        "freqs=axis_data", axis_data={"freqs": np.array(freqs)}
-    )
+    result_fft = field.get_along("freqs=axis_data", axis_data={"freqs": freqs})
 
     # the last element of freqs must trigger is_uniform test
     # epsilon = absolute(a - b) <= (atol + rtol * absolute(b))
@@ -157,9 +159,7 @@ def test_force_nudft_1d():
     freqs[-1] = freqs[-1] + 1e-8 + (1e-5 + 1e-6) * np.abs(freqs[-1])
 
     # Compute non uniform discrete Fourier transform
-    result_nudft = field.get_along(
-        "freqs=axis_data", axis_data={"freqs": np.array(freqs)}
-    )
+    result_nudft = field.get_along("freqs=axis_data", axis_data={"freqs": freqs})
 
     assert np.allclose(
         result_fft["X"][:-1], result_nudft["X"][:-1]
@@ -179,41 +179,51 @@ def test_nudft_2d():
 
         return 1 + 3 * np.sin(10 * 2 * np.pi * theta) + 2 * np.sin(15 * 2 * np.pi * t)
 
-    time = Data1D(name="time", unit="s", values=np.linspace(0, 1, 200))
+    time = Data1D(name="time", unit="s", values=np.linspace(0, 1, 10_000))
     angle = Data1D(name="angle", unit="{°}", values=np.linspace(0, 360, 200))
 
-    angle_coord, time_coord = np.meshgrid(time.get_values(), angle.get_values())
+    time_coord, angle_coord = np.meshgrid(time.get_values(), angle.get_values())
 
-    field = f_2d(time_coord, angle_coord)
+    field = f_2d(time_coord, angle_coord).T
 
     Field = DataTime(
         name="Field", symbol="X", unit="dimless", axes=[time, angle], values=field
     )
 
-    freqs_non_unif = np.linspace(0, 200, 400)
-    freqs_non_unif = rd.sample(list(freqs_non_unif), 200)
-    freqs_non_unif.sort()
-    freqs_non_unif = np.asarray(freqs_non_unif)
+    freqs_non_unif = np.array([0, 15])
 
-    wavenumber_unif = [i for i in range(200)]
-
-    # Compute non uniform discrete Fourier transform
-    result_fft = field.get_along(
+    # Compute non uniform discrete Fourier transform to get freqs and fft to get wavenumber
+    result_dft = Field.get_along(
         "freqs=axis_data",
-        "wavenumber=axis_data",
+        "wavenumber",
         axis_data={
-            "freqs": np.array(freqs_non_unif),
-            "wavenumber": np.array(wavenumber_unif),
+            "freqs": freqs_non_unif,
         },
     )
 
-    wavenumber = Data1D(name="wavenumber", unit="s", values=wavenumber)
-    freqs = Data1D(name="freqs", unit="Hz", values=freqs_non_unif)
-
-    angle_coord, time_coord = np.meshgrid(time.get_values(), angle.get_values())
-
-    field = f_d(time_coord, angle_coord)
-
-    Field = DataTime(
-        name="Field", symbol="X", unit="dimless", axes=[time, angle], values=field
+    assert result_dft["X"].shape == (
+        len(freqs_non_unif),
+        len(np.fft.fftfreq(len(angle.values))),
     )
+
+    # Create DataFreq to test inudft
+    wavenumber = Data1D(name="wavenumber", unit="s", values=result_dft["wavenumber"])
+    freqs = Data1D(name="freqs", unit="Hz", values=result_dft["freqs"])
+
+    FreqField = DataFreq(
+        name="FreqField",
+        symbol="X",
+        unit="dimless",
+        axes=[freqs, wavenumber],
+        values=result_dft["X"],
+    )
+
+    result_idft = FreqField.get_along(
+        "time=axis_data",
+        "angle",
+        axis_data={
+            "time": time.values,
+        },
+    )
+
+    np.testing.assert_array_almost_equal(result_idft["X"].real, field, decimal=2)
