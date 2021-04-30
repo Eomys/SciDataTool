@@ -226,7 +226,7 @@ def comp_fftn(values, axes_list, is_real=True):
     is_non_uniform = False
     for axis in axes_list:
         if axis.transform == "fft":
-            if axis.corr_values is not None:
+            if axis.corr_values is not None:  # Timesteps
                 if not is_uniform(axis.corr_values):
                     is_non_uniform = True
                     axes_dict_non_uniform[axis.index] = [
@@ -236,13 +236,14 @@ def comp_fftn(values, axes_list, is_real=True):
                     # Keep only interpolation data
                     axis.values = axis.input_data
                     axis.input_data = None
-            elif axis.input_data is not None:
+                    continue
+            if axis.input_data is not None:
                 if not isin(axis.input_data, axis.values).all():
                     is_non_uniform = True
                     # Convert wavenumbers to frequencies if needed
                     frequencies = (
                         axis.input_data
-                        if axis.name == "time"
+                        if axis.name == "freqs"
                         else axis.input_data / (2 * pi)
                     )
                     axes_dict_non_uniform[axis.index] = [

@@ -50,7 +50,7 @@ def test_nudft_1d():
 
     # Check amplitudes
     np.testing.assert_array_almost_equal(
-        np.abs(result_nudft["X"]), theoretical_amplitude, decimal=1
+        np.abs(result_nudft["X"]), theoretical_amplitude, decimal=2
     )
 
 
@@ -113,7 +113,7 @@ def test_inudft_1d():
 
     # Compare initial time serie with inudftn(nudftn) with a large tolerance
     np.testing.assert_array_almost_equal(
-        result_inudft["X"].real, data_time.values, decimal=1
+        result_inudft["X"].real, data_time.values, decimal=2
     )
 
 
@@ -226,4 +226,95 @@ def test_nudft_2d():
         },
     )
 
-    np.testing.assert_array_almost_equal(result_idft["X"].real, field, decimal=2)
+    np.testing.assert_array_almost_equal(result_idft["X"].real, field, decimal=3)
+
+
+@pytest.mark.validation
+def test_nudft_2d_wavenumber():
+    def f_2d(t, theta):
+        """
+        Create a 2D function with following Fourier transform coefficients:
+        - 1 at 0 Hz
+        - 2 at 15 Hz
+        Wavenumber:
+        - 3 at 10 {rad^-1}
+        """
+
+        return 1 + 2 * np.sin(4 * 2 * np.pi * t) + 3 * np.sin(80 * theta)
+
+    # Variable to display plot
+    is_plot = False
+
+    # Create DataTime
+    time = Data1D(name="time", unit="s", values=np.linspace(0, 1, 400))
+    angle = Data1D(
+        name="angle", unit="rad", values=np.linspace(0, 2 * np.pi, 300, endpoint=False)
+    )
+
+    time_coord, angle_coord = np.meshgrid(time.get_values(), angle.get_values())
+
+    field = f_2d(time_coord, angle_coord).T
+
+    Field = DataTime(
+        name="Field",
+        symbol="X",
+        unit="dimless",
+        axes=[time, angle],
+        values=field,
+    )
+    if is_plot:  # Display field
+        plt.imshow(field)
+        plt.show()
+
+    # Keep only interesting wavenumber
+    wavenumber_non_unif = np.array([-80, 0, 80])
+
+    # Compute non uniform dft along wavenumbers and fft along frequencies
+    result_dft = Field.get_along(
+        "freqs",
+        "wavenumber=axis_data",
+        axis_data={
+            "wavenumber": wavenumber_non_unif,
+        },
+    )
+    if is_plot:  # Display spectrum values
+        plt.imshow(np.abs(result_dft["X"]))
+        plt.show()
+
+    # Check spectrum shape
+    assert result_dft["X"].shape == (
+        len(np.fft.rfftfreq(len(time.values))),
+        len(wavenumber_non_unif),
+    )
+
+    # Create DataFreq to test inudft
+    freqs = Data1D(name="freqs", unit="Hz", values=result_dft["freqs"])
+    wavenumber = Data1D(name="wavenumber", unit="s", values=result_dft["wavenumber"])
+
+    FreqField = DataFreq(
+        name="FreqField",
+        symbol="X",
+        unit="dimless",
+        axes=[freqs, wavenumber],
+        values=result_dft["X"],
+    )
+
+    # Compute inverse non uniform DFT along wavenumbers and iFFT along frequencies
+    result_idft = FreqField.get_along(
+        "time",
+        "angle=axis_data",
+        axis_data={
+            "angle": angle.values,
+        },
+    )
+
+    if is_plot:  # Display field and reconstructed field to compare
+        fig, axs = plt.subplots(2)
+        axs[0].imshow(field)
+        axs[1].imshow(
+            result_idft["X"].real, vmin=0.9 * np.min(field), vmax=1.1 * np.max(field)
+        )
+        plt.show()
+
+    # Compare values between field and reconstructed field
+    np.testing.assert_array_almost_equal(field, result_idft["X"].real)
