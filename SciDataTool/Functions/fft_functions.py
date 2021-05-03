@@ -284,7 +284,11 @@ def comp_fftn(values, axes_list, is_real=True):
         if is_onereal:
             values_FT = rfftn(values, axes=axes)
             # Do not multiply constant component by 2 (f=0)
-            if axes_list[axes[-1]].corr_values[0] == 0:
+            if axes_list[axes[-1]].corr_values is not None:
+                freqs = axes_list[axes[-1]].corr_values
+            else:
+                freqs = axes_list[axes[-1]].values
+            if freqs[0] == 0:
                 slice_0 = take(values_FT, 0, axis=axes[-1])
                 slice_0 *= 0.5
                 if is_twice:
