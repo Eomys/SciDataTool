@@ -1,7 +1,7 @@
 def plot_3D_Data(
     self,
     *arg_list,
-    axis_data=axis_data,
+    axis_data=None,
     is_norm=False,
     unit="SI",
     component_list=None,
