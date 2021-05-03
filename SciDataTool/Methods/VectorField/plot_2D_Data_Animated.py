@@ -1,15 +1,16 @@
 import numpy as np
 import imageio
 import matplotlib.pyplot as plt
-from SciDataTool.Functions.Plot.init_fig import init_fig,copy_fig
+from SciDataTool.Functions.Plot.init_fig import init_fig, copy_fig
 
 
 def plot_2D_Data_Animated(
     self,
     animated_axis,
     *arg_list,
-    nb_frames=50, 
+    nb_frames=50,
     fps=10,
+    axis_data=None,
     radius=None,
     is_norm=False,
     unit="SI",
@@ -137,15 +138,15 @@ def plot_2D_Data_Animated(
 
         # Params settings
         save_path = None
-        is_show_fig = False 
-
+        is_show_fig = False
 
         # for value in animated_values:
         while value_min < value_max:
             # Call to plot_2D_Data of VectorField class, which manage the quiver case
             self.plot_2D_Data(
                 *arg_list,
-                animated_axis+"="+str(value_min),
+                animated_axis + "=" + str(value_min),
+                axis_data=axis_data,
                 radius=radius,
                 is_norm=is_norm,
                 unit=unit,
@@ -187,7 +188,7 @@ def plot_2D_Data_Animated(
             image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
             image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
             images.append(image)
-            
+
             # Fig and ax reset to default for background
             fig = copy_fig(deepcopy_fig)
             ax = fig.axes[0]
@@ -197,10 +198,6 @@ def plot_2D_Data_Animated(
         # Creating the gif
         plt.close(fig)
         imageio.mimsave(save_path_gif, images, format="GIF-PIL", fps=fps)
-
-        
-
-
 
     else:
 
@@ -217,12 +214,12 @@ def plot_2D_Data_Animated(
             else:
                 save_path_comp = save_path
 
-           
             self.components[comp].plot_2D_Data_Animated(
                 animated_axis,
                 *arg_list,
-                nb_frames=nb_frames, 
+                nb_frames=nb_frames,
                 fps=fps,
+                axis_data=axis_data,
                 is_norm=is_norm,
                 unit=unit,
                 data_list=[dat.components[comp] for dat in data_list],

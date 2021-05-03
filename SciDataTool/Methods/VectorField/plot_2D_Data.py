@@ -6,6 +6,7 @@ from SciDataTool.Functions.conversions import rphiz_to_xyz
 def plot_2D_Data(
     self,
     *arg_list,
+    axis_data=None,
     radius=None,
     is_norm=False,
     unit="SI",
@@ -43,7 +44,6 @@ def plot_2D_Data(
     scale_units="x",
     scale=None,
     width=0.005,
-
 ):
     """Plots a field as a function of time
 
@@ -110,12 +110,14 @@ def plot_2D_Data(
     scale : float
         arrow length factor
     width : float
-        arrow width factor 
+        arrow width factor
     """
 
     # Special case of quiver plot
     if type_plot == "quiver":
-        result = self.get_xyz_along(arg_list)
+        result = self.get_xyz_along(
+            arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+        )
         if "x" in result and "y" in result:
             Xdatas = column_stack((result["x"], result["y"]))
         else:
@@ -170,6 +172,7 @@ def plot_2D_Data(
 
             self.components[comp].plot_2D_Data(
                 arg_list,
+                axis_data=axis_data,
                 is_norm=is_norm,
                 unit=unit,
                 data_list=[dat.components[comp] for dat in data_list],
