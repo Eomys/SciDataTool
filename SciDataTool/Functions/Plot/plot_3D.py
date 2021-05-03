@@ -106,7 +106,7 @@ def plot_3D(
         is_show_fig = True if fig is None else False
 
     # Set if figure is 3D
-    if type_plot != "pcolor" and type != "scatter":
+    if type_plot not in ["pcolor", "pcolormesh", "scatter"]:
         is_3d = True
     else:
         is_3d = False
@@ -211,12 +211,26 @@ def plot_3D(
             interpolation="bilinear",
             extent=(x_min, x_max, y_max, y_min),
             cmap=colormap,
-            picker=True,
+            picker=10,
         )
         im.set_data(Xdata, Ydata, Zdata.T)
         ax.images.append(im)
-        ax.picker = True
         clb = fig.colorbar(im, ax=ax, format=clb_format)
+        clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
+        clb.ax.tick_params(labelsize=font_size_legend)
+        for l in clb.ax.yaxis.get_ticklabels():
+            l.set_family(font_name)
+        if xticks is not None:
+            ax.xaxis.set_ticks(xticks)
+        if yticks is not None:
+            ax.yaxis.set_ticks(yticks)
+        ax.set_xlim([x_min, x_max])
+        ax.set_ylim([y_min, y_max])
+    elif type_plot == "pcolormesh":
+        c = ax.pcolormesh(
+            Xdata, Ydata, Zdata, cmap=colormap, shading="gouraud", antialiased=True
+        )
+        clb = fig.colorbar(c, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
         for l in clb.ax.yaxis.get_ticklabels():
@@ -231,8 +245,9 @@ def plot_3D(
         c = ax.scatter(
             Xdata,
             Ydata,
+            # s=10,
             c=Zdata,
-            marker="s",
+            marker=".",
             cmap=colormap,
             vmin=z_min,
             vmax=z_max,

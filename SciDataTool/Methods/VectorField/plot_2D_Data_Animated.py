@@ -1,11 +1,15 @@
-from numpy import column_stack, array, max as np_max
-from SciDataTool.Functions.Plot.plot_2D import plot_2D
-from SciDataTool.Functions.conversions import rphiz_to_xyz
+import numpy as np
+import imageio
+import matplotlib.pyplot as plt
+from SciDataTool.Functions.Plot.init_fig import init_fig, copy_fig
 
 
-def plot_2D_Data(
+def plot_2D_Data_Animated(
     self,
+    animated_axis,
     *arg_list,
+    nb_frames=50,
+    fps=10,
     axis_data=None,
     radius=None,
     is_norm=False,
@@ -41,7 +45,6 @@ def plot_2D_Data(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
-    scale_units="x",
     scale=None,
     width=0.005,
 ):
@@ -53,8 +56,14 @@ def plot_2D_Data(
         an Output object
     Data_str : str
         name of the Data Object to plot (e.g. "mag.Br")
+    animated_axis : str
+        The field will be animated along this axis
     *arg_list : list of str
         arguments to specify which axes to plot
+    nb_frames : int
+        number of frames used to build the gif
+    fps: int
+        frames displayed per second
     radius : float
         radius used for quiver plot
     is_norm : bool
@@ -105,55 +114,90 @@ def plot_2D_Data(
         True to show figure after plot
     thresh : float
         threshold for automatic fft ticks
-    scale_units : str
-        arrow lenght scale factor reference {'width', 'height', 'dots', 'pouces', 'x', 'y', 'xy'}
     scale : float
-        arrow length factor
+        arrow length factor in quiver. Be careful, if scale = None then there will be a normalization on the arrows on each frame
     width : float
-        arrow width factor
+        arrow width factor in quiver
     """
 
     # Special case of quiver plot
     if type_plot == "quiver":
-        result = self.get_xyz_along(
-            arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
-        )
-        if "x" in result and "y" in result:
-            Xdatas = column_stack((result["x"], result["y"]))
-        else:
-            if radius is None:
-                radius = 1
-            phi = result["angle"]
-            rphi = column_stack((array([radius] * len(phi)), phi))
-            Xdatas = rphiz_to_xyz(rphi)
-        Ydatas = column_stack((result["comp_x"], result["comp_y"]))
-        # Normalize Ydatas
-        # Ydatas = Ydatas / (np_max(Ydatas) * 0.001 * radius)
-        plot_2D(
-            [Xdatas],
-            [Ydatas],
-            color_list=color_list,
-            linestyle_list=linestyles,
-            linewidth_list=linewidth_list,
-            title=self.name.capitalize() + " quiver plot",
-            legend_list=[self.name],
-            xlabel="[m]",
-            ylabel="[m]",
-            fig=fig,
-            ax=ax,
-            type_plot="quiver",
-            save_path=save_path,
-            is_show_fig=is_show_fig,
-            win_title=win_title,
-            font_name=font_name,
-            font_size_title=font_size_title,
-            font_size_label=font_size_label,
-            font_size_legend=font_size_legend,
-            is_grid=False,
-            scale_units=scale_units,
-            scale=scale,
-            width=width,
-        )
+        # list of png to make the gif
+        images = list()
+
+        # definition of the step along animated axis
+        animated_values = self.get_axes(animated_axis)[0].get_values()
+        value_max = np.max(animated_values)
+        value_min = np.min(animated_values)
+        variation_step = (value_max - value_min) / nb_frames
+
+        # Getting the name of the gif
+        save_path_gif = save_path.replace(".png", ".gif")
+        # Copy_fig make a deep copy so that there is no overlaping
+        deepcopy_fig = copy_fig(fig)
+
+        # Params settings
+        save_path = None
+        is_show_fig = False
+
+        # for value in animated_values:
+        while value_min < value_max:
+            # Call to plot_2D_Data of VectorField class, which manage the quiver case
+            self.plot_2D_Data(
+                *arg_list,
+                animated_axis + "=" + str(value_min),
+                axis_data=axis_data,
+                radius=radius,
+                is_norm=is_norm,
+                unit=unit,
+                component_list=component_list,
+                data_list=data_list,
+                legend_list=legend_list,
+                color_list=color_list,
+                curve_colors=curve_colors,
+                phase_colors=phase_colors,
+                linestyles=linestyles,
+                linewidth_list=linewidth_list,
+                save_path=save_path,
+                x_min=x_min,
+                x_max=x_max,
+                y_min=y_min,
+                y_max=y_max,
+                is_logscale_x=is_logscale_x,
+                is_logscale_y=is_logscale_y,
+                is_disp_title=is_disp_title,
+                is_grid=is_grid,
+                is_auto_ticks=is_auto_ticks,
+                is_auto_range=is_auto_range,
+                fig=fig,
+                ax=ax,
+                barwidth=barwidth,
+                type_plot=type_plot,
+                fund_harm_dict=fund_harm_dict,
+                is_show_fig=is_show_fig,
+                win_title=win_title,
+                thresh=thresh,
+                font_name=font_name,
+                font_size_title=font_size_title,
+                font_size_label=font_size_label,
+                font_size_legend=font_size_legend,
+                scale=scale,
+                width=width,
+            )
+            fig.canvas.draw()
+            image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+            image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+            images.append(image)
+
+            # Fig and ax reset to default for background
+            fig = copy_fig(deepcopy_fig)
+            ax = fig.axes[0]
+            # While conidtion incrementation
+            value_min += variation_step
+
+        # Creating the gif
+        plt.close(fig)
+        imageio.mimsave(save_path_gif, images, format="GIF-PIL", fps=fps)
 
     else:
 
@@ -170,8 +214,11 @@ def plot_2D_Data(
             else:
                 save_path_comp = save_path
 
-            self.components[comp].plot_2D_Data(
-                arg_list,
+            self.components[comp].plot_2D_Data_Animated(
+                animated_axis,
+                *arg_list,
+                nb_frames=nb_frames,
+                fps=fps,
                 axis_data=axis_data,
                 is_norm=is_norm,
                 unit=unit,

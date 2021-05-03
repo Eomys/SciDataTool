@@ -24,6 +24,7 @@ from numpy import (
 def plot_2D_Data(
     self,
     *arg_list,
+    axis_data=None,
     is_norm=False,
     unit="SI",
     data_list=[],
@@ -167,7 +168,9 @@ def plot_2D_Data(
     data_list2 = [self] + data_list
     for i, d in enumerate(data_list2):
         if is_fft:
-            result = d.get_magnitude_along(arg_list, unit=unit, is_norm=is_norm)
+            result = d.get_magnitude_along(
+                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+            )
             if i == 0:
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
@@ -175,7 +178,9 @@ def plot_2D_Data(
             Ydatas.append(result.pop(d.symbol))
             Xdatas.append(result[list(result)[0]])
         else:
-            result = d.get_along(arg_list, unit=unit, is_norm=is_norm)
+            result = d.get_along(
+                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+            )
             if i == 0:
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
@@ -205,6 +210,7 @@ def plot_2D_Data(
                 "oneperiod",
                 "antiperiod",
                 "smallestperiod",
+                "axis_data",
             ]
             and len(axis.values) > 1
         ):

@@ -116,6 +116,11 @@ except ImportError as error:
     plot_2D_Data = error
 
 try:
+    from ..Methods.DataND.plot_2D_Data_Animated import plot_2D_Data_Animated
+except ImportError as error:
+    plot_2D_Data_Animated = error
+
+try:
     from ..Methods.DataND.plot_3D_Data import plot_3D_Data
 except ImportError as error:
     plot_3D_Data = error
@@ -347,6 +352,18 @@ class DataND(Data):
         )
     else:
         plot_2D_Data = plot_2D_Data
+    # cf Methods.DataND.plot_2D_Data_Animated
+    if isinstance(plot_2D_Data_Animated, ImportError):
+        plot_2D_Data_Animated = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method plot_2D_Data_Animated: "
+                    + str(plot_2D_Data_Animated)
+                )
+            )
+        )
+    else:
+        plot_2D_Data_Animated = plot_2D_Data_Animated
     # cf Methods.DataND.plot_3D_Data
     if isinstance(plot_3D_Data, ImportError):
         plot_3D_Data = property(
