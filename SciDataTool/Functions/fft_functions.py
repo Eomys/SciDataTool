@@ -29,6 +29,7 @@ from numpy import (
     abs as np_abs,
     angle as np_angle,
     allclose,
+    real,
 )
 
 from SciDataTool.Functions.nudft_functions import is_uniform, nudftn, inudftn
@@ -434,6 +435,8 @@ def comp_ifftn(values, axes_list, is_real=True):
             values_IFT = ifftn(values_shift, axes=axes)
     else:
         values_IFT = values
+    if is_real:
+        values_IFT = real(values_IFT)
     return values_IFT
 
 
