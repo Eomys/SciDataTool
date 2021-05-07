@@ -56,7 +56,6 @@ def plot_2D(
     scale_units="x",
     scale=None,
     width=0.005,
-
 ):
     """Plots a 2D graph (curve, bargraph or barchart) comparing fields in Ydatas
 
@@ -117,7 +116,7 @@ def plot_2D(
     scale : float
         arrow lenght factor
     width : float
-        arrow width factor 
+        arrow width factor
     """
 
     # Set is_show_fig if is None
@@ -171,10 +170,9 @@ def plot_2D(
         # Repeat linewidths
         m = int(ceil(ndatas / len(linewidth_list)))
         linewidth_list = linewidth_list * m
-    if 1 == len(legend_list) < ndatas or len(legend_list) == 0:
-        # Set no legend for all curves
-        legend_list = list(repeat("", ndatas))
+    if (len(legend_list) == 1 and legend_list[0] == "") or len(legend_list) == 0:
         no_legend = True
+        legend_list = ["" for i in range(ndatas)]
     else:
         no_legend = False
 
