@@ -6,7 +6,9 @@ from numpy import (
 )
 
 
-def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
+def get_harmonics(
+    self, N_harm, *args, unit="SI", is_norm=False, axis_data=None, is_flat=False
+):
     """Returns the complex Fourier Transform of the field, using conversions and symmetries if needed.
     Parameters
     ----------
@@ -28,7 +30,9 @@ def get_harmonics(self, N_harm, *args, unit="SI", is_norm=False, is_flat=False):
     """
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
-    return_dict = self.get_magnitude_along(args, unit=unit, is_norm=is_norm)
+    return_dict = self.get_magnitude_along(
+        args, unit=unit, is_norm=is_norm, axis_data=axis_data
+    )
     values = return_dict[self.symbol]
 
     # 2D case
