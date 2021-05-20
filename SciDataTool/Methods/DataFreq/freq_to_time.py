@@ -38,36 +38,28 @@ def freq_to_time(self):
         values = results.pop(self.symbol)
         Axes = []
         for axis in self.axes:
-            if axis.is_components:  # components axis
-                name = axis.name
-                is_components = True
-                axis_values = axis.values
-                unit = "SI"
-            elif axis.name == "freqs":
-                name = "time"
-                is_components = False
-                axis_values = results["time"]
-                unit = "s"
-            elif axis.name == "wavenumber":
-                name = "angle"
-                is_components = False
-                axis_values = results["angle"]
-                unit = "rad"
-            else:
-                name = axis.name
-                is_components = False
-                axis_values = results[axis.name]
-                unit = axis.unit
-            Axes.append(
-                Data1D(
-                    name=name,
-                    unit=unit,
-                    values=axis_values,
-                    is_components=is_components,
+            if axis.name == "freqs":
+                axis_new = Data1D(
+                    name="time",
+                    is_components=False,
+                    values=results["time"],
+                    unit="s",
                     symmetries=axis.symmetries.copy(),
                     normalizations=axis.normalizations.copy(),
                 )
-            )
+            elif axis.name == "wavenumber":
+                axis_new = Data1D(
+                    name="angle",
+                    is_components=False,
+                    values=results["angle"],
+                    unit="rad",
+                    symmetries=axis.symmetries.copy(),
+                    normalizations=axis.normalizations.copy(),
+                )
+            else:
+                axis_new = axis.copy()
+            Axes.append(axis_new)
+
         return DataTime(
             name=self.name,
             unit=self.unit,
