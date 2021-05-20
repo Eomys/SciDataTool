@@ -56,6 +56,7 @@ def plot_2D(
     scale_units="x",
     scale=None,
     width=0.005,
+    symbol=".",
 ):
     """Plots a 2D graph (curve, bargraph or barchart) comparing fields in Ydatas
 
@@ -283,23 +284,22 @@ def plot_2D(
             ax.plot(
                 Xdatas[i_Xdatas[i]],
                 Ydatas[i],
-                ".",
+                symbol,
                 markerfacecolor=color_list[i],
                 markeredgecolor=color_list[i],
                 markersize=10,
-                picker=True,
-                pickradius=5,
             )
     elif type_plot == "point":
         for i in range(ndatas):
             ax.plot(
                 Xdatas[i_Xdatas[i]],
                 Ydatas[i],
-                ".",
+                symbol,
                 label=legend_list[i],
                 markerfacecolor=color_list[i],
                 markeredgecolor=color_list[i],
                 markersize=10,
+                mew=linewidth_list[i],
                 picker=True,
                 pickradius=5,
             )
