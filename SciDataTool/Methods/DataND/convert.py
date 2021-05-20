@@ -5,7 +5,7 @@ from numpy import (
     mean as np_mean,
     sqrt,
     trapz,
-    take,
+    squeeze,
     min as np_min,
     max as np_max,
     apply_along_axis,
@@ -15,7 +15,7 @@ from SciDataTool.Functions import NormError, UnitError
 from SciDataTool.Functions.conversions import convert as convert_unit, to_dB, to_dBA
 
 
-def convert(self, values, unit, is_norm, axes_list):
+def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
     """Returns the values of the field transformed or converted.
     Parameters
     ----------
@@ -33,25 +33,34 @@ def convert(self, values, unit, is_norm, axes_list):
         values of the field
     """
 
+    # Take magnitude before summing
+    if is_magnitude:
+        values = np_abs(values)
+
     # Apply sums, means, etc
     for axis_requested in axes_list:
         # sum over sum axes
         if axis_requested.extension == "sum":
-            values = np_sum(values, axis=axis_requested.index)
+            values = np_sum(values, axis=axis_requested.index, keepdims=True)
         # root sum square over rss axes
         elif axis_requested.extension == "rss":
-            values = sqrt(np_sum(values ** 2, axis=axis_requested.index))
+            values = sqrt(np_sum(values ** 2, axis=axis_requested.index, keepdims=True))
         # mean value over mean axes
         elif axis_requested.extension == "mean":
-            values = np_mean(values, axis=axis_requested.index)
+            values = np_mean(values, axis=axis_requested.index, keepdims=True)
         # RMS over rms axes
         elif axis_requested.extension == "rms":
-            values = sqrt(np_mean(values ** 2, axis=axis_requested.index))
+            values = sqrt(
+                np_mean(values ** 2, axis=axis_requested.index, keepdims=True)
+            )
         # integration over integration axes
         elif axis_requested.extension == "integrate":
             values = trapz(
                 values, x=axis_requested.values, axis=axis_requested.index
             ) / (np_max(axis_requested.values) - np_min(axis_requested.values))
+
+    if is_squeeze:
+        values = squeeze(values)
 
     if unit == self.unit or unit == "SI":
         if is_norm:
