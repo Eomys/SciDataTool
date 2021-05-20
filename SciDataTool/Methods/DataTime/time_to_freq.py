@@ -38,40 +38,35 @@ def time_to_freq(self):
         values = results.pop(self.symbol)
         Axes = []
         for axis in self.axes:
-            if axis.is_components:  # components axis
-                name = axis.name
-                is_components = True
-                axis_values = axis.values
-                unit = "SI"
-            elif axis.name == "time":
-                name = "freqs"
-                is_components = False
-                axis_values = results["freqs"]
-                unit = "Hz"
-            elif axis.name == "angle":
-                name = "wavenumber"
-                is_components = False
-                axis_values = results["wavenumber"]
-                unit = "dimless"
-            else:
-                name = axis.name
-                is_components = False
-                axis_values = results[axis.name]
-                unit = axis.unit
-            if "antiperiod" in axis.symmetries:
-                symmetries = {"period": int(axis.symmetries["antiperiod"] / 2)}
-            else:
-                symmetries = axis.symmetries.copy()
-            Axes.append(
-                Data1D(
-                    name=name,
-                    unit=unit,
-                    values=axis_values,
-                    is_components=is_components,
+            if axis.name == "time":
+                if "antiperiod" in axis.symmetries:
+                    symmetries = {"period": int(axis.symmetries["antiperiod"] / 2)}
+                else:
+                    symmetries = axis.symmetries.copy()
+                axis_new = Data1D(
+                    name="freqs",
+                    is_components=False,
+                    values=results["freqs"],
+                    unit="Hz",
                     symmetries=symmetries,
                     normalizations=axis.normalizations.copy(),
                 )
-            )
+            elif axis.name == "angle":
+                if "antiperiod" in axis.symmetries:
+                    symmetries = {"period": int(axis.symmetries["antiperiod"] / 2)}
+                else:
+                    symmetries = axis.symmetries.copy()
+                axis_new = Data1D(
+                    name="wavenumber",
+                    is_components=False,
+                    values=results["wavenumber"],
+                    unit="dimless",
+                    symmetries=symmetries,
+                    normalizations=axis.normalizations.copy(),
+                )
+            else:
+                axis_new = axis.copy()
+            Axes.append(axis_new)
         return DataFreq(
             name=self.name,
             unit=self.unit,
