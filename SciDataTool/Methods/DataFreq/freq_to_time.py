@@ -27,7 +27,7 @@ def freq_to_time(self):
         elif axis.name == "wavenumber":
             axis_str = "angle[smallestperiod]"
         else:
-            axis_str = axis.name
+            axis_str = axis.name + "[smallestperiod]"
         axes_str.append(axis_str)
     if axes_str == [axis.name for axis in self.axes]:
         raise AxisError(
