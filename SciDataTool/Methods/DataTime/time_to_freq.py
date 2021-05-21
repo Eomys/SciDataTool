@@ -17,6 +17,8 @@ def time_to_freq(self):
     # Dynamic import to avoid loop
     module = __import__("SciDataTool.Classes.DataFreq", fromlist=["DataFreq"])
     DataFreq = getattr(module, "DataFreq")
+    module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+    DataPattern = getattr(module, "DataPattern")
 
     axes_str = []
     for i, axis in enumerate(self.axes):
@@ -26,6 +28,8 @@ def time_to_freq(self):
             axis_str = "freqs"
         elif axis.name == "angle":
             axis_str = "wavenumber"
+        elif isinstance(axis, DataPattern):
+            axis_str = axis.name + "[pattern]"
         else:
             axis_str = axis.name + "[smallestperiod]"
         axes_str.append(axis_str)
