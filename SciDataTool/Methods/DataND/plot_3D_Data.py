@@ -9,6 +9,7 @@ from numpy import where, meshgrid, unique, max as np_max, min as np_min, array2s
 def plot_3D_Data(
     self,
     *arg_list,
+    axis_data=None,
     is_norm=False,
     unit="SI",
     save_path=None,
@@ -134,10 +135,17 @@ def plot_3D_Data(
     # Extract field and axes
     if is_fft:
         if is_2D_view:
-            result = self.get_magnitude_along(arg_list, unit=unit, is_norm=is_norm)
+            result = self.get_magnitude_along(
+                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+            )
         else:
             result = self.get_harmonics(
-                N_stem, arg_list, unit=unit, is_norm=is_norm, is_flat=True
+                N_stem,
+                arg_list,
+                axis_data=axis_data,
+                unit=unit,
+                is_norm=is_norm,
+                is_flat=True,
             )
     else:
         result = self.get_along(arg_list, unit=unit, is_norm=is_norm)

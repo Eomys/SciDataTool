@@ -26,10 +26,11 @@ def get_magnitude_along(
     """
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
-    return_dict = self.get_along(args, axis_data=axis_data, is_squeeze=is_squeeze)
+    return_dict = self.get_along(
+        args, axis_data=axis_data, is_squeeze=is_squeeze, is_magnitude=True
+    )
     values = return_dict[self.symbol]
-    # Compute magnitude
-    values = np_abs(values)
+
     # 1/nth octave band
     for axis in return_dict["axes_list"]:
         if axis.name == "freqs" or axis.corr_name == "freqs":

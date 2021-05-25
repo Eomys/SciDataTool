@@ -1,6 +1,7 @@
 def plot_3D_Data(
     self,
     *arg_list,
+    axis_data=None,
     is_norm=False,
     unit="SI",
     component_list=None,
@@ -102,6 +103,7 @@ def plot_3D_Data(
 
         self.components[comp].plot_3D_Data(
             arg_list,
+            axis_data=axis_data,
             is_norm=is_norm,
             unit=unit,
             save_path=save_path_comp,

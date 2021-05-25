@@ -6,7 +6,7 @@ from SciDataTool.Functions.interpolations import (
 from numpy import apply_along_axis, squeeze
 
 
-def interpolate(self, values, axes_list, is_squeeze=True):
+def interpolate(self, values, axes_list):
     """Returns the values of the field interpolated over the axes values.
     Parameters
     ----------
@@ -48,6 +48,4 @@ def interpolate(self, values, axes_list, is_squeeze=True):
                 )
             # Store new axis data into axis_requested.values
             axis_requested.values = axis_requested.input_data
-    if is_squeeze:
-        values = squeeze(values)
     return values

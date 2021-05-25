@@ -51,23 +51,23 @@ def get_field(self, axes_list):
                 )
                 self.axes[axis_requested.index].symmetries = dict()
 
-        # sum over sum axes
-        if axis_requested.extension == "sum":
-            values = np_sum(values, axis=axis_requested.index, keepdims=True)
-        # root sum square over rss axes
-        elif axis_requested.extension == "rss":
-            values = sqrt(np_sum(values ** 2, axis=axis_requested.index, keepdims=True))
-        # mean value over mean axes
-        elif axis_requested.extension == "mean":
-            values = np_mean(values, axis=axis_requested.index, keepdims=True)
-        # RMS over rms axes
-        elif axis_requested.extension == "rms":
-            values = sqrt(
-                np_mean(values ** 2, axis=axis_requested.index, keepdims=True)
-            )
-        # integration over integration axes
-        elif axis_requested.extension == "integrate":
-            values = trapz(
-                values, x=axis_requested.values, axis=axis_requested.index
-            ) / (np_max(axis_requested.values) - np_min(axis_requested.values))
+        # # sum over sum axes
+        # if axis_requested.extension == "sum":
+        #     values = np_sum(values, axis=axis_requested.index, keepdims=True)
+        # # root sum square over rss axes
+        # elif axis_requested.extension == "rss":
+        #     values = sqrt(np_sum(values ** 2, axis=axis_requested.index, keepdims=True))
+        # # mean value over mean axes
+        # elif axis_requested.extension == "mean":
+        #     values = np_mean(values, axis=axis_requested.index, keepdims=True)
+        # # RMS over rms axes
+        # elif axis_requested.extension == "rms":
+        #     values = sqrt(
+        #         np_mean(values ** 2, axis=axis_requested.index, keepdims=True)
+        #     )
+        # # integration over integration axes
+        # elif axis_requested.extension == "integrate":
+        #     values = trapz(
+        #         values, x=axis_requested.values, axis=axis_requested.index
+        #     ) / (np_max(axis_requested.values) - np_min(axis_requested.values))
     return values

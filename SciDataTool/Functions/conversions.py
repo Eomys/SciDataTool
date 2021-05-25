@@ -412,13 +412,17 @@ def rphiz_to_xyz(values):
 
     r = values[:, 0]
     phi = values[:, 1]
-    z = values[:, 2]
+    if len(values.shape) > 2:
+        z = values[:, 2]
 
     affixe = r * exp(1j * phi)
     x = real(affixe)
     y = imag(affixe)
 
-    return column_stack((x, y, z))
+    if len(values.shape) > 2:
+        return column_stack((x, y, z))
+    else:
+        return column_stack((x, y))
 
 
 def xyz_to_rphiz_field(values, phi):

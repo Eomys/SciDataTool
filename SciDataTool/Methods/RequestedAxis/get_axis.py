@@ -145,6 +145,14 @@ def get_axis(self, axis, is_real):
                     is_real=is_real,
                 )
             )
+            # Store original values
+            self.corr_values = array(
+                axis.get_values(
+                    is_oneperiod=is_oneperiod,
+                    is_antiperiod=is_antiperiod,
+                    is_smallestperiod=is_smallestperiod,
+                )
+            )
         else:
             values = array(
                 axis.get_values(
