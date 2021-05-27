@@ -206,6 +206,8 @@ def plot_3D(
         if is_logscale_z:
             ax.zscale("log")
     elif type_plot == "pcolor":
+        Zdata[Zdata < z_min] = z_min
+        Zdata[Zdata > z_max] = z_max
         im = NonUniformImage(
             ax,
             interpolation="bilinear",
