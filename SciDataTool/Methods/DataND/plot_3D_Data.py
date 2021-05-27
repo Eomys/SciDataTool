@@ -23,6 +23,7 @@ def plot_3D_Data(
     is_auto_ticks=True,
     is_auto_range=True,
     is_2D_view=False,
+    is_contour=False,
     is_same_size=False,
     N_stem=100,
     fig=None,
@@ -74,6 +75,8 @@ def plot_3D_Data(
         in fft, display up to 1% of max
     is_2D_view : bool
         True to plot Data in xy plane and put z as colormap
+    is_contour : bool
+        True to show contour line if is_fft = False and is_2D_view = True
     is_same_size : bool
         True to have all color blocks with same size in 2D view
     N_stem : int
@@ -383,6 +386,7 @@ def plot_3D_Data(
                 fig=fig,
                 ax=ax,
                 type_plot="pcolor",
+                is_contour=is_contour,
                 save_path=save_path,
                 is_show_fig=is_show_fig,
                 is_logscale_x=is_logscale_x,
