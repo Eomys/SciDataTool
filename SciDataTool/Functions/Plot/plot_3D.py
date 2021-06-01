@@ -211,6 +211,13 @@ def plot_3D(
     elif type_plot == "pcolor":
         Zdata[Zdata < z_min] = z_min
         Zdata[Zdata > z_max] = z_max
+        # Handle descending order axes (e.g. spectrogram of run-down in freq/rpm map)
+        if Ydata[-1] < Ydata[0]:
+            Ydata = Ydata[::-1]
+            Zdata = Zdata[:, ::-1]
+        if Xdata[-1] < Xdata[0]:
+            Xdata = Xdata[::-1]
+            Zdata = Zdata[::-1, :]
         im = NonUniformImage(
             ax,
             interpolation="bilinear",
