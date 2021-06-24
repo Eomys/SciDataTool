@@ -354,7 +354,7 @@ def plot_2D_Data(
         indices = [
             ind
             for ind, y in enumerate(Ydatas[0])
-            if abs(y) > abs(0.02 * np_max(Ydatas[0]))
+            if abs(y) > abs(thresh * np_max(Ydatas[0]))
         ]
         xticks = unique(insert(0, 0, freqs[indices]))
 
