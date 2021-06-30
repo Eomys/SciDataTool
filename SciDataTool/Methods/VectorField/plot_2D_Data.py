@@ -36,7 +36,7 @@ def plot_2D_Data(
     fund_harm_dict=None,
     is_show_fig=None,
     win_title=None,
-    thresh=0.02,
+    thresh=None,
     font_name="arial",
     font_size_title=12,
     font_size_label=10,

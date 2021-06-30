@@ -31,7 +31,7 @@ def plot_3D_Data(
     is_logscale_x=False,
     is_logscale_y=False,
     is_logscale_z=False,
-    thresh=0.02,
+    thresh=None,
     is_switch_axes=False,
     colormap="RdBu_r",
     win_title=None,
@@ -275,6 +275,13 @@ def plot_3D_Data(
     title = title.rstrip(", ")
 
     if is_fft:
+
+        if thresh is None:
+            if self.normalizations is not None and "ref" in self.normalizations.keys():
+                thresh = self.normalizations["ref"]
+            else:
+                thresh = 0.02
+
         indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
         xticks = unique(X_flat[indices])
         yticks = unique(Y_flat[indices])
@@ -283,7 +290,7 @@ def plot_3D_Data(
                 x_min = -0.1 * xticks[-1]
                 x_max = xticks[-1] * 1.1
             if len(yticks) > 0:
-                y_min = -yticks[-1] * 1.1
+                y_min = yticks[0] * 1.1
                 y_max = yticks[-1] * 1.1
         else:
             x_min = x_min - x_max * 0.05
