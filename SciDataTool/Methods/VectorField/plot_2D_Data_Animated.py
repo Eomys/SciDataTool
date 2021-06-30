@@ -52,8 +52,8 @@ def plot_2D_Data_Animated(
 
     Parameters
     ----------
-    self : Output
-        an Output object
+    self : VectorField
+        an VectorField object
     Data_str : str
         name of the Data Object to plot (e.g. "mag.Br")
     animated_axis : str
@@ -126,7 +126,8 @@ def plot_2D_Data_Animated(
         images = list()
 
         # definition of the step along animated axis
-        animated_values = self.get_axes(animated_axis)[0].get_values()
+        result = self.get_rphiz_along(animated_axis)
+        animated_values = result[animated_axis]
         value_max = np.max(animated_values)
         value_min = np.min(animated_values)
         variation_step = (value_max - value_min) / nb_frames
@@ -142,10 +143,15 @@ def plot_2D_Data_Animated(
 
         # for value in animated_values:
         while value_min < value_max:
+
+            if animated_axis == "time" or animated_axis == "freqs":
+                arg_list0 = (animated_axis + "=" + str(value_min),) + arg_list
+            else:
+                arg_list0 = arg_list + (animated_axis + "=" + str(value_min),) 
+
             # Call to plot_2D_Data of VectorField class, which manage the quiver case
             self.plot_2D_Data(
-                *arg_list,
-                animated_axis + "=" + str(value_min),
+                *arg_list0,
                 axis_data=axis_data,
                 radius=radius,
                 is_norm=is_norm,
