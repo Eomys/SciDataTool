@@ -9,4 +9,4 @@ from SciDataTool.Classes.RequestedAxis import RequestedAxis
 from SciDataTool.Classes.VectorField import VectorField
 from SciDataTool.Classes.DataPattern import DataPattern
 
-__version__ = "1.4.1"
+__version__ = "1.4.2"
