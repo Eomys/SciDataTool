@@ -8,6 +8,7 @@ from numpy import (
     ceil,
     argmin,
     abs,
+    arange,
     squeeze,
     split,
     ndarray,
@@ -248,6 +249,28 @@ def plot_2D(
             ["{:.2f}".format(f) for f in Xdatas[i_Xdatas[i]]],
             rotation=90,
         )
+    elif type_plot == "octave":
+        pos = arange(0, 1, 1 / (ndatas + 1))[:-1] - (ndatas - 1) / (2 * (ndatas + 1))
+        for i in range(ndatas):
+            x_axis = arange(len(Xdatas[i]))
+            ax.bar(
+                x_axis + pos[i],
+                Ydatas[i],
+                edgecolor=color_list[i],
+                width=1 / (ndatas + 1),
+                # fc="None",
+                # lw=1,
+                label=legend_list[i],
+                picker=True,
+            )
+        plt.xticks(
+            range(len(Xdatas[i_Xdatas[i]])),
+            [f"{f:g}" for f in Xdatas[i_Xdatas[i]]],
+            rotation=90,
+        )
+        x_min = -1
+        x_max = len(x_axis)
+        is_logscale_x = False
 
     elif type_plot == "quiver":
         for i in range(ndatas):
