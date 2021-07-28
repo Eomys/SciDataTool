@@ -177,6 +177,7 @@ def plot_2D_Data(
                 unit=unit,
                 data_list=[dat.components[comp] for dat in data_list],
                 legend_list=legend_list,
+                linestyles=linestyles,
                 color_list=color_list,
                 save_path=save_path_comp,
                 x_min=x_min,
