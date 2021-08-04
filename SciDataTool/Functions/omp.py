@@ -1,9 +1,40 @@
+# -*- coding: utf-8 -*-
+
+from SciDataTool.Classes.Data1D import Data1D
 from logging import getLogger
 
 import numpy as np
-from numpy import ndarray, concatenate, identity, arange
+from numpy import ndarray, concatenate, identity, arange, asarray
 from sklearn.linear_model import orthogonal_mp
 from scipy.fft import idct, idst
+from math import floor
+
+def comp_undersampling(K: float, Time: Data1D) -> ndarray:
+    """
+    Compute an undersampled Data1D object with a K percentage of the initial samples
+    
+    Parameter
+    --------
+
+    K: 0 <= K <= 1
+    """
+
+    n = len(Time.values)
+    m = floor(K*n)
+
+    M = np.random.choice(n,m, replace=False)
+    M.sort()
+    M = asarray(M)
+
+    time_undersampled = Time.values[M]
+
+    Time_undersampled = Data1D(
+        name=Time.name,
+        unit=Time.unit,
+        values=time_undersampled,
+    )
+
+    return M, Time_undersampled
 
 
 def comp_dictionary(n: int, M: ndarray) -> ndarray:
@@ -15,7 +46,6 @@ def comp_dictionary(n: int, M: ndarray) -> ndarray:
 
     M: index of the grid corresponding to the observations of the signal
     n: length of the grid on which the signal is undersampled
-
 
     Returns
     dictionary: concatenation of the DST and DCT's matrix
@@ -29,6 +59,25 @@ def comp_dictionary(n: int, M: ndarray) -> ndarray:
     dictionary = concatenate([DCT,DST],axis=1)
 
     return dictionary
+
+
+def comp_undersampled_axe(Time: Data1D, Time_undersampled: Data1D) -> ndarray:
+    """
+    Compute the ndarray M of indices of the undersampled signal such that:
+    Time_undersampled.value = Time.value[M]
+    
+    This funtion assumes the elements of Time_undersampled.value are elements of Time.value
+    """
+    
+    # Extract the ndarray time vectors
+    time_undersampled = Time_undersampled.values
+    time = Time.values
+
+    # Element wise comparison and selection of indices
+    M = np.arange(len(time))
+    M = M[np.isin(time,time_undersampled)]
+
+    return M
 
 
 def omp(Y: ndarray, M: ndarray, n: int, n_coefs: int=None) -> ndarray:
