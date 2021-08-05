@@ -47,6 +47,7 @@ def plot_2D_Data_Animated(
     font_size_legend=8,
     scale=None,
     width=0.005,
+    is_plot_only=False,
 ):
     """Plots a field as a function of time
 
@@ -118,6 +119,8 @@ def plot_2D_Data_Animated(
         arrow length factor in quiver. Be careful, if scale = None then there will be a normalization on the arrows on each frame
     width : float
         arrow width factor in quiver
+    is_plot_only : bool
+        True to remove axes, title and legend
     """
 
     # Special case of quiver plot
@@ -126,7 +129,7 @@ def plot_2D_Data_Animated(
         images = list()
 
         # definition of the step along animated axis
-        result = self.get_rphiz_along(animated_axis)
+        result = self.get_rphiz_along(animated_axis + "[smallestperiod]")
         animated_values = result[animated_axis]
         value_max = np.max(animated_values)
         value_min = np.min(animated_values)
@@ -136,6 +139,11 @@ def plot_2D_Data_Animated(
         save_path_gif = save_path.replace(".png", ".gif")
         # Copy_fig make a deep copy so that there is no overlaping
         deepcopy_fig = copy_fig(fig)
+
+        # To avoid rescale between 1st and 2nd frame of the gif (there is probably a more efficient way to do it)
+        fig.canvas.draw()
+        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+        image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 
         # Params settings
         save_path = None
@@ -171,7 +179,7 @@ def plot_2D_Data_Animated(
                 y_max=y_max,
                 is_logscale_x=is_logscale_x,
                 is_logscale_y=is_logscale_y,
-                is_disp_title=is_disp_title,
+                is_disp_title=False,
                 is_grid=is_grid,
                 is_auto_ticks=is_auto_ticks,
                 is_auto_range=is_auto_range,
@@ -190,6 +198,12 @@ def plot_2D_Data_Animated(
                 scale=scale,
                 width=width,
             )
+
+            if is_plot_only:
+                ax.set_axis_off()
+                ax.set_title("")
+                ax.get_legend().remove()
+
             fig.canvas.draw()
             image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
             image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
@@ -253,4 +267,5 @@ def plot_2D_Data_Animated(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
+                is_plot_only=is_plot_only
             )
