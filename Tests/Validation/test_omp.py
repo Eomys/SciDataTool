@@ -3,7 +3,7 @@
 import pytest
 import numpy as np
 
-from numpy import ndarray, sin, linspace, asarray, meshgrid
+from numpy import ndarray, sin, linspace, asarray, meshgrid, cos
 from math import floor, pi
 
 from SciDataTool.Classes.Data1D import Data1D
@@ -101,26 +101,21 @@ def test_omp_dataND():
         """
         Create a 2D function with the following Fourier transform coefficients:
         - 2 at 0 Hz
-        - 3 at 5 Hz
-        - 4 at 12 Hz
-        - 1 at 20 Hz
+        - 1 at 4 Hz
+        - 3 at 3 Hz
         Wavenumber:
-        - 1 at 20 {°}
-        - 3 at 50 {°}
+        - 1 {°}
+        - 3 {°}
         """
 
         return (
-            2
-            + 3 * sin(5 * 2 * pi * theta + 20 * 2 * pi * t)
-            + 4 * sin(12 * 2 * pi * theta + 20 * 2 * pi * t)
-            + 1 * sin(20 * 2 * pi * theta + 20 * 2 * pi * t)
-            + 3 * sin(20 * 2 * pi * theta + 50 * 2 * pi * t)
-            + 4 * sin(12 * 2 * pi * theta + 50 * 2 * pi * t)
-            + 1 * sin(20 * 2 * pi * theta + 50 * 2 * pi * t)
+            2    
+            + 1 * cos(4 * 2 * pi * t + 1 * theta)
+            + 3 * cos(3 * 2 * pi * t + 3 * theta)
         )
     
     # Define the Time and Angle vector
-    n = 700
+    n = 100
     Time = Data1D(name="time", unit="s", values=linspace(0,1,n))
     Angle = Data1D(name="angle", unit="{°}", values=linspace(0,45,10))
 
@@ -137,8 +132,10 @@ def test_omp_dataND():
     )
 
     # Undersample the Time axis with 50% of the samples
-    K = 0.99
-    M, Time_under = comp_undersampling(K, Time, seed=40)
+    K = 0.90
+    M, Time_under = comp_undersampling(K, Time, seed=65)
+
+    # assert len(M) == len(Time.values)
 
     # Compute a new grid and the resulting field
     time_under_coord, angle_under_coord = meshgrid(Time_under.get_values(), Angle.get_values())
@@ -152,7 +149,7 @@ def test_omp_dataND():
         values=field_under,
     )
 
-    Field_recovered = Field_under.orthogonal_mp(Time, n_coefs=None)
+    Field_recovered = Field_under.orthogonal_mp(Time, n_coefs=6)
 
     field_recovered = Field_recovered.values
 
@@ -160,8 +157,8 @@ def test_omp_dataND():
     np.testing.assert_allclose(
         field_recovered,
         field,
-        rtol=2*1e-1,
-        atol=2*1e-1,
+        rtol=4*1e-1,
+        atol=4*1e-1,
     )
 
 @pytest.mark.validation
@@ -176,12 +173,18 @@ def test_comp_undersampling():
     )
 
     K = 0.5
-
     [M, Time_undersampled] = comp_undersampling(K,Time)
 
     assert len(M) == len(Time_undersampled.values)
-
     np.testing.assert_array_equal(M,comp_undersampled_axe(Time, Time_undersampled))
+
+    K = 1.0
+    [M, Time_undersampled] = comp_undersampling(K,Time)
+
+    assert len(M) == len(Time_undersampled.values)
+    np.testing.assert_array_equal(M,comp_undersampled_axe(Time, Time_undersampled))
+
+
 
 
 

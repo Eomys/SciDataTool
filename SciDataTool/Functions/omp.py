@@ -3,10 +3,36 @@
 from SciDataTool.Classes.Data1D import Data1D
 
 import numpy as np
-from numpy import ndarray, concatenate, identity, arange, asarray
+from numpy import ndarray, concatenate, identity, arange, asarray, sin, pi, outer, linspace, sqrt
 from sklearn.linear_model import orthogonal_mp
-from scipy.fft import idct, idst
+from scipy.fft import idct
 from math import floor
+
+
+def comp_DST(n: int) -> ndarray:
+    """
+    Compute the matrix of the Discrete Sinus Transform, with normed columns
+    The first null component is removed
+
+    Return
+    DST: ndarray of shape (n,n-1)
+    """
+
+    f = 0.5 * arange(n)
+    t = linspace(0,1,n,endpoint=False)
+
+    DST = sin(2 * pi * outer(f,t))
+
+    # Norm the columns
+    DST = 2 * (1/sqrt(2*n)) * DST
+
+    # Remove the first null component
+    DST = DST[:,1:]
+
+    return DST
+
+
+
 
 def comp_undersampling(K: float, Time: Data1D, seed: int=42) -> ndarray:
     """
@@ -53,7 +79,10 @@ def comp_dictionary(n: int, M: ndarray) -> ndarray:
 
     DCT = idct(identity(n), type=2, norm='ortho', axis=0)
     DCT = DCT[M]
-    DST = idst(identity(n), type=2, norm='ortho', axis=0)
+
+    # DST with normed columns
+    # the first null component is removed in comp_DST
+    DST = comp_DST(n)
     DST = DST[M]
 
     dictionary = concatenate([DCT,DST],axis=1)
