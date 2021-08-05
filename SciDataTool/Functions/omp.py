@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from SciDataTool.Classes.Data1D import Data1D
-from logging import getLogger
 
 import numpy as np
 from numpy import ndarray, concatenate, identity, arange, asarray
