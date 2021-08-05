@@ -79,7 +79,7 @@ def comp_fft_time(freqs, is_angle, is_real):
     Time/space vector
     """
     if freqs.size == 1:
-        time = [0]
+        time = array([0])
     else:
         if is_real and not is_angle:
             N_tot = 2 * (len(freqs) - 1)  # Number of samples

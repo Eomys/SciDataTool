@@ -24,7 +24,7 @@ def plot_3D_Data(
     is_logscale_x=False,
     is_logscale_y=False,
     is_logscale_z=False,
-    thresh=0.02,
+    thresh=None,
     is_switch_axes=False,
     colormap="RdBu_r",
     win_title=None,

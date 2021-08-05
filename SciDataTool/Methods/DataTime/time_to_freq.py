@@ -78,4 +78,5 @@ def time_to_freq(self):
             axes=Axes,
             values=values,
             is_real=self.is_real,
+            normalizations=self.normalizations.copy(),
         )

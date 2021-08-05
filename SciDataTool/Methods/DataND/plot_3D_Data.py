@@ -23,6 +23,7 @@ def plot_3D_Data(
     is_auto_ticks=True,
     is_auto_range=True,
     is_2D_view=False,
+    is_contour=False,
     is_same_size=False,
     N_stem=100,
     fig=None,
@@ -31,7 +32,7 @@ def plot_3D_Data(
     is_logscale_x=False,
     is_logscale_y=False,
     is_logscale_z=False,
-    thresh=0.02,
+    thresh=None,
     is_switch_axes=False,
     colormap="RdBu_r",
     win_title=None,
@@ -74,6 +75,8 @@ def plot_3D_Data(
         in fft, display up to 1% of max
     is_2D_view : bool
         True to plot Data in xy plane and put z as colormap
+    is_contour : bool
+        True to show contour line if is_fft = False and is_2D_view = True
     is_same_size : bool
         True to have all color blocks with same size in 2D view
     N_stem : int
@@ -275,6 +278,13 @@ def plot_3D_Data(
     title = title.rstrip(", ")
 
     if is_fft:
+
+        if thresh is None:
+            if self.normalizations is not None and "ref" in self.normalizations.keys():
+                thresh = self.normalizations["ref"]
+            else:
+                thresh = 0.02
+
         indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
         xticks = unique(X_flat[indices])
         yticks = unique(Y_flat[indices])
@@ -283,7 +293,7 @@ def plot_3D_Data(
                 x_min = -0.1 * xticks[-1]
                 x_max = xticks[-1] * 1.1
             if len(yticks) > 0:
-                y_min = -yticks[-1] * 1.1
+                y_min = yticks[0] * 1.1
                 y_max = yticks[-1] * 1.1
         else:
             x_min = x_min - x_max * 0.05
@@ -383,6 +393,7 @@ def plot_3D_Data(
                 fig=fig,
                 ax=ax,
                 type_plot="pcolor",
+                is_contour=is_contour,
                 save_path=save_path,
                 is_show_fig=is_show_fig,
                 is_logscale_x=is_logscale_x,
