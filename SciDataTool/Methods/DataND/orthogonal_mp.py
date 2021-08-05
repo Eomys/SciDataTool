@@ -7,8 +7,6 @@ from numpy import ndarray
 from SciDataTool.Classes.Data1D import Data1D
 from SciDataTool.Functions.omp import omp, comp_undersampled_axe
 
-# To prevent circular import
-#from SciDataTool.Classes.DataND import DataND as sdt_DataND
 
 def orthogonal_mp(self, Time: Data1D, n_coefs: int=None):
     """

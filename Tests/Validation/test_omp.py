@@ -117,7 +117,7 @@ def test_omp_dataND():
     # Define the Time and Angle vector
     n = 100
     Time = Data1D(name="time", unit="s", values=linspace(0,1,n))
-    Angle = Data1D(name="angle", unit="{°}", values=linspace(0,45,10))
+    Angle = Data1D(name="angle", unit="{°}", values=linspace(0,45,70))
 
     # Compute a grid of the space and the resulting field
     time_coord, angle_coord = meshgrid(Time.get_values(), Angle.get_values())

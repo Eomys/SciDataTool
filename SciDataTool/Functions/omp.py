@@ -32,8 +32,6 @@ def comp_DST(n: int) -> ndarray:
     return DST
 
 
-
-
 def comp_undersampling(K: float, Time: Data1D, seed: int=42) -> ndarray:
     """
     Compute an undersampled Data1D object with a K percentage of the initial samples
