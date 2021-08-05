@@ -9,7 +9,7 @@ from sklearn.linear_model import orthogonal_mp
 from scipy.fft import idct, idst
 from math import floor
 
-def comp_undersampling(K: float, Time: Data1D) -> ndarray:
+def comp_undersampling(K: float, Time: Data1D, seed: int=42) -> ndarray:
     """
     Compute an undersampled Data1D object with a K percentage of the initial samples
     
@@ -22,6 +22,7 @@ def comp_undersampling(K: float, Time: Data1D) -> ndarray:
     n = len(Time.values)
     m = floor(K*n)
 
+    np.random.seed(seed)
     M = np.random.choice(n,m, replace=False)
     M.sort()
     M = asarray(M)
