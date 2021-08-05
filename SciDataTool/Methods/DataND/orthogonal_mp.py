@@ -53,8 +53,8 @@ def orthogonal_mp(self, Time: Data1D, n_coefs: int=None):
             name=self.name,
             symbol=self.symbol,
             unit=self.unit,
-            axes=[Time],
             values=Y_full,
+            axes=[Time],
             is_real=self.is_real,
         )
     if nombre_axes == 2:

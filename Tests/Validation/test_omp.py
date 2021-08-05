@@ -109,15 +109,15 @@ def test_omp_dataND():
         """
 
         return (
-            2    
-            + 1 * cos(4 * 2 * pi * t + 1 * theta)
-            + 3 * cos(3 * 2 * pi * t + 3 * theta)
+            0    
+            + 2 * cos(6 * 2 * pi * t + 20 * theta/360)
+            + 1 * cos(10 * 2 * pi * t + 40 * theta/360)
         )
     
     # Define the Time and Angle vector
-    n = 100
-    Time = Data1D(name="time", unit="s", values=linspace(0,1,n))
-    Angle = Data1D(name="angle", unit="{°}", values=linspace(0,45,70))
+    n = 200
+    Time = Data1D(name="time", unit="s", values=linspace(0,1,n,endpoint=False))
+    Angle = Data1D(name="angle", unit="{°}", values=linspace(0,40,40,endpoint=False))
 
     # Compute a grid of the space and the resulting field
     time_coord, angle_coord = meshgrid(Time.get_values(), Angle.get_values())
@@ -133,7 +133,7 @@ def test_omp_dataND():
 
     # Undersample the Time axis with 50% of the samples
     K = 0.90
-    M, Time_under = comp_undersampling(K, Time, seed=65)
+    M, Time_under = comp_undersampling(K, Time, seed=8)
 
     # assert len(M) == len(Time.values)
 
@@ -149,7 +149,7 @@ def test_omp_dataND():
         values=field_under,
     )
 
-    Field_recovered = Field_under.orthogonal_mp(Time, n_coefs=6)
+    Field_recovered = Field_under.orthogonal_mp(Time, n_coefs=8)
 
     field_recovered = Field_recovered.values
 
