@@ -14,14 +14,13 @@ from SciDataTool.Functions.omp import comp_undersampling, omp, comp_undersampled
 @pytest.mark.validation
 def test_omp_SMV():
     """
-    Test the recovery of a sparse undersampled signal in the SMV situation
+    Test the recovery of a sparse undersampled signal in the SMV (1D) situation
     """
 
     def f_1d(t: ndarray) -> ndarray:
         """
         Create a 1D function with the following Fourier transform coefficients:
         - 2 at 0 Hz
-        - 3 at 5 Hz
         - 4 at 12 Hz
         - 1 at 20 Hz
         """
@@ -34,37 +33,49 @@ def test_omp_SMV():
         )
 
     # Define a time vector
-    n = 1000
-    time = linspace(0,1,n)
+    n = 200
+    time = linspace(0,1,n,endpoint=False)
     Time = Data1D(name="time", unit="s", values=time)
 
     # Compute the signal the signal
     signal = f_1d(Time.values)
-    field = DataTime(
+    Field = DataTime(
         name="field",
         symbol="X",
         axes=[Time],
         values=signal,
-        unit="m"
+        unit="dimless"
     )
 
     # Randomly choose observations of the signal
-    # Fix seed to avoid problem due to random non uniform sampling    
-    K = 0.9
+    # Fix seed to avoid problem due to random non uniform sampling
+    K = 0.3
     M, Time_under = comp_undersampling(K, Time, seed=90)
 
     # Undersample the signal
-    Y = signal[M]
+    signal_under = signal[M]
+
+    # Create the DataTime undersampled object:
+    Field_under = DataTime(
+        name="field under",
+        symbol="X",
+        axes=[Time_under],
+        values=signal_under,
+        unit="dimless",
+    )
 
     # Recover the signal with the OMP
-    Y_full = omp(Y,M,n,n_coefs=8*2)
+    # The parameter n_coefs is the number of atoms of the dictionary used to recover the signal
+
+    Field_recover = Field_under.orthogonal_mp(Time,n_coefs=10)
+    signal_recover = Field_recover.values
 
     # Check that the result match the signal
     np.testing.assert_allclose(
-        Y_full,
         signal,
+        signal_recover,
         rtol=1e-1,
-        atol=1.5*1e-1,
+        atol=1e-1,
     )
 
 
@@ -75,7 +86,7 @@ def test_comp_undersampled_axe():
     """
 
     n = 100
-    time = linspace(0,1,n)
+    time = linspace(0,1,n,endpoint=False)
 
     Time = Data1D(
         name="time",
@@ -83,7 +94,7 @@ def test_comp_undersampled_axe():
         values=time,
     )
 
-    # Randomly choose observations of the signal
+    # Randomly pick a percentage of the samples of the signal
     K = 0.5
     M, Time_under = comp_undersampling(K, Time, seed=10)
 
@@ -100,12 +111,11 @@ def test_omp_dataND():
     def f_2d(theta: ndarray, t: ndarray) -> ndarray:
         """
         Create a 2D function with the following Fourier transform coefficients:
-        - 2 at 0 Hz
-        - 1 at 4 Hz
-        - 3 at 3 Hz
+        - 1 at 6 Hz
+        - 3 at 10 Hz
         Wavenumber:
-        - 1 {°}
-        - 3 {°}
+        - 20 {°}
+        - 40 {°}
         """
 
         return (
@@ -132,10 +142,8 @@ def test_omp_dataND():
     )
 
     # Undersample the Time axis with 50% of the samples
-    K = 0.90
+    K = 0.2
     M, Time_under = comp_undersampling(K, Time, seed=8)
-
-    # assert len(M) == len(Time.values)
 
     # Compute a new grid and the resulting field
     time_under_coord, angle_under_coord = meshgrid(Time_under.get_values(), Angle.get_values())
@@ -149,16 +157,16 @@ def test_omp_dataND():
         values=field_under,
     )
 
-    Field_recovered = Field_under.orthogonal_mp(Time, n_coefs=8)
+    Field_recover = Field_under.orthogonal_mp(Time, n_coefs=8)
 
-    field_recovered = Field_recovered.values
+    field_recover = Field_recover.values
 
     # Check that the result match the true field
     np.testing.assert_allclose(
-        field_recovered,
+        field_recover,
         field,
-        rtol=4*1e-1,
-        atol=4*1e-1,
+        rtol=1e-1,
+        atol=1e-1,
     )
 
 @pytest.mark.validation

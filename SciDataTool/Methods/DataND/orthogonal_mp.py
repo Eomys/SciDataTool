@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from typing import Dict, List
+from typing import List
 from numpy import ndarray
 from SciDataTool.Classes.Data1D import Data1D
 from SciDataTool.Functions.omp import omp, comp_undersampled_axe
@@ -10,21 +10,22 @@ from SciDataTool.Functions.omp import omp, comp_undersampled_axe
 
 def orthogonal_mp(self, Time: Data1D, n_coefs: int=None):
     """
-    Execute the Orthogonal Matching Pursuit on each components provided
+    Execute the Orthogonal Matching Pursuit, this method returns a DataND object with the Time axe,
+    self is the DataND undersampled object.
     
-    Parameter
-    ---------
-
-    components: List of components of the DataND object, if empty the OMP is executed on all components
-    axe: List of Data1D object on which the components are recovered
-    M: List of undersampling index, the time axes of the self.components are the elements axe[M]
+    Parameters
+    ----------
+    Time: The time axe on which the signals are recovered
+    M: The undersampling indices, Time.values[M] is the time axe of self
+    n_coefs: The number of atoms of the dictionary used to recover the signal,
+    if None set to 10 % of len(M)
 
     Returns
     recovered_dataND: A new dataND object composed of the recovered components
     """
 
     # This method should only be used for 1D or 2D field, where the
-    # undersampling is in the direction of time
+    # undersampling is in the time's direction
     nombre_axes = len(self.axes)
     assert nombre_axes == 2 or nombre_axes == 1, "Dimension error: {} not in {1,2}".format(nombre_axes)
 
@@ -68,12 +69,6 @@ def orthogonal_mp(self, Time: Data1D, n_coefs: int=None):
         )
 
     return recovered_dataND
-
-
-
-
-
-
 
 
 
