@@ -37,7 +37,7 @@ def orthogonal_mp(self, Time: Data1D, n_coefs: int=None):
         [Angle] = self.get_axes(axes_name[0])
     [Time_undersampled] = self.get_axes("time")
 
-    M = comp_undersampled_axe(Time_undersampled,Time)
+    M = comp_undersampled_axe(Time,Time_undersampled)
 
     n = len(Time.values)
 
