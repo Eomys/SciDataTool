@@ -8,7 +8,7 @@ from SciDataTool.Classes.Data1D import Data1D
 from SciDataTool.Functions.omp import omp, comp_undersampled_axe
 
 
-def orthogonal_mp(self, Time: Data1D, n_coefs: int=None):
+def orthogonal_mp(self, Time: Data1D, n_coefs: int=None, precompute: bool=True):
     """
     Execute the Orthogonal Matching Pursuit, this method returns a DataND object with the Time axe,
     self is the DataND undersampled object.
@@ -46,7 +46,7 @@ def orthogonal_mp(self, Time: Data1D, n_coefs: int=None):
     Y = self.values
 
     # Compute the OMP
-    Y_full = omp(Y,M,n,n_coefs=n_coefs)
+    Y_full = omp(Y,M,n,n_coefs=n_coefs, precompute=precompute)
 
     # Build the DataND object
     if nombre_axes == 1:

@@ -114,18 +114,19 @@ def comp_undersampled_axe(Time: Data1D, Time_under: Data1D) -> ndarray:
     return M
 
 
-def omp(Y: ndarray, M: ndarray, n: int, n_coefs: int=None) -> ndarray:
+def omp(Y: ndarray, M: ndarray, n: int, n_coefs: int=None, precompute: bool=True) -> ndarray:
     """
     Given Y of shape (len(M),n_targets), recover n_targets signals (of length len(M)) with joint sparsity.
     Each signal - column of Y - is the signal's observation on the support M
 
     Parameter
     ---------
-    Y: ndarray (len(M),n_targets) matrix of the n_targets joint sparse signals
-    M: index of the grid corresponding to the observations of the signals
-    n: length of the grid on which the signal is undersampled
+    Y: ndarray (len(M),n_targets) matrix of the n_targets joint sparse signals.
+    M: index of the grid corresponding to the observations of the signals.
+    n: length of the grid on which the signal is undersampled.
     n_coefs: passed to n_nonzero_coefs, a parameter of orthogonal_mp. It's the number of atoms
     of the dictionary used to decomposed the signals. If None set to 10% of n.
+    precompute: whether to precompute. Improves performance for large Y.
 
     Returns:
     Y_full: ndarray (n,n_targets) matrix of the recovered signals
@@ -136,7 +137,7 @@ def omp(Y: ndarray, M: ndarray, n: int, n_coefs: int=None) -> ndarray:
 
     # Compute the sparse decomposition of the signals with the scikit-learn
     # This implementation can only be used on real-valued signals, it uses a Cholesky factorization
-    sparse_decomposition = orthogonal_mp(X=dictionary,y=Y,n_nonzero_coefs=n_coefs)
+    sparse_decomposition = orthogonal_mp(X=dictionary,y=Y,n_nonzero_coefs=n_coefs, precompute=precompute)
 
     dictionary = comp_dictionary(n,arange(n))
 
