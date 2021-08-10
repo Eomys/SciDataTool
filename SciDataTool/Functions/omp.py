@@ -114,7 +114,7 @@ def comp_undersampled_axe(Time: Data1D, Time_under: Data1D) -> ndarray:
     return M
 
 
-def omp(Y: ndarray, M: ndarray, n: int, n_coefs: int=None, precompute: bool=True) -> ndarray:
+def omp(Y: ndarray, M: ndarray, n: int, n_coefs: int=None, precompute: bool=True, dictionary=None) -> ndarray:
     """
     Given Y of shape (len(M),n_targets), recover n_targets signals (of length len(M)) with joint sparsity.
     Each signal - column of Y - is the signal's observation on the support M
@@ -133,15 +133,19 @@ def omp(Y: ndarray, M: ndarray, n: int, n_coefs: int=None, precompute: bool=True
 
     """
 
-    dictionary = comp_dictionary(n,M)
+    if dictionary is None:
+        dictionary_decomp = comp_dictionary(n,M)
+    else:
+        dictionary_decomp = dictionary[0]
+        dictionary_synth = dictionary[1]
 
     # Compute the sparse decomposition of the signals with the scikit-learn
     # This implementation can only be used on real-valued signals, it uses a Cholesky factorization
-    sparse_decomposition = orthogonal_mp(X=dictionary,y=Y,n_nonzero_coefs=n_coefs, precompute=precompute)
+    sparse_decomposition = orthogonal_mp(X=dictionary_decomp,y=Y,n_nonzero_coefs=n_coefs, precompute=precompute)
 
-    dictionary = comp_dictionary(n,arange(n))
+    dictionary_synth = comp_dictionary(n,arange(n))
 
-    Y_full = dictionary @ sparse_decomposition
+    Y_full = dictionary_synth @ sparse_decomposition
 
     return Y_full
 
