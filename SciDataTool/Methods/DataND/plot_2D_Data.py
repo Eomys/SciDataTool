@@ -191,6 +191,13 @@ def plot_2D_Data(
     # Find main axis as the axis with the most values
     # main_axis = axes_list[0]  # max(axes_list, key=lambda x: x.values.size)
 
+    # Remove axis that has been factorized from axis list
+    # [
+    #     axes_list.pop(i)
+    #     for i in range(len(axes_list))
+    #     if axes_list[i].extension in ["sum", "rss", "mean", "rms", "integrate"]
+    # ]
+
     # Build xlabel and title parts 2 and 3
     title2 = ""
     title3 = " for "
@@ -245,13 +252,16 @@ def plot_2D_Data(
             else:
                 unit = axis.unit
 
-            axis_str = array2string(
-                result_0[axis.name], formatter={"float_kind": "{:.3g}".format}
-            ).replace(" ", ", ")
-            if len(result_0[axis.name]) == 1:
-                axis_str = axis_str.strip("[]")
+            if isinstance(result_0[axis.name], str):
+                title3 += name + "=" + result_0[axis.name]
+            else:
+                axis_str = array2string(
+                    result_0[axis.name], formatter={"float_kind": "{:.3g}".format}
+                ).replace(" ", ", ")
+                if len(result_0[axis.name]) == 1:
+                    axis_str = axis_str.strip("[]")
 
-            title3 += name + "=" + axis_str.rstrip(", ") + " [" + unit + "], "
+                title3 += name + "=" + axis_str.rstrip(", ") + " [" + unit + "], "
 
     # Title part 4 containing axes that are here but not involved in requested axes
     title4 = ""
