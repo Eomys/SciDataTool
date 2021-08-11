@@ -7,7 +7,7 @@ from Tests import save_validation_path
 
 
 @pytest.mark.validation
-def test_request_sum():
+def test_get_data_along():
     f = 50
     Time = DataLinspace(
         name="time",
@@ -30,16 +30,17 @@ def test_request_sum():
     Field = DataTime(
         name="Example field",
         symbol="X",
+        normalizations={"ref": 2e-5},
         axes=[Angle, Time],
         values=field,
     )
-    Field.plot_2D_Data(
-        "angle",
-        "time=sum",
-        is_show_fig=False,
-        save_path=join(save_validation_path, "plot_2D_sum.png"),
-    )
+
+    # Check slicing "time=sum"
+    Field_extract = Field.get_data_along("angle", "time=sum")
+
+    # Check transfer of normalizations
+    assert Field.normalizations == Field_extract.normalizations
 
 
 if __name__ == "__main__":
-    test_request_sum()
+    test_get_data_along()

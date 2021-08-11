@@ -65,5 +65,6 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         symbol=self.symbol,
         axes=Axes,
         values=values,
+        normalizations=self.normalizations,
         is_real=self.is_real,
     )
