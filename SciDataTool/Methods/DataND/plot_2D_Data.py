@@ -215,7 +215,10 @@ def plot_2D_Data(
         ):
             title2 = "over " + name.lower()
             if axis.unit == "SI":
-                unit = unit_dict[axis.name]
+                if axis.name in unit_dict:
+                    unit = unit_dict[axis.name]
+                else:
+                    unit = axis.unit
                 xlabel = name.capitalize() + " [" + unit + "]"
                 main_axis_name = name
             elif axis.unit in norm_dict:
@@ -238,7 +241,10 @@ def plot_2D_Data(
                 xticks = None
         else:
             if axis.unit == "SI":
-                unit = unit_dict[axis.name]
+                if axis.name in unit_dict:
+                    unit = unit_dict[axis.name]
+                else:
+                    unit = axis.unit
             elif axis.unit in norm_dict:
                 unit = norm_dict[axis.unit]
             else:
@@ -303,7 +309,10 @@ def plot_2D_Data(
                         linestyles = ["dashed"]
                 n_curves = len(axis.values)
                 if axis.unit == "SI":
-                    unit = unit_dict[axis.name]
+                    if axis.name in unit_dict:
+                        unit = unit_dict[axis.name]
+                    else:
+                        unit = axis.unit
                 elif axis.unit in norm_dict:
                     unit = norm_dict[axis.unit]
                 else:
