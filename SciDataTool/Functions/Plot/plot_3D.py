@@ -226,6 +226,7 @@ def plot_3D(
             picker=10,
         )
         im.set_data(Xdata, Ydata, Zdata.T)
+        im.set_clim(z_min, z_max)
         ax.images.append(im)
         if is_contour:
             ax.contour(Xdata, Ydata, Zdata.T, colors="black", linewidths=0.8)

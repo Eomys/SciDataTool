@@ -47,13 +47,14 @@ def plot_2D_Data_Animated(
     font_size_legend=8,
     scale=None,
     width=0.005,
+    is_plot_only=False,
 ):
     """Plots a field as a function of time
 
     Parameters
     ----------
-    self : Output
-        an Output object
+    self : VectorField
+        an VectorField object
     Data_str : str
         name of the Data Object to plot (e.g. "mag.Br")
     animated_axis : str
@@ -118,6 +119,8 @@ def plot_2D_Data_Animated(
         arrow length factor in quiver. Be careful, if scale = None then there will be a normalization on the arrows on each frame
     width : float
         arrow width factor in quiver
+    is_plot_only : bool
+        True to remove axes, title and legend
     """
 
     # Special case of quiver plot
@@ -126,7 +129,8 @@ def plot_2D_Data_Animated(
         images = list()
 
         # definition of the step along animated axis
-        animated_values = self.get_axes(animated_axis)[0].get_values()
+        result = self.get_rphiz_along(animated_axis + "[smallestperiod]")
+        animated_values = result[animated_axis]
         value_max = np.max(animated_values)
         value_min = np.min(animated_values)
         variation_step = (value_max - value_min) / nb_frames
@@ -136,16 +140,26 @@ def plot_2D_Data_Animated(
         # Copy_fig make a deep copy so that there is no overlaping
         deepcopy_fig = copy_fig(fig)
 
+        # To avoid rescale between 1st and 2nd frame of the gif (there is probably a more efficient way to do it)
+        fig.canvas.draw()
+        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+        image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
         # Params settings
         save_path = None
         is_show_fig = False
 
         # for value in animated_values:
         while value_min < value_max:
+
+            if animated_axis == "time" or animated_axis == "freqs":
+                arg_list0 = (animated_axis + "=" + str(value_min),) + arg_list
+            else:
+                arg_list0 = arg_list + (animated_axis + "=" + str(value_min),) 
+
             # Call to plot_2D_Data of VectorField class, which manage the quiver case
             self.plot_2D_Data(
-                *arg_list,
-                animated_axis + "=" + str(value_min),
+                *arg_list0,
                 axis_data=axis_data,
                 radius=radius,
                 is_norm=is_norm,
@@ -165,7 +179,7 @@ def plot_2D_Data_Animated(
                 y_max=y_max,
                 is_logscale_x=is_logscale_x,
                 is_logscale_y=is_logscale_y,
-                is_disp_title=is_disp_title,
+                is_disp_title=False,
                 is_grid=is_grid,
                 is_auto_ticks=is_auto_ticks,
                 is_auto_range=is_auto_range,
@@ -184,6 +198,12 @@ def plot_2D_Data_Animated(
                 scale=scale,
                 width=width,
             )
+
+            if is_plot_only:
+                ax.set_axis_off()
+                ax.set_title("")
+                ax.get_legend().remove()
+
             fig.canvas.draw()
             image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
             image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
@@ -247,4 +267,5 @@ def plot_2D_Data_Animated(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
+                is_plot_only=is_plot_only
             )

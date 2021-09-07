@@ -17,6 +17,7 @@ from numpy import (
     max as np_max,
     array2string,
     insert,
+    min as np_min,
 )
 
 
@@ -376,8 +377,15 @@ def plot_2D_Data(
 
         if is_auto_range:
             if len(xticks) > 0:
-                x_min = -xticks[-1] * 0.1
-                x_max = xticks[-1] * 1.1
+                if x_min is None:
+                    x_min = -xticks[-1] * 0.1
+                if x_max is None:
+                    x_max = xticks[-1] * 1.1
+        else:
+            if x_min is None:
+                x_min = np_min(freqs)
+            if x_max is None:
+                x_max = np_max(freqs)
 
         if not is_auto_ticks:
             xticks = None
