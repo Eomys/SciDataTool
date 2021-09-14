@@ -6,6 +6,7 @@
 
 from os import linesep
 from sys import getsizeof
+from logging import getLogger
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
 from ..Functions.copy import copy
@@ -134,6 +135,11 @@ try:
     from ..Methods.DataND.set_Ftparameters import set_Ftparameters
 except ImportError as error:
     set_Ftparameters = error
+
+try:
+    from ..Methods.DataND.orthogonal_mp import orthogonal_mp
+except ImportError as error:
+    orthogonal_mp = error
 
 
 from numpy import array, array_equal
@@ -398,27 +404,26 @@ class DataND(Data):
         )
     else:
         set_Ftparameters = set_Ftparameters
+    # cf Methods.DataND.orthogonal_mp
+    if isinstance(orthogonal_mp, ImportError):
+        orthogonal_mp = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method orthogonal_mp: " + str(orthogonal_mp)
+                )
+            )
+        )
+    else:
+        orthogonal_mp = orthogonal_mp
     # save and copy methods are available in all object
     save = save
     copy = copy
 
-    def __init__(
-        self,
-        axes=None,
-        FTparameters=-1,
-        values=None,
-        is_real=True,
-        symbol="",
-        name="",
-        unit="",
-        normalizations=-1,
-        init_dict=None,
-        init_str=None,
-    ):
+    def __init__(self, axes=None, FTparameters=-1, values=None, is_real=True, symbol="", name="", unit="", normalizations=-1, init_dict = None, init_str = None):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
-            for SciDataTool type, -1 will call the default constructor
-        - __init__ (init_dict = d) d must be a dictionnary with property names as keys
+            for pyleecan type, -1 will call the default constructor
+        - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
@@ -452,9 +457,7 @@ class DataND(Data):
         self.values = values
         self.is_real = is_real
         # Call Data init
-        super(DataND, self).__init__(
-            symbol=symbol, name=name, unit=unit, normalizations=normalizations
-        )
+        super(DataND, self).__init__(symbol=symbol, name=name, unit=unit, normalizations=normalizations)
         # The class is frozen (in Data init), for now it's impossible to
         # add new properties
 
@@ -464,15 +467,9 @@ class DataND(Data):
         DataND_str = ""
         # Get the properties inherited from Data
         DataND_str += super(DataND, self).__str__()
-        DataND_str += "axes = " + str(self.axes) + linesep + linesep
+        DataND_str += "axes = "+ str(self.axes) + linesep + linesep
         DataND_str += "FTparameters = " + str(self.FTparameters) + linesep
-        DataND_str += (
-            "values = "
-            + linesep
-            + str(self.values).replace(linesep, linesep + "\t")
-            + linesep
-            + linesep
-        )
+        DataND_str += "values = " + linesep + str(self.values).replace(linesep, linesep + "\t") + linesep + linesep
         DataND_str += "is_real = " + str(self.is_real) + linesep
         return DataND_str
 
@@ -495,36 +492,34 @@ class DataND(Data):
             return False
         return True
 
-    def compare(self, other, name="self"):
+    def compare(self, other, name='self', ignore_list=None):
         """Compare two objects and return list of differences"""
 
+        if ignore_list is None:
+            ignore_list = list()
         if type(other) != type(self):
-            return ["type(" + name + ")"]
+            return ['type('+name+')']
         diff_list = list()
 
         # Check the properties inherited from Data
-        diff_list.extend(super(DataND, self).compare(other, name=name))
-        if (other.axes is None and self.axes is not None) or (
-            other.axes is not None and self.axes is None
-        ):
-            diff_list.append(name + ".axes None mismatch")
+        diff_list.extend(super(DataND, self).compare(other,name=name))
+        if (other.axes is None and self.axes is not None) or (other.axes is not None and self.axes is None):
+            diff_list.append(name+'.axes None mismatch')
         elif self.axes is None:
             pass
         elif len(other.axes) != len(self.axes):
-            diff_list.append("len(" + name + ".axes)")
+            diff_list.append('len('+name+'.axes)')
         else:
             for ii in range(len(other.axes)):
-                diff_list.extend(
-                    self.axes[ii].compare(
-                        other.axes[ii], name=name + ".axes[" + str(ii) + "]"
-                    )
-                )
+                diff_list.extend(self.axes[ii].compare(other.axes[ii],name=name+'.axes['+str(ii)+']'))
         if other._FTparameters != self._FTparameters:
-            diff_list.append(name + ".FTparameters")
+            diff_list.append(name+'.FTparameters')
         if not array_equal(other.values, self.values):
-            diff_list.append(name + ".values")
+            diff_list.append(name+'.values')
         if other._is_real != self._is_real:
-            diff_list.append(name + ".is_real")
+            diff_list.append(name+'.is_real')
+        # Filter ignore differences
+        diff_list = list(filter(lambda x : x not in ignore_list, diff_list))
         return diff_list
 
     def __sizeof__(self):
@@ -547,7 +542,7 @@ class DataND(Data):
     def as_dict(self, **kwargs):
         """
         Convert this object in a json serializable dict (can be use in __init__).
-        Optional keyword input parameter is for internal use only
+        Optional keyword input parameter is for internal use only 
         and may prevent json serializability.
         """
 
@@ -576,7 +571,7 @@ class DataND(Data):
         return DataND_dict
 
     def _set_None(self):
-        """Set all the properties to None (except SciDataTool object)"""
+        """Set all the properties to None (except pyleecan object)"""
 
         self.axes = None
         self.FTparameters = None
@@ -598,9 +593,7 @@ class DataND(Data):
         if type(value) is list:
             for ii, obj in enumerate(value):
                 if type(obj) is dict:
-                    class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "axes"
-                    )
+                    class_obj = import_class('SciDataTool.Classes', obj.get('__class__'), 'axes')
                     value[ii] = class_obj(init_dict=obj)
                 if value[ii] is not None:
                     value[ii].parent = self
