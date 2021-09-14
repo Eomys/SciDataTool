@@ -371,8 +371,16 @@ def plot_2D(
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    ax.set_xlim([x_min, x_max])
-    ax.set_ylim([y_min, y_max])
+    
+    if x_max is not None:
+        ax.set_xlim(right=x_max)
+    if x_min is not None:
+        ax.set_xlim(left=x_min)
+
+    if y_max is not None:
+        ax.set_ylim(top=y_max)
+    if y_min is not None:
+        ax.set_ylim(bottom=y_min)
 
     if is_logscale_x:
         ax.set_xscale("log")
