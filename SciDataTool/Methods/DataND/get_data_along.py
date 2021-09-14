@@ -32,7 +32,7 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     del results["axes_list"]
     Axes = []
     for axis_name in results.keys():
-        if len(results[axis_name]) > 1:
+        if len(results[axis_name]) > 1 and not isinstance(results[axis_name], str):
             for axis in self.axes:
                 if axis.name == axis_name:
                     name = axis.name
@@ -65,5 +65,6 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         symbol=self.symbol,
         axes=Axes,
         values=values,
+        normalizations=self.normalizations,
         is_real=self.is_real,
     )

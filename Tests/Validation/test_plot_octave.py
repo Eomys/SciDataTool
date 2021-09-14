@@ -2,8 +2,10 @@ import pytest
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.random import default_rng
+from os.path import join
 
-from SciDataTool import Data1D, DataTime, DataFreq
+from SciDataTool import Data1D, DataFreq
+from Tests import save_validation_path
 
 
 @pytest.mark.validation
@@ -46,9 +48,13 @@ def test_plot_octave():
         normalizations={"ref": 2e-5},
     )
     third_spec.plot_2D_Data(
-        "freqs", unit="dB", type_plot="octave", data_list=[third_spec_1, third_spec_2]
+        "freqs",
+        unit="dB",
+        type_plot="octave",
+        data_list=[third_spec_1, third_spec_2],
+        is_show_fig=False,
+        save_path=join(save_validation_path, "plot_2D_octave.png"),
     )
-    plt.show()
 
 
 if __name__ == "__main__":

@@ -149,6 +149,7 @@ def plot_2D_Data(
             font_size_title=font_size_title,
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
+            is_show_legend=True,
             is_grid=False,
             scale_units=scale_units,
             scale=scale,
