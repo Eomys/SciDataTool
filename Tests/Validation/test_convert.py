@@ -151,6 +151,10 @@ def test_dba():
         axes=[Freqs],
         normalizations={"ref": 2e-5},
     )
+    result_Hz = Field.get_along("freqs", unit="dBA")
+    result_elec_order = Field.get_along("freqs->elec_order", unit="dBA")
+    assert_array_almost_equal(result_Hz["X"], result_elec_order["X"])
+
     result_Hz = Field.get_magnitude_along("freqs", unit="dBA")
     result_elec_order = Field.get_magnitude_along("freqs->elec_order", unit="dBA")
     assert_array_almost_equal(result_Hz["X"], result_elec_order["X"])
