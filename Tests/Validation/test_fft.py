@@ -684,6 +684,41 @@ def test_fft2d_period():
 
 
 @pytest.mark.validation
+def test_ifft2d_period():
+    f = 50
+    freqs = np.array([0, 50, 100, 150])
+    Freqs = Data1D(name="freqs", unit="Hz", values=freqs, symmetries={"period": 10})
+    wavenumber = np.array([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4])
+    Wavenumber = Data1D(name="wavenumber", unit="dimless", values=wavenumber)
+    X = np.zeros((4, 10))
+    X[1, 2] = 5  # Only the positive frequency harmonic of the real signal
+    # X[4, 7] = 5
+    Field = DataFreq(
+        name="field",
+        symbol="X",
+        axes=[Freqs, Wavenumber],
+        values=X,
+        unit="m",
+        is_real=True,
+    )
+    result = Field.get_along("time", "angle")
+    time = result["time"]
+    assert_array_almost_equal(np.linspace(0, 10 / f, 60, endpoint=False), time)
+    angle = result["angle"]
+    assert_array_almost_equal(np.linspace(0, 2 * np.pi, 10, endpoint=False), angle)
+    Xangle, Xtime = np.meshgrid(angle, time)
+    field_ift = 5 * np.cos(2 * np.pi * f * Xtime - 3 * Xangle)  # 2 times the real part
+    assert_array_almost_equal(field_ift, result["X"])
+
+    result = Field.get_along("time=0.03", "angle")
+    time0 = result["time"]
+    assert_array_almost_equal(0.03, time0)
+    angle = result["angle"]
+    assert_array_almost_equal(np.linspace(0, 2 * np.pi, 10, endpoint=False), angle)
+    assert_array_almost_equal(field_ift[9, :], result["X"])
+
+
+@pytest.mark.validation
 def test_init_new_object():
     # %%
     f = 50
@@ -814,3 +849,7 @@ def test_fft2_anti_period_random():
     assert_array_almost_equal(
         Field_FT.get_along("angle", "time")["X"], Field.get_along("angle", "time")["X"]
     )
+
+
+if __name__ == "__main__":
+    test_ifft2d_period()
