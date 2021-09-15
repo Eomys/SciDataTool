@@ -1,6 +1,6 @@
 import pytest
 from SciDataTool import DataLinspace, DataTime, DataPattern
-from numpy import meshgrid, linspace, array
+from numpy import meshgrid, linspace, array, repeat, nan
 from numpy.testing import assert_array_almost_equal
 
 
@@ -16,8 +16,12 @@ def test_slice():
 
     # Extract data by axis value
     # 'X=1'
-    result = Field.get_along("X=1", "Y")
-    assert_array_almost_equal(field[1, :], result["Z"])
+    # result = Field.get_along("X=1", "Y")
+    # assert_array_almost_equal(field[1, :], result["Z"])
+
+    # 'X=20' (out of bounds)
+    result = Field.get_along("X=20", "Y")
+    assert_array_almost_equal(repeat(nan, 11), result["Z"])
 
     # 'X=[0, 1]'
     result = Field.get_along("X=[0, 1]", "Y")
