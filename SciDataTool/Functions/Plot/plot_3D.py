@@ -29,6 +29,8 @@ def plot_3D(
     zlabel="",
     xticks=None,
     yticks=None,
+    xticklabels=None,
+    yticklabels=None,
     fig=None,
     ax=None,
     is_logscale_x=False,
@@ -176,6 +178,10 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
         # white background
         ax.xaxis.pane.fill = False
         ax.yaxis.pane.fill = False
@@ -199,6 +205,10 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
         # white background
         ax.xaxis.pane.fill = False
         ax.yaxis.pane.fill = False
@@ -239,6 +249,10 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
         ax.set_xlim([x_min, x_max])
         ax.set_ylim([y_min, y_max])
     elif type_plot == "pcolormesh":
@@ -254,6 +268,10 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
         ax.set_xlim([x_min, x_max])
         ax.set_ylim([y_min, y_max])
     elif type_plot == "scatter":
@@ -278,6 +296,10 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)

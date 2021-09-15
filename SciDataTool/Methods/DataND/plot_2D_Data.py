@@ -18,6 +18,7 @@ from numpy import (
     array2string,
     insert,
     min as np_min,
+    linspace,
 )
 
 
@@ -175,8 +176,8 @@ def plot_2D_Data(
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            Ydatas.append(result.pop(d.symbol))
-            Xdatas.append(result[list(result)[0]])
+            # Ydatas.append(result.pop(d.symbol))
+            # Xdatas.append(result[list(result)[0]])
         else:
             result = d.get_along(
                 arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
@@ -185,8 +186,17 @@ def plot_2D_Data(
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            Ydatas.append(result.pop(d.symbol))
-            Xdatas.append(result[list(result)[0]])
+            # Ydatas.append(result.pop(d.symbol))
+            # Xdatas.append(result[list(result)[0]])
+        Ydatas.append(result.pop(d.symbol))
+        # in string case not overlay, Xdatas is a linspace
+        if axes_list[0].is_str and axes_list[0].extension != "list":
+            xdata = linspace(
+                0, len(result[list(result)[0]]) - 1, len(result[list(result)[0]])
+            )
+        else:
+            xdata = result[list(result)[0]]
+        Xdatas.append(xdata)
 
     # Find main axis as the axis with the most values
     # main_axis = axes_list[0]  # max(axes_list, key=lambda x: x.values.size)
@@ -247,6 +257,11 @@ def plot_2D_Data(
                 xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
             else:
                 xticks = None
+            if axis.is_str and axes_list[0].extension != "list":
+                xticklabels = result[list(result)[0]]
+                xticks = Xdatas[0]
+            else:
+                xticklabels = None
         else:
             if axis.unit == "SI":
                 if axis.name in unit_dict:
@@ -437,6 +452,7 @@ def plot_2D_Data(
             is_disp_title=is_disp_title,
             is_grid=is_grid,
             xticks=xticks,
+            xticklabels=xticklabels,
             save_path=save_path,
             barwidth=barwidth,
             fund_harm=fund_harm,
@@ -474,6 +490,7 @@ def plot_2D_Data(
             is_disp_title=is_disp_title,
             is_grid=is_grid,
             xticks=xticks,
+            xticklabels=xticklabels,
             barwidth=barwidth,
             linestyle_list=linestyle_list,
             linewidth_list=linewidth_list,

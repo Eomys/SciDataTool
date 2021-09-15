@@ -61,13 +61,14 @@ class RequestedAxis(FrozenClass):
         is_step=False,
         noct=None,
         corr_values=None,
+        is_str=False,
         init_dict=None,
         init_str=None,
     ):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
-        - __init__ (init_dict = d) d must be a dictionnary with property names as keys
+        - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
@@ -111,6 +112,8 @@ class RequestedAxis(FrozenClass):
                 noct = init_dict["noct"]
             if "corr_values" in list(init_dict.keys()):
                 corr_values = init_dict["corr_values"]
+            if "is_str" in list(init_dict.keys()):
+                is_str = init_dict["is_str"]
         # Set the properties (value check and convertion are done in setter)
         self.parent = None
         self.name = name
@@ -129,6 +132,7 @@ class RequestedAxis(FrozenClass):
         self.is_step = is_step
         self.noct = noct
         self.corr_values = corr_values
+        self.is_str = is_str
 
         # The class is frozen, for now it's impossible to add new properties
         self._freeze()
@@ -188,6 +192,7 @@ class RequestedAxis(FrozenClass):
             + linesep
             + linesep
         )
+        RequestedAxis_str += "is_str = " + str(self.is_str) + linesep
         return RequestedAxis_str
 
     def __eq__(self, other):
@@ -227,11 +232,15 @@ class RequestedAxis(FrozenClass):
             return False
         if not array_equal(other.corr_values, self.corr_values):
             return False
+        if other.is_str != self.is_str:
+            return False
         return True
 
-    def compare(self, other, name="self"):
+    def compare(self, other, name="self", ignore_list=None):
         """Compare two objects and return list of differences"""
 
+        if ignore_list is None:
+            ignore_list = list()
         if type(other) != type(self):
             return ["type(" + name + ")"]
         diff_list = list()
@@ -267,6 +276,10 @@ class RequestedAxis(FrozenClass):
             diff_list.append(name + ".noct")
         if not array_equal(other.corr_values, self.corr_values):
             diff_list.append(name + ".corr_values")
+        if other._is_str != self._is_str:
+            diff_list.append(name + ".is_str")
+        # Filter ignore differences
+        diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
 
     def __sizeof__(self):
@@ -291,6 +304,7 @@ class RequestedAxis(FrozenClass):
         S += getsizeof(self.is_step)
         S += getsizeof(self.noct)
         S += getsizeof(self.corr_values)
+        S += getsizeof(self.is_str)
         return S
 
     def as_dict(self, **kwargs):
@@ -331,6 +345,7 @@ class RequestedAxis(FrozenClass):
             RequestedAxis_dict["corr_values"] = None
         else:
             RequestedAxis_dict["corr_values"] = self.corr_values.tolist()
+        RequestedAxis_dict["is_str"] = self.is_str
         # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
@@ -354,6 +369,7 @@ class RequestedAxis(FrozenClass):
         self.is_step = None
         self.noct = None
         self.corr_values = None
+        self.is_str = None
 
     def _get_name(self):
         """getter of name"""
@@ -670,5 +686,23 @@ class RequestedAxis(FrozenClass):
         doc=u"""To store original axis values (useful in case of non uniform fft)
 
         :Type: ndarray
+        """,
+    )
+
+    def _get_is_str(self):
+        """getter of is_str"""
+        return self._is_str
+
+    def _set_is_str(self, value):
+        """setter of is_str"""
+        check_var("is_str", value, "bool")
+        self._is_str = value
+
+    is_str = property(
+        fget=_get_is_str,
+        fset=_set_is_str,
+        doc=u"""To indicate if the values are strings
+
+        :Type: bool
         """,
     )

@@ -24,15 +24,22 @@ def get_axis(self, axis, is_real):
         self.is_pattern = True
         self.rebuild_indices = axis.rebuild_indices
         self.is_step = axis.is_step
-    is_components = getattr(axis, "is_components", False)
-    if is_components:
+    is_str = getattr(axis, "is_str", False)
+    if is_str:
         values = axis.get_values()
-        if not self.extension in ["sum", "rss", "mean", "rms", "integrate"]:
-            self.extension = "list"
         if self.indices is not None:
-            self.values = values[self.indices]
+            if self.indices[0] == ":":
+                self.values = values
+                self.indices = list(range(len(values)))
+            else:
+                self.values = values[self.indices]
+                self.extension = "interval"
+        elif not self.extension in ["sum", "rss", "mean", "rms", "integrate", "list"]:
+            self.values = values
+            self.extension = "whole"
         else:
             self.values = values
+
     else:
         if self.extension == "pattern":
             if not self.is_pattern:

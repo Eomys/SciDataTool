@@ -3,7 +3,15 @@
 from SciDataTool.Functions.Plot.plot_4D import plot_4D
 from SciDataTool.Functions.Plot.plot_3D import plot_3D
 from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
-from numpy import where, meshgrid, unique, max as np_max, min as np_min, array2string
+from numpy import (
+    where,
+    meshgrid,
+    unique,
+    max as np_max,
+    min as np_min,
+    array2string,
+    linspace,
+)
 
 
 def plot_3D_Data(
@@ -154,8 +162,18 @@ def plot_3D_Data(
         result = self.get_along(arg_list, unit=unit, is_norm=is_norm)
     axes_list = result["axes_list"]
     axes_dict_other = result["axes_dict_other"]
-    Xdata = result[axes_list[0].name]
-    Ydata = result[axes_list[1].name]
+    if axes_list[0].is_str:
+        Xdata = linspace(
+            0, len(result[axes_list[0].name]) - 1, len(result[axes_list[0].name])
+        )
+    else:
+        Xdata = result[axes_list[0].name]
+    if axes_list[1].is_str:
+        Ydata = linspace(
+            0, len(result[axes_list[1].name]) - 1, len(result[axes_list[1].name])
+        )
+    else:
+        Ydata = result[axes_list[1].name]
     Zdata = result[self.symbol]
     if is_fft and not is_2D_view:
         X_flat = Xdata
@@ -211,6 +229,11 @@ def plot_3D_Data(
         xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         xticks = None
+    if axis.is_str:
+        xticklabels = result[axes_list[0].name]
+        xticks = Xdata
+    else:
+        xticklabels = None
 
     axis = axes_list[1]
     if axis.name in axes_dict:
@@ -234,6 +257,11 @@ def plot_3D_Data(
         yticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         yticks = None
+    if axis.is_str:
+        yticklabels = result[axes_list[1].name]
+        yticks = Xdata
+    else:
+        yticklabels = None
 
     title4 = " for "
     for axis in axes_list[2:]:
@@ -319,6 +347,8 @@ def plot_3D_Data(
                 title=title,
                 xticks=xticks,
                 yticks=yticks,
+                xticklabels=xticklabels,
+                yticklabels=yticklabels,
                 xlabel=xlabel,
                 ylabel=ylabel,
                 zlabel=zlabel,
@@ -355,6 +385,8 @@ def plot_3D_Data(
                 title=title,
                 xticks=xticks,
                 yticks=yticks,
+                xticklabels=xticklabels,
+                yticklabels=yticklabels,
                 xlabel=xlabel,
                 ylabel=ylabel,
                 zlabel=zlabel,
@@ -390,6 +422,8 @@ def plot_3D_Data(
                 title=title,
                 xticks=xticks,
                 yticks=yticks,
+                xticklabels=xticklabels,
+                yticklabels=yticklabels,
                 fig=fig,
                 ax=ax,
                 type_plot="pcolor",
@@ -425,6 +459,8 @@ def plot_3D_Data(
                 ylabel=ylabel,
                 zlabel=zlabel,
                 yticks=yticks,
+                xticklabels=xticklabels,
+                yticklabels=yticklabels,
                 type_plot="surf",
                 save_path=save_path,
                 is_show_fig=is_show_fig,
