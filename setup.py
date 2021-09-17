@@ -11,7 +11,7 @@ with open("requirements.txt", "r") as file:
 
 setuptools.setup(
     name="SciDataTool",
-    version="1.4.3",
+    version="1.4.4",
     author="Helene Toubin",
     author_email="helene.toubin@eomys.com",
     description="Scientific Data Tool",
