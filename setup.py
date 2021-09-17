@@ -18,7 +18,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Eomys/SciDataTool",
-    download_url="https://github.com/Eomys/SciDataTool/archive/1.4.3.tar.gz",
+    download_url="https://github.com/Eomys/SciDataTool/archive/1.4.4.tar.gz",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
