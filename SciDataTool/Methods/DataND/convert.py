@@ -82,15 +82,23 @@ def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
         for axis in axes_list:
             is_match = False
             if axis.name == "freqs" or axis.corr_name == "freqs":
+                if axis.corr_values is None:
+                    axis_values = axis.values
+                else:
+                    axis_values = axis.corr_values
                 index = axis.index
                 values = apply_along_axis(
-                    to_dBA, index, values, axis.values, self.unit, ref_value
+                    to_dBA, index, values, axis_values, self.unit, ref_value
                 )
                 is_match = True
             elif axis.name == "frequency":
+                if axis.corr_values is None:
+                    axis_values = axis.values
+                else:
+                    axis_values = axis.corr_values
                 index = axis.index
                 values = apply_along_axis(
-                    to_dBA, index, values, axis.values, self.unit, ref_value
+                    to_dBA, index, values, axis_values, self.unit, ref_value
                 )
                 is_match = True
         if not is_match:

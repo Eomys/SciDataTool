@@ -132,3 +132,33 @@ def test_noct():
         legend_list=["SciDataTool", "Reference"],
         color_list=["tab:red"],
     )
+
+
+@pytest.mark.validation
+def test_dba():
+    data = np.load(join(DATA_DIR, "pinknoise_fine_band.npy"))
+    freqs = data[1, :]
+    field = data[0, :]
+
+    Freqs = Data1D(
+        name="freqs", unit="Hz", values=freqs, normalizations={"elec_order": 5}
+    )
+    Field = DataFreq(
+        name="pink noise",
+        symbol="X",
+        unit="Pa",
+        values=field,
+        axes=[Freqs],
+        normalizations={"ref": 2e-5},
+    )
+    result_Hz = Field.get_along("freqs", unit="dBA")
+    result_elec_order = Field.get_along("freqs->elec_order", unit="dBA")
+    assert_array_almost_equal(result_Hz["X"], result_elec_order["X"])
+
+    result_Hz = Field.get_magnitude_along("freqs", unit="dBA")
+    result_elec_order = Field.get_magnitude_along("freqs->elec_order", unit="dBA")
+    assert_array_almost_equal(result_Hz["X"], result_elec_order["X"])
+
+
+if __name__ == "__main__":
+    test_dba()
