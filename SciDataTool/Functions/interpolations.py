@@ -79,9 +79,20 @@ def get_interpolation(values, axis_values, new_axis_values, index):
     """
     if str(axis_values) == "whole":  # Whole axis -> no interpolation
         return values
-    elif len(new_axis_values) == 1:  # Single point -> use argmin
-        idx = argmin(np_abs(axis_values - new_axis_values[0]))
-        return take(values, [idx], axis=index)
+    elif (
+        len(new_axis_values) == 1
+    ):  # Single point -> use argmin or None if out of bounds
+        if new_axis_values[0] < min(axis_values) or new_axis_values[0] > min(
+            axis_values
+        ):
+            new_shape = list(values.shape)
+            new_shape[index] = 1
+            new_values = zeros(tuple(new_shape), dtype=values.dtype)
+            new_values[(slice(None),) * index] = None
+            return new_values
+        else:
+            idx = argmin(np_abs(axis_values - new_axis_values[0]))
+            return take(values, [idx], axis=index)
     elif len(axis_values) == len(new_axis_values) and all(
         isclose(axis_values, new_axis_values, rtol=1e-03)
     ):  # Same axes -> no interpolation
