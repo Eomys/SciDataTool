@@ -82,7 +82,7 @@ def get_interpolation(values, axis_values, new_axis_values, index):
     elif (
         len(new_axis_values) == 1
     ):  # Single point -> use argmin or None if out of bounds
-        if new_axis_values[0] < min(axis_values) or new_axis_values[0] > min(
+        if new_axis_values[0] < min(axis_values) or new_axis_values[0] > max(
             axis_values
         ):
             new_shape = list(values.shape)
