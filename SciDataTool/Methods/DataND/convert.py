@@ -82,10 +82,13 @@ def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
         for axis in axes_list:
             is_match = False
             if axis.name == "freqs" or axis.corr_name == "freqs":
-                if axis.corr_values is None:
-                    axis_values = axis.values
-                else:
+                if axis.corr_values is not None and axis.unit not in [
+                    "SI",
+                    axis.corr_unit,
+                ]:
                     axis_values = axis.corr_values
+                else:
+                    axis_values = axis.values
                 index = axis.index
                 values = apply_along_axis(
                     to_dBA, index, values, axis_values, self.unit, ref_value
