@@ -383,7 +383,7 @@ def plot_2D_Data(
             for ind, y in enumerate(Ydatas[0])
             if abs(y) > abs(thresh * np_max(Ydatas[0]))
         ]
-        xticks = unique(insert(0, 0, freqs[indices]))
+        xticks = unique(insert(freqs[indices], 0, 0))
 
         if is_auto_range:
             if len(xticks) > 0:
