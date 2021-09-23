@@ -316,11 +316,11 @@ def dB_to_dBA(values, freqs, noct=None):
         )
         Aweight = 2.0 + 20.0 * log10(RA)
         Aweight[isnan(Aweight)] = -100  # replacing NaN by -100 dB
-        Aweight[
-            values <= 0
-        ] = 0  # avoiding to increase dB in dBA at frequencies where noise is already null
     try:
         values += Aweight
+        values[
+            values < 0
+        ] = 0  # avoiding to increase dB in dBA at frequencies where noise is already null
         return values
     except:
         raise UnitError("ERROR: dBA conversion only available for 1D fft")

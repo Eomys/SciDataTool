@@ -130,7 +130,7 @@ def get_axis(self, axis, is_real):
                         is_smallestperiod = False
                         is_oneperiod = False
                         is_antiperiod = False
-                        if not self.is_pattern:
+                        if not self.is_pattern and not self.extension == "single":
                             self.extension = "interval"
             elif self.transform == "ifft":  # Ignore symmetries in ifft case
                 is_smallestperiod = True
@@ -173,6 +173,8 @@ def get_axis(self, axis, is_real):
         if unit == self.corr_unit or unit == "SI":
             pass
         elif unit in axis.normalizations:
+            # Store original values
+            self.corr_values = values
             if axis.normalizations.get(unit) == "indices":
                 values = array([i for i in range(len(values))])
             elif isinstance(axis.normalizations.get(unit), ndarray):
@@ -180,6 +182,8 @@ def get_axis(self, axis, is_real):
             else:
                 values = values / axis.normalizations.get(unit)
         else:
+            # Store original values
+            self.corr_values = values
             values = convert(values, self.corr_unit, unit)
         # Rebuild symmetries in fft case
         if self.transform == "fft":
