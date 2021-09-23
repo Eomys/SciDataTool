@@ -190,7 +190,7 @@ def plot_2D_Data(
             # Xdatas.append(result[list(result)[0]])
         Ydatas.append(result.pop(d.symbol))
         # in string case not overlay, Xdatas is a linspace
-        if axes_list[0].is_str and axes_list[0].extension != "list":
+        if axes_list[0].is_components and axes_list[0].extension != "list":
             xdata = linspace(
                 0, len(result[list(result)[0]]) - 1, len(result[list(result)[0]])
             )
@@ -257,7 +257,7 @@ def plot_2D_Data(
                 xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
             else:
                 xticks = None
-            if axis.is_str and axes_list[0].extension != "list":
+            if axis.is_components and axes_list[0].extension != "list":
                 xticklabels = result[list(result)[0]]
                 xticks = Xdatas[0]
             else:

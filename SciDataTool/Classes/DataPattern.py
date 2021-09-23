@@ -84,7 +84,7 @@ class DataPattern(Data):
         unique_indices=None,
         is_step=True,
         values=None,
-        is_str=False,
+        is_components=False,
         symmetries=-1,
         values_whole=None,
         symbol="",
@@ -117,8 +117,8 @@ class DataPattern(Data):
                 is_step = init_dict["is_step"]
             if "values" in list(init_dict.keys()):
                 values = init_dict["values"]
-            if "is_str" in list(init_dict.keys()):
-                is_str = init_dict["is_str"]
+            if "is_components" in list(init_dict.keys()):
+                is_components = init_dict["is_components"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
             if "values_whole" in list(init_dict.keys()):
@@ -136,7 +136,7 @@ class DataPattern(Data):
         self.unique_indices = unique_indices
         self.is_step = is_step
         self.values = values
-        self.is_str = is_str
+        self.is_components = is_components
         self.symmetries = symmetries
         self.values_whole = values_whole
         # Call Data init
@@ -172,7 +172,7 @@ class DataPattern(Data):
             + linesep
             + linesep
         )
-        DataPattern_str += "is_str = " + str(self.is_str) + linesep
+        DataPattern_str += "is_components = " + str(self.is_components) + linesep
         DataPattern_str += "symmetries = " + str(self.symmetries) + linesep
         DataPattern_str += (
             "values_whole = "
@@ -200,7 +200,7 @@ class DataPattern(Data):
             return False
         if not array_equal(other.values, self.values):
             return False
-        if other.is_str != self.is_str:
+        if other.is_components != self.is_components:
             return False
         if other.symmetries != self.symmetries:
             return False
@@ -227,8 +227,8 @@ class DataPattern(Data):
             diff_list.append(name + ".is_step")
         if not array_equal(other.values, self.values):
             diff_list.append(name + ".values")
-        if other._is_str != self._is_str:
-            diff_list.append(name + ".is_str")
+        if other._is_components != self._is_components:
+            diff_list.append(name + ".is_components")
         if other._symmetries != self._symmetries:
             diff_list.append(name + ".symmetries")
         if not array_equal(other.values_whole, self.values_whole):
@@ -252,7 +252,7 @@ class DataPattern(Data):
                 S += getsizeof(value)
         S += getsizeof(self.is_step)
         S += getsizeof(self.values)
-        S += getsizeof(self.is_str)
+        S += getsizeof(self.is_components)
         if self.symmetries is not None:
             for key, value in self.symmetries.items():
                 S += getsizeof(value) + getsizeof(key)
@@ -279,7 +279,7 @@ class DataPattern(Data):
             DataPattern_dict["values"] = None
         else:
             DataPattern_dict["values"] = self.values.tolist()
-        DataPattern_dict["is_str"] = self.is_str
+        DataPattern_dict["is_components"] = self.is_components
         DataPattern_dict["symmetries"] = (
             self.symmetries.copy() if self.symmetries is not None else None
         )
@@ -299,7 +299,7 @@ class DataPattern(Data):
         self.unique_indices = None
         self.is_step = None
         self.values = None
-        self.is_str = None
+        self.is_components = None
         self.symmetries = None
         self.values_whole = None
         # Set to None the properties inherited from Data
@@ -388,18 +388,18 @@ class DataPattern(Data):
         """,
     )
 
-    def _get_is_str(self):
-        """getter of is_str"""
-        return self._is_str
+    def _get_is_components(self):
+        """getter of is_components"""
+        return self._is_components
 
-    def _set_is_str(self, value):
-        """setter of is_str"""
-        check_var("is_str", value, "bool")
-        self._is_str = value
+    def _set_is_components(self, value):
+        """setter of is_components"""
+        check_var("is_components", value, "bool")
+        self._is_components = value
 
-    is_str = property(
-        fget=_get_is_str,
-        fset=_set_is_str,
+    is_components = property(
+        fget=_get_is_components,
+        fset=_set_is_components,
         doc=u"""Boolean indicating if the axis values are strings
 
         :Type: bool

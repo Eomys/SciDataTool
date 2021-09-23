@@ -118,7 +118,7 @@ class DataLinspace(Data):
         step=None,
         number=None,
         include_endpoint=True,
-        is_str=False,
+        is_components=False,
         symmetries=-1,
         symbol="",
         name="",
@@ -152,8 +152,8 @@ class DataLinspace(Data):
                 number = init_dict["number"]
             if "include_endpoint" in list(init_dict.keys()):
                 include_endpoint = init_dict["include_endpoint"]
-            if "is_str" in list(init_dict.keys()):
-                is_str = init_dict["is_str"]
+            if "is_components" in list(init_dict.keys()):
+                is_components = init_dict["is_components"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
             if "symbol" in list(init_dict.keys()):
@@ -170,7 +170,7 @@ class DataLinspace(Data):
         self.step = step
         self.number = number
         self.include_endpoint = include_endpoint
-        self.is_str = is_str
+        self.is_components = is_components
         self.symmetries = symmetries
         # Call Data init
         super(DataLinspace, self).__init__(
@@ -190,7 +190,7 @@ class DataLinspace(Data):
         DataLinspace_str += "step = " + str(self.step) + linesep
         DataLinspace_str += "number = " + str(self.number) + linesep
         DataLinspace_str += "include_endpoint = " + str(self.include_endpoint) + linesep
-        DataLinspace_str += "is_str = " + str(self.is_str) + linesep
+        DataLinspace_str += "is_components = " + str(self.is_components) + linesep
         DataLinspace_str += "symmetries = " + str(self.symmetries) + linesep
         return DataLinspace_str
 
@@ -213,7 +213,7 @@ class DataLinspace(Data):
             return False
         if other.include_endpoint != self.include_endpoint:
             return False
-        if other.is_str != self.is_str:
+        if other.is_components != self.is_components:
             return False
         if other.symmetries != self.symmetries:
             return False
@@ -240,8 +240,8 @@ class DataLinspace(Data):
             diff_list.append(name + ".number")
         if other._include_endpoint != self._include_endpoint:
             diff_list.append(name + ".include_endpoint")
-        if other._is_str != self._is_str:
-            diff_list.append(name + ".is_str")
+        if other._is_components != self._is_components:
+            diff_list.append(name + ".is_components")
         if other._symmetries != self._symmetries:
             diff_list.append(name + ".symmetries")
         # Filter ignore differences
@@ -260,7 +260,7 @@ class DataLinspace(Data):
         S += getsizeof(self.step)
         S += getsizeof(self.number)
         S += getsizeof(self.include_endpoint)
-        S += getsizeof(self.is_str)
+        S += getsizeof(self.is_components)
         if self.symmetries is not None:
             for key, value in self.symmetries.items():
                 S += getsizeof(value) + getsizeof(key)
@@ -280,7 +280,7 @@ class DataLinspace(Data):
         DataLinspace_dict["step"] = self.step
         DataLinspace_dict["number"] = self.number
         DataLinspace_dict["include_endpoint"] = self.include_endpoint
-        DataLinspace_dict["is_str"] = self.is_str
+        DataLinspace_dict["is_components"] = self.is_components
         DataLinspace_dict["symmetries"] = (
             self.symmetries.copy() if self.symmetries is not None else None
         )
@@ -297,7 +297,7 @@ class DataLinspace(Data):
         self.step = None
         self.number = None
         self.include_endpoint = None
-        self.is_str = None
+        self.is_components = None
         self.symmetries = None
         # Set to None the properties inherited from Data
         super(DataLinspace, self)._set_None()
@@ -392,18 +392,18 @@ class DataLinspace(Data):
         """,
     )
 
-    def _get_is_str(self):
-        """getter of is_str"""
-        return self._is_str
+    def _get_is_components(self):
+        """getter of is_components"""
+        return self._is_components
 
-    def _set_is_str(self, value):
-        """setter of is_str"""
-        check_var("is_str", value, "bool")
-        self._is_str = value
+    def _set_is_components(self, value):
+        """setter of is_components"""
+        check_var("is_components", value, "bool")
+        self._is_components = value
 
-    is_str = property(
-        fget=_get_is_str,
-        fset=_set_is_str,
+    is_components = property(
+        fget=_get_is_components,
+        fset=_set_is_components,
         doc=u"""Boolean indicating if the axis values are strings
 
         :Type: bool

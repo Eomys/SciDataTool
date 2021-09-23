@@ -26,7 +26,7 @@ def comp_axes(self, axes_list):
                 axis_requested.index = index
                 axis_requested.corr_name = axis_name
                 axis_requested.corr_unit = axis.unit
-                axis_requested.is_str = axis.is_str
+                axis_requested.is_components = axis.is_components
                 if axis_name in rev_axes_dict.keys():
                     axis_requested.transform = "fft_axis"
                     transforms.append("fft")
@@ -37,7 +37,7 @@ def comp_axes(self, axes_list):
                     if axis.name == axes_dict[axis_name][0]:
                         axis_requested.corr_name = axes_dict[axis_name][0]
                         axis_requested.corr_unit = axes_dict[axis_name][2]
-                        axis_requested.is_str = axis.is_str
+                        axis_requested.is_components = axis.is_components
                         axis_requested.operation = (
                             axes_dict[axis_name][0] + "_to_" + axis_name
                         )
@@ -52,7 +52,7 @@ def comp_axes(self, axes_list):
                     if axis.name == rev_axes_dict[axis_name][0]:
                         axis_requested.corr_name = rev_axes_dict[axis_name][0]
                         axis_requested.corr_unit = rev_axes_dict[axis_name][2]
-                        axis_requested.is_str = axis.is_str
+                        axis_requested.is_components = axis.is_components
                         axis_requested.operation = (
                             rev_axes_dict[axis_name][0] + "_to_" + axis_name
                         )

@@ -24,8 +24,8 @@ def get_axis(self, axis, is_real):
         self.is_pattern = True
         self.rebuild_indices = axis.rebuild_indices
         self.is_step = axis.is_step
-    is_str = getattr(axis, "is_str", False)
-    if is_str:
+    is_components = getattr(axis, "is_components", False)
+    if is_components:
         values = axis.get_values()
         if self.indices is not None:
             if self.indices[0] == ":":

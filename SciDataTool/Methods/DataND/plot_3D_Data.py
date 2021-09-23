@@ -162,13 +162,13 @@ def plot_3D_Data(
         result = self.get_along(arg_list, unit=unit, is_norm=is_norm)
     axes_list = result["axes_list"]
     axes_dict_other = result["axes_dict_other"]
-    if axes_list[0].is_str:
+    if axes_list[0].is_components:
         Xdata = linspace(
             0, len(result[axes_list[0].name]) - 1, len(result[axes_list[0].name])
         )
     else:
         Xdata = result[axes_list[0].name]
-    if axes_list[1].is_str:
+    if axes_list[1].is_components:
         Ydata = linspace(
             0, len(result[axes_list[1].name]) - 1, len(result[axes_list[1].name])
         )
@@ -229,7 +229,7 @@ def plot_3D_Data(
         xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         xticks = None
-    if axis.is_str:
+    if axis.is_components:
         xticklabels = result[axes_list[0].name]
         xticks = Xdata
     else:
@@ -257,7 +257,7 @@ def plot_3D_Data(
         yticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         yticks = None
-    if axis.is_str:
+    if axis.is_components:
         yticklabels = result[axes_list[1].name]
         yticks = Xdata
     else:

@@ -61,7 +61,7 @@ class RequestedAxis(FrozenClass):
         is_step=False,
         noct=None,
         corr_values=None,
-        is_str=False,
+        is_components=False,
         init_dict=None,
         init_str=None,
     ):
@@ -112,8 +112,8 @@ class RequestedAxis(FrozenClass):
                 noct = init_dict["noct"]
             if "corr_values" in list(init_dict.keys()):
                 corr_values = init_dict["corr_values"]
-            if "is_str" in list(init_dict.keys()):
-                is_str = init_dict["is_str"]
+            if "is_components" in list(init_dict.keys()):
+                is_components = init_dict["is_components"]
         # Set the properties (value check and convertion are done in setter)
         self.parent = None
         self.name = name
@@ -132,7 +132,7 @@ class RequestedAxis(FrozenClass):
         self.is_step = is_step
         self.noct = noct
         self.corr_values = corr_values
-        self.is_str = is_str
+        self.is_components = is_components
 
         # The class is frozen, for now it's impossible to add new properties
         self._freeze()
@@ -192,7 +192,7 @@ class RequestedAxis(FrozenClass):
             + linesep
             + linesep
         )
-        RequestedAxis_str += "is_str = " + str(self.is_str) + linesep
+        RequestedAxis_str += "is_components = " + str(self.is_components) + linesep
         return RequestedAxis_str
 
     def __eq__(self, other):
@@ -232,7 +232,7 @@ class RequestedAxis(FrozenClass):
             return False
         if not array_equal(other.corr_values, self.corr_values):
             return False
-        if other.is_str != self.is_str:
+        if other.is_components != self.is_components:
             return False
         return True
 
@@ -276,8 +276,8 @@ class RequestedAxis(FrozenClass):
             diff_list.append(name + ".noct")
         if not array_equal(other.corr_values, self.corr_values):
             diff_list.append(name + ".corr_values")
-        if other._is_str != self._is_str:
-            diff_list.append(name + ".is_str")
+        if other._is_components != self._is_components:
+            diff_list.append(name + ".is_components")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -304,7 +304,7 @@ class RequestedAxis(FrozenClass):
         S += getsizeof(self.is_step)
         S += getsizeof(self.noct)
         S += getsizeof(self.corr_values)
-        S += getsizeof(self.is_str)
+        S += getsizeof(self.is_components)
         return S
 
     def as_dict(self, **kwargs):
@@ -345,7 +345,7 @@ class RequestedAxis(FrozenClass):
             RequestedAxis_dict["corr_values"] = None
         else:
             RequestedAxis_dict["corr_values"] = self.corr_values.tolist()
-        RequestedAxis_dict["is_str"] = self.is_str
+        RequestedAxis_dict["is_components"] = self.is_components
         # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
@@ -369,7 +369,7 @@ class RequestedAxis(FrozenClass):
         self.is_step = None
         self.noct = None
         self.corr_values = None
-        self.is_str = None
+        self.is_components = None
 
     def _get_name(self):
         """getter of name"""
@@ -689,18 +689,18 @@ class RequestedAxis(FrozenClass):
         """,
     )
 
-    def _get_is_str(self):
-        """getter of is_str"""
-        return self._is_str
+    def _get_is_components(self):
+        """getter of is_components"""
+        return self._is_components
 
-    def _set_is_str(self, value):
-        """setter of is_str"""
-        check_var("is_str", value, "bool")
-        self._is_str = value
+    def _set_is_components(self, value):
+        """setter of is_components"""
+        check_var("is_components", value, "bool")
+        self._is_components = value
 
-    is_str = property(
-        fget=_get_is_str,
-        fset=_set_is_str,
+    is_components = property(
+        fget=_get_is_components,
+        fset=_set_is_components,
         doc=u"""To indicate if the values are strings
 
         :Type: bool

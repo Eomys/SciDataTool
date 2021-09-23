@@ -22,7 +22,7 @@ def freq_to_time(self):
 
     axes_str = []
     for i, axis in enumerate(self.axes):
-        if axis.is_str:
+        if axis.is_components:
             axis_str = axis.name + str(list(range(len(axis.values))))
         elif axis.name == "freqs":
             axis_str = "time[smallestperiod]"
@@ -45,7 +45,7 @@ def freq_to_time(self):
             if axis.name == "freqs":
                 axis_new = Data1D(
                     name="time",
-                    is_str=False,
+                    is_components=False,
                     values=results["time"],
                     unit="s",
                     symmetries=axis.symmetries.copy(),
@@ -54,7 +54,7 @@ def freq_to_time(self):
             elif axis.name == "wavenumber":
                 axis_new = Data1D(
                     name="angle",
-                    is_str=False,
+                    is_components=False,
                     values=results["angle"],
                     unit="rad",
                     symmetries=axis.symmetries.copy(),

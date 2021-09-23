@@ -36,19 +36,19 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             for axis in self.axes:
                 if axis.name == axis_name:
                     name = axis.name
-                    is_str = axis.is_str
+                    is_components = axis.is_components
                     axis_values = results[axis_name]
                     unit = axis.unit
                 elif axis_name in axes_dict:
                     if axes_dict[axis_name][0] == axis.name:
                         name = axis_name
-                        is_str = axis.is_str
+                        is_components = axis.is_components
                         axis_values = results[axis_name]
                         unit = axes_dict[axis_name][2]
                 elif axis_name in rev_axes_dict:
                     if rev_axes_dict[axis_name][0] == axis.name:
                         name = axis_name
-                        is_str = axis.is_str
+                        is_components = axis.is_components
                         axis_values = results[axis_name]
                         unit = rev_axes_dict[axis_name][2]
             Axes.append(
@@ -56,7 +56,7 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     name=name,
                     unit=unit,
                     values=axis_values,
-                    is_str=is_str,
+                    is_components=is_components,
                 )
             )
     return DataND(
