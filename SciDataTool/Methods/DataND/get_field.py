@@ -32,7 +32,8 @@ def get_field(self, axes_list):
         if (
             axis_requested.transform == "fft"
             and axis_requested.is_pattern
-            or axis_requested.extension in ["sum", "rss", "mean", "rms", "integrate"]
+            or axis_requested.extension
+            in ["sum", "rss", "mean", "rms", "integrate", "derivate"]
             and axis_requested.is_pattern
         ):
             values = take(values, axis_requested.rebuild_indices, axis_requested.index)
@@ -43,7 +44,8 @@ def get_field(self, axes_list):
             axis_symmetries["antiperiod"] = nper
         elif axis_requested.indices is not None:
             if (
-                axis_requested.extension in ["sum", "rss", "mean", "rms", "integrate"]
+                axis_requested.extension
+                in ["sum", "rss", "mean", "rms", "integrate", "derivate"]
                 or max(axis_requested.indices) > values.shape[axis_requested.index]
             ):
                 values = rebuild_symmetries(

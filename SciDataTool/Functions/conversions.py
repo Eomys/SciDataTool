@@ -109,6 +109,96 @@ def get_dim_prefix(unit_str):
     return (dim, prefix)
 
 
+def get_unit_derivate(unit_str, axis_unit):
+    if axis_unit == "Hz":
+        axis_unit = "s"
+    p = 0
+    if "/" in unit_str:
+        unit_num = unit_str.split("/")[0]
+        unit_denom = unit_str.split("/")[1]
+    else:
+        unit_num = unit_str
+        unit_denom = ""
+    if axis_unit in unit_num:
+        p = 1
+        if unit_num.rsplit(axis_unit, 1)[1].isdigit():
+            p = int(unit_num.rsplit(axis_unit, 1)[1])
+        p_new = p - 1
+        # Case axis_unit must be withdrawn
+        if p_new == 0:
+            unit_str = unit_str.replace(axis_unit, "")
+        elif p_new == 1:
+            unit_str = unit_str.replace(axis_unit + str(p), axis_unit)
+        else:
+            unit_str = unit_str.replace(axis_unit + str(p), axis_unit + str(p_new))
+    elif axis_unit in unit_denom:
+        p = 1
+        if unit_denom.rsplit(axis_unit, 1)[1].isdigit():
+            p = int(unit_denom.rsplit(axis_unit, 1)[1])
+        p_new = p + 1
+        # Case p was 1
+        if p_new == 2:
+            unit_str = unit_str.replace(axis_unit, axis_unit + "2")
+        elif p_new == 1:
+            unit_str = unit_str.replace(axis_unit + str(p), axis_unit)
+        else:
+            unit_str = unit_str.replace(axis_unit + str(p), axis_unit + str(p_new))
+    else:
+        # Case axis_unit was not in unit_str
+        if unit_denom != "":
+            unit_str += axis_unit
+        else:
+            unit_str += "/" + axis_unit
+    return unit_str
+
+
+def get_unit_integrate(unit_str, axis_unit):
+    if axis_unit == "Hz":
+        axis_unit = "s"
+    p = 0
+    if "/" in unit_str:
+        unit_num = unit_str.split("/")[0]
+        unit_denom = unit_str.split("/")[1]
+    else:
+        unit_num = unit_str
+        unit_denom = ""
+    if axis_unit in unit_num:
+        p = 1
+        if unit_num.rsplit(axis_unit, 1)[1].isdigit():
+            p = int(unit_num.rsplit(axis_unit, 1)[1])
+        p_new = p + 1
+        # Case p was 1
+        if p_new == 2:
+            unit_str = unit_str.replace(axis_unit, axis_unit + "2")
+        elif p_new == 1:
+            unit_str = unit_str.replace(axis_unit + str(p), axis_unit)
+        else:
+            unit_str = unit_str.replace(axis_unit + str(p), axis_unit + str(p_new))
+    elif axis_unit in unit_denom:
+        p = 1
+        if unit_denom.rsplit(axis_unit, 1)[1].isdigit():
+            p = int(unit_denom.rsplit(axis_unit, 1)[1])
+        p_new = p - 1
+        # Case axis_unit must be withdrawn
+        if p_new == 0:
+            unit_denom = unit_denom.replace(axis_unit, "")
+            if unit_denom == "":
+                unit_str = unit_num
+            else:
+                unit_str = unit_str.replace(axis_unit, "")
+        elif p_new == 1:
+            unit_str = unit_str.replace(axis_unit + str(p), axis_unit)
+        else:
+            unit_str = unit_str.replace(axis_unit + str(p), axis_unit + str(p_new))
+    else:
+        # Case axis_unit was not in unit_str
+        if unit_denom != "":
+            unit_str = unit_num + axis_unit + "/" + unit_denom
+        else:
+            unit_str += axis_unit
+    return unit_str
+
+
 def convert(values, unit1, unit2):
     """Converts values from unit1 to unit2
     Parameters

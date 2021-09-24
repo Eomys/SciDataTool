@@ -31,7 +31,15 @@ def rebuild_symmetries(
             and axis.is_pattern
             and (
                 axis.extension
-                not in ["sum", "rss", "mean", "rms", "integrate", "smallestperiod"]
+                not in [
+                    "sum",
+                    "rss",
+                    "mean",
+                    "rms",
+                    "integrate",
+                    "derivate",
+                    "smallestperiod",
+                ]
                 and axis.indices is None
             )
         ):

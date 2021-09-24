@@ -67,6 +67,11 @@ def read_input_strings(args, axis_data):
             elems = axis_str.split("=integrate")
             name = elems[0]
             extension = "integrate"
+        # Detect derivate
+        elif "derivate" in axis_str:
+            elems = axis_str.split("=derivate")
+            name = elems[0]
+            extension = "derivate"
         # Detect periods
         elif "oneperiod" in axis_str:
             elems = axis_str.split("[")
