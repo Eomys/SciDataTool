@@ -259,15 +259,23 @@ class DataPattern(Data):
         S += getsizeof(self.values_whole)
         return S
 
-    def as_dict(self, **kwargs):
+    def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
         """
         Convert this object in a json serializable dict (can be use in __init__).
+        type_handle_ndarray: int
+            How to handle ndarray (0: tolist, 1: copy, 2: nothing)
+        keep_function : bool
+            True to keep the function object, else return str
         Optional keyword input parameter is for internal use only
         and may prevent json serializability.
         """
 
         # Get the properties inherited from Data
-        DataPattern_dict = super(DataPattern, self).as_dict(**kwargs)
+        DataPattern_dict = super(DataPattern, self).as_dict(
+            type_handle_ndarray=type_handle_ndarray,
+            keep_function=keep_function,
+            **kwargs
+        )
         DataPattern_dict["rebuild_indices"] = (
             self.rebuild_indices.copy() if self.rebuild_indices is not None else None
         )
@@ -278,7 +286,16 @@ class DataPattern(Data):
         if self.values is None:
             DataPattern_dict["values"] = None
         else:
-            DataPattern_dict["values"] = self.values.tolist()
+            if type_handle_ndarray == 0:
+                DataPattern_dict["values"] = self.values.tolist()
+            elif type_handle_ndarray == 1:
+                DataPattern_dict["values"] = self.values.copy()
+            elif type_handle_ndarray == 2:
+                DataPattern_dict["values"] = self.values
+            else:
+                raise Exception(
+                    "Unknown type_handle_ndarray: " + str(type_handle_ndarray)
+                )
         DataPattern_dict["is_components"] = self.is_components
         DataPattern_dict["symmetries"] = (
             self.symmetries.copy() if self.symmetries is not None else None
@@ -286,7 +303,16 @@ class DataPattern(Data):
         if self.values_whole is None:
             DataPattern_dict["values_whole"] = None
         else:
-            DataPattern_dict["values_whole"] = self.values_whole.tolist()
+            if type_handle_ndarray == 0:
+                DataPattern_dict["values_whole"] = self.values_whole.tolist()
+            elif type_handle_ndarray == 1:
+                DataPattern_dict["values_whole"] = self.values_whole.copy()
+            elif type_handle_ndarray == 2:
+                DataPattern_dict["values_whole"] = self.values_whole
+            else:
+                raise Exception(
+                    "Unknown type_handle_ndarray: " + str(type_handle_ndarray)
+                )
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataPattern_dict["__class__"] = "DataPattern"
@@ -400,7 +426,7 @@ class DataPattern(Data):
     is_components = property(
         fget=_get_is_components,
         fset=_set_is_components,
-        doc=u"""Boolean indicating if the axis values are strings
+        doc=u"""Boolean indicating if the axis values are strings: True if strings
 
         :Type: bool
         """,
