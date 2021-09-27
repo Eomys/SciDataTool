@@ -257,7 +257,13 @@ def plot_3D(
         ax.set_ylim([y_min, y_max])
     elif type_plot == "pcolormesh":
         c = ax.pcolormesh(
-            Xdata, Ydata, Zdata, cmap=colormap, shading="gouraud", antialiased=True
+            Xdata,
+            Ydata,
+            Zdata,
+            cmap=colormap,
+            shading="gouraud",
+            antialiased=True,
+            picker=True,
         )
         clb = fig.colorbar(c, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
