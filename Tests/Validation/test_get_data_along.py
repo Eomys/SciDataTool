@@ -123,7 +123,7 @@ def test_get_data_along_derivate():
 
     Field_ft = Field.time_to_freq()
 
-    Field_der = Field_ft.get_data_along("freqs=derivate", "angle")
+    Field_der = Field_ft.get_data_along("freqs=derivate")
     assert Field_der.unit == "m/s"
     Field_ft.unit = "m/s"
     Field_der = Field_ft.get_data_along("freqs=derivate")

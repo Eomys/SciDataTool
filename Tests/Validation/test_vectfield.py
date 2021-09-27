@@ -54,6 +54,64 @@ def test_one_comp():
     assert_array_almost_equal(np.zeros((8, 8)), result["comp_z"])
 
 
+@pytest.mark.validation
+def test_xyz_integration():
+    f = 50
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=10,
+        include_endpoint=False,
+    )
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=2 * np.pi,
+        number=20,
+        include_endpoint=False,
+    )
+    ta, at = np.meshgrid(Time.get_values(), Angle.get_values())
+    field = 5 * np.cos(2 * np.pi * f * ta + 3 * at)
+    Field_r = DataTime(
+        name="Radial field",
+        symbol="X_r",
+        unit="m",
+        normalizations={"ref": 2e-5},
+        axes=[Time, Angle],
+        values=field.T,
+    )
+    Field_t = DataTime(
+        name="Tangential field",
+        symbol="X_t",
+        unit="m",
+        normalizations={"ref": 2e-5},
+        axes=[Time, Angle],
+        values=-field.T,
+    )
+    VecField = VectorField(
+        name="Example field",
+        symbol="X",
+        components={"radial": Field_r, "tangential": Field_t},
+    )
+    result = VecField.get_xyz_along("time", "angle=sum")
+    assert result["comp_x"].shape == (10,)
+
+    VecField_ft = VecField.time_to_freq()
+    result = VecField_ft.get_xyz_along("time", "angle")
+    assert result["comp_x"].shape == (10, 20)
+
+    VecField_ft = VecField.time_to_freq()
+    result = VecField_ft.get_xyz_along("time", "angle=sum")
+    assert result["comp_x"].shape == (10,)
+
+
+if __name__ == "__main__":
+    test_xyz_integration()
+
+
 # @pytest.mark.validation
 # def test_two_comp():
 #     x = np.array(
