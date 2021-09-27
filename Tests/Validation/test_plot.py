@@ -1,5 +1,5 @@
 import pytest
-from SciDataTool import DataLinspace, DataTime
+from SciDataTool import DataLinspace, DataTime, Data1D
 from Tests import save_validation_path
 from SciDataTool.Functions.Plot.plot_2D import plot_2D
 from numpy import meshgrid, pi, linspace, zeros, sin, split, sum
@@ -55,6 +55,25 @@ def test_normalization():
     )
 
 
+def test_strings():
+    Modes = Data1D(
+        name="modes",
+        unit="",
+        values=["(0,0)", "(1,0)", "(2,0)", "(3,0)", "(4,0)"],
+        is_components=True,
+    )
+    field = linspace(1, 5, 5)
+    Field = DataTime(name="Example field", symbol="Z", axes=[Modes], values=field)
+
+    Field.plot_2D_Data(
+        "modes",
+        type_plot="bargraph",
+        is_show_fig=False,
+        save_path=join(save_validation_path, "plot_str.png"),
+    )
+
+
 if __name__ == "__main__":
     test_plot()
     test_normalization()
+    test_strings()

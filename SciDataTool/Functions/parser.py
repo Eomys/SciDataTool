@@ -148,6 +148,10 @@ def read_input_strings(args, axis_data):
             elif "," in ind_str:
                 extension = "list"
                 indices = [int(x) for x in ind_str.split(",")]
+            # List of all indices
+            elif len(ind_str) == 0:
+                extension = "list"
+                indices = [":"]
             # Single index
             else:
                 extension = "single"
