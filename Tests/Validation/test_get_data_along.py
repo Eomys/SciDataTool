@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+from numpy.testing import assert_array_almost_equal
 from os.path import join
 
 from SciDataTool import DataLinspace, DataTime
@@ -123,19 +124,23 @@ def test_get_data_along_derivate():
 
     Field_ft = Field.time_to_freq()
 
-    Field_der = Field_ft.get_data_along("freqs=derivate")
+    Field_der = Field_ft.get_data_along("freqs=derivate", "angle[0]")
     assert Field_der.unit == "m/s"
+    result_ft = Field_ft.get_along("freqs", "angle[0]")
+    freqs = result_ft["freqs"]
+    field_ft = result_ft["X"]
+    assert_array_almost_equal(Field_der.values, field_ft * 2 * 1j * np.pi * freqs)
     Field_ft.unit = "m/s"
-    Field_der = Field_ft.get_data_along("freqs=derivate")
+    Field_der = Field_ft.get_data_along("freqs=derivate", "wavenumber")
     assert Field_der.unit == "m/s2"
     Field_ft.unit = "ms"
-    Field_der = Field_ft.get_data_along("freqs=derivate")
+    Field_der = Field_ft.get_data_along("freqs=derivate", "wavenumber")
     assert Field_der.unit == "m"
     Field_ft.unit = "ms2"
-    Field_der = Field_ft.get_data_along("freqs=derivate")
+    Field_der = Field_ft.get_data_along("freqs=derivate", "wavenumber")
     assert Field_der.unit == "ms"
     Field_ft.unit = "ms3"
-    Field_der = Field_ft.get_data_along("freqs=derivate")
+    Field_der = Field_ft.get_data_along("freqs=derivate", "wavenumber")
     assert Field_der.unit == "ms2"
 
 
