@@ -155,7 +155,7 @@ def plot_2D_Data_Animated(
             if animated_axis == "time" or animated_axis == "freqs":
                 arg_list0 = (animated_axis + "=" + str(value_min),) + arg_list
             else:
-                arg_list0 = arg_list + (animated_axis + "=" + str(value_min),) 
+                arg_list0 = arg_list + (animated_axis + "=" + str(value_min),)
 
             # Call to plot_2D_Data of VectorField class, which manage the quiver case
             self.plot_2D_Data(
@@ -267,5 +267,5 @@ def plot_2D_Data_Animated(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
-                is_plot_only=is_plot_only
+                is_plot_only=is_plot_only,
             )
