@@ -45,6 +45,7 @@ def plot_2D(
     y_min=None,
     y_max=None,
     xticks=None,
+    xticklabels=None,
     save_path=None,
     barwidth=5,
     is_show_fig=None,
@@ -193,6 +194,8 @@ def plot_2D(
             )
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
     elif type_plot == "bargraph":
         positions = range(-ndatas + 1, ndatas, 2)
         if x_max is not None:
@@ -221,6 +224,8 @@ def plot_2D(
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
             plt.xticks(rotation=90, ha="center", va="top")
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
 
     elif type_plot == "barchart":
         for i in range(ndatas):
@@ -371,7 +376,7 @@ def plot_2D(
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    
+
     if x_max is not None:
         ax.set_xlim(right=x_max)
     if x_min is not None:

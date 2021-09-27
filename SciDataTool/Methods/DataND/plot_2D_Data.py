@@ -18,6 +18,7 @@ from numpy import (
     array2string,
     insert,
     min as np_min,
+    linspace,
 )
 
 
@@ -45,6 +46,9 @@ def plot_2D_Data(
     is_grid=True,
     is_auto_ticks=True,
     is_auto_range=True,
+    xlabel=None,
+    ylabel=None,
+    title=None,
     fig=None,
     ax=None,
     barwidth=100,
@@ -138,9 +142,11 @@ def plot_2D_Data(
         else:
             unit_str = "[" + unit + "]"
         if self.symbol == "Magnitude":
-            ylabel = "Magnitude " + r"$[" + unit + "]$"
+            if ylabel is None:
+                ylabel = "Magnitude " + r"$[" + unit + "]$"
         else:
-            ylabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
+            if ylabel is None:
+                ylabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
         if data_list == []:
             title1 = "FFT of " + self.name.lower() + " "
         else:
@@ -153,14 +159,23 @@ def plot_2D_Data(
             # title = data.name.capitalize() + " for " + ', '.join(arg_list_str)
             title1 = "Comparison of " + self.name.lower() + " "
         if is_norm:
-            ylabel = (
-                r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\, [" + unit + "]$"
-            )
+            if ylabel is None:
+                ylabel = (
+                    r"$\frac{"
+                    + self.symbol
+                    + "}{"
+                    + self.symbol
+                    + "_0}\, ["
+                    + unit
+                    + "]$"
+                )
         else:
             if self.symbol == "Magnitude":
-                ylabel = "Magnitude " + r"$[" + unit + "]$"
+                if ylabel is None:
+                    ylabel = "Magnitude " + r"$[" + unit + "]$"
             else:
-                ylabel = r"$" + self.symbol + "\, [" + unit + "]$"
+                if ylabel is None:
+                    ylabel = r"$" + self.symbol + "\, [" + unit + "]$"
 
     # Extract field and axes
     Xdatas = []
@@ -175,8 +190,8 @@ def plot_2D_Data(
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            Ydatas.append(result.pop(d.symbol))
-            Xdatas.append(result[list(result)[0]])
+            # Ydatas.append(result.pop(d.symbol))
+            # Xdatas.append(result[list(result)[0]])
         else:
             result = d.get_along(
                 arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
@@ -185,8 +200,17 @@ def plot_2D_Data(
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            Ydatas.append(result.pop(d.symbol))
-            Xdatas.append(result[list(result)[0]])
+            # Ydatas.append(result.pop(d.symbol))
+            # Xdatas.append(result[list(result)[0]])
+        Ydatas.append(result.pop(d.symbol))
+        # in string case not overlay, Xdatas is a linspace
+        if axes_list[0].is_components and axes_list[0].extension != "list":
+            xdata = linspace(
+                0, len(result[list(result)[0]]) - 1, len(result[list(result)[0]])
+            )
+        else:
+            xdata = result[list(result)[0]]
+        Xdatas.append(xdata)
 
     # Find main axis as the axis with the most values
     # main_axis = axes_list[0]  # max(axes_list, key=lambda x: x.values.size)
@@ -227,17 +251,20 @@ def plot_2D_Data(
                     unit = unit_dict[axis.name]
                 else:
                     unit = axis.unit
-                xlabel = name.capitalize() + " [" + unit + "]"
+                if xlabel is None:
+                    xlabel = name.capitalize() + " [" + unit + "]"
                 main_axis_name = name
             elif axis.unit in norm_dict:
-                xlabel = norm_dict[axis.unit]
+                if xlabel is None:
+                    xlabel = norm_dict[axis.unit]
                 if axis.unit == "Hz":
                     main_axis_name = "frequency"
                 else:
                     main_axis_name = axis.unit
             else:
                 unit = axis.unit
-                xlabel = name.capitalize() + " [" + unit + "]"
+                if xlabel is None:
+                    xlabel = name.capitalize() + " [" + unit + "]"
                 main_axis_name = name
             if (
                 axis.name == "angle"
@@ -247,6 +274,11 @@ def plot_2D_Data(
                 xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
             else:
                 xticks = None
+            if axis.is_components and axes_list[0].extension != "list":
+                xticklabels = result[list(result)[0]]
+                xticks = Xdatas[0]
+            else:
+                xticklabels = None
         else:
             if axis.unit == "SI":
                 if axis.name in unit_dict:
@@ -287,15 +319,16 @@ def plot_2D_Data(
     if title3 == " for " and title4 == "":
         title3 = ""
 
-    # Concatenate all title parts
-    title = title1 + title2 + title3 + title4
+    if title is None:
+        # Concatenate all title parts
+        title = title1 + title2 + title3 + title4
 
-    # Remove last coma due to title3 or title4
-    title = title.rstrip(", ")
+        # Remove last coma due to title3 or title4
+        title = title.rstrip(", ")
 
-    # Remove dimless and quotes
-    title = title.replace("[]", "")
-    title = title.replace("'", "")
+        # Remove dimless and quotes
+        title = title.replace("[]", "")
+        title = title.replace("'", "")
 
     # Detect how many curves are overlaid, build legend and color lists
     if legend_list == [] and data_list != []:
@@ -437,6 +470,7 @@ def plot_2D_Data(
             is_disp_title=is_disp_title,
             is_grid=is_grid,
             xticks=xticks,
+            xticklabels=xticklabels,
             save_path=save_path,
             barwidth=barwidth,
             fund_harm=fund_harm,
@@ -474,6 +508,7 @@ def plot_2D_Data(
             is_disp_title=is_disp_title,
             is_grid=is_grid,
             xticks=xticks,
+            xticklabels=xticklabels,
             barwidth=barwidth,
             linestyle_list=linestyle_list,
             linewidth_list=linewidth_list,
