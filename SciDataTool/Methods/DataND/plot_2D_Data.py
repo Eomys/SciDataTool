@@ -19,6 +19,7 @@ from numpy import (
     insert,
     min as np_min,
     linspace,
+    log10,
 )
 
 
@@ -248,11 +249,11 @@ def plot_2D_Data(
             title2 = "over " + name.lower()
             if axis.unit == "SI":
                 if axis.name in unit_dict:
-                    unit = unit_dict[axis.name]
+                    axis_unit = unit_dict[axis.name]
                 else:
-                    unit = axis.unit
+                    axis_unit = axis.unit
                 if xlabel is None:
-                    xlabel = name.capitalize() + " [" + unit + "]"
+                    xlabel = name.capitalize() + " [" + axis_unit + "]"
                 main_axis_name = name
             elif axis.unit in norm_dict:
                 if xlabel is None:
@@ -262,9 +263,9 @@ def plot_2D_Data(
                 else:
                     main_axis_name = axis.unit
             else:
-                unit = axis.unit
+                axis_unit = axis.unit
                 if xlabel is None:
-                    xlabel = name.capitalize() + " [" + unit + "]"
+                    xlabel = name.capitalize() + " [" + axis_unit + "]"
                 main_axis_name = name
             if (
                 axis.name == "angle"
@@ -282,13 +283,13 @@ def plot_2D_Data(
         else:
             if axis.unit == "SI":
                 if axis.name in unit_dict:
-                    unit = unit_dict[axis.name]
+                    axis_unit = unit_dict[axis.name]
                 else:
-                    unit = axis.unit
+                    axis_unit = axis.unit
             elif axis.unit in norm_dict:
-                unit = norm_dict[axis.unit]
+                axis_unit = norm_dict[axis.unit]
             else:
-                unit = axis.unit
+                axis_unit = axis.unit
 
             if isinstance(result_0[axis.name], str):
                 title3 += name + "=" + result_0[axis.name]
@@ -299,7 +300,7 @@ def plot_2D_Data(
                 if len(result_0[axis.name]) == 1:
                     axis_str = axis_str.strip("[]")
 
-                title3 += name + "=" + axis_str.rstrip(", ") + " [" + unit + "], "
+                title3 += name + "=" + axis_str.rstrip(", ") + " [" + axis_unit + "], "
 
     # Title part 4 containing axes that are here but not involved in requested axes
     title4 = ""
@@ -354,13 +355,13 @@ def plot_2D_Data(
                 n_curves = len(axis.values)
                 if axis.unit == "SI":
                     if axis.name in unit_dict:
-                        unit = unit_dict[axis.name]
+                        axis_unit = unit_dict[axis.name]
                     else:
-                        unit = axis.unit
+                        axis_unit = axis.unit
                 elif axis.unit in norm_dict:
-                    unit = norm_dict[axis.unit]
+                    axis_unit = norm_dict[axis.unit]
                 else:
-                    unit = axis.unit
+                    axis_unit = axis.unit
                 if len(d.axes[axis.index].get_values()) > 1:
                     legends += [
                         legend_list[i]
@@ -368,14 +369,14 @@ def plot_2D_Data(
                         + "="
                         + axis.values.tolist()[j]
                         + " "
-                        + unit
+                        + axis_unit
                         if isinstance(axis.values.tolist()[j], str)
                         else legend_list[i]
                         + axis.name
                         + "="
                         + "%.3g" % axis.values.tolist()[j]
                         + " "
-                        + unit
+                        + axis_unit
                         for j in range(n_curves)
                     ]
                 else:
@@ -411,11 +412,20 @@ def plot_2D_Data(
                 thresh = 0.02
 
         freqs = Xdatas[0]
-        indices = [
-            ind
-            for ind, y in enumerate(Ydatas[0])
-            if abs(y) > abs(thresh * np_max(Ydatas[0]))
-        ]
+        if "dB" in unit:
+            indices = [
+                ind
+                for ind, y in enumerate(Ydatas[0])
+                if abs(y)
+                > 10 * log10(thresh * self.normalizations["ref"])
+                + abs(np_max(Ydatas[0]))
+            ]
+        else:
+            indices = [
+                ind
+                for ind, y in enumerate(Ydatas[0])
+                if abs(y) > abs(thresh * np_max(Ydatas[0]))
+            ]
         xticks = unique(insert(freqs[indices], 0, 0))
 
         if is_auto_range:

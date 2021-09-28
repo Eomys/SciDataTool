@@ -11,6 +11,7 @@ from numpy import (
     min as np_min,
     array2string,
     linspace,
+    log10,
 )
 
 
@@ -214,13 +215,13 @@ def plot_3D_Data(
         name = axis.name
     title2 = "over " + name.lower()
     if axis.unit == "SI":
-        unit = unit_dict[axis.name]
-        xlabel = name.capitalize() + " [" + unit + "]"
+        axis_unit = unit_dict[axis.name]
+        xlabel = name.capitalize() + " [" + axis_unit + "]"
     elif axis.unit in norm_dict:
         xlabel = norm_dict[axis.unit]
     else:
-        unit = axis.unit
-        xlabel = name.capitalize() + " [" + unit + "]"
+        axis_unit = axis.unit
+        xlabel = name.capitalize() + " [" + axis_unit + "]"
     if (
         axis.name == "angle"
         and axis.unit == "°"
@@ -242,13 +243,13 @@ def plot_3D_Data(
         name = axis.name
     title3 = " and " + axis.name.lower()
     if axis.unit == "SI":
-        unit = unit_dict[axis.name]
-        ylabel = name.capitalize() + " [" + unit + "]"
+        axis_unit = unit_dict[axis.name]
+        ylabel = name.capitalize() + " [" + axis_unit + "]"
     elif axis.unit in norm_dict:
         ylabel = norm_dict[axis.unit]
     else:
-        unit = axis.unit
-        ylabel = name.capitalize() + " [" + unit + "]"
+        axis_unit = axis.unit
+        ylabel = name.capitalize() + " [" + axis_unit + "]"
     if (
         axis.name == "angle"
         and axis.unit == "°"
@@ -266,11 +267,11 @@ def plot_3D_Data(
     title4 = " for "
     for axis in axes_list[2:]:
         if axis.unit == "SI":
-            unit = unit_dict[axis.name]
+            axis_unit = unit_dict[axis.name]
         elif axis.unit in norm_dict:
-            unit = norm_dict[axis.unit]
+            axis_unit = norm_dict[axis.unit]
         else:
-            unit = axis.unit
+            axis_unit = axis.unit
         title4 += (
             axis.name
             + "="
@@ -282,7 +283,7 @@ def plot_3D_Data(
             .replace("[", "")
             .replace("]", "")
             + " ["
-            + unit
+            + axis_unit
             + "], "
         )
     title5 = ""
@@ -313,7 +314,14 @@ def plot_3D_Data(
             else:
                 thresh = 0.02
 
-        indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
+        if "dB" in unit:
+            indices = where(
+                Z_flat
+                > 10 * log10(thresh * self.normalizations["ref"]) + abs(np_max(Zdata))
+            )[0]
+        else:
+            indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
+
         xticks = unique(X_flat[indices])
         yticks = unique(Y_flat[indices])
         if is_auto_range:
