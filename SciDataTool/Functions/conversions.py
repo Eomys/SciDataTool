@@ -190,9 +190,10 @@ def to_dB(values, unit, ref_value=1.0):
     mask = values != 0
     try:
         convert(values, unit, "W")
-        return 10.0 * where(mask, log10(values / ref_value, where=mask), 0)
+        values_dB = 10.0 * where(mask, log10(values / ref_value, where=mask), 0)
     except:
-        return 20.0 * where(mask, log10(values / ref_value, where=mask), 0)
+        values_dB = 20.0 * where(mask, log10(values / ref_value, where=mask), 0)
+    return values_dB
 
 
 def to_dBA(values, freqs, unit, ref_value=1.0):
@@ -318,9 +319,6 @@ def dB_to_dBA(values, freqs, noct=None):
         Aweight[isnan(Aweight)] = -100  # replacing NaN by -100 dB
     try:
         values += Aweight
-        values[
-            values < 0
-        ] = 0  # avoiding to increase dB in dBA at frequencies where noise is already null
         return values
     except:
         raise UnitError("ERROR: dBA conversion only available for 1D fft")
