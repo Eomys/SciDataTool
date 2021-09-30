@@ -307,9 +307,13 @@ class RequestedAxis(FrozenClass):
         S += getsizeof(self.is_components)
         return S
 
-    def as_dict(self, **kwargs):
+    def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
         """
         Convert this object in a json serializable dict (can be use in __init__).
+        type_handle_ndarray: int
+            How to handle ndarray (0: tolist, 1: copy, 2: nothing)
+        keep_function : bool
+            True to keep the function object, else return str
         Optional keyword input parameter is for internal use only
         and may prevent json serializability.
         """
@@ -323,14 +327,32 @@ class RequestedAxis(FrozenClass):
         if self.values is None:
             RequestedAxis_dict["values"] = None
         else:
-            RequestedAxis_dict["values"] = self.values.tolist()
+            if type_handle_ndarray == 0:
+                RequestedAxis_dict["values"] = self.values.tolist()
+            elif type_handle_ndarray == 1:
+                RequestedAxis_dict["values"] = self.values.copy()
+            elif type_handle_ndarray == 2:
+                RequestedAxis_dict["values"] = self.values
+            else:
+                raise Exception(
+                    "Unknown type_handle_ndarray: " + str(type_handle_ndarray)
+                )
         RequestedAxis_dict["indices"] = (
             self.indices.copy() if self.indices is not None else None
         )
         if self.input_data is None:
             RequestedAxis_dict["input_data"] = None
         else:
-            RequestedAxis_dict["input_data"] = self.input_data.tolist()
+            if type_handle_ndarray == 0:
+                RequestedAxis_dict["input_data"] = self.input_data.tolist()
+            elif type_handle_ndarray == 1:
+                RequestedAxis_dict["input_data"] = self.input_data.copy()
+            elif type_handle_ndarray == 2:
+                RequestedAxis_dict["input_data"] = self.input_data
+            else:
+                raise Exception(
+                    "Unknown type_handle_ndarray: " + str(type_handle_ndarray)
+                )
         RequestedAxis_dict["operation"] = self.operation
         RequestedAxis_dict["index"] = self.index
         RequestedAxis_dict["transform"] = self.transform
@@ -338,13 +360,31 @@ class RequestedAxis(FrozenClass):
         if self.rebuild_indices is None:
             RequestedAxis_dict["rebuild_indices"] = None
         else:
-            RequestedAxis_dict["rebuild_indices"] = self.rebuild_indices.tolist()
+            if type_handle_ndarray == 0:
+                RequestedAxis_dict["rebuild_indices"] = self.rebuild_indices.tolist()
+            elif type_handle_ndarray == 1:
+                RequestedAxis_dict["rebuild_indices"] = self.rebuild_indices.copy()
+            elif type_handle_ndarray == 2:
+                RequestedAxis_dict["rebuild_indices"] = self.rebuild_indices
+            else:
+                raise Exception(
+                    "Unknown type_handle_ndarray: " + str(type_handle_ndarray)
+                )
         RequestedAxis_dict["is_step"] = self.is_step
         RequestedAxis_dict["noct"] = self.noct
         if self.corr_values is None:
             RequestedAxis_dict["corr_values"] = None
         else:
-            RequestedAxis_dict["corr_values"] = self.corr_values.tolist()
+            if type_handle_ndarray == 0:
+                RequestedAxis_dict["corr_values"] = self.corr_values.tolist()
+            elif type_handle_ndarray == 1:
+                RequestedAxis_dict["corr_values"] = self.corr_values.copy()
+            elif type_handle_ndarray == 2:
+                RequestedAxis_dict["corr_values"] = self.corr_values
+            else:
+                raise Exception(
+                    "Unknown type_handle_ndarray: " + str(type_handle_ndarray)
+                )
         RequestedAxis_dict["is_components"] = self.is_components
         # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"

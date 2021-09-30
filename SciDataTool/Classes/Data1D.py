@@ -226,19 +226,36 @@ class Data1D(Data):
                 S += getsizeof(value) + getsizeof(key)
         return S
 
-    def as_dict(self, **kwargs):
+    def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
         """
         Convert this object in a json serializable dict (can be use in __init__).
+        type_handle_ndarray: int
+            How to handle ndarray (0: tolist, 1: copy, 2: nothing)
+        keep_function : bool
+            True to keep the function object, else return str
         Optional keyword input parameter is for internal use only
         and may prevent json serializability.
         """
 
         # Get the properties inherited from Data
-        Data1D_dict = super(Data1D, self).as_dict(**kwargs)
+        Data1D_dict = super(Data1D, self).as_dict(
+            type_handle_ndarray=type_handle_ndarray,
+            keep_function=keep_function,
+            **kwargs
+        )
         if self.values is None:
             Data1D_dict["values"] = None
         else:
-            Data1D_dict["values"] = self.values.tolist()
+            if type_handle_ndarray == 0:
+                Data1D_dict["values"] = self.values.tolist()
+            elif type_handle_ndarray == 1:
+                Data1D_dict["values"] = self.values.copy()
+            elif type_handle_ndarray == 2:
+                Data1D_dict["values"] = self.values
+            else:
+                raise Exception(
+                    "Unknown type_handle_ndarray: " + str(type_handle_ndarray)
+                )
         Data1D_dict["is_components"] = self.is_components
         Data1D_dict["symmetries"] = (
             self.symmetries.copy() if self.symmetries is not None else None
@@ -294,7 +311,7 @@ class Data1D(Data):
     is_components = property(
         fget=_get_is_components,
         fset=_set_is_components,
-        doc=u"""Boolean indicating if the axis values are strings
+        doc=u"""Boolean indicating if the axis values are strings: True if strings
 
         :Type: bool
         """,
