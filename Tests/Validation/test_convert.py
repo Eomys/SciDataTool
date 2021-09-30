@@ -71,6 +71,13 @@ def test_norm():
     assert_array_almost_equal(1 / (7 * 10), result["freqs"][1])
     assert_array_almost_equal(1 / 0.2, result["X"][2])
 
+    Time.normalizations["angle_rotor"] = np.linspace(0, 20, 20, endpoint=False)
+    Time.symmetries["period"] = 2
+    result = Field.get_along("time->angle_rotor")
+    assert_array_almost_equal(np.linspace(0, 20, 20, endpoint=False), result["time"])
+    result = Field.get_along("time->angle_rotor[smallestperiod]")
+    assert_array_almost_equal(np.linspace(0, 10, 10, endpoint=False), result["time"])
+
     angle = np.linspace(0, 2 * np.pi, 10, endpoint=False)
     Angle = DataLinspace(
         name="angle",
@@ -161,4 +168,4 @@ def test_dba():
 
 
 if __name__ == "__main__":
-    test_dba()
+    test_norm()
