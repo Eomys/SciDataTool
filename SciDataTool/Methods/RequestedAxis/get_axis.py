@@ -178,7 +178,8 @@ def get_axis(self, axis, is_real):
             if axis.normalizations.get(unit) == "indices":
                 values = array([i for i in range(len(values))])
             elif isinstance(axis.normalizations.get(unit), ndarray):
-                values = axis.normalizations.get(unit)
+                indices = [i for i in range(len(values))]
+                values = axis.normalizations.get(unit)[indices]
             else:
                 values = values / axis.normalizations.get(unit)
         else:
