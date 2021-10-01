@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions.conversions import convert
 from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
-from SciDataTool.Functions import AxisError
+from SciDataTool.Functions import AxisError, NormError
 from numpy import linspace
 
 
 def get_values(
-    self, unit="SI", is_oneperiod=False, is_antiperiod=False, is_smallestperiod=False
+    self,
+    unit="SI",
+    is_oneperiod=False,
+    is_antiperiod=False,
+    is_smallestperiod=False,
+    normalization=None,
 ):
     """Returns the vector 'axis' by rebuilding the linspace, symmetries and unit included.
     Parameters
@@ -19,6 +24,8 @@ def get_values(
         return values on a single period
     is_antiperiod: bool
         return values on a semi period (only for antiperiodic signals)
+    normalization: str
+        name of normalization to use
     Returns
     -------
     Vector of axis values
@@ -34,6 +41,25 @@ def get_values(
         number = self.number
         final = self.final
     values = linspace(initial, final, int(number), endpoint=self.include_endpoint)
+
+    if unit != "SI" and unit != self.unit:
+        if unit in self.normalizations and normalization is None:
+            normalization = unit
+            unit = "SI"
+
+    # Normalization
+    if normalization is not None:
+        if normalization in self.normalizations:
+            if (
+                self.normalizations[normalization].unit == "SI"
+                or self.normalizations[normalization].unit == self.unit
+            ):
+                # Axis is int he correct unit for the normalization
+                values = self.normalizations[normalization].normalize(values)
+            else:
+                raise NormError("Normalization is not available in this unit")
+        else:
+            raise NormError("Normalization is not available")
 
     # Unit conversion
     if unit != "SI" and unit != self.unit:

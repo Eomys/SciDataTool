@@ -82,20 +82,20 @@ def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
-                values = values / self.normalizations.get("ref")
+                values = self.normalizations["ref"].normalize(values)
             except:
                 raise NormError(
                     "ERROR: Reference value not specified for normalization"
                 )
     elif unit == "dB":
         ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
+        if "ref" in self.normalizations:
+            ref_value *= self.normalizations["ref"].ref
         values = to_dB(np_abs(values), self.unit, ref_value)
     elif unit == "dBA":
         ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
+        if "ref" in self.normalizations:
+            ref_value *= self.normalizations["ref"].ref
         for axis in axes_list:
             is_match = False
             if axis.name == "freqs" or axis.corr_name == "freqs":

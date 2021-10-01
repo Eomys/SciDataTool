@@ -11,5 +11,11 @@ from ..Classes.DataLinspace import DataLinspace
 from ..Classes.DataND import DataND
 from ..Classes.DataPattern import DataPattern
 from ..Classes.DataTime import DataTime
+from ..Classes.Norm_affine import Norm_affine
+from ..Classes.Norm_func import Norm_func
+from ..Classes.Norm_indices import Norm_indices
+from ..Classes.Norm_ref import Norm_ref
+from ..Classes.Norm_vector import Norm_vector
+from ..Classes.Normalization import Normalization
 from ..Classes.RequestedAxis import RequestedAxis
 from ..Classes.VectorField import VectorField

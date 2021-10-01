@@ -32,7 +32,7 @@ def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
-                values = values / self.normalizations.get("ref")
+                values = self.normalizations["ref"].normalize(values)
             except:
                 raise NormError(
                     "ERROR: Reference value not specified for normalization"

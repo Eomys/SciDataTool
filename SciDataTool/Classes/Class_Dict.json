@@ -404,6 +404,183 @@
         "path": "SciDataTool/Generator/ClassesRef/DataTime.csv",
         "properties": []
     },
+    "Norm_affine": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Affine function normalization (slope x axis + offset)",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_affine",
+        "package": "",
+        "path": "SciDataTool/Generator/ClassesRef/Norm_affine.csv",
+        "properties": [
+            {
+                "desc": "slope of the axis function",
+                "max": "",
+                "min": "",
+                "name": "slope",
+                "type": "float",
+                "unit": "",
+                "value": 1
+            },
+            {
+                "desc": "offset of the axis function",
+                "max": "",
+                "min": "",
+                "name": "offset",
+                "type": "float",
+                "unit": "",
+                "value": 0
+            }
+        ]
+    },
+    "Norm_func": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Function normalization (lambda x: function(axis))",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_func",
+        "package": "",
+        "path": "SciDataTool/Generator/ClassesRef/Norm_func.csv",
+        "properties": [
+            {
+                "desc": "function to apply",
+                "max": "",
+                "min": "",
+                "name": "function",
+                "type": "function",
+                "unit": "",
+                "value": ""
+            }
+        ]
+    },
+    "Norm_indices": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Return indices instead of axis values",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_indices",
+        "package": "",
+        "path": "SciDataTool/Generator/ClassesRef/Norm_indices.csv",
+        "properties": []
+    },
+    "Norm_ref": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Normalization with a reference value (values/ref)",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_ref",
+        "package": "",
+        "path": "SciDataTool/Generator/ClassesRef/Norm_ref.csv",
+        "properties": [
+            {
+                "desc": "reference value",
+                "max": "",
+                "min": "",
+                "name": "ref",
+                "type": "float",
+                "unit": "",
+                "value": 1
+            }
+        ]
+    },
+    "Norm_vector": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [],
+        "desc": "Normalization by a given vector",
+        "is_internal": false,
+        "methods": [
+            "normalize"
+        ],
+        "mother": "Normalization",
+        "name": "Norm_vector",
+        "package": "",
+        "path": "SciDataTool/Generator/ClassesRef/Norm_vector.csv",
+        "properties": [
+            {
+                "desc": "vector to replace axis values",
+                "max": "",
+                "min": "",
+                "name": "vector",
+                "type": "ndarray",
+                "unit": "",
+                "value": ""
+            }
+        ]
+    },
+    "Normalization": {
+        "constants": [
+            {
+                "name": "VERSION",
+                "value": "1"
+            }
+        ],
+        "daughters": [
+            "Norm_affine",
+            "Norm_func",
+            "Norm_indices",
+            "Norm_ref",
+            "Norm_vector"
+        ],
+        "desc": "Abstract class for normalizations",
+        "is_internal": false,
+        "methods": [],
+        "mother": "",
+        "name": "Normalization",
+        "package": "",
+        "path": "SciDataTool/Generator/ClassesRef/Normalization.csv",
+        "properties": [
+            {
+                "desc": "Normalization must be applied on axis values in this unit",
+                "max": "",
+                "min": "",
+                "name": "unit",
+                "type": "str",
+                "unit": "",
+                "value": "SI"
+            }
+        ]
+    },
     "RequestedAxis": {
         "constants": [
             {

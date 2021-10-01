@@ -44,20 +44,20 @@ def get_magnitude_along(
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
-                values = values / self.normalizations.get("ref")
+                values = self.normalizations["ref"].normalize(values)
             except:
                 raise NormError(
                     "ERROR: Reference value not specified for normalization"
                 )
     elif unit == "dB":
         ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
+        if "ref" in self.normalizations:
+            ref_value *= self.normalizations["ref"].ref
         values = to_dB(values, self.unit, ref_value)
     elif unit == "dBA":
         ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
+        if "ref" in self.normalizations:
+            ref_value *= self.normalizations["ref"].ref
         if "freqs" in return_dict.keys():
             for axis in return_dict["axes_list"]:
                 if axis.name == "freqs" or axis.corr_name == "freqs":

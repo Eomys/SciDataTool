@@ -1,0 +1,3 @@
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
+slope,,slope of the axis function,,float,1,,,,,Normalization,normalize,VERSION,1,Affine function normalization (slope x axis + offset),
+offset,,offset of the axis function,,float,0,,,,,,,,,,

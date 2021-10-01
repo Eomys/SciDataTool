@@ -3,7 +3,7 @@ import numpy as np
 from numpy.testing import assert_array_almost_equal
 from os.path import join
 
-from SciDataTool import DataLinspace, DataTime
+from SciDataTool import DataLinspace, DataTime, Norm_ref
 from Tests import save_validation_path
 
 
@@ -31,7 +31,7 @@ def test_get_data_along():
     Field = DataTime(
         name="Example field",
         symbol="X",
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
         axes=[Angle, Time],
         values=field,
     )
@@ -68,7 +68,7 @@ def test_get_data_along_integrate():
         name="Example field",
         symbol="X",
         unit="m",
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
         axes=[Angle, Time],
         values=field,
     )
@@ -117,7 +117,7 @@ def test_get_data_along_derivate():
         name="Example field",
         symbol="X",
         unit="m",
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
         axes=[Time, Angle],
         values=field.T,
     )
