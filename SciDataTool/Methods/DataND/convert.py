@@ -9,9 +9,11 @@ from numpy import (
     min as np_min,
     max as np_max,
     apply_along_axis,
+    pi,
+    ones,
 )
 
-from SciDataTool.Functions import NormError, UnitError
+from SciDataTool.Functions import NormError, UnitError, AxisError
 from SciDataTool.Functions.conversions import convert as convert_unit, to_dB, to_dBA
 
 
@@ -55,9 +57,24 @@ def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
             )
         # integration over integration axes
         elif axis_requested.extension == "integrate":
-            values = trapz(
-                values, x=axis_requested.values, axis=axis_requested.index
-            ) / (np_max(axis_requested.values) - np_min(axis_requested.values))
+            if axis_requested.name == "freqs":
+                dim_array = ones((1, values.ndim), int).ravel()
+                dim_array[axis_requested.index] = -1
+                axis_reshaped = axis_requested.values.reshape(dim_array)
+                values = values / (axis_reshaped * 2 * 1j * pi)
+            else:
+                values = trapz(
+                    values, x=axis_requested.values, axis=axis_requested.index
+                ) / (np_max(axis_requested.values) - np_min(axis_requested.values))
+        # derivation over derivation axes
+        elif axis_requested.extension == "derivate":
+            if axis_requested.name == "freqs":
+                dim_array = ones((1, values.ndim), int).ravel()
+                dim_array[axis_requested.index] = -1
+                axis_reshaped = axis_requested.values.reshape(dim_array)
+                values = values * axis_reshaped * 2 * 1j * pi
+            else:
+                raise AxisError("Derivation not available in time domain")
 
     if is_squeeze:
         values = squeeze(values)

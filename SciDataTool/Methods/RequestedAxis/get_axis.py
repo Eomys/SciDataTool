@@ -34,7 +34,7 @@ def get_axis(self, axis, is_real):
             else:
                 self.values = values[self.indices]
                 self.extension = "interval"
-        elif not self.extension in ["sum", "rss", "mean", "rms", "integrate", "list"]:
+        elif not self.extension in ["sum", "rss", "mean", "rms", "integrate", "derivate", "list"]:
             self.values = values
             self.extension = "whole"
         else:
@@ -78,7 +78,7 @@ def get_axis(self, axis, is_real):
                 is_smallestperiod = False
                 is_oneperiod = True
                 is_antiperiod = False
-        elif self.extension in ["sum", "rss", "mean", "rms", "integrate"]:
+        elif self.extension in ["sum", "rss", "mean", "rms", "integrate", "derivate"]:
             is_smallestperiod = False
             is_oneperiod = False
             is_antiperiod = False
@@ -235,5 +235,5 @@ def get_axis(self, axis, is_real):
                 self.values = values
         if self.indices is not None:
             self.values = values[self.indices]
-            if self.extension in ["sum", "rss", "mean", "rms", "integrate"]:
+            if self.extension in ["sum", "rss", "mean", "rms", "integrate", "derivate"]:
                 self.indices = None

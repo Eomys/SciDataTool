@@ -29,65 +29,88 @@ def get_harm_rphiz_along(self, N_harm, *args, unit="SI", is_norm=False, axis_dat
         args = args[0]  # if called from another script with *args
 
     if "comp_x" in self.components.keys() and "comp_y" in self.components.keys():
-        # Extract from DataND
-        resultx = self.components["comp_x"].get_harmonics(
-            N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        # Extract first along whole "angle" axis
+        new_args = [arg for arg in args]
+        string = [s for s in args if "angle" in s]
+        if string != []:
+            new_args[args.index(string[0])] = "angle"
+        else:
+            new_args.extend(["angle"])
+        Datax = self.components["comp_x"].get_data_along(
+            *new_args,
+            unit=unit,
+            is_norm=is_norm,
+            axis_data=axis_data,
         )
-        resulty = self.components["comp_y"].get_harmonics(
-            N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        Datay = self.components["comp_y"].get_data_along(
+            *new_args,
+            unit=unit,
+            is_norm=is_norm,
+            axis_data=axis_data,
         )
-        field_x = resultx[self.components["comp_x"].symbol]
-        field_y = resulty[self.components["comp_y"].symbol]
+        field_x = Datax.values
+        field_y = Datay.values
         shape = field_x.shape
-        if "angle" not in resultx:
-            raise AxisError(
-                "ERROR: need angle axis to convert to cylindrical coordinates"
-            )
-        phi = resultx["angle"]
+        phi = Datax.get_axes("angle")[0].get_values()
         # Convert to cylindrical coordinates
-        (field_r, field_c) = cart2pol(field_x, field_y, phi)
+        (field_r, field_t) = cart2pol(field_x, field_y, phi)
+        # Extract second time with true args
+        if "angle" not in args:
+            Datax.values = field_r
+            Datay.values = field_t
+            self.components["radial"] = Datax
+            self.components["tangential"] = Datay
+            resultr = self.components["radial"].get_harmonics(
+                N_harm,
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+            )
+            field_r = resultr[self.components["radial"].symbol]
+            resultt = self.components["tangential"].get_harmonics(
+                N_harm,
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+            )
+            field_t = resultt[self.components["tangential"].symbol]
+            # Delete temporary Data objects
+            del self.components["radial"]
+            del self.components["tangential"]
+        else:
+            # Need return dict to initialize results
+            resultr = self.components["comp_x"].get_harmonics(
+                N_harm,
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+            )
+        # Add axial component
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_harmonics(
-                N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                N_harm,
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
             )
             field_z = resultz[self.components["axial"].symbol]
         elif "comp_z" in self.components.keys():
             resultz = self.components["comp_z"].get_harmonics(
-                N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
-            )
-            field_z = resultz[self.components["comp_z"].symbol]
-        else:
-            field_z = zeros(shape)
-        return_dict = dict(resultx)
-        del return_dict[self.components["comp_x"].symbol]
-
-    elif "radial" in self.components.keys():
-        resultr = self.components["radial"].get_harmonics(
-            N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
-        )
-        field_r = resultr[self.components["radial"].symbol]
-        shape = field_r.shape
-        if "tangential" in self.components.keys():
-            resultphi = self.components["tangential"].get_harmonics(
-                N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
-            )
-            field_t = resultphi[self.components["tangential"].symbol]
-        else:
-            field_t = zeros(shape)
-        if "axial" in self.components.keys():
-            resultz = self.components["axial"].get_harmonics(
-                N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
-            )
-            field_z = resultz[self.components["axial"].symbol]
-        elif "comp_z" in self.components.keys():
-            resultz = self.components["comp_z"].get_harmonics(
-                N_harm, args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                N_harm,
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
             field_z = zeros(shape)
         return_dict = dict(resultr)
-        del return_dict[self.components["radial"].symbol]
+        del return_dict[self.components["comp_x"].symbol]
 
     elif "tangential" in self.components.keys():
         resultphi = self.components["tangential"].get_harmonics(
