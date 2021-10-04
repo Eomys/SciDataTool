@@ -19,8 +19,8 @@ def get_values(
     """Returns the vector 'axis' taking symmetries into account.
     Parameters
     ----------
-    self: DataLinspace
-        a DataLinspace object
+    self: DataPattern
+        a DataPattern object
     unit: str
         requested unit
     is_oneperiod: bool
