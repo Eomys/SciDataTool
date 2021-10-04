@@ -366,13 +366,14 @@ def comp_ifftn(values, axes_list, is_real=True):
                     # Keep only interpolation data
                     axis.values = axis.input_data
                     axis.input_data = None
-                elif axis.corr_values is not None:
+                else:
                     # Compare frequencies of interest with fft frequencies
                     freqs = comp_fft_freqs(
                         axis.input_data, axis.name == "time", is_real
                     )
                     if (
-                        (
+                        not is_uniform(axis.corr_values)
+                        or (
                             len(freqs) != len(axis.corr_values)
                             and not isin(freqs, axis.corr_values).all()
                         )
@@ -399,6 +400,7 @@ def comp_ifftn(values, axes_list, is_real=True):
                         # Keep only interpolation data
                         axis.values = axis.input_data
                         axis.input_data = None
+
     # Compute non uniform inverse Fourier Transform for axes
     if axes_dict_non_uniform:
         values = inudftn(values, axes_dict=axes_dict_non_uniform)
