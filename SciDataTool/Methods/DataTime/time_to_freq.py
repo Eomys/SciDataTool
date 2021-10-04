@@ -54,7 +54,7 @@ def time_to_freq(self):
                     unit="Hz",
                     symmetries=symmetries,
                     normalizations=axis.normalizations.copy(),
-                )
+                ).to_linspace()
             elif axis.name == "angle":
                 if "antiperiod" in axis.symmetries:
                     symmetries = {"period": int(axis.symmetries["antiperiod"] / 2)}
@@ -67,7 +67,7 @@ def time_to_freq(self):
                     unit="dimless",
                     symmetries=symmetries,
                     normalizations=axis.normalizations.copy(),
-                )
+                ).to_linspace()
             else:
                 axis_new = axis.copy()
             Axes.append(axis_new)

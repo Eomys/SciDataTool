@@ -75,7 +75,8 @@
             "get_length",
             "get_axis_periodic",
             "has_period",
-            "get_periodicity"
+            "get_periodicity",
+            "to_linspace"
         ],
         "mother": "Data",
         "name": "Data1D",

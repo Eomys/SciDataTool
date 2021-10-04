@@ -4,3 +4,4 @@ is_components,,Boolean indicating if the axis values are strings: True if string
 symmetries,,"Dictionary of the symmetries along each axis, used to reduce storage",,dict,{},,,,,,get_axis_periodic,,,,
 ,,,,,,,,,,,has_period,,,,
 ,,,,,,,,,,,get_periodicity,,,,
+,,,,,,,,,,,to_linspace,,,,

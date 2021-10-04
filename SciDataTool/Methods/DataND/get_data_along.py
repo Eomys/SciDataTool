@@ -34,31 +34,41 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     Axes = []
     for axis_name in results.keys():
         if len(results[axis_name]) > 1 and not isinstance(results[axis_name], str):
-            for axis in self.axes:
+            for i, axis in enumerate(self.axes):
                 if axis.name == axis_name:
+                    index = i
                     name = axis.name
                     is_components = axis.is_components
                     axis_values = results[axis_name]
                     unit = axis.unit
                 elif axis_name in axes_dict:
                     if axes_dict[axis_name][0] == axis.name:
+                        index = i
                         name = axis_name
                         is_components = axis.is_components
                         axis_values = results[axis_name]
                         unit = axes_dict[axis_name][2]
                 elif axis_name in rev_axes_dict:
                     if rev_axes_dict[axis_name][0] == axis.name:
+                        index = i
                         name = axis_name
                         is_components = axis.is_components
                         axis_values = results[axis_name]
                         unit = rev_axes_dict[axis_name][2]
+            # Update symmetries
+            if "smallestperiod" in args[index]:
+                symmetries = self.axes[index].symmetries
+            else:
+                symmetries = dict()
             Axes.append(
                 Data1D(
                     name=name,
                     unit=unit,
                     values=axis_values,
                     is_components=is_components,
-                )
+                    normalizations=self.axes[index].normalizations,
+                    symmetries=symmetries,
+                ).to_linspace()
             )
     # Update unit if derivation or integration
     for axis in axes_list:
