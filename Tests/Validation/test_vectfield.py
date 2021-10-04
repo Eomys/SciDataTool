@@ -1,5 +1,5 @@
 import pytest
-from SciDataTool import DataTime, Data1D, DataLinspace, VectorField
+from SciDataTool import DataTime, Data1D, DataLinspace, VectorField, Norm_ref
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 
@@ -79,7 +79,7 @@ def test_xyz_integration():
         name="Radial field",
         symbol="X_r",
         unit="m",
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
         axes=[Time, Angle],
         values=field.T,
     )
@@ -87,7 +87,7 @@ def test_xyz_integration():
         name="Tangential field",
         symbol="X_t",
         unit="m",
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
         axes=[Time, Angle],
         values=-field.T,
     )

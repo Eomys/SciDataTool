@@ -18,7 +18,7 @@ class UnitError(FTError):
 
 
 class NormError(FTError):
-    """Raised when the unit requested is not available or does not match the existing one (Data Object)"""
+    """Raised when the normalization cannot be applied (Data Object)"""
 
     pass
 

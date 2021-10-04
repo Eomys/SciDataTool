@@ -15,7 +15,7 @@ def test_period_linspace():
         number=10,
         include_endpoint=False,
     )
-    Time_periodic = Time.get_axis_periodic(5)
+    Time_periodic, _ = Time.get_axis_periodic(5)
     field = np.tile(np.arange(50, 60, 5), 5)
     field_periodic = np.arange(50, 60, 5)
     Field = DataTime(
@@ -45,7 +45,7 @@ def test_period_1d():
         unit="s",
         values=time,
     )
-    Time_periodic = Time.get_axis_periodic(5)
+    Time_periodic, _ = Time.get_axis_periodic(5)
     field = np.tile(np.arange(50, 60, 5), 5)
     field_periodic = np.arange(50, 60, 5)
     Field = DataTime(
@@ -78,7 +78,7 @@ def test_antiperiod_linspace():
         number=16,
         include_endpoint=False,
     )
-    Time_periodic = Time.get_axis_periodic(4, is_antiperiod=True)
+    Time_periodic, _ = Time.get_axis_periodic(2, is_aper=True)
     field_periodic = np.arange(50, 70, 5)
     field_antisym = np.concatenate((field_periodic, np.negative(field_periodic)))
     field = np.tile(field_antisym, 2)
@@ -114,7 +114,7 @@ def test_antiperiod_1d():
         unit="s",
         values=time,
     )
-    Time_periodic = Time.get_axis_periodic(4, is_antiperiod=True)
+    Time_periodic, _ = Time.get_axis_periodic(2, is_aper=True)
     field_periodic = np.arange(50, 70, 5)
     field_antisym = np.concatenate((field_periodic, np.negative(field_periodic)))
     field = np.tile(field_antisym, 2)
@@ -153,7 +153,7 @@ def test_period_2d():
         number=10,
         include_endpoint=False,
     )
-    Time_periodic = Time.get_axis_periodic(5)
+    Time_periodic, _ = Time.get_axis_periodic(5)
     angle = np.linspace(0, 2 * np.pi, 16, endpoint=False)
     Angle = DataLinspace(
         name="angle",
@@ -163,7 +163,7 @@ def test_period_2d():
         number=16,
         include_endpoint=False,
     )
-    Angle_periodic = Angle.get_axis_periodic(4, is_antiperiod=True)
+    Angle_periodic, _ = Angle.get_axis_periodic(2, is_aper=True)
     ta, at = np.meshgrid(
         Time_periodic.get_values(is_smallestperiod=True),
         Angle_periodic.get_values(is_smallestperiod=True),
@@ -331,4 +331,4 @@ def test_period_single():
 
 
 if __name__ == "__main__":
-    test_period_single()
+    test_antiperiod_linspace()

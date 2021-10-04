@@ -138,7 +138,12 @@ def plot_2D_Data(
         is_fft = True
         if "dB" in unit:
             unit_str = (
-                "[" + unit + " re. " + str(self.normalizations["ref"]) + self.unit + "]"
+                "["
+                + unit
+                + " re. "
+                + str(self.normalizations["ref"].ref)
+                + self.unit
+                + "]"
             )
         else:
             unit_str = "[" + unit + "]"
@@ -406,8 +411,8 @@ def plot_2D_Data(
     if is_fft:
 
         if thresh is None:
-            if self.normalizations is not None and "ref" in self.normalizations.keys():
-                thresh = self.normalizations["ref"]
+            if self.normalizations is not None and "ref" in self.normalizations:
+                thresh = self.normalizations["ref"].ref
             else:
                 thresh = 0.02
 
@@ -417,7 +422,7 @@ def plot_2D_Data(
                 ind
                 for ind, y in enumerate(Ydatas[0])
                 if abs(y)
-                > 10 * log10(thresh * self.normalizations["ref"])
+                > 10 * log10(thresh * self.normalizations["ref"].ref)
                 + abs(np_max(Ydatas[0]))
             ]
         else:

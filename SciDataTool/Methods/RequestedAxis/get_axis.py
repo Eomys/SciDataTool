@@ -26,7 +26,7 @@ def get_axis(self, axis, is_real):
         self.is_step = axis.is_step
     is_components = getattr(axis, "is_components", False)
     if is_components:
-        values = axis.get_values()
+        values = axis.get_values(unit=self.unit)
         if self.indices is not None:
             if self.indices[0] == ":":
                 self.values = values
@@ -98,17 +98,11 @@ def get_axis(self, axis, is_real):
         else:
             if self.input_data is not None and not self.is_step:
                 # Check if symmetries need to be reconstructed to match input_data
-                if self.operation is not None:
-                    axis_values = func(
-                        axis.get_values(
-                            is_smallestperiod=True,
-                        ),
-                        is_real=is_real,
-                    )
-                else:
-                    axis_values = axis.get_values(
-                        is_smallestperiod=True,
-                    )
+                axis_values = axis.get_values(
+                    is_smallestperiod=True,
+                    operation=self.operation,
+                    is_real=is_real,
+                )
                 if min(self.input_data) >= min(axis_values) and max(
                     self.input_data
                 ) <= max(axis_values):
@@ -116,17 +110,11 @@ def get_axis(self, axis, is_real):
                     is_oneperiod = False
                     is_antiperiod = False
                 else:
-                    if self.operation is not None:
-                        axis_values = func(
-                            axis.get_values(
-                                is_oneperiod=True,
-                            ),
-                            is_real=is_real,
-                        )
-                    else:
-                        axis_values = axis.get_values(
-                            is_oneperiod=True,
-                        )
+                    axis_values = axis.get_values(
+                        is_oneperiod=True,
+                        operation=self.operation,
+                        is_real=is_real,
+                    )
                     if min(self.input_data) >= min(axis_values) and max(
                         self.input_data
                     ) <= max(axis_values):
@@ -148,19 +136,13 @@ def get_axis(self, axis, is_real):
                 is_smallestperiod = False
                 is_oneperiod = False
                 is_antiperiod = False
-        # Get original values of the axis
-        if self.operation is not None:
-            values = array(
-                func(
-                    axis.get_values(
-                        is_oneperiod=is_oneperiod,
-                        is_antiperiod=is_antiperiod,
-                        is_smallestperiod=is_smallestperiod,
-                    ),
-                    is_real=is_real,
-                )
-            )
-            # Store original values
+        # Get original values of the axisn including unit and normalizations
+        # Store before normalization/operation
+        if (
+            self.unit != self.corr_unit
+            and self.unit != "SI"
+            or self.operation is not None
+        ):
             self.corr_values = array(
                 axis.get_values(
                     is_oneperiod=is_oneperiod,
@@ -168,32 +150,15 @@ def get_axis(self, axis, is_real):
                     is_smallestperiod=is_smallestperiod,
                 )
             )
-        else:
-            values = array(
-                axis.get_values(
-                    is_oneperiod=is_oneperiod,
-                    is_antiperiod=is_antiperiod,
-                    is_smallestperiod=is_smallestperiod,
-                )
-            )
-        # Unit conversions and normalizations
-        unit = self.unit
-        if unit == self.corr_unit or unit == "SI":
-            pass
-        elif unit in axis.normalizations:
-            # Store original values
-            self.corr_values = values
-            if axis.normalizations.get(unit) == "indices":
-                values = array([i for i in range(len(values))])
-            elif isinstance(axis.normalizations.get(unit), ndarray):
-                indices = [i for i in range(len(values))]
-                values = axis.normalizations.get(unit)[indices]
-            else:
-                values = values / axis.normalizations.get(unit)
-        else:
-            # Store original values
-            self.corr_values = values
-            values = convert(values, self.corr_unit, unit)
+        values = axis.get_values(
+            is_oneperiod=is_oneperiod,
+            is_antiperiod=is_antiperiod,
+            is_smallestperiod=is_smallestperiod,
+            unit=self.unit,
+            operation=self.operation,
+            is_real=is_real,
+        )
+
         # Rebuild symmetries in fft case
         if self.transform == "fft":
             if "period" in axis.symmetries:
@@ -204,26 +169,16 @@ def get_axis(self, axis, is_real):
                     values = values * axis.symmetries["antiperiod"] / 2
         # Rebuild symmetries in ifft case
         if self.transform == "ifft":
-            # if "antiperiod" in axis.symmetries:
-            #     axis.symmetries["antiperiod"] = int(axis.symmetries["antiperiod"]/2)
             if (
                 self.extension != "smallestperiod"
                 and self.extension != "oneperiod"
                 and self.extension != "antiperiod"
             ):
                 values = rebuild_symmetries_axis(values, axis.symmetries)
-            # if "period" in axis.symmetries:
-            #     if axis.name != "freqs":
-            #         values = values * axis.symmetries["period"]
-            # elif "antiperiod" in axis.symmetries:
-            #     if axis.name != "freqs":
-            #         values = values * axis.symmetries["antiperiod"] / 2
         # Interpolate axis with input data
         if self.input_data is None:
             self.values = values
         else:
-            # if self.is_step:
-            #     values = values[axis.rebuild_indices]
             if len(self.input_data) == 2 and self.extension != "axis_data":
                 indices = [
                     i
