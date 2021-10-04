@@ -371,12 +371,19 @@ def comp_ifftn(values, axes_list, is_real=True):
                     freqs = comp_fft_freqs(
                         axis.input_data, axis.name == "time", is_real
                     )
-                    if len(freqs) != len(axis.corr_values) or not allclose(
-                        freqs,
-                        axis.corr_values,
-                        rtol=1e-5,
-                        atol=1e-8,
-                        equal_nan=False,
+                    if (
+                        (
+                            len(freqs) != len(axis.corr_values)
+                            and not isin(freqs, axis.corr_values).all()
+                        )
+                        or len(freqs) == len(axis.corr_values)
+                        and not allclose(
+                            freqs,
+                            axis.corr_values,
+                            rtol=1e-5,
+                            atol=1e-8,
+                            equal_nan=False,
+                        )
                     ):
                         # Data is at least non uniform in "frequency"
                         # Convert wavenumbers to frequencies if needed

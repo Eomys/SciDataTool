@@ -150,7 +150,11 @@ def get_axis(self, axis, is_real):
                 is_antiperiod = False
         # Get original values of the axisn including unit and normalizations
         # Store before normalization/operation
-        if self.unit != self.corr_unit and self.unit != "SI":
+        if (
+            self.unit != self.corr_unit
+            and self.unit != "SI"
+            or self.operation is not None
+        ):
             self.corr_values = array(
                 axis.get_values(
                     is_oneperiod=is_oneperiod,
