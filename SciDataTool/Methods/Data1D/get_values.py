@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions.conversions import convert
 from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
-from SciDataTool.Functions import AxisError, UnitError, NormError
+from SciDataTool.Functions import AxisError, NormError
 
 
 def get_values(
@@ -23,6 +22,8 @@ def get_values(
         return values on a single period
     is_antiperiod: bool
         return values on a semi period (only for antiperiodic signals)
+    is_smallestperiod: bool
+        return values on smallest available period
     normalization: str
         name of normalization to use
     Returns
