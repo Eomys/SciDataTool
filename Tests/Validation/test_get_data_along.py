@@ -4,6 +4,7 @@ from numpy.testing import assert_array_almost_equal
 from os.path import join
 
 from SciDataTool import DataLinspace, DataTime
+from SciDataTool.Functions import symmetries
 from Tests import save_validation_path
 
 
@@ -41,6 +42,52 @@ def test_get_data_along():
 
     # Check transfer of normalizations
     assert Field.normalizations == Field_extract.normalizations
+    assert isinstance(Field_extract.axes[0], DataLinspace)
+    assert_array_almost_equal(
+        Field_extract.axes[0].get_values(), Field.axes[0].get_values()
+    )
+
+
+@pytest.mark.validation
+def test_get_data_along_symmetry():
+    f = 50
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=10,
+        include_endpoint=False,
+    )
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=np.pi,
+        number=20,
+        include_endpoint=False,
+        symmetries={"period": 2},
+    )
+    ta, at = np.meshgrid(Time.get_values(), Angle.get_values(is_smallestperiod=True))
+    field = 5 * np.cos(2 * np.pi * f * ta + 3 * at)
+    Field = DataTime(
+        name="Example field",
+        symbol="X",
+        normalizations={"ref": 2e-5},
+        axes=[Angle, Time],
+        values=field,
+    )
+
+    # Check slicing "time=sum"
+    Field_extract = Field.get_data_along("angle", "time=sum")
+
+    # Check transfer of symmetries
+    assert Field_extract.axes[0].symmetries == dict()
+
+    Field_extract = Field.get_data_along("angle[smallestperiod]", "time=sum")
+
+    # Check transfer of symmetries
+    assert Field_extract.axes[0].symmetries == {"period": 2}
 
 
 @pytest.mark.validation
@@ -145,6 +192,6 @@ def test_get_data_along_derivate():
 
 
 if __name__ == "__main__":
-    # test_get_data_along()
+    test_get_data_along_symmetry()
     # test_get_data_along_integrate()
-    test_get_data_along_derivate()
+    # test_get_data_along_derivate()

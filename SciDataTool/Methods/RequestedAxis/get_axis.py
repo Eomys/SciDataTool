@@ -34,7 +34,15 @@ def get_axis(self, axis, is_real):
             else:
                 self.values = values[self.indices]
                 self.extension = "interval"
-        elif not self.extension in ["sum", "rss", "mean", "rms", "integrate", "derivate", "list"]:
+        elif not self.extension in [
+            "sum",
+            "rss",
+            "mean",
+            "rms",
+            "integrate",
+            "derivate",
+            "list",
+        ]:
             self.values = values
             self.extension = "whole"
         else:

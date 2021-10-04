@@ -40,6 +40,11 @@ try:
 except ImportError as error:
     get_periodicity = error
 
+try:
+    from ..Methods.Data1D.to_linspace import to_linspace
+except ImportError as error:
+    to_linspace = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -101,6 +106,15 @@ class Data1D(Data):
         )
     else:
         get_periodicity = get_periodicity
+    # cf Methods.Data1D.to_linspace
+    if isinstance(to_linspace, ImportError):
+        to_linspace = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Data1D method to_linspace: " + str(to_linspace))
+            )
+        )
+    else:
+        to_linspace = to_linspace
     # save and copy methods are available in all object
     save = save
     copy = copy
