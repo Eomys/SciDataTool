@@ -1,3 +1,6 @@
+from importlib import import_module
+from numpy import array
+
 from SciDataTool.Functions.conversions import convert
 from SciDataTool.Functions import NormError
 
@@ -10,6 +13,8 @@ def get_values(
     is_smallestperiod=False,
     is_pattern=False,
     normalization=None,
+    operation=None,
+    is_real=True,
 ):
     """Returns the vector 'axis' taking symmetries into account.
     Parameters
@@ -28,11 +33,28 @@ def get_values(
         return values on smallest available pattern
     normalization: str
         name of normalization to use
+    operation: str
+        name of the operation (e.g. "freqs_to_time")
     Returns
     -------
     Vector of axis values
     """
     values = self.values
+
+    # Rebuild pattern
+    if is_smallestperiod or is_pattern:
+        pass
+    else:
+        if self.values_whole is not None:
+            values = self.values_whole
+        else:
+            values = values[self.rebuild_indices]
+
+    # fft/ifft
+    if operation is not None:
+        module = import_module("SciDataTool.Functions.conversions")
+        func = getattr(module, operation)  # Conversion function
+        values = array(func(values, is_real=is_real))
 
     if unit != "SI" and unit != self.unit:
         if unit in self.normalizations and normalization is None:
@@ -57,11 +79,4 @@ def get_values(
     if unit != "SI" and unit != self.unit:
         values = convert(values, self.unit, unit)
 
-    # Rebuild pattern
-    if is_smallestperiod or is_pattern:
-        return values
-    else:
-        if self.values_whole is not None:
-            return self.values_whole
-        else:
-            return values[self.rebuild_indices]
+    return values

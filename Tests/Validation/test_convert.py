@@ -67,7 +67,7 @@ def test_norm():
         final=1 / f,
         number=10,
         include_endpoint=False,
-        normalizations={"elec_order": Norm_affine(slope=50)},
+        normalizations={"elec_order": Norm_ref(ref=50)},
     )
     field = np.cos(2 * np.pi * 2 * f * time)
     Field = DataTime(

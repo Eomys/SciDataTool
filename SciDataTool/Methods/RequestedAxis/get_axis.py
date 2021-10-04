@@ -98,17 +98,11 @@ def get_axis(self, axis, is_real):
         else:
             if self.input_data is not None and not self.is_step:
                 # Check if symmetries need to be reconstructed to match input_data
-                if self.operation is not None:
-                    axis_values = func(
-                        axis.get_values(
-                            is_smallestperiod=True,
-                        ),
-                        is_real=is_real,
-                    )
-                else:
-                    axis_values = axis.get_values(
-                        is_smallestperiod=True,
-                    )
+                axis_values = axis.get_values(
+                    is_smallestperiod=True,
+                    operation=self.operation,
+                    is_real=is_real,
+                )
                 if min(self.input_data) >= min(axis_values) and max(
                     self.input_data
                 ) <= max(axis_values):
@@ -116,17 +110,11 @@ def get_axis(self, axis, is_real):
                     is_oneperiod = False
                     is_antiperiod = False
                 else:
-                    if self.operation is not None:
-                        axis_values = func(
-                            axis.get_values(
-                                is_oneperiod=True,
-                            ),
-                            is_real=is_real,
-                        )
-                    else:
-                        axis_values = axis.get_values(
-                            is_oneperiod=True,
-                        )
+                    axis_values = axis.get_values(
+                        is_oneperiod=True,
+                        operation=self.operation,
+                        is_real=is_real,
+                    )
                     if min(self.input_data) >= min(axis_values) and max(
                         self.input_data
                     ) <= max(axis_values):
@@ -162,27 +150,14 @@ def get_axis(self, axis, is_real):
                     is_smallestperiod=is_smallestperiod,
                 )
             )
-        if self.operation is not None:
-            values = array(
-                func(
-                    axis.get_values(
-                        is_oneperiod=is_oneperiod,
-                        is_antiperiod=is_antiperiod,
-                        is_smallestperiod=is_smallestperiod,
-                        unit=self.unit,
-                    ),
-                    is_real=is_real,
-                )
-            )
-        else:
-            values = array(
-                axis.get_values(
-                    is_oneperiod=is_oneperiod,
-                    is_antiperiod=is_antiperiod,
-                    is_smallestperiod=is_smallestperiod,
-                    unit=self.unit,
-                )
-            )
+        values = axis.get_values(
+            is_oneperiod=is_oneperiod,
+            is_antiperiod=is_antiperiod,
+            is_smallestperiod=is_smallestperiod,
+            unit=self.unit,
+            operation=self.operation,
+            is_real=is_real,
+        )
 
         # Rebuild symmetries in fft case
         if self.transform == "fft":
