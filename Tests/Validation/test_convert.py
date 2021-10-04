@@ -10,6 +10,7 @@ from SciDataTool import (
     Norm_vector,
     Norm_ref,
 )
+from SciDataTool.Functions import NormError
 from Tests import DATA_DIR
 import numpy as np
 from numpy.testing import assert_array_almost_equal
@@ -85,10 +86,17 @@ def test_norm():
     result = Field.get_along("time->angle_rotor")
     assert_array_almost_equal(50 * time + 2, result["time"])
 
+    Time.symmetries["period"] = 2
+    Time.normalizations["angle_rotor"] = Norm_vector(
+        vector=np.linspace(0, 10, 20, endpoint=False)
+    )
+    # Normalization vector does not have the right size -> must raise error
+    with pytest.raises(NormError):
+        result = Field.get_along("time->angle_rotor")
+    # With right size
     Time.normalizations["angle_rotor"] = Norm_vector(
         vector=np.linspace(0, 10, 10, endpoint=False)
     )
-    Time.symmetries["period"] = 2
     result = Field.get_along("time->angle_rotor")
     assert_array_almost_equal(np.linspace(0, 20, 20, endpoint=False), result["time"])
     result = Field.get_along("time->angle_rotor[smallestperiod]")

@@ -1,3 +1,6 @@
+from SciDataTool.Functions import NormError
+
+
 def normalize(
     self,
     values,
@@ -13,4 +16,9 @@ def normalize(
     -------
     Vector of axis values
     """
-    return self.vector
+    if len(values) != len(self.vector):
+        raise NormError(
+            "Normalization vector is not the same length as axis, cannot normalize"
+        )
+    else:
+        return self.vector
