@@ -65,7 +65,7 @@ def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
             else:
                 values = trapz(
                     values, x=axis_requested.values, axis=axis_requested.index
-                ) / (np_max(axis_requested.values) - np_min(axis_requested.values))
+                )
         # derivation over derivation axes
         elif axis_requested.extension == "derivate":
             if axis_requested.name == "freqs":
