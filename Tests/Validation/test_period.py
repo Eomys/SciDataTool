@@ -36,6 +36,10 @@ def test_period_linspace():
     assert_array_almost_equal(np.linspace(0, 2, 2, endpoint=False), result["time"])
     assert_array_almost_equal(field_periodic, result["X"])
 
+    result = Field.get_along("time[0]")
+    assert_array_almost_equal(0, result["time"])
+    assert_array_almost_equal(50, result["X"])
+
 
 @pytest.mark.validation
 def test_period_1d():
@@ -65,6 +69,10 @@ def test_period_1d():
     result = Field.get_along("time[oneperiod]")
     assert_array_almost_equal(np.linspace(0, 2, 2, endpoint=False), result["time"])
     assert_array_almost_equal(field_periodic, result["X"])
+
+    result = Field.get_along("time[0]")
+    assert_array_almost_equal(0, result["time"])
+    assert_array_almost_equal(50, result["X"])
 
 
 @pytest.mark.validation
@@ -105,6 +113,10 @@ def test_antiperiod_linspace():
     assert_array_almost_equal(np.linspace(0, 8, 8, endpoint=False), result["time"])
     assert_array_almost_equal(field_antisym, result["X"])
 
+    result = Field.get_along("time[0]")
+    assert_array_almost_equal(0, result["time"])
+    assert_array_almost_equal(50, result["X"])
+
 
 @pytest.mark.validation
 def test_antiperiod_1d():
@@ -140,6 +152,10 @@ def test_antiperiod_1d():
     result = Field.get_along("time[oneperiod]")
     assert_array_almost_equal(np.linspace(0, 8, 8, endpoint=False), result["time"])
     assert_array_almost_equal(field_antisym, result["X"])
+
+    result = Field.get_along("time[0]")
+    assert_array_almost_equal(0, result["time"])
+    assert_array_almost_equal(50, result["X"])
 
 
 @pytest.mark.validation

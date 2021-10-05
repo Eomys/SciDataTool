@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import mean, hanning, linspace, where, isclose, apply_along_axis
+from numpy import mean, hanning, linspace, where, isclose, apply_along_axis, around
 from numpy.fft import (
     fft,
     fftshift,
@@ -239,7 +239,9 @@ def comp_fftn(values, axes_list, is_real=True):
                     axis.input_data = None
                     continue
             if axis.input_data is not None:
-                if not isin(axis.input_data, axis.values).all():
+                if not isin(
+                    around(axis.input_data, decimals=5), around(axis.values, decimals=5)
+                ).all():
                     is_non_uniform = True
                     # Convert wavenumbers to frequencies if needed
                     frequencies = (
