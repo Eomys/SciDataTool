@@ -45,7 +45,6 @@ def rebuild_symmetries(
         ):
             values = take(values, axis.rebuild_indices, axis.index)
         elif axis.transform != "fft" and axis.extension in [
-            "single",
             "whole",
             "interval",
             "oneperiod",
