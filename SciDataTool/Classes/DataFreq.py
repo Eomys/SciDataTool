@@ -23,7 +23,6 @@ except ImportError as error:
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
-from .Normalization import Normalization
 
 
 class DataFreq(DataND):

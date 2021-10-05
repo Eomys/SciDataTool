@@ -54,7 +54,7 @@
                 "max": "",
                 "min": "",
                 "name": "normalizations",
-                "type": "{Normalization}",
+                "type": "dict",
                 "unit": "",
                 "value": {}
             }

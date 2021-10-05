@@ -73,7 +73,7 @@ def test_get_data_along_symmetry():
     Field = DataTime(
         name="Example field",
         symbol="X",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
         axes=[Angle, Time],
         values=field,
     )

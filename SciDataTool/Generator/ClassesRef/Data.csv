@@ -2,4 +2,4 @@ Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximu
 symbol,,Symbol of the variable (in latex syntax),,str,,,,,,,,VERSION,1,Abstract class for all kinds of data,
 name,,Name of the physical quantity (to be used in plots),,str,,,,,,,,,,,
 unit,,Unit of the physical quantity (to be used in plots),,str,,,,,,,,,,,
-normalizations,,Normalizations available for the field and its axes,,{Normalization},{},,,,,,,,,,
+normalizations,,Normalizations available for the field and its axes,,dict,{},,,,,,,,,,
