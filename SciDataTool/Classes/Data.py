@@ -257,7 +257,7 @@ class Data(FrozenClass):
             for key, obj in value.items():
                 if type(obj) is dict:
                     class_obj = import_class(
-                        "pyleecan.Classes", obj.get("__class__"), "normalizations"
+                        "SciDataTool.Classes", obj.get("__class__"), "normalizations"
                     )
                     value[key] = class_obj(init_dict=obj)
         if type(value) is int and value == -1:
