@@ -91,6 +91,56 @@ def test_get_data_along_symmetry():
 
 
 @pytest.mark.validation
+def test_get_data_along_single():
+    f = 50
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=1,
+        include_endpoint=False,
+    )
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=np.pi,
+        number=20,
+        include_endpoint=False,
+        symmetries={"period": 2},
+    )
+    Slice = DataLinspace(
+        name="z",
+        unit="m",
+        initial=0,
+        final=10,
+        number=30,
+        include_endpoint=False,
+    )
+    ta, at = np.meshgrid(Time.get_values(), Angle.get_values(is_smallestperiod=True))
+    field = 5 * np.cos(2 * np.pi * f * ta + 3 * at)
+    field_tot = np.zeros((1, 20, 30))
+    for i in range(30):
+        field_tot[:, :, i] = field.T + i
+    Field = DataTime(
+        name="Example field",
+        symbol="X",
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+        axes=[Time, Angle, Slice],
+        values=field_tot,
+    )
+
+    # Check slicing "z=sum"
+    Field_extract = Field.get_data_along("time", "angle[smallestperiod]", "z=sum")
+
+    # Check shape
+    assert Field_extract.values.shape == (1, 20)
+    # Check time axis
+    assert Field_extract.axes[0].name == "time"
+
+
+@pytest.mark.validation
 def test_get_data_along_integrate():
     f = 50
     Time = DataLinspace(
@@ -192,6 +242,6 @@ def test_get_data_along_derivate():
 
 
 if __name__ == "__main__":
-    test_get_data_along_symmetry()
+    test_get_data_along_single()
     # test_get_data_along_integrate()
     # test_get_data_along_derivate()

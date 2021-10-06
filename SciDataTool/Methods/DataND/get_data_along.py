@@ -27,13 +27,13 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     module = __import__("SciDataTool.Classes.DataND", fromlist=["DataND"])
     DataND = getattr(module, "DataND")
 
-    results = self.get_along(*args)
+    results = self.get_along(*args, is_squeeze=False)
     values = results.pop(self.symbol)
     del results["axes_dict_other"]
     axes_list = results.pop("axes_list")
     Axes = []
     for axis_name in results.keys():
-        if len(results[axis_name]) > 1 and not isinstance(results[axis_name], str):
+        if not isinstance(results[axis_name], str):
             for i, axis in enumerate(self.axes):
                 if axis.name == axis_name:
                     index = i
