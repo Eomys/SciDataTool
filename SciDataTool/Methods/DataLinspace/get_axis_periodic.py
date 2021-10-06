@@ -38,6 +38,11 @@ def get_axis_periodic(self, Nper, is_aper=False):
         else:
             sym = "period"
 
+        if Nper == 1 and sym == "period":
+            symmetries = dict()
+        else:
+            symmetries = {sym: Nper}
+
         New_axis = DataLinspace(
             initial=self.initial,
             final=values_per[-1],
@@ -45,7 +50,7 @@ def get_axis_periodic(self, Nper, is_aper=False):
             include_endpoint=True,
             name=self.name,
             unit=self.unit,
-            symmetries={sym: Nper},
+            symmetries=symmetries,
             normalizations=self.normalizations,
             is_components=self.is_components,
             symbol=self.symbol,
