@@ -223,7 +223,9 @@ def test_get_data_along_derivate():
     result_ft = Field_ft.get_along("freqs", "angle[0]")
     freqs = result_ft["freqs"]
     field_ft = result_ft["X"]
-    assert_array_almost_equal(Field_der.values, field_ft * 2 * 1j * np.pi * freqs)
+    assert_array_almost_equal(
+        np.squeeze(Field_der.values), field_ft * 2 * 1j * np.pi * freqs
+    )
     Field_ft.unit = "m/s"
     Field_der = Field_ft.get_data_along("freqs=derivate", "wavenumber")
     assert Field_der.unit == "m/s2"
