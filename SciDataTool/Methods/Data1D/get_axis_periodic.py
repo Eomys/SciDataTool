@@ -1,4 +1,5 @@
 from SciDataTool.Functions import AxisError
+from SciDataTool.Classes.Norm_vector import Norm_vector
 
 
 def get_axis_periodic(self, Nper, is_aper=False):
@@ -32,6 +33,9 @@ def get_axis_periodic(self, Nper, is_aper=False):
         if N % Nper != 0:
             raise AxisError("length of axis is not divisible by the number of periods")
         values_per = values[: int(N / Nper)]
+        for norm in self.normalizations.values():
+            if isinstance(norm, Norm_vector):
+                norm.vector = norm.vector[: int(N / Nper)]
 
         if is_aper:
             sym = "antiperiod"
