@@ -16,7 +16,9 @@
         ],
         "desc": "Abstract class for all kinds of data",
         "is_internal": false,
-        "methods": [],
+        "methods": [
+            "_set_normalizations"
+        ],
         "mother": "",
         "name": "Data",
         "package": "",

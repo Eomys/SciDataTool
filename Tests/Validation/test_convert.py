@@ -1,5 +1,6 @@
 import pytest
 from SciDataTool import (
+    Data,
     DataTime,
     DataLinspace,
     Data1D,
@@ -125,6 +126,35 @@ def test_norm():
 
 
 @pytest.mark.validation
+def test_setter_norm():
+    """Check that you can set Normalization with the old format"""
+    norm_dict = {
+        "time": 20.5,
+        "fe": 50,
+        "rotor_angle": [0, 1, 2, 3],
+        "rotor_angle2": np.array([0, 1, 2, 3]),
+    }
+    test_obj = Data(normalizations=norm_dict)
+
+    assert len(test_obj.normalizations) == 4
+    assert isinstance(test_obj.normalizations["time"], Norm_ref)
+    assert test_obj.normalizations["time"].ref == 20.5
+
+    assert isinstance(test_obj.normalizations["fe"], Norm_ref)
+    assert test_obj.normalizations["fe"].ref == 50
+
+    assert isinstance(test_obj.normalizations["rotor_angle"], Norm_vector)
+    assert_array_almost_equal(
+        test_obj.normalizations["rotor_angle"].vector, np.array([0, 1, 2, 3])
+    )
+
+    assert isinstance(test_obj.normalizations["rotor_angle2"], Norm_vector)
+    assert_array_almost_equal(
+        test_obj.normalizations["rotor_angle2"].vector, np.array([0, 1, 2, 3])
+    )
+
+
+@pytest.mark.validation
 def test_noct():
     data = np.load(join(DATA_DIR, "pinknoise_fine_band.npy"))
     freqs = data[1, :]
@@ -195,4 +225,6 @@ def test_dba():
 
 
 if __name__ == "__main__":
-    test_norm()
+    test_setter_norm()
+    # test_norm()
+    print("Done")

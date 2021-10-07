@@ -13,6 +13,14 @@ from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
 from ._frozen import FrozenClass
 
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Data._set_normalizations import _set_normalizations
+except ImportError as error:
+    _set_normalizations = error
+
+
 from ._check import InitUnKnowClassError
 from .Normalization import Normalization
 
@@ -22,6 +30,18 @@ class Data(FrozenClass):
 
     VERSION = 1
 
+    # cf Methods.Data._set_normalizations
+    if isinstance(_set_normalizations, ImportError):
+        _set_normalizations = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Data method _set_normalizations: "
+                    + str(_set_normalizations)
+                )
+            )
+        )
+    else:
+        _set_normalizations = _set_normalizations
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -250,20 +270,6 @@ class Data(FrozenClass):
                 if obj is not None:
                     obj.parent = self
         return self._normalizations
-
-    def _set_normalizations(self, value):
-        """setter of normalizations"""
-        if type(value) is dict:
-            for key, obj in value.items():
-                if type(obj) is dict:
-                    class_obj = import_class(
-                        "SciDataTool.Classes", obj.get("__class__"), "normalizations"
-                    )
-                    value[key] = class_obj(init_dict=obj)
-        if type(value) is int and value == -1:
-            value = dict()
-        check_var("normalizations", value, "{Normalization}")
-        self._normalizations = value
 
     normalizations = property(
         fget=_get_normalizations,
