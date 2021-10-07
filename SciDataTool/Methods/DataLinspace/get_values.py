@@ -109,7 +109,7 @@ def get_values(
                 self.normalizations[normalization].unit == "SI"
                 or self.normalizations[normalization].unit == self.unit
             ):
-                # Axis is int he correct unit for the normalization
+                # Axis is in the correct unit for the normalization
                 values = self.normalizations[normalization].normalize(values)
             else:
                 raise NormError("Normalization is not available in this unit")

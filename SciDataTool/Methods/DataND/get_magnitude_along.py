@@ -76,7 +76,7 @@ def get_magnitude_along(
                 "ERROR: dBA conversion only available for fft with frequencies"
             )
     elif unit in self.normalizations:
-        values = values / self.normalizations.get(unit)
+        values = self.normalizations.get(unit).normalize(values)
     else:
         values = convert(values, self.unit, unit)
     return_dict[self.symbol] = values

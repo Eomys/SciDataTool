@@ -205,7 +205,7 @@ def test_dba():
         name="freqs",
         unit="Hz",
         values=freqs,
-        normalizations={"elec_order": Norm_affine(slope=5)},
+        normalizations={"elec_order": Norm_ref(ref=5)},
     )
     Field = DataFreq(
         name="pink noise",
