@@ -29,7 +29,8 @@ def test_get_data_along():
     Field = DataTime(
         name="Example field",
         symbol="X",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
         axes=[Angle, Time],
         values=field,
     )
@@ -123,7 +124,8 @@ def test_get_data_along_single():
     Field = DataTime(
         name="Example field",
         symbol="X",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
         axes=[Time, Angle, Slice],
         values=field_tot,
     )
@@ -162,7 +164,8 @@ def test_get_data_along_integrate():
         name="Example field",
         symbol="X",
         unit="m",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
         axes=[Angle, Time],
         values=field,
     )
@@ -211,7 +214,8 @@ def test_get_data_along_derivate():
         name="Example field",
         symbol="X",
         unit="m",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
         axes=[Time, Angle],
         values=field.T,
     )

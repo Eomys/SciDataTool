@@ -42,10 +42,10 @@ def get_values(
     module = __import__("SciDataTool.Classes.Norm_vector", fromlist=["Norm_vector"])
     Norm_vector = getattr(module, "Norm_vector")
 
-    # if unit != "SI" and unit != self.unit:
-    #     if unit in self.normalizations and normalization is None:
-    #         normalization = unit
-    #         unit = "SI"
+    if unit != "SI" and unit != self.unit:
+        if unit in self.normalizations and normalization is None:
+            normalization = unit
+            unit = "SI"
 
     values = self.values
     norm_vector = None
@@ -92,18 +92,19 @@ def get_values(
         values = array(func(values, is_real=is_real))
 
     # Normalization
-    # if normalization is not None:
-    #     if normalization in self.normalizations:
-    #         if (
-    #             self.normalizations[normalization].unit == "SI"
-    #             or self.normalizations[normalization].unit == self.unit
-    #         ):
-    #             # Axis is int he correct unit for the normalization
-    #             values = self.normalizations[normalization].normalize(values)
-    #         else:
-    #             raise NormError("Normalization is not available in this unit")
-    #     else:
-    #         raise NormError("Normalization is not available")
+    if normalization is not None:
+        if normalization in self.normalizations:
+            # if (
+            #     self.normalizations[normalization].unit == "SI"
+            #     or self.normalizations[normalization].unit == self.unit
+            # ):
+            # Axis is int he correct unit for the normalization
+            # values = self.normalizations[normalization].normalize(values)
+            values /= self.normalizations[normalization]
+            # else:
+            #     raise NormError("Normalization is not available in this unit")
+        else:
+            raise NormError("Normalization is not available")
 
     # Unit conversion
     if unit != "SI" and unit != self.unit:
