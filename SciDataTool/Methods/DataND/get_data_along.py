@@ -23,16 +23,25 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     a DataND object
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("SciDataTool.Classes.DataND", fromlist=["DataND"])
-    DataND = getattr(module, "DataND")
-
     results = self.get_along(*args, is_squeeze=False)
     values = results.pop(self.symbol)
     del results["axes_dict_other"]
     axes_list = results.pop("axes_list")
     Axes = []
-    for axis_name in results.keys():
+
+    axes_name_new = list(results.keys())
+    if "time" in axes_name_new:
+        Data_type = "DataTime"
+    elif "freqs" in axes_name_new:
+        Data_type = "DataFreq"
+    else:
+        Data_type = "DataND"
+
+    # Dynamic import to avoid loop
+    module = __import__("SciDataTool.Classes." + Data_type, fromlist=[Data_type])
+    DataClass = getattr(module, Data_type)
+
+    for axis_name in axes_name_new:
         if not isinstance(results[axis_name], str):
             for i, axis in enumerate(self.axes):
                 if axis.name == axis_name:
@@ -77,7 +86,7 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         elif axis.extension == "derivate":
             self.unit = get_unit_derivate(self.unit, axis.corr_unit)
 
-    return DataND(
+    return DataClass(
         name=self.name,
         unit=self.unit,
         symbol=self.symbol,
