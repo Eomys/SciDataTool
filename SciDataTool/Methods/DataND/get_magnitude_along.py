@@ -52,12 +52,12 @@ def get_magnitude_along(
     elif unit == "dB":
         ref_value = 1.0
         if "ref" in self.normalizations:
-            ref_value *= self.normalizations["ref"].ref
+            ref_value *= self.normalizations["ref"]
         values = to_dB(values, self.unit, ref_value)
     elif unit == "dBA":
         ref_value = 1.0
         if "ref" in self.normalizations:
-            ref_value *= self.normalizations["ref"].ref
+            ref_value *= self.normalizations["ref"]
         if "freqs" in return_dict.keys():
             for axis in return_dict["axes_list"]:
                 if axis.name == "freqs" or axis.corr_name == "freqs":

@@ -121,7 +121,7 @@ def plot_3D_Data(
         is_fft = True
         if "dB" in unit:
             if "ref" in self.normalizations:
-                ref = self.normalizations["ref"].ref
+                ref = self.normalizations["ref"]
             else:
                 ref = 1
             unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
@@ -310,15 +310,14 @@ def plot_3D_Data(
 
         if thresh is None:
             if self.normalizations is not None and "ref" in self.normalizations:
-                thresh = self.normalizations["ref"].ref
+                thresh = self.normalizations["ref"]
             else:
                 thresh = 0.02
 
         if "dB" in unit:
             indices = where(
                 Z_flat
-                > 10 * log10(thresh * self.normalizations["ref"].ref)
-                + abs(np_max(Zdata))
+                > 10 * log10(thresh * self.normalizations["ref"]) + abs(np_max(Zdata))
             )[0]
         else:
             indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
