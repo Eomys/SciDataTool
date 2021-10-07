@@ -42,10 +42,10 @@ def get_values(
     module = __import__("SciDataTool.Classes.Norm_vector", fromlist=["Norm_vector"])
     Norm_vector = getattr(module, "Norm_vector")
 
-    if unit != "SI" and unit != self.unit:
-        if unit in self.normalizations and normalization is None:
-            normalization = unit
-            unit = "SI"
+    # if unit != "SI" and unit != self.unit:
+    #     if unit in self.normalizations and normalization is None:
+    #         normalization = unit
+    #         unit = "SI"
 
     initial = self.initial
     if self.number == None:
@@ -86,15 +86,15 @@ def get_values(
             pass
     else:
         values = rebuild_symmetries_axis(values, self.symmetries)
-        if (
-            normalization is not None
-            and normalization in self.normalizations
-            and isinstance(self.normalizations[normalization], Norm_vector)
-        ):
-            norm_vector = self.normalizations[normalization].vector.copy()
-            self.normalizations[normalization].vector = rebuild_symmetries_axis(
-                norm_vector, self.symmetries
-            )
+        # if (
+        #     normalization is not None
+        #     and normalization in self.normalizations
+        #     and isinstance(self.normalizations[normalization], Norm_vector)
+        # ):
+        #     norm_vector = self.normalizations[normalization].vector.copy()
+        #     self.normalizations[normalization].vector = rebuild_symmetries_axis(
+        #         norm_vector, self.symmetries
+        #     )
 
     # fft/ifft
     if operation is not None:
@@ -103,24 +103,24 @@ def get_values(
         values = array(func(values, is_real=is_real))
 
     # Normalization
-    if normalization is not None:
-        if normalization in self.normalizations:
-            if (
-                self.normalizations[normalization].unit == "SI"
-                or self.normalizations[normalization].unit == self.unit
-            ):
-                # Axis is int he correct unit for the normalization
-                values = self.normalizations[normalization].normalize(values)
-            else:
-                raise NormError("Normalization is not available in this unit")
-        else:
-            raise NormError("Normalization is not available")
+    # if normalization is not None:
+    #     if normalization in self.normalizations:
+    #         if (
+    #             self.normalizations[normalization].unit == "SI"
+    #             or self.normalizations[normalization].unit == self.unit
+    #         ):
+    #             # Axis is int he correct unit for the normalization
+    #             values = self.normalizations[normalization].normalize(values)
+    #         else:
+    #             raise NormError("Normalization is not available in this unit")
+    #     else:
+    #         raise NormError("Normalization is not available")
 
     # Unit conversion
     if unit != "SI" and unit != self.unit:
         values = convert(values, self.unit, unit)
 
-    if norm_vector is not None:
-        self.normalizations[normalization].vector = norm_vector
+    # if norm_vector is not None:
+    #     self.normalizations[normalization].vector = norm_vector
 
     return values
