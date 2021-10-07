@@ -79,8 +79,7 @@ def test_xyz_integration():
         name="Radial field",
         symbol="X_r",
         unit="m",
-        # normalizations={"ref": Norm_ref(ref=2e-5)},
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
         axes=[Time, Angle],
         values=field.T,
     )
@@ -88,8 +87,7 @@ def test_xyz_integration():
         name="Tangential field",
         symbol="X_t",
         unit="m",
-        # normalizations={"ref": Norm_ref(ref=2e-5)},
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
         axes=[Time, Angle],
         values=-field.T,
     )

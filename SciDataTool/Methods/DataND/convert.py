@@ -90,12 +90,12 @@ def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
     elif unit == "dB":
         ref_value = 1.0
         if "ref" in self.normalizations:
-            ref_value *= self.normalizations["ref"]
+            ref_value *= self.normalizations["ref"].ref
         values = to_dB(np_abs(values), self.unit, ref_value)
     elif unit == "dBA":
         ref_value = 1.0
         if "ref" in self.normalizations:
-            ref_value *= self.normalizations["ref"]
+            ref_value *= self.normalizations["ref"].ref
         for axis in axes_list:
             is_match = False
             if axis.name == "freqs" or axis.corr_name == "freqs":
@@ -126,7 +126,7 @@ def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
                 "ERROR: dBA conversion only available for fft with frequencies"
             )
     elif unit in self.normalizations:
-        values = values / self.normalizations.get(unit)
+        values = self.normalizations.get(unit).normalize(values)
     else:
         values = convert_unit(values, self.unit, unit)
 

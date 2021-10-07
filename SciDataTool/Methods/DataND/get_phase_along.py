@@ -40,7 +40,7 @@ def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     elif unit == "°":
         values = convert(values, "rad", "°")
     elif unit in self.normalizations:
-        values = values / self.normalizations.get(unit)
+        values = self.normalizations.get(unit).normalize(values)
     else:
         values = convert(values, self.unit, unit)
     return_dict[self.symbol] = values

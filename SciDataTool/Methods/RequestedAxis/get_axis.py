@@ -136,7 +136,7 @@ def get_axis(self, axis, is_real):
                 is_smallestperiod = False
                 is_oneperiod = False
                 is_antiperiod = False
-        # Get original values of the axisn including unit and normalizations
+        # Get original values of the axis including unit and normalizations
         # Store before normalization/operation
         if (
             self.unit != self.corr_unit

@@ -13,7 +13,16 @@ from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
 from ._frozen import FrozenClass
 
+# Import all class method
+# Try/catch to remove unnecessary dependencies in unused method
+try:
+    from ..Methods.Data._set_normalizations import _set_normalizations
+except ImportError as error:
+    _set_normalizations = error
+
+
 from ._check import InitUnKnowClassError
+from .Normalization import Normalization
 
 
 class Data(FrozenClass):
@@ -21,6 +30,18 @@ class Data(FrozenClass):
 
     VERSION = 1
 
+    # cf Methods.Data._set_normalizations
+    if isinstance(_set_normalizations, ImportError):
+        _set_normalizations = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Data method _set_normalizations: "
+                    + str(_set_normalizations)
+                )
+            )
+        )
+    else:
+        _set_normalizations = _set_normalizations
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -78,7 +99,14 @@ class Data(FrozenClass):
         Data_str += 'symbol = "' + str(self.symbol) + '"' + linesep
         Data_str += 'name = "' + str(self.name) + '"' + linesep
         Data_str += 'unit = "' + str(self.unit) + '"' + linesep
-        Data_str += "normalizations = " + str(self.normalizations) + linesep
+        if len(self.normalizations) == 0:
+            Data_str += "normalizations = dict()" + linesep
+        for key, obj in self.normalizations.items():
+            tmp = (
+                self.normalizations[key].__str__().replace(linesep, linesep + "\t")
+                + linesep
+            )
+            Data_str += "normalizations[" + key + "] =" + tmp + linesep + linesep
         return Data_str
 
     def __eq__(self, other):
@@ -110,8 +138,21 @@ class Data(FrozenClass):
             diff_list.append(name + ".name")
         if other._unit != self._unit:
             diff_list.append(name + ".unit")
-        if other._normalizations != self._normalizations:
-            diff_list.append(name + ".normalizations")
+        if (other.normalizations is None and self.normalizations is not None) or (
+            other.normalizations is not None and self.normalizations is None
+        ):
+            diff_list.append(name + ".normalizations None mismatch")
+        elif self.normalizations is None:
+            pass
+        elif len(other.normalizations) != len(self.normalizations):
+            diff_list.append("len(" + name + "normalizations)")
+        else:
+            for key in self.normalizations:
+                diff_list.extend(
+                    self.normalizations[key].compare(
+                        other.normalizations[key], name=name + ".normalizations"
+                    )
+                )
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -143,9 +184,19 @@ class Data(FrozenClass):
         Data_dict["symbol"] = self.symbol
         Data_dict["name"] = self.name
         Data_dict["unit"] = self.unit
-        Data_dict["normalizations"] = (
-            self.normalizations.copy() if self.normalizations is not None else None
-        )
+        if self.normalizations is None:
+            Data_dict["normalizations"] = None
+        else:
+            Data_dict["normalizations"] = dict()
+            for key, obj in self.normalizations.items():
+                if obj is not None:
+                    Data_dict["normalizations"][key] = obj.as_dict(
+                        type_handle_ndarray=type_handle_ndarray,
+                        keep_function=keep_function,
+                        **kwargs
+                    )
+                else:
+                    Data_dict["normalizations"][key] = None
         # The class name is added to the dict for deserialisation purpose
         Data_dict["__class__"] = "Data"
         return Data_dict
@@ -214,20 +265,17 @@ class Data(FrozenClass):
 
     def _get_normalizations(self):
         """getter of normalizations"""
+        if self._normalizations is not None:
+            for key, obj in self._normalizations.items():
+                if obj is not None:
+                    obj.parent = self
         return self._normalizations
-
-    def _set_normalizations(self, value):
-        """setter of normalizations"""
-        if type(value) is int and value == -1:
-            value = dict()
-        check_var("normalizations", value, "dict")
-        self._normalizations = value
 
     normalizations = property(
         fget=_get_normalizations,
         fset=_set_normalizations,
         doc=u"""Normalizations available for the field and its axes
 
-        :Type: dict
+        :Type: {Normalization}
         """,
     )

@@ -38,7 +38,7 @@ def to_linspace(self):
             name=self.name,
             unit=self.unit,
             symmetries=self.symmetries,
-            normalizations=self.normalizations,
+            normalizations=self.normalizations.copy(),
             is_components=self.is_components,
             symbol=self.symbol,
         )

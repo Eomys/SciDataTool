@@ -34,8 +34,7 @@ def test_plot():
 def test_normalization():
     Time = DataLinspace(name="time", unit="s", initial=0, final=10, number=1001)
     time = Time.get_values()
-    # Time.normalizations = {"rpm": Norm_affine(slope=5, offset=2)}
-    Time.normalizations = {"rpm": linspace(5, 15, 1001)}
+    Time.normalizations = {"rpm": Norm_affine(slope=5, offset=2)}
     Angle = DataLinspace(name="angle", unit="rad", initial=0, final=2 * pi, number=2001)
     angle, time = meshgrid(Angle.get_values(), Time.get_values())
     field = time + angle

@@ -1,5 +1,6 @@
 import pytest
 from SciDataTool import (
+    Data,
     DataTime,
     DataLinspace,
     Data1D,
@@ -55,73 +56,102 @@ def test_units():
     assert_array_almost_equal(1e-5 * field[0, :], result["X"])
 
 
-# @pytest.mark.validation
-# def test_norm():
-#     f = 50
-#     time = np.linspace(0, 1 / f, 10, endpoint=False)
+@pytest.mark.validation
+def test_norm():
+    f = 50
+    time = np.linspace(0, 1 / f, 10, endpoint=False)
 
-#     Time = DataLinspace(
-#         name="time",
-#         unit="s",
-#         initial=0,
-#         final=1 / f,
-#         number=10,
-#         include_endpoint=False,
-#         normalizations={"elec_order": Norm_ref(ref=50)},
-#     )
-#     field = np.cos(2 * np.pi * 2 * f * time)
-#     Field = DataTime(
-#         name="field",
-#         symbol="X",
-#         axes=[Time],
-#         values=field,
-#         unit="m/s2",
-#         normalizations={"ref": Norm_ref(ref=0.2)},
-#     )
-#     result = Field.get_along("freqs->elec_order=[0,3]", is_norm=True)
-#     assert_array_almost_equal(np.linspace(0, 3, 4), result["freqs"])
-#     assert_array_almost_equal(1 / 0.2, result["X"][2])
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=10,
+        include_endpoint=False,
+        normalizations={"elec_order": Norm_ref(ref=50)},
+    )
+    field = np.cos(2 * np.pi * 2 * f * time)
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time],
+        values=field,
+        unit="m/s2",
+        normalizations={"ref": Norm_ref(ref=0.2)},
+    )
+    result = Field.get_along("freqs->elec_order=[0,3]", is_norm=True)
+    assert_array_almost_equal(np.linspace(0, 3, 4), result["freqs"])
+    assert_array_almost_equal(1 / 0.2, result["X"][2])
 
-#     Time.normalizations["angle_rotor"] = Norm_func(function=lambda x: 50 * x + 2)
-#     result = Field.get_along("time->angle_rotor")
-#     assert_array_almost_equal(50 * time + 2, result["time"])
+    Time.normalizations["angle_rotor"] = Norm_func(function=lambda x: 50 * x + 2)
+    result = Field.get_along("time->angle_rotor")
+    assert_array_almost_equal(50 * time + 2, result["time"])
 
-#     Time.symmetries["period"] = 2
-#     Time.normalizations["angle_rotor"] = Norm_vector(
-#         vector=np.linspace(0, 10, 20, endpoint=False)
-#     )
-#     # Normalization vector does not have the right size -> must raise error
-#     with pytest.raises(NormError):
-#         result = Field.get_along("time->angle_rotor")
-#     # With right size
-#     Time.normalizations["angle_rotor"] = Norm_vector(
-#         vector=np.linspace(0, 10, 10, endpoint=False)
-#     )
-#     result = Field.get_along("time->angle_rotor")
-#     assert_array_almost_equal(np.linspace(0, 20, 20, endpoint=False), result["time"])
-#     result = Field.get_along("time->angle_rotor[smallestperiod]")
-#     assert_array_almost_equal(np.linspace(0, 10, 10, endpoint=False), result["time"])
+    Time.symmetries["period"] = 2
+    Time.normalizations["angle_rotor"] = Norm_vector(
+        vector=np.linspace(0, 10, 20, endpoint=False)
+    )
+    # Normalization vector does not have the right size -> must raise error
+    with pytest.raises(NormError):
+        result = Field.get_along("time->angle_rotor")
+    # With right size
+    Time.normalizations["angle_rotor"] = Norm_vector(
+        vector=np.linspace(0, 10, 10, endpoint=False)
+    )
+    result = Field.get_along("time->angle_rotor")
+    assert_array_almost_equal(np.linspace(0, 20, 20, endpoint=False), result["time"])
+    result = Field.get_along("time->angle_rotor[smallestperiod]")
+    assert_array_almost_equal(np.linspace(0, 10, 10, endpoint=False), result["time"])
 
-#     angle = np.linspace(0, 2 * np.pi, 10, endpoint=False)
-#     Angle = DataLinspace(
-#         name="angle",
-#         unit="rad",
-#         initial=0,
-#         final=2 * np.pi,
-#         number=10,
-#         include_endpoint=False,
-#         normalizations={"tooth_id": Norm_indices()},
-#     )
-#     field = np.cos(2 * np.pi * 100 * angle)
-#     Field = DataTime(
-#         name="field",
-#         symbol="X",
-#         axes=[Angle],
-#         values=field,
-#         unit="m/s2",
-#     )
-#     result = Field.get_along("angle->tooth_id")
-#     assert_array_almost_equal(np.linspace(0, 10, 10, endpoint=False), result["angle"])
+    angle = np.linspace(0, 2 * np.pi, 10, endpoint=False)
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=2 * np.pi,
+        number=10,
+        include_endpoint=False,
+        normalizations={"tooth_id": Norm_indices()},
+    )
+    field = np.cos(2 * np.pi * 100 * angle)
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Angle],
+        values=field,
+        unit="m/s2",
+    )
+    result = Field.get_along("angle->tooth_id")
+    assert_array_almost_equal(np.linspace(0, 10, 10, endpoint=False), result["angle"])
+
+
+@pytest.mark.validation
+def test_setter_norm():
+    """Check that you can set Normalization with the old format"""
+    norm_dict = {
+        "time": 20.5,
+        "fe": 50,
+        "rotor_angle": [0, 1, 2, 3],
+        "rotor_angle2": np.array([0, 1, 2, 3]),
+    }
+    test_obj = Data(normalizations=norm_dict)
+
+    assert len(test_obj.normalizations) == 4
+    assert isinstance(test_obj.normalizations["time"], Norm_ref)
+    assert test_obj.normalizations["time"].ref == 20.5
+
+    assert isinstance(test_obj.normalizations["fe"], Norm_ref)
+    assert test_obj.normalizations["fe"].ref == 50
+
+    assert isinstance(test_obj.normalizations["rotor_angle"], Norm_vector)
+    assert_array_almost_equal(
+        test_obj.normalizations["rotor_angle"].vector, np.array([0, 1, 2, 3])
+    )
+
+    assert isinstance(test_obj.normalizations["rotor_angle2"], Norm_vector)
+    assert_array_almost_equal(
+        test_obj.normalizations["rotor_angle2"].vector, np.array([0, 1, 2, 3])
+    )
 
 
 @pytest.mark.validation
@@ -140,8 +170,7 @@ def test_noct():
         unit="Pa",
         values=field,
         axes=[Freqs],
-        # normalizations={"ref": Norm_ref(ref=2e-5)},
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
     )
     F_oct = Data1D(name="freqs", unit="Hz", values=foct)
     Field_oct = DataFreq(
@@ -150,8 +179,7 @@ def test_noct():
         unit="Pa",
         values=field_oct,
         axes=[F_oct],
-        # normalizations={"ref": Norm_ref(ref=2e-5)},
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
     )
 
     Field.plot_2D_Data("freqs=[24,20000]->1/3oct", unit="dB")
@@ -177,8 +205,7 @@ def test_dba():
         name="freqs",
         unit="Hz",
         values=freqs,
-        # normalizations={"elec_order": Norm_ref(ref=5)},
-        normalizations={"elec_order": 5},
+        normalizations={"elec_order": Norm_ref(ref=5)},
     )
     Field = DataFreq(
         name="pink noise",
@@ -186,8 +213,7 @@ def test_dba():
         unit="Pa",
         values=field,
         axes=[Freqs],
-        # normalizations={"ref": Norm_ref(ref=2e-5)},
-        normalizations={"ref": 2e-5},
+        normalizations={"ref": Norm_ref(ref=2e-5)},
     )
     result_Hz = Field.get_along("freqs", unit="dBA")
     result_elec_order = Field.get_along("freqs->elec_order", unit="dBA")
@@ -199,4 +225,6 @@ def test_dba():
 
 
 if __name__ == "__main__":
-    test_norm()
+    test_setter_norm()
+    # test_norm()
+    print("Done")
