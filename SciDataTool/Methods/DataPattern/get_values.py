@@ -64,14 +64,15 @@ def get_values(
     # Normalization
     if normalization is not None:
         if normalization in self.normalizations:
-            if (
-                self.normalizations[normalization].unit == "SI"
-                or self.normalizations[normalization].unit == self.unit
-            ):
-                # Axis is int he correct unit for the normalization
-                values = self.normalizations[normalization].normalize(values)
-            else:
-                raise NormError("Normalization is not available in this unit")
+            # if (
+            #     self.normalizations[normalization].unit == "SI"
+            #     or self.normalizations[normalization].unit == self.unit
+            # ):
+            # Axis is int he correct unit for the normalization
+            # values = self.normalizations[normalization].normalize(values)
+            values /= self.normalizations[normalization]
+            # else:
+            #     raise NormError("Normalization is not available in this unit")
         else:
             raise NormError("Normalization is not available")
 

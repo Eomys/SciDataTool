@@ -27,7 +27,8 @@ def test_plot_octave():
         axes=[frequency],
         values=spec_data[0, :],
         unit="Pa",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
     )
 
     rng = default_rng()
@@ -37,7 +38,8 @@ def test_plot_octave():
         axes=[frequency],
         values=rng.standard_normal(28) * 0.006,
         unit="Pa",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
     )
     third_spec_2 = DataFreq(
         name="Signal 3",
@@ -45,7 +47,8 @@ def test_plot_octave():
         axes=[frequency],
         values=rng.standard_normal(28) * 0.006,
         unit="Pa",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
     )
     third_spec.plot_2D_Data(
         "freqs",

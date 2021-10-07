@@ -75,15 +75,15 @@ def get_values(
             pass
     else:
         values = rebuild_symmetries_axis(values, self.symmetries)
-        if (
-            normalization is not None
-            and normalization in self.normalizations
-            and isinstance(self.normalizations[normalization], Norm_vector)
-        ):
-            norm_vector = self.normalizations[normalization].vector.copy()
-            self.normalizations[normalization].vector = rebuild_symmetries_axis(
-                norm_vector, self.symmetries
-            )
+        # if (
+        #     normalization is not None
+        #     and normalization in self.normalizations
+        #     and isinstance(self.normalizations[normalization], Norm_vector)
+        # ):
+        #     norm_vector = self.normalizations[normalization].vector.copy()
+        #     self.normalizations[normalization].vector = rebuild_symmetries_axis(
+        #         norm_vector, self.symmetries
+        #     )
 
     # fft/ifft
     if operation is not None:
@@ -94,14 +94,15 @@ def get_values(
     # Normalization
     if normalization is not None:
         if normalization in self.normalizations:
-            if (
-                self.normalizations[normalization].unit == "SI"
-                or self.normalizations[normalization].unit == self.unit
-            ):
-                # Axis is int he correct unit for the normalization
-                values = self.normalizations[normalization].normalize(values)
-            else:
-                raise NormError("Normalization is not available in this unit")
+            # if (
+            #     self.normalizations[normalization].unit == "SI"
+            #     or self.normalizations[normalization].unit == self.unit
+            # ):
+            # Axis is int he correct unit for the normalization
+            # values = self.normalizations[normalization].normalize(values)
+            values /= self.normalizations[normalization]
+            # else:
+            #     raise NormError("Normalization is not available in this unit")
         else:
             raise NormError("Normalization is not available")
 
@@ -109,7 +110,7 @@ def get_values(
     if unit != "SI" and unit != self.unit:
         values = convert(values, self.unit, unit)
 
-    if norm_vector is not None:
-        self.normalizations[normalization].vector = norm_vector
+    # if norm_vector is not None:
+    #     self.normalizations[normalization].vector = norm_vector
 
     return values

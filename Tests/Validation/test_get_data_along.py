@@ -1,11 +1,8 @@
 import pytest
 import numpy as np
 from numpy.testing import assert_array_almost_equal
-from os.path import join
 
-from SciDataTool import DataLinspace, DataTime, Norm_ref
-from SciDataTool.Functions import symmetries
-from Tests import save_validation_path
+from SciDataTool import DataLinspace, DataTime, Norm_ref, Data1D
 
 
 @pytest.mark.validation
@@ -32,7 +29,8 @@ def test_get_data_along():
     Field = DataTime(
         name="Example field",
         symbol="X",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
         axes=[Angle, Time],
         values=field,
     )
@@ -126,7 +124,8 @@ def test_get_data_along_single():
     Field = DataTime(
         name="Example field",
         symbol="X",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
         axes=[Time, Angle, Slice],
         values=field_tot,
     )
@@ -165,7 +164,8 @@ def test_get_data_along_integrate():
         name="Example field",
         symbol="X",
         unit="m",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
         axes=[Angle, Time],
         values=field,
     )
@@ -214,7 +214,8 @@ def test_get_data_along_derivate():
         name="Example field",
         symbol="X",
         unit="m",
-        normalizations={"ref": Norm_ref(ref=2e-5)},
+        # normalizations={"ref": Norm_ref(ref=2e-5)},
+        normalizations={"ref": 2e-5},
         axes=[Time, Angle],
         values=field.T,
     )
@@ -226,7 +227,9 @@ def test_get_data_along_derivate():
     result_ft = Field_ft.get_along("freqs", "angle[0]")
     freqs = result_ft["freqs"]
     field_ft = result_ft["X"]
-    assert_array_almost_equal(Field_der.values, field_ft * 2 * 1j * np.pi * freqs)
+    assert_array_almost_equal(
+        np.squeeze(Field_der.values), field_ft * 2 * 1j * np.pi * freqs
+    )
     Field_ft.unit = "m/s"
     Field_der = Field_ft.get_data_along("freqs=derivate", "wavenumber")
     assert Field_der.unit == "m/s2"
@@ -241,7 +244,32 @@ def test_get_data_along_derivate():
     assert Field_der.unit == "ms2"
 
 
+@pytest.mark.validation
+def test_get_data_along_to_linspace():
+    """Test to_linspace method that is called in get_data_along"""
+    Time = Data1D(name="time", unit="s", values=np.linspace(0, 1, 100))
+    Angle = Data1D(name="angle", unit="rad", values=np.array([0]))
+    Phase = Data1D(
+        name="phase",
+        unit="",
+        values=["A", "B", "C"],
+        is_components=True,
+    )
+
+    Time_lin = Time.to_linspace()
+    Angle_lin = Angle.to_linspace()
+    Phase_lin = Phase.to_linspace()
+
+    # Check transfer of normalizations
+    assert isinstance(Time_lin, DataLinspace), "Time axis not a linspace"
+    assert isinstance(Angle_lin, Data1D), "Angle axis not a Data1D"
+    assert isinstance(Phase_lin, Data1D), "Phase axis not a Data1D"
+
+    assert_array_almost_equal(Time.get_values(), Time_lin.get_values())
+
+
 if __name__ == "__main__":
     test_get_data_along_single()
-    # test_get_data_along_integrate()
-    # test_get_data_along_derivate()
+    test_get_data_along_integrate()
+    test_get_data_along_derivate()
+    test_get_data_along_to_linspace()
