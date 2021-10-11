@@ -194,7 +194,7 @@ def test_get_data_along_derivate():
         unit="s",
         initial=0,
         final=1 / f,
-        number=10,
+        number=100,
         include_endpoint=False,
     )
     Angle = DataLinspace(
@@ -202,7 +202,7 @@ def test_get_data_along_derivate():
         unit="rad",
         initial=0,
         final=2 * np.pi,
-        number=20,
+        number=200,
         include_endpoint=False,
     )
     ta, at = np.meshgrid(Time.get_values(), Angle.get_values())
@@ -216,6 +216,21 @@ def test_get_data_along_derivate():
         values=field.T,
     )
 
+    # Time derivation
+    Field_diff_t = Field.get_data_along("time=derivate", "angle")
+    assert Field_diff_t.unit == "m/s"
+    field_diff_t_check = Field_diff_t.values
+    field_diff_t_ref = -5 * 2 * np.pi * f * np.sin(2 * np.pi * f * ta.T + 3 * at.T)
+    assert_array_almost_equal(field_diff_t_check, field_diff_t_ref, decimal=0)
+
+    # Angle derivation
+    Field_diff_a = Field.get_data_along("time", "angle=derivate")
+    assert Field_diff_a.unit == "m/rad"
+    field_diff_a_check = Field_diff_a.values
+    field_diff_a_ref = -5 * 3 * np.sin(2 * np.pi * f * ta.T + 3 * at.T)
+    assert_array_almost_equal(field_diff_a_check, field_diff_a_ref, decimal=1)
+
+    # Freqs derivation
     Field_ft = Field.time_to_freq()
 
     Field_der = Field_ft.get_data_along("freqs=derivate", "angle[0]")
@@ -265,7 +280,7 @@ def test_get_data_along_to_linspace():
 
 
 if __name__ == "__main__":
-    test_get_data_along_single()
-    test_get_data_along_integrate()
+    # test_get_data_along_single()
+    # test_get_data_along_integrate()
     test_get_data_along_derivate()
-    test_get_data_along_to_linspace()
+    # test_get_data_along_to_linspace()
