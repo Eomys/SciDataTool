@@ -16,6 +16,7 @@ def get_values(
     normalization=None,
     operation=None,
     is_real=True,
+    corr_unit=None,
 ):
     """Returns the vector 'axis' by rebuilding the linspace, symmetries and unit included.
     Parameters
@@ -118,7 +119,10 @@ def get_values(
 
     # Unit conversion
     if unit != "SI" and unit != self.unit:
-        values = convert(values, self.unit, unit)
+        if corr_unit is not None:
+            values = convert(values, corr_unit, unit)
+        else:
+            values = convert(values, self.unit, unit)
 
     if norm_vector is not None:
         self.normalizations[normalization].vector = norm_vector

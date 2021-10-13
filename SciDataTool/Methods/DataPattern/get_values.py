@@ -15,6 +15,7 @@ def get_values(
     normalization=None,
     operation=None,
     is_real=True,
+    corr_unit=None,
 ):
     """Returns the vector 'axis' taking symmetries into account.
     Parameters
@@ -77,6 +78,9 @@ def get_values(
 
     # Unit conversion
     if unit != "SI" and unit != self.unit:
-        values = convert(values, self.unit, unit)
+        if corr_unit is not None:
+            values = convert(values, corr_unit, unit)
+        else:
+            values = convert(values, self.unit, unit)
 
     return values
