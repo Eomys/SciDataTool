@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from SciDataTool import Data1D
-from SciDataTool.Functions import AxisError, axes_dict, rev_axes_dict
+from SciDataTool.Functions import axes_dict, rev_axes_dict
 from SciDataTool.Functions.conversions import get_unit_derivate, get_unit_integrate
 
 
@@ -80,15 +79,16 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                 ).to_linspace()
             )
     # Update unit if derivation or integration
+    unit = self.unit
     for axis in axes_list:
         if axis.extension == "integrate":
-            self.unit = get_unit_integrate(self.unit, axis.corr_unit)
+            unit = get_unit_integrate(self.unit, axis.corr_unit)
         elif axis.extension == "derivate":
-            self.unit = get_unit_derivate(self.unit, axis.corr_unit)
+            unit = get_unit_derivate(self.unit, axis.corr_unit)
 
     return DataClass(
         name=self.name,
-        unit=self.unit,
+        unit=unit,
         symbol=self.symbol,
         axes=Axes,
         values=values,

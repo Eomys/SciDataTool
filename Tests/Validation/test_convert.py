@@ -57,6 +57,39 @@ def test_units():
 
 
 @pytest.mark.validation
+def test_units_fft():
+    time = np.linspace(0, 10, 10, endpoint=False)
+    angle = np.linspace(0, 2 * np.pi, 20, endpoint=False)
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=10,
+        number=10,
+        include_endpoint=False,
+    )
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=2 * np.pi,
+        number=20,
+        include_endpoint=False,
+    )
+    field = np.ones((10, 20))
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time, Angle],
+        values=field,
+        unit="m/s2",
+    )
+    Field_ft = Field.time_to_freq()
+    result = Field_ft.get_along("angle{°}")
+    assert_array_almost_equal(180 / np.pi * angle, result["angle"])
+
+
+@pytest.mark.validation
 def test_norm():
     f = 50
     time = np.linspace(0, 1 / f, 10, endpoint=False)
@@ -225,6 +258,6 @@ def test_dba():
 
 
 if __name__ == "__main__":
-    test_setter_norm()
+    test_units_fft()
     # test_norm()
     print("Done")

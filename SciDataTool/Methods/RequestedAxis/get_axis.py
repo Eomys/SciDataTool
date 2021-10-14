@@ -150,6 +150,9 @@ def get_axis(self, axis, is_real):
                     is_smallestperiod=is_smallestperiod,
                 )
             )
+        # Prepare unit
+        # if self.corr_unit is None:
+        #     self.corr_unit = self.unit
         values = axis.get_values(
             is_oneperiod=is_oneperiod,
             is_antiperiod=is_antiperiod,
@@ -157,6 +160,7 @@ def get_axis(self, axis, is_real):
             unit=self.unit,
             operation=self.operation,
             is_real=is_real,
+            corr_unit=self.corr_unit,
         )
 
         # Rebuild symmetries in fft case
