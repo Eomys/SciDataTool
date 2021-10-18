@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WDataExtractor</class>
+ <widget class="QDialog" name="WDataExtractor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>224</width>
+    <height>110</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MANATEE Plot</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/images/images/icon/Manatee.ico</normaloff>:/images/images/icon/Manatee.ico</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="in_name">
+       <property name="text">
+        <string>angle</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="c_type_extraction">
+       <item>
+        <property name="text">
+         <string>slice</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>sum</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>mean</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>superimpose</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>animate</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string/>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="FloatEdit" name="lf_value">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>70</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>70</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>0.314</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="slider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="b_action">
+     <property name="text">
+      <string>Superimpose selection / Animate</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>FloatEdit</class>
+   <extends>QLineEdit</extends>
+   <header>.....GUI/Tools/FloatEdit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
