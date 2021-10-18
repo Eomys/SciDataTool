@@ -152,10 +152,17 @@ def plot_2D_Data_Animated(
         # for value in animated_values:
         while value_min < value_max:
 
-            if animated_axis == "time" or animated_axis == "freqs":
+            if "freqs" in arg_list[0]:
+                arg_list0 = arg_list
+                step = (value_min/variation_step)/nb_frames
+                phase = 2 * np.pi * step
+
+            elif animated_axis == "time":
                 arg_list0 = (animated_axis + "=" + str(value_min),) + arg_list
+                phase=0
             else:
                 arg_list0 = arg_list + (animated_axis + "=" + str(value_min),)
+            
 
             # Call to plot_2D_Data of VectorField class, which manage the quiver case
             self.plot_2D_Data(
@@ -197,6 +204,7 @@ def plot_2D_Data_Animated(
                 font_size_legend=font_size_legend,
                 scale=scale,
                 width=width,
+                phase=phase,
             )
 
             if is_plot_only:
