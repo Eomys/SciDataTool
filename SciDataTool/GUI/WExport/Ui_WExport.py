@@ -10,17 +10,12 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 
-class Ui_WDataRange(object):
-    def setupUi(self, WDataRange):
-        if not WDataRange.objectName():
-            WDataRange.setObjectName(u"WDataRange")
-        WDataRange.resize(265, 50)
-        icon = QIcon()
-        icon.addFile(
-            u":/images/images/icon/Manatee.ico", QSize(), QIcon.Normal, QIcon.Off
-        )
-        WDataRange.setWindowIcon(icon)
-        self.horizontalLayout = QHBoxLayout(WDataRange)
+class Ui_WExport(object):
+    def setupUi(self, WExport):
+        if not WExport.objectName():
+            WExport.setObjectName(u"WExport")
+        WExport.resize(265, 50)
+        self.horizontalLayout = QHBoxLayout(WExport)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalSpacer = QSpacerItem(
             140, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
@@ -28,21 +23,19 @@ class Ui_WDataRange(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
-        self.b_export = QPushButton(WDataRange)
+        self.b_export = QPushButton(WExport)
         self.b_export.setObjectName(u"b_export")
 
         self.horizontalLayout.addWidget(self.b_export)
 
-        self.retranslateUi(WDataRange)
+        self.retranslateUi(WExport)
 
-        QMetaObject.connectSlotsByName(WDataRange)
+        QMetaObject.connectSlotsByName(WExport)
 
     # setupUi
 
-    def retranslateUi(self, WDataRange):
-        WDataRange.setWindowTitle(
-            QCoreApplication.translate("WDataRange", u"MANATEE Plot", None)
-        )
-        self.b_export.setText(QCoreApplication.translate("WDataRange", u"Export", None))
+    def retranslateUi(self, WExport):
+        self.b_export.setText(QCoreApplication.translate("WExport", u"Export", None))
+        pass
 
     # retranslateUi

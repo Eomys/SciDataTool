@@ -6,16 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>224</width>
-    <height>110</height>
+    <width>324</width>
+    <height>112</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MANATEE Plot</string>
-  </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>:/images/images/icon/Manatee.ico</normaloff>:/images/images/icon/Manatee.ico</iconset>
+   <string/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -106,7 +102,7 @@
   <customwidget>
    <class>FloatEdit</class>
    <extends>QLineEdit</extends>
-   <header>.....GUI/Tools/FloatEdit.h</header>
+   <header>...GUI/Tools/FloatEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

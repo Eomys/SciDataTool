@@ -5,8 +5,6 @@ from PySide2 import QtGui
 from PySide2.QtGui import QDoubleValidator
 from PySide2.QtWidgets import QLineEdit
 
-from ...GUI import gui_option
-
 _float_re = compile(r"(([+-]?\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)")
 
 
@@ -29,10 +27,8 @@ def valid_float_string(string):
 class FloatEdit(QLineEdit):
     """A Line Edit Widget optimized to input float"""
 
-    def __init__(self, unit="", *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Same constructor as QLineEdit + config validator"""
-        self.unit = unit
-        self.u = gui_option.unit
 
         # Call the Line Edit constructor
         super(FloatEdit, self).__init__(*args, **kwargs)
@@ -59,10 +55,7 @@ class FloatEdit(QLineEdit):
         if value is None:
             self.clear()
         else:
-            if self.unit == "m":
-                self.setText(format(self.u.get_m(value), ".8g"))
-            else:
-                self.setText(format(value, ".8g"))
+            self.setText(format(value, ".8g"))
 
     def value(self):
         """Return the content of the Widget as a float
@@ -77,12 +70,9 @@ class FloatEdit(QLineEdit):
 
         """
         try:
-            self.setText(self.validator().fixup_txt(self.text(), self.u, self.unit))
+            self.setText(self.validator().fixup_txt(self.text()))
             value = float(self.text())
-            if self.unit == "m":
-                return self.u.set_m(value)
-            else:
-                return value
+            return value
         except Exception:
             return None
 

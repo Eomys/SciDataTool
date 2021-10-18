@@ -9,19 +9,14 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from .....GUI.Tools.FloatEdit import FloatEdit
+from ...GUI.Tools.FloatEdit import FloatEdit
 
 
 class Ui_WDataRange(object):
     def setupUi(self, WDataRange):
         if not WDataRange.objectName():
             WDataRange.setObjectName(u"WDataRange")
-        WDataRange.resize(151, 96)
-        icon = QIcon()
-        icon.addFile(
-            u":/images/images/icon/Manatee.ico", QSize(), QIcon.Normal, QIcon.Off
-        )
-        WDataRange.setWindowIcon(icon)
+        WDataRange.resize(154, 102)
         self.gridLayout = QGridLayout(WDataRange)
         self.gridLayout.setObjectName(u"gridLayout")
         self.in_unit = QLabel(WDataRange)
@@ -70,9 +65,7 @@ class Ui_WDataRange(object):
     # setupUi
 
     def retranslateUi(self, WDataRange):
-        WDataRange.setWindowTitle(
-            QCoreApplication.translate("WDataRange", u"MANATEE Plot", None)
-        )
+        WDataRange.setWindowTitle("")
         self.in_unit.setText(QCoreApplication.translate("WDataRange", u"unit", None))
         self.in_min.setText(QCoreApplication.translate("WDataRange", u"min", None))
         self.lf_min.setText(QCoreApplication.translate("WDataRange", u"0.314", None))

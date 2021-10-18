@@ -9,19 +9,14 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from .....GUI.Tools.FloatEdit import FloatEdit
+from ...GUI.Tools.FloatEdit import FloatEdit
 
 
 class Ui_WDataExtractor(object):
     def setupUi(self, WDataExtractor):
         if not WDataExtractor.objectName():
             WDataExtractor.setObjectName(u"WDataExtractor")
-        WDataExtractor.resize(224, 110)
-        icon = QIcon()
-        icon.addFile(
-            u":/images/images/icon/Manatee.ico", QSize(), QIcon.Normal, QIcon.Off
-        )
-        WDataExtractor.setWindowIcon(icon)
+        WDataExtractor.resize(324, 112)
         self.verticalLayout = QVBoxLayout(WDataExtractor)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -77,9 +72,7 @@ class Ui_WDataExtractor(object):
     # setupUi
 
     def retranslateUi(self, WDataExtractor):
-        WDataExtractor.setWindowTitle(
-            QCoreApplication.translate("WDataExtractor", u"MANATEE Plot", None)
-        )
+        WDataExtractor.setWindowTitle("")
         self.in_name.setText(
             QCoreApplication.translate("WDataExtractor", u"angle", None)
         )

@@ -15,11 +15,6 @@ class Ui_WAxisSelector(object):
         if not WAxisSelector.objectName():
             WAxisSelector.setObjectName(u"WAxisSelector")
         WAxisSelector.resize(338, 50)
-        icon = QIcon()
-        icon.addFile(
-            u":/images/images/icon/Manatee.ico", QSize(), QIcon.Normal, QIcon.Off
-        )
-        WAxisSelector.setWindowIcon(icon)
         self.horizontalLayout = QHBoxLayout(WAxisSelector)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.in_name = QLabel(WAxisSelector)
@@ -67,9 +62,7 @@ class Ui_WAxisSelector(object):
     # setupUi
 
     def retranslateUi(self, WAxisSelector):
-        WAxisSelector.setWindowTitle(
-            QCoreApplication.translate("WAxisSelector", u"MANATEE Plot", None)
-        )
+        WAxisSelector.setWindowTitle("")
         self.in_name.setText(QCoreApplication.translate("WAxisSelector", u"x", None))
         self.c_axis.setItemText(
             0, QCoreApplication.translate("WAxisSelector", u"time", None)

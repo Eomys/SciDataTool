@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WDataRange</class>
- <widget class="QDialog" name="WDataRange">
+ <class>WExport</class>
+ <widget class="QDialog" name="WExport">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,13 +9,6 @@
     <width>265</width>
     <height>50</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MANATEE Plot</string>
-  </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>:/images/images/icon/Manatee.ico</normaloff>:/images/images/icon/Manatee.ico</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
