@@ -140,6 +140,11 @@ try:
 except ImportError as error:
     orthogonal_mp = error
 
+try:
+    from ..Methods.DataND.plot import plot
+except ImportError as error:
+    plot = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -415,6 +420,15 @@ class DataND(Data):
         )
     else:
         orthogonal_mp = orthogonal_mp
+    # cf Methods.DataND.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # save and copy methods are available in all object
     save = save
     copy = copy

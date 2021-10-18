@@ -24,3 +24,4 @@ is_real,,To indicate if the signal is real (use only positive frequencies),,bool
 ,,,,,,,,,,,rebuild_symmetries,,,,
 ,,,,,,,,,,,set_Ftparameters,,,,
 ,,,,,,,,,,,orthogonal_mp,,,,
+,,,,,,,,,,,plot,,,,

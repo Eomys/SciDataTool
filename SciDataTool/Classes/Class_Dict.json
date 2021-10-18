@@ -258,7 +258,8 @@
             "plot_3D_Data",
             "rebuild_symmetries",
             "set_Ftparameters",
-            "orthogonal_mp"
+            "orthogonal_mp",
+            "plot"
         ],
         "mother": "Data",
         "name": "DataND",
