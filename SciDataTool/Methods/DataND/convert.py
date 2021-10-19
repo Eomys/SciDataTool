@@ -2,6 +2,11 @@ import numpy as np
 
 from SciDataTool.Functions import NormError, UnitError, AxisError
 from SciDataTool.Functions.conversions import convert as convert_unit, to_dB, to_dBA
+from SciDataTool.Functions.derivation_integration import (
+    derivate,
+    integrate,
+    antiderivate,
+)
 
 
 def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
@@ -28,75 +33,70 @@ def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
 
     # Apply sums, means, etc
     for axis_requested in axes_list:
+        # Get axis data
+        extension = axis_requested.extension
+        index = axis_requested.index
         # sum over sum axes
-        if axis_requested.extension == "sum":
-            values = np.sum(values, axis=axis_requested.index, keepdims=True)
+        if extension in "sum":
+            values = np.sum(values, axis=index, keepdims=True)
         # root sum square over rss axes
-        elif axis_requested.extension == "rss":
-            values = np.sqrt(
-                np.sum(values ** 2, axis=axis_requested.index, keepdims=True)
-            )
+        elif extension == "rss":
+            if axis_requested.name in ["time", "angle", "z"]:
+                # Use trapz rather than sum
+                values = np.sqrt(
+                    integrate(values ** 2, axis_requested.values, index, is_aper)
+                )
+            else:
+                values = np.sqrt(np.sum(values ** 2, axis=index, keepdims=True))
         # mean value over mean axes
-        elif axis_requested.extension == "mean":
-            values = np.mean(values, axis=axis_requested.index, keepdims=True)
+        elif extension == "mean":
+            if axis_requested.name in ["time", "angle", "z"]:
+                # Use trapz/interval rather than mean
+                ax_val = axis_requested.values
+                values = integrate(
+                    values ** 2, axis_requested.values, index, is_aper, is_mean=True
+                )
+            else:
+                values = np.mean(values, axis=index, keepdims=True)
+
         # RMS over rms axes
-        elif axis_requested.extension == "rms":
-            values = np.sqrt(
-                np.mean(values ** 2, axis=axis_requested.index, keepdims=True)
-            )
+        elif extension == "rms":
+            values = np.sqrt(np.mean(values ** 2, axis=index, keepdims=True))
         # integration over integration axes
-        elif axis_requested.extension == "integrate":
+        elif extension == "integrate":
+            if axis_requested.name in ["time", "angle", "z"]:
+                ax_val = axis_requested.values
+                _, is_aper = self.axes[index].get_periodicity()
+                values = integrate(values, ax_val, index, is_aper)
+            else:
+                raise AxisError("Integration not available except for time/angle/z")
+        # integration over integration axes
+        elif extension == "antiderivate":
             if axis_requested.name == "freqs":
                 dim_array = np.ones((1, values.ndim), int).ravel()
-                dim_array[axis_requested.index] = -1
+                dim_array[index] = -1
                 axis_reshaped = axis_requested.values.reshape(dim_array)
                 axis_reshaped[axis_reshaped == 0] = np.inf  # put f=0 component to 0
                 values = values / (axis_reshaped * 2 * 1j * np.pi)
+            elif axis_requested.name in ["time", "angle", "z"]:
+                ax_val = axis_requested.values
+                _, is_aper = self.axes[index].get_periodicity()
+                values = antiderivate(values, ax_val, index, is_aper)
             else:
-                values = np.trapz(
-                    values, x=axis_requested.values, axis=axis_requested.index
+                raise AxisError(
+                    "Anti derivation not available except for time/angle/z/freqs axes"
                 )
         # derivation over derivation axes
-        elif axis_requested.extension == "derivate":
+        elif extension == "derivate":
             if axis_requested.name == "freqs":
                 dim_array = np.ones((1, values.ndim), int).ravel()
-                dim_array[axis_requested.index] = -1
+                dim_array[index] = -1
                 axis_reshaped = axis_requested.values.reshape(dim_array)
                 values = values * axis_reshaped * 2 * 1j * np.pi
             elif axis_requested.name in ["time", "angle"]:
-                if axis_requested.values.size > 1:
-                    # quantity is assumed to be periodic and axis is assumed to be a linspace
-                    ind = axis_requested.index
-                    _, is_aper = self.axes[ind].get_periodicity()
-                    shape = list(values.shape)
-                    # Create the full vector of axis values
-                    ax_val = axis_requested.values
-                    ax_full = np.concatenate(
-                        (
-                            np.array([ax_val[0] - ax_val[1]]),
-                            ax_val,
-                            np.array([ax_val[-1] + ax_val[1] - ax_val[0]]),
-                        )
-                    )
-                    # Swap axis to always have derivating axis on 1st position
-                    values = np.swapaxes(values, ind, 0)
-                    shape[ind], shape[0] = shape[0], shape[ind]
-                    # Get values on a full (anti-)period
-                    shape[0] = shape[0] + 2
-                    values_full = np.zeros(shape, dtype=values.dtype)
-                    values_full[1:-1, ...] = values
-                    # Add first and last samples at the end and start of values to make values_full periodic
-                    # Last value is the same as (respectively the opposite of) the first value
-                    # in case of periodicity (respectively anti-periodicity)
-                    values_full[-1, ...] = (-1) ** int(is_aper) * values[0, ...]
-                    values_full[0, ...] = (-1) ** int(is_aper) * values[-1, ...]
-                    # Derivate along axis
-                    values = np.gradient(values_full, ax_full, axis=0)
-                    # Get N first values and swap axes back to origin
-                    values = np.swapaxes(values[1:-1, ...], 0, ind)
-
-                else:
-                    raise Exception("Cannot derivate along axis if axis size is 1")
+                ax_val = axis_requested.values
+                _, is_aper = self.axes[index].get_periodicity()
+                values = derivate(values, ax_val, index, is_aper)
             else:
                 raise AxisError(
                     "Derivation not available except for time/angle/freqs axes"

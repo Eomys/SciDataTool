@@ -34,7 +34,6 @@ def get_field(self, axes_list):
             and axis_requested.is_pattern
             or axis_requested.extension
             in ["sum", "rss", "mean", "rms", "integrate", "derivate"]
-            and axis_requested.is_pattern
         ):
             values = take(values, axis_requested.rebuild_indices, axis_requested.index)
         elif axis_requested.transform == "fft" and "antiperiod" in axis_symmetries:

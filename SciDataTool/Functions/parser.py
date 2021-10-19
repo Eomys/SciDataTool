@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from numpy import pi, sqrt, inf  # for eval
 from SciDataTool.Functions import AxisError
 from SciDataTool.Classes.RequestedAxis import RequestedAxis
@@ -97,7 +96,7 @@ def read_input_strings(args, axis_data):
             extension = "axis_data"
             try:
                 input_data = axis_data[name]
-            except:
+            except Exception:
                 raise AxisError("ERROR: No axis_data provided")
         # Detect above
         elif ">" in axis_str:
