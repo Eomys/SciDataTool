@@ -33,6 +33,7 @@ def get_field(self, axes_list):
             axis_requested.transform == "fft"
             or axis_requested.extension
             in ["sum", "rss", "mean", "rms", "integrate", "derivate", "antiderivate"]
+            and axis_requested.is_pattern
         ):
             # DataPattern case where all values are requested
             values = take(values, axis_requested.rebuild_indices, axis_requested.index)
