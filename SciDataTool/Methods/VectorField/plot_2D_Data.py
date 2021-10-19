@@ -142,12 +142,12 @@ def plot_2D_Data(
                 Xdatas = column_stack((result["x"], result["y"]))
                 rphiz = xyz_to_rphiz(Xdatas)
 
-                if component_list[0] is "radial":
-                    Y_rad_3d = column_stack((Y_rad, 0*Y_rad, 0*Y_rad))
+                if component_list[0] == "radial":
+                    Y_3d = column_stack((Y_comp, 0*Y_comp, 0*Y_comp))
                 else:
-                    Y_rad_3d = column_stack((0*Y_rad, Y_rad, 0*Y_rad))
+                    Y_3d = column_stack((0*Y_comp, Y_comp, 0*Y_comp))
 
-                Ydatas = rphiz_to_xyz_field(Y_rad_3d, rphiz[:,1])
+                Ydatas = rphiz_to_xyz_field(Y_3d, rphiz[:,1])
 
             else:
                 if radius is None:
@@ -155,8 +155,12 @@ def plot_2D_Data(
                 phi = result["angle"]
                 rphi = column_stack((array([radius] * len(phi)), phi))
                 Xdatas = rphiz_to_xyz(rphi)
-                Y_rad_3d = column_stack((Y_rad, 0*Y_rad, 0*Y_rad))
-                Ydatas = rphiz_to_xyz_field(Y_rad_3d, phi)
+                if component_list[0] == "radial":
+                    Y_3d = column_stack((Y_comp, 0*Y_comp, 0*Y_comp))
+                else:
+                    Y_3d = column_stack((0*Y_comp, Y_comp, 0*Y_comp))
+
+                Ydatas = rphiz_to_xyz_field(Y_3d, phi)
 
         Ydatas = real(Ydatas*exp(1j*phase))
 
