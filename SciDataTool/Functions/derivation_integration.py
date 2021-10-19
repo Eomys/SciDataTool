@@ -1,19 +1,123 @@
 import numpy as np
+import scipy.integrate as scp_int
 
 
-def antiderivate():
-    values = np.cumtrapz(values, x=axis_requested.values, axis=axis_requested.index)
+def antiderivate(values, ax_val, index, is_aper):
+    """Returns the first anti-derivate of values along given axis
+    values is assumed to be periodic and axis is assumed to be a linspace
+
+    Parameters
+    ----------
+    values: ndarray
+        array to derivate
+    ax_val: ndarray
+        axis values
+    index: int
+        index of axis along which to anti-derivate
+    is_aper: bool
+        True if values is anti-periodic along axis
+
+    Returns
+    -------
+    values: ndarray
+        anti-derivative of values
+    """
+
+    if ax_val.size > 1:
+        # Add last point to axis
+        ax_full = np.concatenate(
+            (
+                ax_val,
+                np.array([ax_val[-1] + ax_val[1] - ax_val[0]]),
+            )
+        )
+        # Swap axis to always have anti-derivating axis on 1st position
+        shape = list(values.shape)
+        values = np.swapaxes(values, index, 0)
+        shape[index], shape[0] = shape[0], shape[index]
+        # Get values on a full (anti-)period
+        shape[0] = shape[0] + 1
+        values_full = np.zeros(shape, dtype=values.dtype)
+        values_full[:-1, ...] = values
+        # Add first sample at the end of values to integrate on last interval
+        # Last value is the same as (respectively the opposite of) the first value
+        # in case of periodicity (respectively anti-periodicity)
+        values_full[-1, ...] = (-1) ** int(is_aper) * values[0, ...]
+        # Anti-derivate along axis
+        values = np.roll(
+            scp_int.cumulative_trapezoid(values_full, x=ax_full, axis=0),
+            shift=1,
+            axis=0,
+        )
+        # Integration constant is given by removing average value
+        values = values - np.mean(values, axis=0)
+        # Get N first values and swap axes back to origin
+        values = np.swapaxes(values, 0, index)
+
+    else:
+        raise Exception("Cannot anti-derivate along axis if axis size is 1")
 
     return values
 
 
-def integrate(is_mean=True):
-    values = np.trapz(values, x=axis_requested.values, axis=axis_requested.index)
+def integrate(values, ax_val, index, is_aper, per):
+    """Returns the integration of values along given axis
+    values is assumed to be periodic and axis is assumed to be a linspace
+
+    Parameters
+    ----------
+    values: ndarray
+        array to integrate
+    ax_val: ndarray
+        axis values
+    index: int
+        index of axis along which to derivate
+    is_aper: bool
+        True if values is anti-periodic along axis
+
+    Returns
+    -------
+    values: ndarray
+        integration of values
+    """
+
+    if ax_val.size > 1:
+        shape = list(values.shape)
+        if is_aper:
+            # Integration of anti-periodic signal yields zero
+            shape0 = [s for ii, s in enumerate(shape) if ii != index]
+            values = np.zeros(shape0, dtype=values.dtype)
+        else:
+            # Add last point to axis
+            ax_full = np.concatenate(
+                (
+                    ax_val,
+                    np.array([ax_val[-1] + ax_val[1] - ax_val[0]]),
+                )
+            )
+            # Swap axis to always have integration axis on 1st position
+            values = np.swapaxes(values, index, 0)
+            shape[index], shape[0] = shape[0], shape[index]
+            # Get values on a full (anti-)period
+            shape[0] = shape[0] + 1
+            values_full = np.zeros(shape, dtype=values.dtype)
+            values_full[:-1, ...] = values
+            # Add first sample at the end of values to integrate on last interval
+            # Last value is the same as (respectively the opposite of) the first value
+            # in case of periodicity (respectively anti-periodicity)
+            values_full[-1, ...] = values[0, ...]
+            # Integrate along axis
+            values = per * np.trapz(values_full, x=ax_full, axis=0)
+            # Get N first values and swap axes back to origin
+            values = np.swapaxes(values, 0, index)
+
+    else:
+        raise Exception("Cannot anti-derivate along axis if axis size is 1")
 
     return values
 
 
-def derivate(values, ax_val, ind, is_aper):
+def derivate(values, ax_val, index, is_aper):
     """Returns the first derivate of values along given axis
     values is assumed to be periodic and axis is assumed to be a linspace
 
@@ -23,7 +127,7 @@ def derivate(values, ax_val, ind, is_aper):
         array to derivate
     ax_val: ndarray
         axis values
-    ind: int
+    index: int
         index of axis along which to derivate
     is_aper: bool
         True if values is anti-periodic along axis
@@ -45,8 +149,8 @@ def derivate(values, ax_val, ind, is_aper):
         )
         # Swap axis to always have derivating axis on 1st position
         shape = list(values.shape)
-        values = np.swapaxes(values, ind, 0)
-        shape[ind], shape[0] = shape[0], shape[ind]
+        values = np.swapaxes(values, index, 0)
+        shape[index], shape[0] = shape[0], shape[index]
         # Get values on a full (anti-)period
         shape[0] = shape[0] + 2
         values_full = np.zeros(shape, dtype=values.dtype)
@@ -59,7 +163,7 @@ def derivate(values, ax_val, ind, is_aper):
         # Derivate along axis
         values = np.gradient(values_full, ax_full, axis=0)
         # Get N first values and swap axes back to origin
-        values = np.swapaxes(values[1:-1, ...], 0, ind)
+        values = np.swapaxes(values[1:-1, ...], 0, index)
 
     else:
         raise Exception("Cannot derivate along axis if axis size is 1")

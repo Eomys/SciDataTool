@@ -136,6 +136,7 @@ def test_get_data_along_single():
     # Check time axis
     assert Field_extract.axes[0].name == "time"
 
+
 @pytest.mark.skip
 @pytest.mark.validation
 def test_get_data_along_integrate():
@@ -195,7 +196,7 @@ def test_get_data_along_antiderivate():
         unit="s",
         initial=0,
         final=1 / f,
-        number=10,
+        number=100,
         include_endpoint=False,
     )
     Angle = DataLinspace(
@@ -203,7 +204,7 @@ def test_get_data_along_antiderivate():
         unit="rad",
         initial=0,
         final=2 * np.pi,
-        number=20,
+        number=200,
         include_endpoint=False,
     )
     ta, at = np.meshgrid(Time.get_values(), Angle.get_values())
@@ -213,26 +214,40 @@ def test_get_data_along_antiderivate():
         symbol="X",
         unit="m",
         normalizations={"ref": Norm_ref(ref=2e-5)},
-        axes=[Angle, Time],
-        values=field,
+        axes=[Time, Angle],
+        values=field.T,
     )
 
-    Field_int = Field.get_data_along("time=integrate", "angle")
+    # Time derivation
+    Field_anti_t = Field.get_data_along("time=antiderivate", "angle")
+    assert Field_anti_t.unit == "ms", "wrong unit: " + Field_anti_t.unit
+    field_anti_t_check = Field_anti_t.values
+    field_anti_t_ref = 5 / (2 * np.pi * f) * np.sin(2 * np.pi * f * ta.T + 3 * at.T)
+    assert_array_almost_equal(field_anti_t_check, field_anti_t_ref, decimal=5)
+
+    # Angle derivation
+    Field_anti_a = Field.get_data_along("time", "angle=antiderivate")
+    assert Field_anti_a.unit == "mrad", "wrong unit: " + Field_anti_a.unit
+    field_anti_a_check = Field_anti_a.values
+    field_anti_a_ref = 5 / 3 * np.sin(2 * np.pi * f * ta.T + 3 * at.T)
+    assert_array_almost_equal(field_anti_a_check, field_anti_a_ref, decimal=3)
+
+    Field_int = Field.get_data_along("time=antiderivate", "angle")
     assert Field_int.unit == "ms"
     Field.unit = "ms"
-    Field_int = Field.get_data_along("time=integrate")
+    Field_int = Field.get_data_along("time=antiderivate")
     assert Field_int.unit == "ms2"
     Field.unit = "m/s"
-    Field_int = Field.get_data_along("time=integrate")
+    Field_int = Field.get_data_along("time=antiderivate")
     assert Field_int.unit == "m"
     Field.unit = "m/s2"
-    Field_int = Field.get_data_along("time=integrate")
+    Field_int = Field.get_data_along("time=antiderivate")
     assert Field_int.unit == "m/s"
     Field.unit = "m/s3"
-    Field_int = Field.get_data_along("time=integrate")
+    Field_int = Field.get_data_along("time=antiderivate")
     assert Field_int.unit == "m/s2"
     Field.unit = "ms"
-    Field_int = Field.get_data_along("time=integrate")
+    Field_int = Field.get_data_along("time=antiderivate")
     assert Field_int.unit == "ms2"
 
 
@@ -334,6 +349,6 @@ def test_get_data_along_to_linspace():
 if __name__ == "__main__":
     # test_get_data_along_single()
     # test_get_data_along_integrate()
-    test_get_data_along_derivate()
-    # test_get_data_along_antiderivate()
+    # test_get_data_along_derivate()
+    test_get_data_along_antiderivate()
     # test_get_data_along_to_linspace()
