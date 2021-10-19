@@ -7,9 +7,15 @@ from SciDataTool.Functions.derivation_integration import (
     integrate,
     antiderivate,
 )
+from SciDataTool.Functions.sum_mean import (
+    my_sum,
+    my_mean,
+    root_mean_square,
+    root_sum_square,
+)
 
 
-def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
+def convert(self, values, unit, is_norm, is_squeeze, axes_list):
     """Returns the values of the field transformed or converted.
     Parameters
     ----------
@@ -26,81 +32,6 @@ def convert(self, values, unit, is_norm, is_squeeze, is_magnitude, axes_list):
     values: ndarray
         values of the field
     """
-
-    # Take magnitude before summing
-    if is_magnitude:
-        values = np.abs(values)
-
-    # Apply sums, means, etc
-    for axis_requested in axes_list:
-        # Get axis data
-        extension = axis_requested.extension
-        index = axis_requested.index
-        # sum over sum axes
-        if extension in "sum":
-            values = np.sum(values, axis=index, keepdims=True)
-        # root sum square over rss axes
-        elif extension == "rss":
-            if axis_requested.name in ["time", "angle", "z"]:
-                # Use trapz rather than sum
-                values = np.sqrt(
-                    integrate(values ** 2, axis_requested.values, index, is_aper)
-                )
-            else:
-                values = np.sqrt(np.sum(values ** 2, axis=index, keepdims=True))
-        # mean value over mean axes
-        elif extension == "mean":
-            if axis_requested.name in ["time", "angle", "z"]:
-                # Use trapz/interval rather than mean
-                ax_val = axis_requested.values
-                values = integrate(
-                    values ** 2, axis_requested.values, index, is_aper, is_mean=True
-                )
-            else:
-                values = np.mean(values, axis=index, keepdims=True)
-
-        # RMS over rms axes
-        elif extension == "rms":
-            values = np.sqrt(np.mean(values ** 2, axis=index, keepdims=True))
-        # integration over integration axes
-        elif extension == "integrate":
-            if axis_requested.name in ["time", "angle", "z"]:
-                ax_val = axis_requested.values
-                _, is_aper = self.axes[index].get_periodicity()
-                values = integrate(values, ax_val, index, is_aper)
-            else:
-                raise AxisError("Integration not available except for time/angle/z")
-        # integration over integration axes
-        elif extension == "antiderivate":
-            if axis_requested.name == "freqs":
-                dim_array = np.ones((1, values.ndim), int).ravel()
-                dim_array[index] = -1
-                axis_reshaped = axis_requested.values.reshape(dim_array)
-                axis_reshaped[axis_reshaped == 0] = np.inf  # put f=0 component to 0
-                values = values / (axis_reshaped * 2 * 1j * np.pi)
-            elif axis_requested.name in ["time", "angle", "z"]:
-                ax_val = axis_requested.values
-                _, is_aper = self.axes[index].get_periodicity()
-                values = antiderivate(values, ax_val, index, is_aper)
-            else:
-                raise AxisError(
-                    "Anti derivation not available except for time/angle/z/freqs axes"
-                )
-        # derivation over derivation axes
-        elif extension == "derivate":
-            if axis_requested.name == "freqs":
-                dim_array = np.ones((1, values.ndim), int).ravel()
-                dim_array[index] = -1
-                axis_reshaped = axis_requested.values.reshape(dim_array)
-                values = values * axis_reshaped * 2 * 1j * np.pi
-            elif axis_requested.name in ["time", "angle"]:
-                ax_val = axis_requested.values
-                _, is_aper = self.axes[index].get_periodicity()
-                values = derivate(values, ax_val, index, is_aper)
-            else:
-                raise AxisError(
-                    "Derivation not available except for time/angle/freqs axes"
-                )
 
     if is_squeeze:
         values = np.squeeze(values)
