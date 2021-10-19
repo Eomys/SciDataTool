@@ -1,3 +1,4 @@
+from PySide2.QtWidgets import *
 from SciDataTool.Classes.DataLinspace import DataLinspace
 from SciDataTool.Classes.DataTime import DataTime
 import numpy as np
