@@ -28,17 +28,17 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.fig = Figure()
         self.set_figure(self.fig)
 
-        self.b_refresh.click(self.update_plot)
+        self.b_refresh.clicked.connect(self.update_plot)
 
     def set_figure(self, fig):
         "Method that set up the figure inside the GUI"
         # Set plot layout
-        canvas = FigureCanvas(fig)
-        toolbar = NavigationToolbar(canvas, self)
+        self.canvas = FigureCanvas(fig)
+        self.toolbar = NavigationToolbar(self.canvas, self)
         
 
-        self.plot_layout.addWidget(toolbar)
-        self.plot_layout.addWidget(canvas)
+        self.plot_layout.addWidget(self.toolbar)
+        self.plot_layout.addWidget(self.canvas)
 
 
 
