@@ -129,6 +129,8 @@ def integrate(values, ax_val, index, Nper, is_aper, is_phys):
             values_full[-1, ...] = values[0, ...]
             # Integrate along axis
             values = Nper * np.trapz(values_full, x=ax_full, axis=0)
+            # Get N first values and swap axes back to origin
+            values = np.swapaxes(values, 0, index - 1)
 
     else:
         raise Exception("Cannot anti-derivate along axis if axis size is 1")
