@@ -2,6 +2,14 @@ from PySide2.QtWidgets import QWidget
 
 from ...GUI.WAxisSelector.Ui_WAxisSelector import Ui_WAxisSelector
 
+AXES_DICT = {
+    "time": "time",
+    "angle": "angle",
+    "z": "axial direction",
+    "freqs": "frequency",
+    "wavenumber": "wavenumber",
+}
+
 UNIT_DICT = {
     "elec.get_Is": ["A"],
     "mag.get_B": ["T", "G"],
@@ -48,20 +56,32 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         QWidget.__init__(self, parent)
         self.setupUi(self)
 
+        self.b_filter.setDisabled(True)
         self.c_axis.currentTextChanged.connect(self.update_unit)
 
     def update_axis(self,data):
         """Method that will put the axes of data in the combobox"""
-        #Step 1 : Getting the name of the different axes
-        axes_list = data.get_axes()
-        axes_name = ['None']
+        #Step 1 : Getting the name of the different axes of the field
+        axes_list = [AXES_DICT[axis.name] 
+        for axis in data.get_axes() 
+        if axis.name != "phase" and axis.get_length() > 1
+        ]
+
+        axes_list.insert(0, "None")
+
+        # Add fft axes
+        if "time" in axes_list:
+            axes_list.append("frequency")
+        elif "frequency" in axes_list:
+            axes_list.insert(0, "time")
+        if "angle" in axes_list:
+            axes_list.append("wavenumber")
+        elif "wavenumber" in axes_list:
+            axes_list.insert(1, "angle")
         
-        for axis in axes_list:
-            axes_name.append(axis.name)
-        
-        #Step 2 : Replacing the items inside of the ComboBox by the axes recovered
+        #Step 2 : Replacing the items inside of the ComboBox with the axes recovered
         self.c_axis.clear()
-        self.c_axis.addItems(axes_name)
+        self.c_axis.addItems(axes_list)
 
 
     def update_unit(self):
@@ -71,9 +91,17 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         #Step 2 : Adding the right units according to a dictionnary
         if quantity == "None":
+            #If the axis is not selected, then we can not choose the unit
             self.c_unit.clear()
             self.c_unit.setDisabled(True)
         else:
             self.c_unit.setDisabled(False)
             self.c_unit.clear()
-            self.c_unit.addItems(UNIT_DICT[quantity])
+
+            if quantity in UNIT_DICT:
+                self.c_unit.addItems(UNIT_DICT[quantity])
+            
+    def change_name(self,axis_name):
+        "Method to change of the label of the widget"
+
+        self.in_name.setText(axis_name)

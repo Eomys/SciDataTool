@@ -38,6 +38,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.b_refresh.clicked.connect(self.update_plot)
         self.w_axis_1.update_axis(self.data)
         self.w_axis_2.update_axis(self.data)
+        self.w_axis_2.change_name("y")
 
     def set_figure(self, fig):
         "Method that set up the figure inside the GUI"
@@ -54,6 +55,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         else:
             self.c_component.show()
             self.in_component.show()   
+
+        
                  
     def update_plot(self):
         """Method that update the plot according to the info given by the user"""

@@ -13,6 +13,7 @@ if __name__ == "__main__":
     field_3d = np.zeros((11, 21, 3))
     for i in range(3):
         field_3d[:, :, i] = (i + 1) * field
+
     Field = DataTime(
         name="Airgap flux density",
         symbol="B_r",
@@ -22,3 +23,6 @@ if __name__ == "__main__":
     )
 
     Field.plot()
+
+
+
