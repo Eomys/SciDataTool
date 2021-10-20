@@ -34,19 +34,14 @@ def test_slice():
     # assert_array_almost_equal(expected, result["Z"])
 
     # Extract data by operator
-    # mean value 'X=mean'
-    result = Field.get_along("time=mean", "Y")
-    expected = field.mean(axis=0)
+    # mean value 'Y=mean' (arithmetic)
+    result = Field.get_along("time", "Y=mean")
+    expected = (field).mean(axis=1)
     assert_array_almost_equal(expected, result["Z"])
 
     # sum 'X=sum'
     result = Field.get_along("time=sum", "Y")
     expected = field.sum(axis=0)
-    assert_array_almost_equal(expected, result["Z"])
-
-    # rms value 'X=rms' (integral)
-    result = Field.get_along("time=rms", "Y")
-    expected = (trapz(field ** 2, x, axis=0) / (x[-1] - x[0])) ** (1 / 2)
     assert_array_almost_equal(expected, result["Z"])
 
     # rms value 'Y=rms' (arithmetic)
@@ -59,10 +54,6 @@ def test_slice():
     expected = field[1:5, 2:8]
     assert_array_almost_equal(expected, result["Z"])
 
-    # Integral value 'X=integrate'
-    result = Field.get_along("time=integrate", "Y")
-    expected = 50 + 10 * linspace(0, 100, 11)
-    assert_array_almost_equal(expected, result["Z"])
     # Step axis
     X = DataPattern(
         name="time",
@@ -76,7 +67,7 @@ def test_slice():
     field = field_x + y
     Field = DataTime(name="Example field", symbol="Z", axes=[X, Y], values=field)
     result = Field.get_along("time=integrate", "Y")
-    expected = 300 * 0.2 + linspace(0, 100, 11)
+    expected = (300 * 0.2 + linspace(0, 100, 11)) * 1.2
     assert_array_almost_equal(expected, result["Z"])
 
 
