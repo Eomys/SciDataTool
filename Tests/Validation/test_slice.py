@@ -1,6 +1,6 @@
 import pytest
 from SciDataTool import DataLinspace, DataTime, DataPattern
-from numpy import meshgrid, linspace, array, repeat, nan, trapz
+from numpy import meshgrid, linspace, array, repeat, nan, trapz, pi, cos
 from numpy.testing import assert_array_almost_equal
 
 
@@ -69,6 +69,52 @@ def test_slice():
     result = Field.get_along("time=integrate", "Y")
     expected = (300 * 0.2 + linspace(0, 100, 11)) * 1.2
     assert_array_almost_equal(expected, result["Z"])
+
+    # Interpolation on double point
+    f = 50
+    Nt_tot = 10
+    Na_tot = 2 ** 11
+    time = linspace(0, 1 / f, Nt_tot, endpoint=False)
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=Nt_tot,
+        include_endpoint=False,
+    )
+
+    angle = linspace(0, 2 * pi, Na_tot, endpoint=False)
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=2 * pi,
+        number=Na_tot,
+        include_endpoint=False,
+    )
+    zlong = array([-1, 1])
+    Slice = DataPattern(
+        name="z",
+        unit="m",
+        values=[-1, 0],
+        is_step=True,
+        values_whole=[-1, 0, 0, 1],
+        rebuild_indices=[0, 0, 1, 1],
+    )
+    at, ta, zat = meshgrid(angle, time, zlong)
+    field = 2e5 * cos(2 * pi * 2 * f * ta + 2 * at)
+    Field = DataTime(
+        name="Radial AGSF",
+        unit="N/m^2",
+        symbol="AGSF_r",
+        axes=[Time, Angle, Slice],
+        values=field[:, None],
+    )
+    result = Field.get_along(
+        "time", "angle", "z=axis_data", axis_data={"z": array([0.0])}
+    )
+    assert result["AGSF_r"].shape == (10, 2048)
 
 
 if __name__ == "__main__":
