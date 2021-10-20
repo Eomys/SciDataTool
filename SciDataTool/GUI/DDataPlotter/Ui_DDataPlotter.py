@@ -18,7 +18,7 @@ class Ui_DDataPlotter(object):
     def setupUi(self, DDataPlotter):
         if not DDataPlotter.objectName():
             DDataPlotter.setObjectName(u"DDataPlotter")
-        DDataPlotter.resize(798, 523)
+        DDataPlotter.resize(816, 532)
         self.horizontalLayout = QHBoxLayout(DDataPlotter)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.plot_layout = QVBoxLayout()
@@ -33,26 +33,23 @@ class Ui_DDataPlotter(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 318, 499))
-        self.gridLayout = QGridLayout(self.scrollAreaWidgetContents)
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.g_range = QGroupBox(self.scrollAreaWidgetContents)
-        self.g_range.setObjectName(u"g_range")
-        self.g_range.setMinimumSize(QSize(296, 0))
-        self.g_range.setMaximumSize(QSize(296, 16777215))
-        self.verticalLayout_3 = QVBoxLayout(self.g_range)
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.w_range = WDataRange(self.g_range)
-        self.w_range.setObjectName(u"w_range")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 318, 508))
+        self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.in_component = QLabel(self.scrollAreaWidgetContents)
+        self.in_component.setObjectName(u"in_component")
 
-        self.verticalLayout_3.addWidget(self.w_range)
+        self.horizontalLayout_2.addWidget(self.in_component)
+
+        self.c_component = QComboBox(self.scrollAreaWidgetContents)
+        self.c_component.setObjectName(u"c_component")
+
+        self.horizontalLayout_2.addWidget(self.c_component)
 
 
-        self.gridLayout.addWidget(self.g_range, 2, 0, 1, 1)
-
-        self.verticalSpacer = QSpacerItem(20, 153, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.gridLayout.addItem(self.verticalSpacer, 3, 0, 1, 1)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.g_axes = QGroupBox(self.scrollAreaWidgetContents)
         self.g_axes.setObjectName(u"g_axes")
@@ -71,13 +68,32 @@ class Ui_DDataPlotter(object):
         self.verticalLayout_2.addWidget(self.w_axis_2)
 
 
-        self.gridLayout.addWidget(self.g_axes, 0, 0, 1, 1)
+        self.verticalLayout.addWidget(self.g_axes)
 
-        self.w_export = WExport(self.scrollAreaWidgetContents)
-        self.w_export.setObjectName(u"w_export")
-        self.w_export.setMinimumSize(QSize(296, 0))
+        self.g_data_extract = QGroupBox(self.scrollAreaWidgetContents)
+        self.g_data_extract.setObjectName(u"g_data_extract")
+        self.g_data_extract.setMinimumSize(QSize(296, 0))
+        self.g_data_extract.setMaximumSize(QSize(296, 16777215))
 
-        self.gridLayout.addWidget(self.w_export, 5, 0, 1, 1)
+        self.verticalLayout.addWidget(self.g_data_extract)
+
+        self.g_range = QGroupBox(self.scrollAreaWidgetContents)
+        self.g_range.setObjectName(u"g_range")
+        self.g_range.setMinimumSize(QSize(296, 0))
+        self.g_range.setMaximumSize(QSize(296, 16777215))
+        self.verticalLayout_3 = QVBoxLayout(self.g_range)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.w_range = WDataRange(self.g_range)
+        self.w_range.setObjectName(u"w_range")
+
+        self.verticalLayout_3.addWidget(self.w_range)
+
+
+        self.verticalLayout.addWidget(self.g_range)
+
+        self.verticalSpacer = QSpacerItem(20, 153, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout.addItem(self.verticalSpacer)
 
         self.refresh_layout = QHBoxLayout()
         self.refresh_layout.setObjectName(u"refresh_layout")
@@ -100,14 +116,13 @@ class Ui_DDataPlotter(object):
         self.refresh_layout.addWidget(self.b_refresh)
 
 
-        self.gridLayout.addLayout(self.refresh_layout, 4, 0, 1, 1)
+        self.verticalLayout.addLayout(self.refresh_layout)
 
-        self.g_data_extract = QGroupBox(self.scrollAreaWidgetContents)
-        self.g_data_extract.setObjectName(u"g_data_extract")
-        self.g_data_extract.setMinimumSize(QSize(296, 0))
-        self.g_data_extract.setMaximumSize(QSize(296, 16777215))
+        self.w_export = WExport(self.scrollAreaWidgetContents)
+        self.w_export.setObjectName(u"w_export")
+        self.w_export.setMinimumSize(QSize(296, 0))
 
-        self.gridLayout.addWidget(self.g_data_extract, 1, 0, 1, 1)
+        self.verticalLayout.addWidget(self.w_export)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
@@ -121,9 +136,10 @@ class Ui_DDataPlotter(object):
 
     def retranslateUi(self, DDataPlotter):
         DDataPlotter.setWindowTitle(QCoreApplication.translate("DDataPlotter", u"Data Plot", None))
-        self.g_range.setTitle(QCoreApplication.translate("DDataPlotter", u"Output Range", None))
+        self.in_component.setText(QCoreApplication.translate("DDataPlotter", u"Component", None))
         self.g_axes.setTitle(QCoreApplication.translate("DDataPlotter", u"Axes", None))
-        self.b_refresh.setText(QCoreApplication.translate("DDataPlotter", u"Refresh", None))
         self.g_data_extract.setTitle(QCoreApplication.translate("DDataPlotter", u"Data Selection", None))
+        self.g_range.setTitle(QCoreApplication.translate("DDataPlotter", u"Output Range", None))
+        self.b_refresh.setText(QCoreApplication.translate("DDataPlotter", u"Refresh", None))
     # retranslateUi
 

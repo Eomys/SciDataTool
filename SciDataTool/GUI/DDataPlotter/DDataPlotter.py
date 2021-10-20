@@ -1,8 +1,11 @@
 from PySide2.QtWidgets import QWidget
 from matplotlib.figure import Figure
 
+from SciDataTool.Classes.VectorField import VectorField
+
 from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
 from matplotlib.backends.backend_qt5agg import (FigureCanvas, NavigationToolbar2QT as NavigationToolbar,)
+from ...Functions.Plot.init_fig import init_fig
 
 
 class DDataPlotter(Ui_DDataPlotter, QWidget):
@@ -23,11 +26,14 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         QWidget.__init__(self)
         self.setupUi(self)
 
+        #Recovering the object that we want to show
         self.data = data
 
-        self.fig = Figure()
+        #Initializing the figure inside the UI
+        (self.fig, self.ax, _, _) = init_fig()
         self.set_figure(self.fig)
 
+        #Managing signals
         self.b_refresh.clicked.connect(self.update_plot)
 
     def set_figure(self, fig):
@@ -35,16 +41,21 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Set plot layout
         self.canvas = FigureCanvas(fig)
         self.toolbar = NavigationToolbar(self.canvas, self)
-        
-
         self.plot_layout.addWidget(self.toolbar)
         self.plot_layout.addWidget(self.canvas)
 
+        #Hide or show the ComboBox related to the component of a VectorField
+        if not isinstance(self.data, VectorField):
+            self.c_component.hide()
+            self.in_component.hide()
+        else:
+            self.c_component.show()
+            self.in_component.show()        
 
-
+            
 
     def update_plot(self):
         """Method that update the plot according to the info given by the user"""
 
-        self.canvas.draw(self.data.plot_2D_Data("time"))
+        self.data.plot_2D_Data("time",fig = self.fig, ax=self.ax)
         
