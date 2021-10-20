@@ -32,9 +32,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         #Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
         self.set_figure(self.fig)
+ 
 
-        #Managing signals
+        #Building the interaction with the UI
         self.b_refresh.clicked.connect(self.update_plot)
+        self.w_axis_1.update_axis(self.data)
+        self.w_axis_2.update_axis(self.data)
 
     def set_figure(self, fig):
         "Method that set up the figure inside the GUI"
@@ -50,12 +53,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             self.in_component.hide()
         else:
             self.c_component.show()
-            self.in_component.show()        
-
-            
-
+            self.in_component.show()   
+                 
     def update_plot(self):
         """Method that update the plot according to the info given by the user"""
 
-        self.data.plot_2D_Data("time",fig = self.fig, ax=self.ax)
+        self.data.plot_2D_Data("time",fig = self.fig, ax=self.ax) #Mandatory to give the figure and the axes to plot
         
+
+
