@@ -1,6 +1,6 @@
 from ...Functions.Load.import_class import import_class
 from ...Classes._check import check_var
-from numpy import ndarray
+from numpy import ndarray, int32, int64, float32, float64
 
 
 def _set_normalizations(self, value):
@@ -12,7 +12,7 @@ def _set_normalizations(self, value):
                     "SciDataTool.Classes", obj.get("__class__"), "normalizations"
                 )
                 value[key] = class_obj(init_dict=obj)
-            elif isinstance(obj, (float, int)):
+            elif isinstance(obj, (float, int, int32, int64, float32, float64)):
                 Norm_ref = import_class(
                     "SciDataTool.Classes", "Norm_ref", "normalizations"
                 )
