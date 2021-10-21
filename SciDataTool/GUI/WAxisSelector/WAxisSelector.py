@@ -60,6 +60,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.setupUi(self)
 
         self.name = "X"
+        self.axes_list = list()
 
         self.b_filter.setDisabled(True)
         self.c_axis.currentTextChanged.connect(self.update_axis)
@@ -75,9 +76,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         axis_name : string
             string that will set the text of in_name (=name of the axis)
             """
+        self.c_axis.blockSignals(True)
+        self.change_name(axis_name)
         self.set_axis(data)
         self.set_unit()
-        self.change_name(axis_name)
+        self.c_axis.blockSignals(False)
 
     def set_axis(self,data):
         """Method that will put the axes of data in the combobox of the widget
@@ -90,28 +93,28 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         """
         #Step 1 : Getting the name of the different axes of the DataND object
-        axes_list = [AXES_DICT[axis.name] 
+        self.axes_list = [AXES_DICT[axis.name] 
         for axis in data.get_axes() 
         if axis.name != "phase" and axis.get_length() > 1
         ]
 
         # At least one axis must be selected => impossible to have none for X axis
         if self.name.lower() != "x" : 
-            axes_list.insert(0, "None")
+            self.axes_list.insert(0, "None")
 
         # Add fft axes
-        if "time" in axes_list:
-            axes_list.append("frequency")
-        elif "frequency" in axes_list:
-            axes_list.insert(0, "time")
-        if "angle" in axes_list:
-            axes_list.append("wavenumber")
-        elif "wavenumber" in axes_list:
-            axes_list.insert(1, "angle")
+        if "time" in self.axes_list:
+            self.axes_list.append("frequency")
+        elif "frequency" in self.axes_list:
+            self.axes_list.insert(0, "time")
+        if "angle" in self.axes_list:
+            self.axes_list.append("wavenumber")
+        elif "wavenumber" in self.axes_list:
+            self.axes_list.insert(1, "angle")
         
         #Step 2 : Replacing the items inside of the ComboBox with the axes recovered
         self.c_axis.clear()
-        self.c_axis.addItems(axes_list)
+        self.c_axis.addItems(self.axes_list)
 
 
     def set_unit(self):
@@ -175,3 +178,16 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the current axis selected
         """
         return self.c_axis.currentText()
+
+    def get_axes(self):
+        """Method that return the axes that can be selected
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        Output
+        ---------
+        list
+            name of the axes avalaible
+        """
+        return self.axes_list
