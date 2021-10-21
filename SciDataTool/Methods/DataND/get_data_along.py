@@ -81,7 +81,7 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     # Update unit if derivation or integration
     unit = self.unit
     for axis in axes_list:
-        if axis.extension == "integrate":
+        if axis.extension in ["antiderivate", "integrate"]:
             unit = get_unit_integrate(self.unit, axis.corr_unit)
         elif axis.extension == "derivate":
             unit = get_unit_derivate(self.unit, axis.corr_unit)
