@@ -59,11 +59,17 @@
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="g_axes">
+        <widget class="WAxisManager" name="w_axis_manager" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>296</width>
-           <height>0</height>
+           <height>200</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -71,36 +77,6 @@
            <width>296</width>
            <height>16777215</height>
           </size>
-         </property>
-         <property name="title">
-          <string>Axes</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="WAxisSelector" name="w_axis_1" native="true"/>
-          </item>
-          <item>
-           <widget class="WAxisSelector" name="w_axis_2" native="true"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="g_data_extract">
-         <property name="minimumSize">
-          <size>
-           <width>296</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>296</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="title">
-          <string>Data Selection</string>
          </property>
         </widget>
        </item>
@@ -133,10 +109,13 @@
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>153</height>
+           <height>650</height>
           </size>
          </property>
         </spacer>
@@ -210,12 +189,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>WAxisSelector</class>
-   <extends>QWidget</extends>
-   <header>...GUI.WAxisSelector.WAxisSelector.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>WDataRange</class>
    <extends>QWidget</extends>
    <header>...GUI.WDataRange.WDataRange.h</header>
@@ -225,6 +198,12 @@
    <class>WExport</class>
    <extends>QWidget</extends>
    <header>...GUI.WExport.WExport.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>WAxisManager</class>
+   <extends>QWidget</extends>
+   <header>...GUI.WAxisManager.WAxisManager.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

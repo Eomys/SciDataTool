@@ -39,8 +39,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         #Building the interaction with the UI
         self.b_refresh.clicked.connect(self.update_plot)
-        self.w_axis_1.update(self.data)
-        self.w_axis_2.update(self.data, "Y")
+        self.w_axis_manager.set_axes(self.data)
+
 
 
         # if is_auto_refresh:

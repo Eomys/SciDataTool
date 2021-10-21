@@ -34,7 +34,7 @@ UNIT_DICT = {
     "angle": ["°", "rad", "distance"],
     "axial direction": ["m", "x L"],
     "frequency": ["Hz", "electrical order", "mechanical order"],
-    "wavenumber": ["", "space order"],
+    "wavenumber": ["", "space order"], #check is correct
     "rotation speed": ["rpm"],
 }       #Dictionnary that contains the possible units for a given axis
 
@@ -152,6 +152,26 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.in_name.setText(axis_name)
 
     def update_axis(self):
+        """Method called when an axis is changed that will emit a signal as well as updating the units available
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+
+        """
         self.set_unit()
         self.refreshNeeded.emit()
         self.axisChanged.emit()
+
+    def get_current_axis(self):
+        """Method that return the axis currently selected
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        Output
+        ---------
+        string
+            name of the current axis selected
+        """
+        return self.c_axis.currentText()
