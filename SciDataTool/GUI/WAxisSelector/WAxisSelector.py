@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QWidget
 
 from ...GUI.WAxisSelector.Ui_WAxisSelector import Ui_WAxisSelector
-
+from PySide2.QtCore import Signal
 AXES_DICT = {
     "time": "time",
     "angle": "angle",
@@ -41,6 +41,9 @@ UNIT_DICT = {
 class WAxisSelector(Ui_WAxisSelector, QWidget):
     """Widget to select the axis to plot"""
 
+    refreshNeeded = Signal()
+    axisChanged = Signal()
+
     def __init__(self, parent=None):
         """Initialize the GUI according to machine type
 
@@ -56,18 +59,45 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         QWidget.__init__(self, parent)
         self.setupUi(self)
 
-        self.b_filter.setDisabled(True)
-        self.c_axis.currentTextChanged.connect(self.update_unit)
+        self.name = "X"
 
-    def update_axis(self,data):
-        """Method that will put the axes of data in the combobox"""
-        #Step 1 : Getting the name of the different axes of the field
+        self.b_filter.setDisabled(True)
+        self.c_axis.currentTextChanged.connect(self.update_axis)
+
+    def update(self,data,axis_name = "X"):
+        """Method used to update the axis by calling the other method defined
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        data : DataND
+            A DataND object to plot
+        axis_name : string
+            string that will set the text of in_name (=name of the axis)
+            """
+        self.set_axis(data)
+        self.set_unit()
+        self.change_name(axis_name)
+
+    def set_axis(self,data):
+        """Method that will put the axes of data in the combobox of the widget
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        data : DataND
+            A DataND object that we want to plot
+
+        """
+        #Step 1 : Getting the name of the different axes of the DataND object
         axes_list = [AXES_DICT[axis.name] 
         for axis in data.get_axes() 
         if axis.name != "phase" and axis.get_length() > 1
         ]
 
-        axes_list.insert(0, "None")
+        # At least one axis must be selected => impossible to have none for X axis
+        if self.name.lower() != "x" : 
+            axes_list.insert(0, "None")
 
         # Add fft axes
         if "time" in axes_list:
@@ -84,8 +114,14 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.c_axis.addItems(axes_list)
 
 
-    def update_unit(self):
-        "Method that update the unit comboxbox according to the axis selected"
+    def set_unit(self):
+        """Method that update the unit comboxbox according to the axis selected in the other combobox
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+
+        """
         #Step 1 : Recovering the axis chosen 
         quantity = self.c_axis.currentText()
 
@@ -102,6 +138,20 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 self.c_unit.addItems(UNIT_DICT[quantity])
             
     def change_name(self,axis_name):
-        "Method to change of the label of the widget"
+        """Method to change of the label of the widget
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        axis_name : string
+            string that we will use to set the in_name of the widget
 
+        """
+
+        self.name = axis_name
         self.in_name.setText(axis_name)
+
+    def update_axis(self):
+        self.set_unit()
+        self.refreshNeeded.emit()
+        self.axisChanged.emit()

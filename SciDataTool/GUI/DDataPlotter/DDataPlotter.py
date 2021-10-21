@@ -11,7 +11,7 @@ from ...Functions.Plot.init_fig import init_fig
 class DDataPlotter(Ui_DDataPlotter, QWidget):
     """Main windows of to plot a Data object"""
 
-    def __init__(self, data):
+    def __init__(self, data, is_auto_refresh=False):
         """Initialize the GUI according to machine type
 
         Parameters
@@ -20,6 +20,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a DDataPlotter object
         data : DataND
             A DataND object to plot
+        is_auto_refresh : bool
+            True to remove 
         """
 
         # Build the interface according to the .ui file
@@ -28,6 +30,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         #Recovering the object that we want to show
         self.data = data
+        # is_auto_refresh = False
 
         #Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
@@ -36,12 +39,27 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         #Building the interaction with the UI
         self.b_refresh.clicked.connect(self.update_plot)
-        self.w_axis_1.update_axis(self.data)
-        self.w_axis_2.update_axis(self.data)
-        self.w_axis_2.change_name("y")
+        self.w_axis_1.update(self.data)
+        self.w_axis_2.update(self.data, "Y")
+
+
+        # if is_auto_refresh:
+        # Update Graph
+        #     refreshNeeded.connect(self.refresh)
+        # else:  # Enable refresh button
+        #     refreshNeeded.connect(refresh_enable)
 
     def set_figure(self, fig):
-        "Method that set up the figure inside the GUI"
+        """Method that set up the figure inside the GUI
+        
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+        fig : Figure
+            A Figure object to put inside the UI
+
+        """
         # Set plot layout
         self.canvas = FigureCanvas(fig)
         self.toolbar = NavigationToolbar(self.canvas, self)
@@ -55,11 +73,15 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         else:
             self.c_component.show()
             self.in_component.show()   
-
-        
-                 
+           
     def update_plot(self):
-        """Method that update the plot according to the info given by the user"""
+        """Method that update the plot according to the info given by the user
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+
+        """
 
         self.data.plot_2D_Data("time",fig = self.fig, ax=self.ax) #Mandatory to give the figure and the axes to plot
         
