@@ -140,6 +140,11 @@ try:
 except ImportError as error:
     orthogonal_mp = error
 
+try:
+    from ..Methods.DataND.summing import summing
+except ImportError as error:
+    summing = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -415,6 +420,15 @@ class DataND(Data):
         )
     else:
         orthogonal_mp = orthogonal_mp
+    # cf Methods.DataND.summing
+    if isinstance(summing, ImportError):
+        summing = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method summing: " + str(summing))
+            )
+        )
+    else:
+        summing = summing
     # save and copy methods are available in all object
     save = save
     copy = copy
