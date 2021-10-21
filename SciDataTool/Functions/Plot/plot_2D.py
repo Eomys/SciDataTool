@@ -296,6 +296,7 @@ def plot_2D(
                 headwidth=2,
                 headlength=4,
             )
+            
             ax.axis("equal")
 
     elif type_plot == "curve_point":
