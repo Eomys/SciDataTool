@@ -38,7 +38,7 @@ def summing(self, values, axes_list, is_magnitude):
         extension = axis_requested.extension
         index = axis_requested.index
         if axis_requested.is_pattern:
-            Nper, is_aper = 1, False
+            Nper, is_aper = None, None
         else:
             Nper, is_aper = self.axes[index].get_periodicity()
         if axis_requested.name in ["time", "angle", "z"]:

@@ -264,6 +264,8 @@ def plot_3D(
             shading="gouraud",
             antialiased=True,
             picker=True,
+            vmin=z_min,
+            vmax=z_max,
         )
         clb = fig.colorbar(c, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
