@@ -67,7 +67,7 @@ def test_slice():
     field = field_x + y
     Field = DataTime(name="Example field", symbol="Z", axes=[X, Y], values=field)
     result = Field.get_along("time=integrate", "Y")
-    expected = (300 * 0.2 + linspace(0, 100, 11)) * 1.2
+    expected = 300 * 0.2 + linspace(0, 100, 11)
     assert_array_almost_equal(expected, result["Z"])
 
     # Interpolation on double point

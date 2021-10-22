@@ -56,7 +56,6 @@ def antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
                 )
                 # Get values on a full (anti-)period
                 shape = list(values.shape)
-                shape[index], shape[0] = shape[0], shape[index]
                 shape[0] = shape[0] + 1
                 values_full = np.zeros(shape, dtype=values.dtype)
                 values_full[:-1, ...] = values
@@ -201,7 +200,6 @@ def derivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
                 )
                 # Rebuild values on a full (anti-)period
                 shape = list(values.shape)
-                shape[index], shape[0] = shape[0], shape[index]
                 shape[0] = shape[0] + 2
                 values_full = np.zeros(shape, dtype=values.dtype)
                 values_full[1:-1, ...] = values

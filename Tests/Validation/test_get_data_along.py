@@ -137,7 +137,6 @@ def test_get_data_along_single():
     assert Field_extract.axes[0].name == "time"
 
 
-@pytest.mark.skip
 @pytest.mark.validation
 def test_get_data_along_integrate():
     f = 50
@@ -170,6 +169,7 @@ def test_get_data_along_integrate():
 
     Field_int = Field.get_data_along("time=integrate", "angle")
     assert Field_int.unit == "ms"
+    assert_array_almost_equal(Field_int.values, 0, decimal=16)
     Field.unit = "ms"
     Field_int = Field.get_data_along("time=integrate")
     assert Field_int.unit == "ms2"
@@ -188,7 +188,6 @@ def test_get_data_along_integrate():
 
 
 @pytest.mark.validation
-@pytest.mark.skip
 def test_get_data_along_antiderivate():
     f = 50
     Time = DataLinspace(
@@ -348,7 +347,7 @@ def test_get_data_along_to_linspace():
 
 if __name__ == "__main__":
     # test_get_data_along_single()
-    # test_get_data_along_integrate()
+    test_get_data_along_integrate()
     # test_get_data_along_derivate()
-    test_get_data_along_antiderivate()
+    # test_get_data_along_antiderivate()
     # test_get_data_along_to_linspace()
