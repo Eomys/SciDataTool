@@ -20,3 +20,18 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         # Build the interface according to the .ui file
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
+        self.name = "angle"
+
+    def get_name(self):
+
+        return self.in_name.text()
+
+    def set_name (self,name):
+
+        self.name = name
+        self.in_name.setText(name)
+
+    def update(self,name):
+
+        self.set_name(name)
+

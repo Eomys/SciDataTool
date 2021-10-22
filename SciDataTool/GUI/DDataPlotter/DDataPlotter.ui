@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
-    <height>532</height>
+    <width>872</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,7 +40,7 @@
         <x>0</x>
         <y>0</y>
         <width>318</width>
-        <height>508</height>
+        <height>714</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -69,7 +69,7 @@
          <property name="minimumSize">
           <size>
            <width>296</width>
-           <height>200</height>
+           <height>350</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -110,12 +110,12 @@
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
+          <enum>QSizePolicy::Preferred</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>650</height>
+           <height>120</height>
           </size>
          </property>
         </spacer>
@@ -161,7 +161,7 @@
            <property name="maximumSize">
             <size>
              <width>93</width>
-             <height>16777215</height>
+             <height>30</height>
             </size>
            </property>
            <property name="text">

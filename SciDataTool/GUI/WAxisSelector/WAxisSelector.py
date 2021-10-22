@@ -59,8 +59,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         QWidget.__init__(self, parent)
         self.setupUi(self)
 
-        self.name = "X"
-        self.axes_list = list()
+        self.name = "X"         #Name of the axis
+        self.axes_list = list() #List of the different axes of the DataND object
 
         self.b_filter.setDisabled(True)
         self.c_axis.currentTextChanged.connect(self.update_axis)

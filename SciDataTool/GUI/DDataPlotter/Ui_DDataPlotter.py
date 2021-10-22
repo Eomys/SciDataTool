@@ -18,7 +18,7 @@ class Ui_DDataPlotter(object):
     def setupUi(self, DDataPlotter):
         if not DDataPlotter.objectName():
             DDataPlotter.setObjectName(u"DDataPlotter")
-        DDataPlotter.resize(816, 532)
+        DDataPlotter.resize(872, 738)
         self.horizontalLayout = QHBoxLayout(DDataPlotter)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.plot_layout = QVBoxLayout()
@@ -33,7 +33,7 @@ class Ui_DDataPlotter(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 318, 508))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 318, 714))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout_2 = QHBoxLayout()
@@ -58,7 +58,7 @@ class Ui_DDataPlotter(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.w_axis_manager.sizePolicy().hasHeightForWidth())
         self.w_axis_manager.setSizePolicy(sizePolicy)
-        self.w_axis_manager.setMinimumSize(QSize(296, 200))
+        self.w_axis_manager.setMinimumSize(QSize(296, 300))
         self.w_axis_manager.setMaximumSize(QSize(296, 16777215))
 
         self.verticalLayout.addWidget(self.w_axis_manager)
@@ -77,7 +77,7 @@ class Ui_DDataPlotter(object):
 
         self.verticalLayout.addWidget(self.g_range)
 
-        self.verticalSpacer = QSpacerItem(20, 650, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(20, 120, QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
@@ -97,7 +97,7 @@ class Ui_DDataPlotter(object):
         sizePolicy1.setHeightForWidth(self.b_refresh.sizePolicy().hasHeightForWidth())
         self.b_refresh.setSizePolicy(sizePolicy1)
         self.b_refresh.setMinimumSize(QSize(93, 0))
-        self.b_refresh.setMaximumSize(QSize(93, 16777215))
+        self.b_refresh.setMaximumSize(QSize(93, 30))
 
         self.refresh_layout.addWidget(self.b_refresh)
 
