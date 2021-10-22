@@ -115,6 +115,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         #Step 2 : Replacing the items inside of the ComboBox with the axes recovered
         self.c_axis.clear()
         self.c_axis.addItems(self.axes_list)
+        self.update_axis()
 
 
     def set_unit(self):
@@ -162,11 +163,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             a WAxisSelector object
 
         """
-        self.set_unit()
+        self.set_unit()     
         self.refreshNeeded.emit()
         self.axisChanged.emit()
 
-    def get_current_axis(self):
+    def get_current_axis_name(self):
         """Method that return the axis currently selected
         Parameters
         ----------

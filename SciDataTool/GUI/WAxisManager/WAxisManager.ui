@@ -19,7 +19,7 @@
      <x>11</x>
      <y>138</y>
      <width>296</width>
-     <height>300</height>
+     <height>450</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -31,7 +31,7 @@
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>300</height>
+     <height>450</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -49,7 +49,7 @@
       <x>10</x>
       <y>20</y>
       <width>281</width>
-      <height>271</height>
+      <height>411</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="lay_data_extract">

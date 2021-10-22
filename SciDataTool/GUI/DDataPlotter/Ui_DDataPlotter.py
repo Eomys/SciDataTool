@@ -58,7 +58,7 @@ class Ui_DDataPlotter(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.w_axis_manager.sizePolicy().hasHeightForWidth())
         self.w_axis_manager.setSizePolicy(sizePolicy)
-        self.w_axis_manager.setMinimumSize(QSize(296, 300))
+        self.w_axis_manager.setMinimumSize(QSize(296, 450))
         self.w_axis_manager.setMaximumSize(QSize(296, 16777215))
 
         self.verticalLayout.addWidget(self.w_axis_manager)
@@ -77,7 +77,7 @@ class Ui_DDataPlotter(object):
 
         self.verticalLayout.addWidget(self.g_range)
 
-        self.verticalSpacer = QSpacerItem(20, 120, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.verticalSpacer = QSpacerItem(20, 100, QSizePolicy.Minimum, QSizePolicy.Preferred)
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
