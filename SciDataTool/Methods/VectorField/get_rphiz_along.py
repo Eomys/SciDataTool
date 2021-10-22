@@ -2,7 +2,7 @@
 
 from numpy import zeros
 
-from SciDataTool.Functions.conversions import xy_to_rphi, cart2pol
+from SciDataTool.Functions.conversions import cart2pol
 from SciDataTool.Functions import AxisError
 
 
