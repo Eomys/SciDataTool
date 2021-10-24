@@ -1,18 +1,7 @@
 import numpy as np
 
-from SciDataTool.Functions import NormError, UnitError, AxisError
+from SciDataTool.Functions import NormError, UnitError
 from SciDataTool.Functions.conversions import convert as convert_unit, to_dB, to_dBA
-from SciDataTool.Functions.derivation_integration import (
-    derivate,
-    integrate,
-    antiderivate,
-)
-from SciDataTool.Functions.sum_mean import (
-    my_sum,
-    my_mean,
-    root_mean_square,
-    root_sum_square,
-)
 
 
 def convert(self, values, unit, is_norm, is_squeeze, axes_list):
