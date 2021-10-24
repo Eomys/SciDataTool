@@ -139,7 +139,10 @@ def test_get_data_along_single():
 
 @pytest.mark.validation
 def test_get_data_along_integrate():
+
+    # Test integrate / sum / mean / rms with and without anti-periodicity
     f = 50
+    A = 5
     Time = DataLinspace(
         name="time",
         unit="s",
@@ -157,19 +160,100 @@ def test_get_data_along_integrate():
         include_endpoint=False,
     )
     ta, at = np.meshgrid(Time.get_values(), Angle.get_values())
-    field = 5 * np.cos(2 * np.pi * f * ta + 3 * at)
+    field = A * np.cos(2 * np.pi * f * ta + 3 * at)
     Field = DataTime(
         name="Example field",
         symbol="X",
         unit="m",
         normalizations={"ref": Norm_ref(ref=2e-5)},
-        axes=[Angle, Time],
-        values=field,
+        axes=[Time, Angle],
+        values=field.T,
     )
 
     Field_int = Field.get_data_along("time=integrate", "angle")
-    assert Field_int.unit == "ms"
     assert_array_almost_equal(Field_int.values, 0, decimal=16)
+    assert Field_int.unit == "ms"
+    Field_mean = Field.get_data_along("time=mean", "angle")
+    assert_array_almost_equal(Field_mean.values, 0, decimal=15)
+    assert Field_mean.unit == "m"
+    Field_sum = Field.get_data_along("time=sum", "angle")
+    assert_array_almost_equal(Field_sum.values, 0, decimal=14)
+    assert Field_sum.unit == "m"
+    Field_rms = Field.get_data_along("time=rms", "angle")
+    assert_array_almost_equal(Field_rms.values, A / np.sqrt(2), decimal=15)
+    assert Field_rms.unit == "m"
+
+    # Anti-periodic signal
+    Time0 = Time.get_axis_periodic(Nper=1, is_aper=True)
+    ta0, at0 = np.meshgrid(Time0.get_values(is_smallestperiod=True), Angle.get_values())
+    field0 = A * np.cos(2 * np.pi * f * ta0 + 3 * at0)
+    Field0 = DataTime(
+        name="Example field",
+        symbol="X",
+        unit="m",
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+        axes=[Time0, Angle],
+        values=field0.T,
+    )
+    Field_int0 = Field0.get_data_along("time=integrate", "angle")
+    assert_array_almost_equal(Field_int0.values, 0, decimal=16)
+    Field_mean0 = Field0.get_data_along("time=mean", "angle")
+    assert_array_almost_equal(Field_mean0.values, 0, decimal=15)
+    Field_sum0 = Field0.get_data_along("time=sum", "angle")
+    assert_array_almost_equal(Field_sum0.values, 0, decimal=14)
+    Field_rms0 = Field0.get_data_along("time=rms", "angle")
+    assert_array_almost_equal(Field_rms0.values, A / np.sqrt(2), decimal=15)
+
+    # Test integrate / sum / mean / rms with and without periodicity
+    f = 32.1258
+    A = 12.478
+    Time1 = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=0.5 / f,
+        number=10,
+        include_endpoint=False,
+        symmetries={"period": 2},
+    )
+    ta1, at1 = np.meshgrid(Time1.get_values(is_smallestperiod=True), Angle.get_values())
+    field1 = A * np.cos(2 * np.pi * f * ta1 + 3 * at1) ** 2
+    Field1 = DataTime(
+        name="Example field",
+        symbol="X",
+        unit="m",
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+        axes=[Time1, Angle],
+        values=field1.T,
+    )
+
+    Time2 = Time1.get_axis_periodic(Nper=1, is_aper=False)
+    ta2, at2 = np.meshgrid(Time2.get_values(), Angle.get_values())
+    field2 = A * np.cos(2 * np.pi * f * ta2 + 3 * at2) ** 2
+    Field2 = DataTime(
+        name="Example field",
+        symbol="X",
+        unit="m",
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+        axes=[Time2, Angle],
+        values=field2.T,
+    )
+
+    assert_array_almost_equal(Time1.get_values(), Time2.get_values(), decimal=16)
+    Field_int1 = Field1.get_data_along("time=integrate", "angle")
+    Field_int2 = Field2.get_data_along("time=integrate", "angle")
+    assert_array_almost_equal(Field_int1.values, 0.5 * A / f, decimal=15)
+    assert_array_almost_equal(Field_int2.values, 0.5 * A / f, decimal=15)
+    Field_mean1 = Field1.get_data_along("time=mean", "angle")
+    Field_mean2 = Field2.get_data_along("time=mean", "angle")
+    assert_array_almost_equal(Field_mean1.values, 0.5 * A, decimal=14)
+    assert_array_almost_equal(Field_mean2.values, 0.5 * A, decimal=14)
+    Field_rms1 = Field1.get_data_along("time=rms", "angle")
+    Field_rms2 = Field2.get_data_along("time=rms", "angle")
+    assert_array_almost_equal(Field_rms1.values, np.sqrt(3 * A ** 2 / 8), decimal=14)
+    assert_array_almost_equal(Field_rms2.values, np.sqrt(3 * A ** 2 / 8), decimal=14)
+
+    # Test unit change
     Field.unit = "ms"
     Field_int = Field.get_data_along("time=integrate")
     assert Field_int.unit == "ms2"
@@ -346,8 +430,8 @@ def test_get_data_along_to_linspace():
 
 
 if __name__ == "__main__":
-    # test_get_data_along_single()
+    test_get_data_along_single()
     test_get_data_along_integrate()
-    # test_get_data_along_derivate()
-    # test_get_data_along_antiderivate()
-    # test_get_data_along_to_linspace()
+    test_get_data_along_derivate()
+    test_get_data_along_antiderivate()
+    test_get_data_along_to_linspace()

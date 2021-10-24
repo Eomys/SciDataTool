@@ -83,7 +83,7 @@ def antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
     return values
 
 
-def integrate(values, ax_val, index, Nper, is_aper, is_phys):
+def integrate(values, ax_val, index, Nper, is_aper, is_phys, is_mean=False):
     """Returns the integral of values along given axis
 
     Parameters
@@ -94,8 +94,14 @@ def integrate(values, ax_val, index, Nper, is_aper, is_phys):
         axis values
     index: int
         index of axis along which to derivate
+    Nper: int
+        number of periodicities along axis
     is_aper: bool
         True if values is anti-periodic along axis
+    is_phys: bool
+        True if physical quantity (time/angle/z)
+    is_mean: bool
+        True to divide integrated value by integration interval (mean value)
 
     Returns
     -------
@@ -141,6 +147,11 @@ def integrate(values, ax_val, index, Nper, is_aper, is_phys):
             values = Nper * np.trapz(values_full, x=ax_full, axis=0)
             # Get N first values and swap axes back to origin
             values = np.swapaxes(values, 0, index - 1)
+
+            if is_mean:
+                # Taking mean value by dividing by integration interval
+                interval = Nper * (np.max(ax_full) - np.min(ax_full))
+                values /= interval
 
     else:
         raise Exception("Cannot anti-derivate along axis if axis size is 1")
