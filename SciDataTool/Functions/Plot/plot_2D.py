@@ -56,7 +56,6 @@ def plot_2D(
     scale_units="x",
     scale=None,
     width=0.005,
-
 ):
     """Plots a 2D graph (curve, bargraph or barchart) comparing fields in Ydatas
 
@@ -117,7 +116,7 @@ def plot_2D(
     scale : float
         arrow lenght factor
     width : float
-        arrow width factor 
+        arrow width factor
     """
 
     # Set is_show_fig if is None
@@ -254,10 +253,8 @@ def plot_2D(
         for i in range(ndatas):
             x = [e[0] for e in Xdatas[i_Xdatas[i]]]
             y = [e[1] for e in Xdatas[i_Xdatas[i]]]
-            if scale == None :
-                scale=25 * (np_max(Ydatas[0]))
-            else:
-                scale=25 * (np_max(Ydatas[0])) / scale
+            if scale == None:
+                scale = 25 * (np_max(Ydatas[0]))
             ax.quiver(
                 x,
                 y,

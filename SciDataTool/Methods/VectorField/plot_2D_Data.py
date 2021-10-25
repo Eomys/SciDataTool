@@ -43,7 +43,6 @@ def plot_2D_Data(
     scale_units="x",
     scale=None,
     width=0.005,
-
 ):
     """Plots a field as a function of time
 
@@ -110,7 +109,7 @@ def plot_2D_Data(
     scale : float
         arrow lenght factor
     width : float
-        arrow width factor 
+        arrow width factor
     """
 
     # Special case of quiver plot
@@ -148,8 +147,8 @@ def plot_2D_Data(
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
             is_grid=False,
-            scale_units=scale_units,
-            scale=scale,
+            scale_units="x",
+            scale=None,
             width=width,
         )
 
