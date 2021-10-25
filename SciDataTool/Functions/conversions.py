@@ -102,10 +102,10 @@ def get_dim_prefix(unit_str):
             if prefix_str in unit_prefixes.keys():
                 prefix = (unit_prefixes.get(prefix_str) * key[1]) ** p
             else:
-                raise UnitError("ERROR: Prefix " + prefix_str + " unknown")
+                raise UnitError("Prefix " + prefix_str + " unknown")
             break
     if not dim:
-        raise UnitError("ERROR: Unit " + unit_str + " unknown")
+        raise UnitError("Unit " + unit_str + " unknown")
     return (dim, prefix)
 
 

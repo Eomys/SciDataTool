@@ -145,8 +145,8 @@ def integrate(values, ax_val, index, Nper, is_aper, is_phys, is_mean=False):
                 values_full[-1, ...] = values[0, ...]
             # Integrate along axis
             values = Nper * np.trapz(values_full, x=ax_full, axis=0)
-            # Get N first values and swap axes back to origin
-            values = np.swapaxes(values, 0, index - 1)
+            # Readd first dim and swap axes back to origin
+            values = np.swapaxes(values[None, ...], 0, index)
 
             if is_mean:
                 # Taking mean value by dividing by integration interval
