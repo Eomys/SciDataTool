@@ -780,7 +780,9 @@
             "plot_2D_Data",
             "plot_2D_Data_Animated",
             "plot_3D_Data",
-            "time_to_freq"
+            "time_to_freq",
+            "to_xyz",
+            "to_rphiz"
         ],
         "mother": "",
         "name": "VectorField",

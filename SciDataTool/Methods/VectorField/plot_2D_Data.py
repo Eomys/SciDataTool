@@ -1,6 +1,10 @@
 from numpy import column_stack, array, exp, real, squeeze
 from SciDataTool.Functions.Plot.plot_2D import plot_2D
-from SciDataTool.Functions.conversions import rphiz_to_xyz, xyz_to_rphiz, rphiz_to_xyz_field
+from SciDataTool.Functions.conversions import (
+    rphiz_to_xyz,
+    xyz_to_rphiz,
+    rphiz_to_xyz_field,
+)
 
 
 def plot_2D_Data(
@@ -116,10 +120,13 @@ def plot_2D_Data(
 
     # Special case of quiver plot
     if type_plot == "quiver":
-        
+
         if component_list is None:
             result = self.get_xyz_along(
-                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm,
+                arg_list,
+                axis_data=axis_data,
+                unit=unit,
+                is_norm=is_norm,
             )
 
             if "x" in result and "y" in result:
@@ -131,10 +138,15 @@ def plot_2D_Data(
                 rphi = column_stack((array([radius] * len(phi)), phi))
                 Xdatas = rphiz_to_xyz(rphi)
 
-            Ydatas = column_stack((squeeze(result["comp_x"]), squeeze(result["comp_y"])))
+            Ydatas = column_stack(
+                (squeeze(result["comp_x"]), squeeze(result["comp_y"]))
+            )
         else:
             result = self.components[component_list[0]].get_along(
-                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm,
+                arg_list,
+                axis_data=axis_data,
+                unit=unit,
+                is_norm=is_norm,
             )
             Y_comp = result[self.components[component_list[0]].symbol]
 
@@ -143,11 +155,11 @@ def plot_2D_Data(
                 rphiz = xyz_to_rphiz(Xdatas)
 
                 if component_list[0] == "radial":
-                    Y_3d = column_stack((Y_comp, 0*Y_comp, 0*Y_comp))
+                    Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
                 else:
-                    Y_3d = column_stack((0*Y_comp, Y_comp, 0*Y_comp))
+                    Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
 
-                Ydatas = rphiz_to_xyz_field(Y_3d, rphiz[:,1])
+                Ydatas = rphiz_to_xyz_field(Y_3d, rphiz[:, 1])
 
             else:
                 if radius is None:
@@ -156,13 +168,13 @@ def plot_2D_Data(
                 rphi = column_stack((array([radius] * len(phi)), phi))
                 Xdatas = rphiz_to_xyz(rphi)
                 if component_list[0] == "radial":
-                    Y_3d = column_stack((Y_comp, 0*Y_comp, 0*Y_comp))
+                    Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
                 else:
-                    Y_3d = column_stack((0*Y_comp, Y_comp, 0*Y_comp))
+                    Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
 
                 Ydatas = rphiz_to_xyz_field(Y_3d, phi)
 
-        Ydatas = real(Ydatas*exp(1j*phase))
+        Ydatas = real(Ydatas * exp(1j * phase))
 
         # Normalize Ydatas
         # Ydatas = Ydatas / (np_max(Ydatas) * 0.001 * radius)
