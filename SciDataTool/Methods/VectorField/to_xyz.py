@@ -24,7 +24,7 @@ def to_xyz(self):
         arg_list = [
             axis.name + "[smallestperiod]" for axis in self.components["radial"].axes
         ]
-        result = self.get_xyz_along(*arg_list)
+        result = self.get_xyz_along(*arg_list, is_squeeze=False)
         # Store in new VectorField
         comp_dict = dict()
 

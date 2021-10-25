@@ -21,7 +21,9 @@ def to_rphiz(self):
 
     else:
         # Coordinate transform
-        arg_list = [axis.name for axis in self.components["comp_x"].axes]
+        arg_list = [
+            axis.name + "[smallestperiod]" for axis in self.components["comp_x"].axes
+        ]
         result = self.get_rphiz_along(*arg_list)
         # Store in new VectorField
         comp_dict = dict()

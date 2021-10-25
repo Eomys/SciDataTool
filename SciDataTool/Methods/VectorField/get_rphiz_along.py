@@ -34,9 +34,9 @@ def get_rphiz_along(
         # Extract first along whole "angle" axis
         new_args = [arg for arg in args]
         string = [s for s in args if "angle" in s]
-        if string != []:
+        if string != [] and "smallestperiod" not in string[0]:
             new_args[args.index(string[0])] = "angle"
-        else:
+        elif string == []:
             new_args.extend(["angle"])
         Datax = self.components["comp_x"].get_data_along(
             *new_args,
@@ -53,7 +53,10 @@ def get_rphiz_along(
         field_x = Datax.values
         field_y = Datay.values
         shape = field_x.shape
-        phi = Datax.get_axes("angle")[0].get_values()
+        if "smallestperiod" in string[0]:
+            phi = Datax.get_axes("angle")[0].get_values(is_smallestperiod=True)
+        else:
+            phi = Datax.get_axes("angle")[0].get_values()
         # Convert to cylindrical coordinates
         (field_r, field_t) = cart2pol(field_x, field_y, phi)
         # Extract second time with true args
@@ -77,7 +80,7 @@ def get_rphiz_along(
                 axis_data=axis_data,
                 is_squeeze=is_squeeze,
             )
-            field_t = resultt[self.components["tangential"].symbol]
+            field_c = resultt[self.components["tangential"].symbol]
             # Delete temporary Data objects
             del self.components["radial"]
             del self.components["tangential"]
