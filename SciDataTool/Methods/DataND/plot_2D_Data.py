@@ -62,6 +62,7 @@ def plot_2D_Data(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
+    is_oustide_legend=False,
 ):
     """Plots a field as a function of time
 
@@ -119,6 +120,8 @@ def plot_2D_Data(
         Title of the plot window
     thresh : float
         threshold for automatic fft ticks
+    is_outside_legend : bool
+        True to display legend outside the graph
     """
 
     # Extract arg_list it the function called from another script with *arg_list
@@ -495,6 +498,7 @@ def plot_2D_Data(
             font_size_title=font_size_title,
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
+            is_oustide_legend=is_oustide_legend,
         )
 
     else:
@@ -535,4 +539,5 @@ def plot_2D_Data(
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
             is_show_legend=True,
+            is_oustide_legend=is_oustide_legend,
         )

@@ -49,6 +49,7 @@ def plot_2D_Data(
     scale=None,
     width=0.005,
     phase=0,
+    is_oustide_legend=False,
 ):
     """Plots a field as a function of time
 
@@ -116,6 +117,8 @@ def plot_2D_Data(
         arrow length factor
     width : float
         arrow width factor
+    is_outside_legend : bool
+        True to display legend outside the graph
     """
 
     # Special case of quiver plot
@@ -203,6 +206,7 @@ def plot_2D_Data(
             scale_units=scale_units,
             scale=scale,
             width=width,
+            is_oustide_legend=is_oustide_legend,
         )
 
     else:
@@ -251,4 +255,5 @@ def plot_2D_Data(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
+                is_oustide_legend=is_oustide_legend,
             )
