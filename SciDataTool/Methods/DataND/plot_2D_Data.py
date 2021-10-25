@@ -62,7 +62,7 @@ def plot_2D_Data(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
-    is_oustide_legend=False,
+    is_outside_legend=False,
 ):
     """Plots a field as a function of time
 
@@ -498,7 +498,7 @@ def plot_2D_Data(
             font_size_title=font_size_title,
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
-            is_oustide_legend=is_oustide_legend,
+            is_outside_legend=is_outside_legend,
         )
 
     else:
@@ -539,5 +539,5 @@ def plot_2D_Data(
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
             is_show_legend=True,
-            is_oustide_legend=is_oustide_legend,
+            is_outside_legend=is_outside_legend,
         )
