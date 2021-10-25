@@ -2,9 +2,24 @@ from PySide2.QtCore import QSize
 from PySide2.QtWidgets import QSizePolicy, QSpacerItem, QWidget
 
 from ...GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
-from ...GUI.WAxisSelector.WAxisSelector import AXES_DICT
 from ...GUI.WDataExtractor.WDataExtractor import WDataExtractor
 
+LINKED_AXIS ={
+    "time":["time","frequency"],
+    "frequency":["time","frequency"],
+    "angle":["angle","wavenumber"],
+    "wavenumber":["angle","wavenumber"],
+    "None" : [],
+    "axial direction": [],
+}
+
+COMP_AXIS = {
+    "time":["angle","axial direction"],
+    "angle":["time","axial direction"],
+    "frequency":["wavenumber"],
+    "wavenumber":["frequency"],
+    "axial direction":["time","angle"],
+}
 
 class WAxisManager(Ui_WAxisManager, QWidget):
     """Widget that will handle the selection of the axis as well as generating WDataExtractor"""
@@ -36,8 +51,10 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         data : DataND
             The DataND object that we want to plot
         """
+
         self.w_axis_1.update(data)
         self.w_axis_2.update(data,"Y")
+
 
 
     def axes_updated(self):
@@ -56,32 +73,21 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_selected.append(self.w_axis_2.get_current_axis_name())
 
         #Step 2 : Handling the case where the selected axes are not correct
-        if axes_selected[0] == axes_selected[1]:
-            print("Error : Same axis selected for X and Y")
-
-        elif "time" in axes_selected and "frequency" in axes_selected:
-            print("Error : You can not select time and frequency as axes at the same time")
-        elif "angle" in axes_selected and "wavenumber" in axes_selected:
-            print("Error : You can not select angle and wavenumber as axes at the same time")
-                
+        if axes_selected[1] in LINKED_AXIS[axes_selected[0]] or axes_selected[0] in LINKED_AXIS[axes_selected[1]]:
+            print("Error : Wrong axes combination selected")
+ 
         else:
-
-            #Step 3 : Getting the list of items to generate
-            if "time" in axes_selected:
-                axes_selected.append("frequency")
-            elif "frequency" in axes_selected:
-                axes_selected.append("time")
-            if "angle" in axes_selected:
-                axes_selected.append("wavenumber")
-            elif "wavenumber" in axes_selected:
-                axes_selected.append("angle")            
-
-            axes_to_show = list ()
-            for ax in self.w_axis_1.get_axes():
+   
+            #Step 3 : Adding the FFT/IFFT of the axis given
+            axes_selected += [axis for axis in LINKED_AXIS[axes_selected[0]] if axis != axes_selected[0]]
+            axes_selected += [axis for axis in LINKED_AXIS[axes_selected[1]] if axis != axes_selected[1]]
+                    
+            axes_to_gen = list()
+            for ax in self.w_axis_1.get_axes(): #TO MODIFY
                 if not ax in axes_selected:
-                    axes_to_show.append(ax)
+                    axes_to_gen.append(ax)
             #Step 4 : showing the right axes inside the DataSelection groupBox
-            self.gen_data_selec(axes_to_show)
+            self.gen_data_selec(axes_to_gen)
 
 
         

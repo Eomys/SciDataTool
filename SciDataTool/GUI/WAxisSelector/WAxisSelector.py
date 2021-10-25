@@ -92,6 +92,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             A DataND object that we want to plot
 
         """
+        
         #Step 1 : Getting the name of the different axes of the DataND object
         self.axes_list = [AXES_DICT[axis.name] 
         for axis in data.get_axes() 

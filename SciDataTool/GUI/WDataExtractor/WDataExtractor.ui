@@ -56,6 +56,21 @@
        </item>
        <item>
         <property name="text">
+         <string>slice (fft)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>rms</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>rss</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>sum</string>
         </property>
        </item>
@@ -66,7 +81,12 @@
        </item>
        <item>
         <property name="text">
-         <string>superimpose</string>
+         <string>integrate</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>superimpose/filter</string>
         </property>
        </item>
        <item>
