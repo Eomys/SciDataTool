@@ -75,6 +75,16 @@ try:
 except ImportError as error:
     time_to_freq = error
 
+try:
+    from ..Methods.VectorField.to_xyz import to_xyz
+except ImportError as error:
+    to_xyz = error
+
+try:
+    from ..Methods.VectorField.to_rphiz import to_rphiz
+except ImportError as error:
+    to_rphiz = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -221,6 +231,24 @@ class VectorField(FrozenClass):
         )
     else:
         time_to_freq = time_to_freq
+    # cf Methods.VectorField.to_xyz
+    if isinstance(to_xyz, ImportError):
+        to_xyz = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VectorField method to_xyz: " + str(to_xyz))
+            )
+        )
+    else:
+        to_xyz = to_xyz
+    # cf Methods.VectorField.to_rphiz
+    if isinstance(to_rphiz, ImportError):
+        to_rphiz = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VectorField method to_rphiz: " + str(to_rphiz))
+            )
+        )
+    else:
+        to_rphiz = to_rphiz
     # save and copy methods are available in all object
     save = save
     copy = copy
