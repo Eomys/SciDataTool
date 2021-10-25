@@ -31,7 +31,7 @@ def plot_3D_Data(
     z_range=None,
     is_auto_ticks=True,
     is_auto_range=True,
-    is_2D_view=False,
+    is_2D_view=True,
     is_contour=False,
     is_same_size=False,
     N_stem=100,

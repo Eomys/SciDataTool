@@ -108,63 +108,68 @@ def test_xyz_integration():
     assert result["comp_x"].shape == (10,)
 
 
+@pytest.mark.validation
+def test_xyz_rphiz():
+    f = 50
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=10,
+        include_endpoint=False,
+    )
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=2 * np.pi,
+        number=20,
+        include_endpoint=False,
+    )
+    ta, at = np.meshgrid(Time.get_values(), Angle.get_values())
+    field = 5 * np.cos(2 * np.pi * f * ta + 3 * at)
+    Field_r = DataTime(
+        name="Radial field",
+        symbol="X_r",
+        unit="m",
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+        axes=[Time, Angle],
+        values=field.T,
+    )
+    Field_t = DataTime(
+        name="Tangential field",
+        symbol="X_t",
+        unit="m",
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+        axes=[Time, Angle],
+        values=-field.T,
+    )
+    VecField = VectorField(
+        name="Example field",
+        symbol="X",
+        components={"radial": Field_r, "tangential": Field_t},
+    )
+    VecField_xyz = VecField.to_xyz()
+    assert_array_almost_equal(
+        VecField_xyz.components["comp_x"].values.T,
+        field * np.cos(at) + field * np.sin(at),
+    )
+    assert_array_almost_equal(
+        VecField_xyz.components["comp_y"].values.T,
+        field * np.sin(at) - field * np.cos(at),
+    )
+
+    VecField_rphiz = VecField.to_rphiz()
+    assert_array_almost_equal(
+        VecField_rphiz.components["radial"].values.T,
+        field,
+    )
+    assert_array_almost_equal(
+        VecField_rphiz.components["tangential"].values.T,
+        -field,
+    )
+
+
 if __name__ == "__main__":
-    test_xyz_integration()
-
-
-# @pytest.mark.validation
-# def test_two_comp():
-#     x = np.array(
-#         [
-#             6,
-#             6 * np.sqrt(2) / 2,
-#             0,
-#             -6 * np.sqrt(2) / 2,
-#             -6,
-#             -6 * np.sqrt(2) / 2,
-#             0,
-#             6 * np.sqrt(2) / 2,
-#         ]
-#     )
-#     y = np.array(
-#         [
-#             0,
-#             6 * np.sqrt(2) / 2,
-#             6,
-#             6 * np.sqrt(2) / 2,
-#             0,
-#             -6 * np.sqrt(2) / 2,
-#             -6,
-#             -6 * np.sqrt(2) / 2,
-#         ]
-#     )
-#     X = Data1D(
-#         name="x",
-#         unit="m",
-#         values=x,
-#     )
-#     Y = Data1D(
-#         name="y",
-#         unit="m",
-#         values=y,
-#     )
-#     field = np.ones((8, 8))
-#     comp_x = DataTime(
-#         name="field",
-#         symbol="X_x",
-#         axes=[X, Y],
-#         values=field,
-#     )
-#     comp_y = DataTime(
-#         name="field",
-#         symbol="X_y",
-#         axes=[X, Y],
-#         values=field,
-#     )
-#     Field = VectorField(
-#         name="field", symbol="X_r", components={"comp_x": comp_x, "comp_y": comp_y}
-#     )
-#     result = Field.get_rphiz_along("x", "y")
-#     assert_array_almost_equal(
-#         np.array([1, np.sqrt(2), 1, 0, -1, -np.sqrt(2), -1, 0]), result["radial"][0, :]
-#     )
+    test_xyz_rphiz()

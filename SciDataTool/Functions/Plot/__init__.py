@@ -14,6 +14,7 @@ unit_dict = {
     "order": "",
     "cr_band": "Bark",
     "speed": "rpm",
+    "modes": "",
 }
 
 norm_dict = {

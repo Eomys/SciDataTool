@@ -23,11 +23,17 @@ def my_sum(values, index, Nper, is_aper):
         arithmetic sum of values
     """
 
-    values = np.sum(values, axis=index, keepdims=True)
     if is_aper:
-        values = values - values
-        Nper = int(Nper / 2)
-    values *= Nper
+        # Sum of anti-periodic signal yields zero
+        shape = list(values.shape)
+        shape0 = [s for ii, s in enumerate(shape) if ii != index]
+        values = np.zeros(shape0, dtype=values.dtype)
+    else:
+        # Take sum value multiplied by periodicity
+        if Nper is None:
+            # Set Nper to 1 in case of non-periodic axis
+            Nper = 1
+        values = Nper * np.sum(values, axis=index, keepdims=True)
 
     return values
 
@@ -57,15 +63,20 @@ def my_mean(values, ax_val, index, Nper, is_aper, is_phys):
     """
 
     if is_phys:
-        values = integrate(values, ax_val, index, Nper, is_aper, is_phys) / (
-            max(ax_val) - min(ax_val)
-        )
+        # Integrate values and take mean value by dividing by integration interval in integrate()
+        values = integrate(values, ax_val, index, Nper, is_aper, is_phys, is_mean=True)
     else:
-        values = np.mean(values, axis=index)
         if is_aper:
-            values = values - values
-            Nper = int(Nper / 2)
-        values *= Nper
+            # Average of anti-periodic signal yields zero
+            shape = list(values.shape)
+            shape0 = [s for ii, s in enumerate(shape) if ii != index]
+            values = np.zeros(shape0, dtype=values.dtype)
+        else:
+            # Take mean value multiplied by periodicity
+            if Nper is None:
+                # Set Nper to 1 in case of non-periodic axis
+                Nper = 1
+            values = Nper * np.mean(values, axis=index)
 
     return values
 
@@ -94,6 +105,10 @@ def root_mean_square(values, ax_val, index, Nper, is_aper, is_phys):
         root mean square of values
     """
 
+    if is_aper and Nper is not None:
+        # Remove anti-periodicity since values is squared
+        is_aper = False
+
     return np.sqrt(my_mean(values ** 2, ax_val, index, Nper, is_aper, is_phys))
 
 
@@ -120,6 +135,10 @@ def root_sum_square(values, ax_val, index, Nper, is_aper, is_phys):
     values: ndarray
         root sum square of values
     """
+
+    if is_aper and Nper is not None:
+        # Remove anti-periodicity since values is squared
+        is_aper = False
 
     if is_phys:
         values = integrate(values ** 2, ax_val, index, Nper, is_aper, is_phys)
