@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions import UnitError
 from SciDataTool.Functions.fft_functions import (
     comp_fft_freqs,
@@ -281,7 +280,7 @@ def to_dB(values, unit, ref_value=1.0):
     try:
         convert(values, unit, "W")
         values_dB = 10.0 * where(mask, log10(values / ref_value, where=mask), 0)
-    except:
+    except Exception:
         values_dB = 20.0 * where(mask, log10(values / ref_value, where=mask), 0)
     return values_dB
 
@@ -410,7 +409,7 @@ def dB_to_dBA(values, freqs, noct=None):
     try:
         values += Aweight
         return values
-    except:
+    except Exception:
         raise UnitError("ERROR: dBA conversion only available for 1D fft")
 
 

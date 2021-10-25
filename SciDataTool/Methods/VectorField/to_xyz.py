@@ -21,7 +21,9 @@ def to_xyz(self):
 
     else:
         # Coordinate transform
-        arg_list = [axis.name for axis in self.components["radial"].axes]
+        arg_list = [
+            axis.name + "[smallestperiod]" for axis in self.components["radial"].axes
+        ]
         result = self.get_xyz_along(*arg_list)
         # Store in new VectorField
         comp_dict = dict()

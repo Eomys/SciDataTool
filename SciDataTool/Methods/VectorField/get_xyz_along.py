@@ -28,7 +28,7 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeez
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
 
-    if "radial" in self.components.keys() and "tangential" in self.components.keys():
+    if "radial" in self.components.keys() or "tangential" in self.components.keys():
         # Extract first along whole "angle" axis
         new_args = [arg for arg in args]
         string = [s for s in args if "angle" in s]
@@ -42,15 +42,26 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeez
             is_norm=is_norm,
             axis_data=axis_data,
         )
-        Dataphi = self.components["tangential"].get_data_along(
-            *new_args,
-            unit=unit,
-            is_norm=is_norm,
-            axis_data=axis_data,
-        )
         field_r = Datar.values
-        field_c = Dataphi.values
         shape = field_r.shape
+        if "tangential" in self.components.keys():
+            Dataphi = self.components["tangential"].get_data_along(
+                *new_args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+            )
+            field_c = Dataphi.values
+        else:
+            field_c = zeros(shape, dtype=field_r.dtype)
+            Dataphi = type(Datar)(
+                name=Datar.name,
+                unit=Datar.unit,
+                symbol=Datar.symbol,
+                axes=Datar.axes,
+                values=field_c,
+            )
+
         phi = Datar.get_axes("angle")[0].get_values()
         # Convert to cylindrical coordinates
         (field_x, field_y) = pol2cart(field_r, field_c, phi)
