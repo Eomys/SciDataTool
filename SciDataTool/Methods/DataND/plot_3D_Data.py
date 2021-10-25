@@ -3,12 +3,22 @@
 from SciDataTool.Functions.Plot.plot_4D import plot_4D
 from SciDataTool.Functions.Plot.plot_3D import plot_3D
 from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
-from numpy import where, meshgrid, unique, max as np_max, min as np_min, array2string
+from numpy import (
+    where,
+    meshgrid,
+    unique,
+    max as np_max,
+    min as np_min,
+    array2string,
+    linspace,
+    log10,
+)
 
 
 def plot_3D_Data(
     self,
     *arg_list,
+    axis_data=None,
     is_norm=False,
     unit="SI",
     save_path=None,
@@ -21,7 +31,8 @@ def plot_3D_Data(
     z_range=None,
     is_auto_ticks=True,
     is_auto_range=True,
-    is_2D_view=False,
+    is_2D_view=True,
+    is_contour=False,
     is_same_size=False,
     N_stem=100,
     fig=None,
@@ -30,7 +41,7 @@ def plot_3D_Data(
     is_logscale_x=False,
     is_logscale_y=False,
     is_logscale_z=False,
-    thresh=0.02,
+    thresh=None,
     is_switch_axes=False,
     colormap="RdBu_r",
     win_title=None,
@@ -73,6 +84,8 @@ def plot_3D_Data(
         in fft, display up to 1% of max
     is_2D_view : bool
         True to plot Data in xy plane and put z as colormap
+    is_contour : bool
+        True to show contour line if is_fft = False and is_2D_view = True
     is_same_size : bool
         True to have all color blocks with same size in 2D view
     N_stem : int
@@ -108,7 +121,7 @@ def plot_3D_Data(
         is_fft = True
         if "dB" in unit:
             if "ref" in self.normalizations:
-                ref = self.normalizations["ref"]
+                ref = self.normalizations["ref"].ref
             else:
                 ref = 1
             unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
@@ -134,17 +147,34 @@ def plot_3D_Data(
     # Extract field and axes
     if is_fft:
         if is_2D_view:
-            result = self.get_magnitude_along(arg_list, unit=unit, is_norm=is_norm)
+            result = self.get_magnitude_along(
+                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+            )
         else:
             result = self.get_harmonics(
-                N_stem, arg_list, unit=unit, is_norm=is_norm, is_flat=True
+                N_stem,
+                arg_list,
+                axis_data=axis_data,
+                unit=unit,
+                is_norm=is_norm,
+                is_flat=True,
             )
     else:
         result = self.get_along(arg_list, unit=unit, is_norm=is_norm)
     axes_list = result["axes_list"]
     axes_dict_other = result["axes_dict_other"]
-    Xdata = result[axes_list[0].name]
-    Ydata = result[axes_list[1].name]
+    if axes_list[0].is_components:
+        Xdata = linspace(
+            0, len(result[axes_list[0].name]) - 1, len(result[axes_list[0].name])
+        )
+    else:
+        Xdata = result[axes_list[0].name]
+    if axes_list[1].is_components:
+        Ydata = linspace(
+            0, len(result[axes_list[1].name]) - 1, len(result[axes_list[1].name])
+        )
+    else:
+        Ydata = result[axes_list[1].name]
     Zdata = result[self.symbol]
     if is_fft and not is_2D_view:
         X_flat = Xdata
@@ -185,13 +215,13 @@ def plot_3D_Data(
         name = axis.name
     title2 = "over " + name.lower()
     if axis.unit == "SI":
-        unit = unit_dict[axis.name]
-        xlabel = name.capitalize() + " [" + unit + "]"
+        axis_unit = unit_dict[axis.name]
+        xlabel = name.capitalize() + " [" + axis_unit + "]"
     elif axis.unit in norm_dict:
         xlabel = norm_dict[axis.unit]
     else:
-        unit = axis.unit
-        xlabel = name.capitalize() + " [" + unit + "]"
+        axis_unit = axis.unit
+        xlabel = name.capitalize() + " [" + axis_unit + "]"
     if (
         axis.name == "angle"
         and axis.unit == "°"
@@ -200,6 +230,11 @@ def plot_3D_Data(
         xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         xticks = None
+    if axis.is_components:
+        xticklabels = result[axes_list[0].name]
+        xticks = Xdata
+    else:
+        xticklabels = None
 
     axis = axes_list[1]
     if axis.name in axes_dict:
@@ -208,13 +243,13 @@ def plot_3D_Data(
         name = axis.name
     title3 = " and " + axis.name.lower()
     if axis.unit == "SI":
-        unit = unit_dict[axis.name]
-        ylabel = name.capitalize() + " [" + unit + "]"
+        axis_unit = unit_dict[axis.name]
+        ylabel = name.capitalize() + " [" + axis_unit + "]"
     elif axis.unit in norm_dict:
         ylabel = norm_dict[axis.unit]
     else:
-        unit = axis.unit
-        ylabel = name.capitalize() + " [" + unit + "]"
+        axis_unit = axis.unit
+        ylabel = name.capitalize() + " [" + axis_unit + "]"
     if (
         axis.name == "angle"
         and axis.unit == "°"
@@ -223,15 +258,20 @@ def plot_3D_Data(
         yticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         yticks = None
+    if axis.is_components:
+        yticklabels = result[axes_list[1].name]
+        yticks = Xdata
+    else:
+        yticklabels = None
 
     title4 = " for "
     for axis in axes_list[2:]:
         if axis.unit == "SI":
-            unit = unit_dict[axis.name]
+            axis_unit = unit_dict[axis.name]
         elif axis.unit in norm_dict:
-            unit = norm_dict[axis.unit]
+            axis_unit = norm_dict[axis.unit]
         else:
-            unit = axis.unit
+            axis_unit = axis.unit
         title4 += (
             axis.name
             + "="
@@ -243,7 +283,7 @@ def plot_3D_Data(
             .replace("[", "")
             .replace("]", "")
             + " ["
-            + unit
+            + axis_unit
             + "], "
         )
     title5 = ""
@@ -267,7 +307,22 @@ def plot_3D_Data(
     title = title.rstrip(", ")
 
     if is_fft:
-        indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
+
+        if thresh is None:
+            if self.normalizations is not None and "ref" in self.normalizations:
+                thresh = self.normalizations["ref"].ref
+            else:
+                thresh = 0.02
+
+        if "dB" in unit:
+            indices = where(
+                Z_flat
+                > 10 * log10(thresh * self.normalizations["ref"].ref)
+                + abs(np_max(Zdata))
+            )[0]
+        else:
+            indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
+
         xticks = unique(X_flat[indices])
         yticks = unique(Y_flat[indices])
         if is_auto_range:
@@ -275,7 +330,7 @@ def plot_3D_Data(
                 x_min = -0.1 * xticks[-1]
                 x_max = xticks[-1] * 1.1
             if len(yticks) > 0:
-                y_min = -yticks[-1] * 1.1
+                y_min = yticks[0] * 1.1
                 y_max = yticks[-1] * 1.1
         else:
             x_min = x_min - x_max * 0.05
@@ -301,6 +356,8 @@ def plot_3D_Data(
                 title=title,
                 xticks=xticks,
                 yticks=yticks,
+                xticklabels=xticklabels,
+                yticklabels=yticklabels,
                 xlabel=xlabel,
                 ylabel=ylabel,
                 zlabel=zlabel,
@@ -337,6 +394,8 @@ def plot_3D_Data(
                 title=title,
                 xticks=xticks,
                 yticks=yticks,
+                xticklabels=xticklabels,
+                yticklabels=yticklabels,
                 xlabel=xlabel,
                 ylabel=ylabel,
                 zlabel=zlabel,
@@ -372,9 +431,12 @@ def plot_3D_Data(
                 title=title,
                 xticks=xticks,
                 yticks=yticks,
+                xticklabels=xticklabels,
+                yticklabels=yticklabels,
                 fig=fig,
                 ax=ax,
                 type_plot="pcolor",
+                is_contour=is_contour,
                 save_path=save_path,
                 is_show_fig=is_show_fig,
                 is_logscale_x=is_logscale_x,
@@ -406,6 +468,8 @@ def plot_3D_Data(
                 ylabel=ylabel,
                 zlabel=zlabel,
                 yticks=yticks,
+                xticklabels=xticklabels,
+                yticklabels=yticklabels,
                 type_plot="surf",
                 save_path=save_path,
                 is_show_fig=is_show_fig,

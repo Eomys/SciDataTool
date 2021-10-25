@@ -17,6 +17,8 @@ def time_to_freq(self):
     # Dynamic import to avoid loop
     module = __import__("SciDataTool.Classes.DataFreq", fromlist=["DataFreq"])
     DataFreq = getattr(module, "DataFreq")
+    module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+    DataPattern = getattr(module, "DataPattern")
 
     axes_str = []
     for i, axis in enumerate(self.axes):
@@ -26,8 +28,10 @@ def time_to_freq(self):
             axis_str = "freqs"
         elif axis.name == "angle":
             axis_str = "wavenumber"
+        elif isinstance(axis, DataPattern):
+            axis_str = axis.name + "[pattern]"
         else:
-            axis_str = axis.name
+            axis_str = axis.name + "[smallestperiod]"
         axes_str.append(axis_str)
     if axes_str == [axis.name for axis in self.axes]:
         raise AxisError(
@@ -38,40 +42,35 @@ def time_to_freq(self):
         values = results.pop(self.symbol)
         Axes = []
         for axis in self.axes:
-            if axis.is_components:  # components axis
-                name = axis.name
-                is_components = True
-                axis_values = axis.values
-                unit = "SI"
-            elif axis.name == "time":
-                name = "freqs"
-                is_components = False
-                axis_values = results["freqs"]
-                unit = "Hz"
-            elif axis.name == "angle":
-                name = "wavenumber"
-                is_components = False
-                axis_values = results["wavenumber"]
-                unit = "dimless"
-            else:
-                name = axis.name
-                is_components = False
-                axis_values = results[axis.name]
-                unit = axis.unit
-            if "antiperiod" in axis.symmetries:
-                symmetries = {"period": int(axis.symmetries["antiperiod"] / 2)}
-            else:
-                symmetries = axis.symmetries.copy()
-            Axes.append(
-                Data1D(
-                    name=name,
-                    unit=unit,
-                    values=axis_values,
-                    is_components=is_components,
+            if axis.name == "time":
+                if "antiperiod" in axis.symmetries:
+                    symmetries = {"period": int(axis.symmetries["antiperiod"] / 2)}
+                else:
+                    symmetries = axis.symmetries.copy()
+                axis_new = Data1D(
+                    name="freqs",
+                    is_components=False,
+                    values=results["freqs"],
+                    unit="Hz",
                     symmetries=symmetries,
                     normalizations=axis.normalizations.copy(),
-                )
-            )
+                ).to_linspace()
+            elif axis.name == "angle":
+                if "antiperiod" in axis.symmetries:
+                    symmetries = {"period": int(axis.symmetries["antiperiod"] / 2)}
+                else:
+                    symmetries = axis.symmetries.copy()
+                axis_new = Data1D(
+                    name="wavenumber",
+                    is_components=False,
+                    values=results["wavenumber"],
+                    unit="dimless",
+                    symmetries=symmetries,
+                    normalizations=axis.normalizations.copy(),
+                ).to_linspace()
+            else:
+                axis_new = axis.copy()
+            Axes.append(axis_new)
         return DataFreq(
             name=self.name,
             unit=self.unit,
@@ -79,4 +78,5 @@ def time_to_freq(self):
             axes=Axes,
             values=values,
             is_real=self.is_real,
+            normalizations=self.normalizations.copy(),
         )

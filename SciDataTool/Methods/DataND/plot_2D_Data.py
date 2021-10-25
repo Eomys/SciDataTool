@@ -17,12 +17,16 @@ from numpy import (
     max as np_max,
     array2string,
     insert,
+    min as np_min,
+    linspace,
+    log10,
 )
 
 
 def plot_2D_Data(
     self,
     *arg_list,
+    axis_data=None,
     is_norm=False,
     unit="SI",
     data_list=[],
@@ -43,6 +47,9 @@ def plot_2D_Data(
     is_grid=True,
     is_auto_ticks=True,
     is_auto_range=True,
+    xlabel=None,
+    ylabel=None,
+    title=None,
     fig=None,
     ax=None,
     barwidth=100,
@@ -50,7 +57,7 @@ def plot_2D_Data(
     fund_harm_dict=None,
     is_show_fig=None,
     win_title=None,
-    thresh=0.02,
+    thresh=None,
     font_name="arial",
     font_size_title=12,
     font_size_label=10,
@@ -131,14 +138,21 @@ def plot_2D_Data(
         is_fft = True
         if "dB" in unit:
             unit_str = (
-                "[" + unit + " re. " + str(self.normalizations["ref"]) + self.unit + "]"
+                "["
+                + unit
+                + " re. "
+                + str(self.normalizations["ref"].ref)
+                + self.unit
+                + "]"
             )
         else:
             unit_str = "[" + unit + "]"
         if self.symbol == "Magnitude":
-            ylabel = "Magnitude " + r"$[" + unit + "]$"
+            if ylabel is None:
+                ylabel = "Magnitude " + r"$[" + unit + "]$"
         else:
-            ylabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
+            if ylabel is None:
+                ylabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
         if data_list == []:
             title1 = "FFT of " + self.name.lower() + " "
         else:
@@ -151,14 +165,23 @@ def plot_2D_Data(
             # title = data.name.capitalize() + " for " + ', '.join(arg_list_str)
             title1 = "Comparison of " + self.name.lower() + " "
         if is_norm:
-            ylabel = (
-                r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\, [" + unit + "]$"
-            )
+            if ylabel is None:
+                ylabel = (
+                    r"$\frac{"
+                    + self.symbol
+                    + "}{"
+                    + self.symbol
+                    + "_0}\, ["
+                    + unit
+                    + "]$"
+                )
         else:
             if self.symbol == "Magnitude":
-                ylabel = "Magnitude " + r"$[" + unit + "]$"
+                if ylabel is None:
+                    ylabel = "Magnitude " + r"$[" + unit + "]$"
             else:
-                ylabel = r"$" + self.symbol + "\, [" + unit + "]$"
+                if ylabel is None:
+                    ylabel = r"$" + self.symbol + "\, [" + unit + "]$"
 
     # Extract field and axes
     Xdatas = []
@@ -166,24 +189,44 @@ def plot_2D_Data(
     data_list2 = [self] + data_list
     for i, d in enumerate(data_list2):
         if is_fft:
-            result = d.get_magnitude_along(arg_list, unit=unit, is_norm=is_norm)
+            result = d.get_magnitude_along(
+                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+            )
             if i == 0:
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            Ydatas.append(result.pop(d.symbol))
-            Xdatas.append(result[list(result)[0]])
+            # Ydatas.append(result.pop(d.symbol))
+            # Xdatas.append(result[list(result)[0]])
         else:
-            result = d.get_along(arg_list, unit=unit, is_norm=is_norm)
+            result = d.get_along(
+                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+            )
             if i == 0:
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            Ydatas.append(result.pop(d.symbol))
-            Xdatas.append(result[list(result)[0]])
+            # Ydatas.append(result.pop(d.symbol))
+            # Xdatas.append(result[list(result)[0]])
+        Ydatas.append(result.pop(d.symbol))
+        # in string case not overlay, Xdatas is a linspace
+        if axes_list[0].is_components and axes_list[0].extension != "list":
+            xdata = linspace(
+                0, len(result[list(result)[0]]) - 1, len(result[list(result)[0]])
+            )
+        else:
+            xdata = result[list(result)[0]]
+        Xdatas.append(xdata)
 
     # Find main axis as the axis with the most values
     # main_axis = axes_list[0]  # max(axes_list, key=lambda x: x.values.size)
+
+    # Remove axis that has been factorized from axis list
+    # [
+    #     axes_list.pop(i)
+    #     for i in range(len(axes_list))
+    #     if axes_list[i].extension in ["sum", "rss", "mean", "rms", "integrate"]
+    # ]
 
     # Build xlabel and title parts 2 and 3
     title2 = ""
@@ -204,23 +247,30 @@ def plot_2D_Data(
                 "oneperiod",
                 "antiperiod",
                 "smallestperiod",
+                "axis_data",
             ]
             and len(axis.values) > 1
         ):
             title2 = "over " + name.lower()
             if axis.unit == "SI":
-                unit = unit_dict[axis.name]
-                xlabel = name.capitalize() + " [" + unit + "]"
+                if axis.name in unit_dict:
+                    axis_unit = unit_dict[axis.name]
+                else:
+                    axis_unit = axis.unit
+                if xlabel is None:
+                    xlabel = name.capitalize() + " [" + axis_unit + "]"
                 main_axis_name = name
             elif axis.unit in norm_dict:
-                xlabel = norm_dict[axis.unit]
+                if xlabel is None:
+                    xlabel = norm_dict[axis.unit]
                 if axis.unit == "Hz":
                     main_axis_name = "frequency"
                 else:
                     main_axis_name = axis.unit
             else:
-                unit = axis.unit
-                xlabel = name.capitalize() + " [" + unit + "]"
+                axis_unit = axis.unit
+                if xlabel is None:
+                    xlabel = name.capitalize() + " [" + axis_unit + "]"
                 main_axis_name = name
             if (
                 axis.name == "angle"
@@ -230,21 +280,32 @@ def plot_2D_Data(
                 xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
             else:
                 xticks = None
+            if axis.is_components and axes_list[0].extension != "list":
+                xticklabels = result[list(result)[0]]
+                xticks = Xdatas[0]
+            else:
+                xticklabels = None
         else:
             if axis.unit == "SI":
-                unit = unit_dict[axis.name]
+                if axis.name in unit_dict:
+                    axis_unit = unit_dict[axis.name]
+                else:
+                    axis_unit = axis.unit
             elif axis.unit in norm_dict:
-                unit = norm_dict[axis.unit]
+                axis_unit = norm_dict[axis.unit]
             else:
-                unit = axis.unit
+                axis_unit = axis.unit
 
-            axis_str = array2string(
-                result_0[axis.name], formatter={"float_kind": "{:.3g}".format}
-            ).replace(" ", ", ")
-            if len(result_0[axis.name]) == 1:
-                axis_str = axis_str.strip("[]")
+            if isinstance(result_0[axis.name], str):
+                title3 += name + "=" + result_0[axis.name]
+            else:
+                axis_str = array2string(
+                    result_0[axis.name], formatter={"float_kind": "{:.3g}".format}
+                ).replace(" ", ", ")
+                if len(result_0[axis.name]) == 1:
+                    axis_str = axis_str.strip("[]")
 
-            title3 += name + "=" + axis_str.rstrip(", ") + " [" + unit + "], "
+                title3 += name + "=" + axis_str.rstrip(", ") + " [" + axis_unit + "], "
 
     # Title part 4 containing axes that are here but not involved in requested axes
     title4 = ""
@@ -264,15 +325,16 @@ def plot_2D_Data(
     if title3 == " for " and title4 == "":
         title3 = ""
 
-    # Concatenate all title parts
-    title = title1 + title2 + title3 + title4
+    if title is None:
+        # Concatenate all title parts
+        title = title1 + title2 + title3 + title4
 
-    # Remove last coma due to title3 or title4
-    title = title.rstrip(", ")
+        # Remove last coma due to title3 or title4
+        title = title.rstrip(", ")
 
-    # Remove dimless and quotes
-    title = title.replace("[]", "")
-    title = title.replace("'", "")
+        # Remove dimless and quotes
+        title = title.replace("[]", "")
+        title = title.replace("'", "")
 
     # Detect how many curves are overlaid, build legend and color lists
     if legend_list == [] and data_list != []:
@@ -297,11 +359,14 @@ def plot_2D_Data(
                         linestyles = ["dashed"]
                 n_curves = len(axis.values)
                 if axis.unit == "SI":
-                    unit = unit_dict[axis.name]
+                    if axis.name in unit_dict:
+                        axis_unit = unit_dict[axis.name]
+                    else:
+                        axis_unit = axis.unit
                 elif axis.unit in norm_dict:
-                    unit = norm_dict[axis.unit]
+                    axis_unit = norm_dict[axis.unit]
                 else:
-                    unit = axis.unit
+                    axis_unit = axis.unit
                 if len(d.axes[axis.index].get_values()) > 1:
                     legends += [
                         legend_list[i]
@@ -309,14 +374,14 @@ def plot_2D_Data(
                         + "="
                         + axis.values.tolist()[j]
                         + " "
-                        + unit
+                        + axis_unit
                         if isinstance(axis.values.tolist()[j], str)
                         else legend_list[i]
                         + axis.name
                         + "="
                         + "%.3g" % axis.values.tolist()[j]
                         + " "
-                        + unit
+                        + axis_unit
                         for j in range(n_curves)
                     ]
                 else:
@@ -344,18 +409,41 @@ def plot_2D_Data(
 
     # Call generic plot function
     if is_fft:
+
+        if thresh is None:
+            if self.normalizations is not None and "ref" in self.normalizations:
+                thresh = self.normalizations["ref"].ref
+            else:
+                thresh = 0.02
+
         freqs = Xdatas[0]
-        indices = [
-            ind
-            for ind, y in enumerate(Ydatas[0])
-            if abs(y) > abs(0.02 * np_max(Ydatas[0]))
-        ]
-        xticks = unique(insert(0, 0, freqs[indices]))
+        if "dB" in unit:
+            indices = [
+                ind
+                for ind, y in enumerate(Ydatas[0])
+                if abs(y)
+                > 10 * log10(thresh * self.normalizations["ref"].ref)
+                + abs(np_max(Ydatas[0]))
+            ]
+        else:
+            indices = [
+                ind
+                for ind, y in enumerate(Ydatas[0])
+                if abs(y) > abs(thresh * np_max(Ydatas[0]))
+            ]
+        xticks = unique(insert(freqs[indices], 0, 0))
 
         if is_auto_range:
             if len(xticks) > 0:
-                x_min = -xticks[-1] * 0.1
-                x_max = xticks[-1] * 1.1
+                if x_min is None:
+                    x_min = -xticks[-1] * 0.1
+                if x_max is None:
+                    x_max = xticks[-1] * 1.1
+        else:
+            if x_min is None:
+                x_min = np_min(freqs)
+            if x_max is None:
+                x_max = np_max(freqs)
 
         if not is_auto_ticks:
             xticks = None
@@ -397,6 +485,7 @@ def plot_2D_Data(
             is_disp_title=is_disp_title,
             is_grid=is_grid,
             xticks=xticks,
+            xticklabels=xticklabels,
             save_path=save_path,
             barwidth=barwidth,
             fund_harm=fund_harm,
@@ -434,6 +523,7 @@ def plot_2D_Data(
             is_disp_title=is_disp_title,
             is_grid=is_grid,
             xticks=xticks,
+            xticklabels=xticklabels,
             barwidth=barwidth,
             linestyle_list=linestyle_list,
             linewidth_list=linewidth_list,
@@ -444,4 +534,5 @@ def plot_2D_Data(
             font_size_title=font_size_title,
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
+            is_show_legend=True,
         )

@@ -24,6 +24,11 @@ def test_period_linspace():
         axes=[Time_periodic],
         values=field_periodic,
     )
+
+    Time_bis = Time.get_axis_periodic(1, False)
+    assert len(Time_bis.symmetries) == 0
+    assert_array_almost_equal(Time.get_values(), Time_bis.get_values())
+
     result = Field.get_along("time")
     assert_array_almost_equal(time, result["time"])
     assert_array_almost_equal(field, result["X"])
@@ -35,6 +40,10 @@ def test_period_linspace():
     result = Field.get_along("time[oneperiod]")
     assert_array_almost_equal(np.linspace(0, 2, 2, endpoint=False), result["time"])
     assert_array_almost_equal(field_periodic, result["X"])
+
+    result = Field.get_along("time[0]")
+    assert_array_almost_equal(0, result["time"])
+    assert_array_almost_equal(50, result["X"])
 
 
 @pytest.mark.validation
@@ -46,6 +55,7 @@ def test_period_1d():
         values=time,
     )
     Time_periodic = Time.get_axis_periodic(5)
+
     field = np.tile(np.arange(50, 60, 5), 5)
     field_periodic = np.arange(50, 60, 5)
     Field = DataTime(
@@ -54,6 +64,11 @@ def test_period_1d():
         axes=[Time_periodic],
         values=field_periodic,
     )
+
+    Time_bis = Time.get_axis_periodic(1, False)
+    assert len(Time_bis.symmetries) == 0
+    assert_array_almost_equal(Time.get_values(), Time_bis.get_values())
+
     result = Field.get_along("time")
     assert_array_almost_equal(time, result["time"])
     assert_array_almost_equal(field, result["X"])
@@ -65,6 +80,10 @@ def test_period_1d():
     result = Field.get_along("time[oneperiod]")
     assert_array_almost_equal(np.linspace(0, 2, 2, endpoint=False), result["time"])
     assert_array_almost_equal(field_periodic, result["X"])
+
+    result = Field.get_along("time[0]")
+    assert_array_almost_equal(0, result["time"])
+    assert_array_almost_equal(50, result["X"])
 
 
 @pytest.mark.validation
@@ -78,7 +97,7 @@ def test_antiperiod_linspace():
         number=16,
         include_endpoint=False,
     )
-    Time_periodic = Time.get_axis_periodic(4, is_antiperiod=True)
+    Time_periodic = Time.get_axis_periodic(2, is_aper=True)
     field_periodic = np.arange(50, 70, 5)
     field_antisym = np.concatenate((field_periodic, np.negative(field_periodic)))
     field = np.tile(field_antisym, 2)
@@ -104,6 +123,10 @@ def test_antiperiod_linspace():
     result = Field.get_along("time[oneperiod]")
     assert_array_almost_equal(np.linspace(0, 8, 8, endpoint=False), result["time"])
     assert_array_almost_equal(field_antisym, result["X"])
+
+    result = Field.get_along("time[0]")
+    assert_array_almost_equal(0, result["time"])
+    assert_array_almost_equal(50, result["X"])
 
 
 @pytest.mark.validation
@@ -114,7 +137,7 @@ def test_antiperiod_1d():
         unit="s",
         values=time,
     )
-    Time_periodic = Time.get_axis_periodic(4, is_antiperiod=True)
+    Time_periodic = Time.get_axis_periodic(2, is_aper=True)
     field_periodic = np.arange(50, 70, 5)
     field_antisym = np.concatenate((field_periodic, np.negative(field_periodic)))
     field = np.tile(field_antisym, 2)
@@ -140,6 +163,10 @@ def test_antiperiod_1d():
     result = Field.get_along("time[oneperiod]")
     assert_array_almost_equal(np.linspace(0, 8, 8, endpoint=False), result["time"])
     assert_array_almost_equal(field_antisym, result["X"])
+
+    result = Field.get_along("time[0]")
+    assert_array_almost_equal(0, result["time"])
+    assert_array_almost_equal(50, result["X"])
 
 
 @pytest.mark.validation
@@ -163,7 +190,7 @@ def test_period_2d():
         number=16,
         include_endpoint=False,
     )
-    Angle_periodic = Angle.get_axis_periodic(4, is_antiperiod=True)
+    Angle_periodic = Angle.get_axis_periodic(2, is_aper=True)
     ta, at = np.meshgrid(
         Time_periodic.get_values(is_smallestperiod=True),
         Angle_periodic.get_values(is_smallestperiod=True),
@@ -331,4 +358,6 @@ def test_period_single():
 
 
 if __name__ == "__main__":
-    test_period_single()
+    test_period_linspace()
+    test_antiperiod_linspace()
+    test_period_1d()

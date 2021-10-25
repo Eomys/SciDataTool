@@ -1,11 +1,21 @@
-# -*- coding: utf-8 -*-
+from importlib import import_module
+from numpy import array
+
 from SciDataTool.Functions.conversions import convert
 from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
-from SciDataTool.Functions import AxisError
+from SciDataTool.Functions import AxisError, NormError
 
 
 def get_values(
-    self, unit="SI", is_oneperiod=False, is_antiperiod=False, is_smallestperiod=False
+    self,
+    unit="SI",
+    is_oneperiod=False,
+    is_antiperiod=False,
+    is_smallestperiod=False,
+    normalization=None,
+    operation=None,
+    is_real=True,
+    corr_unit=None,
 ):
     """Returns the vector 'axis' taking symmetries into account.
     Parameters
@@ -18,15 +28,28 @@ def get_values(
         return values on a single period
     is_antiperiod: bool
         return values on a semi period (only for antiperiodic signals)
+    is_smallestperiod: bool
+        return values on smallest available period
+    normalization: str
+        name of normalization to use
+    operation: str
+        name of the operation (e.g. "freqs_to_time")
+
     Returns
     -------
     Vector of axis values
     """
-    values = self.values
+    # Dynamic import to avoid loop
+    module = __import__("SciDataTool.Classes.Norm_vector", fromlist=["Norm_vector"])
+    Norm_vector = getattr(module, "Norm_vector")
 
-    # Unit conversion
     if unit != "SI" and unit != self.unit:
-        values = convert(values, self.unit, unit)
+        if unit in self.normalizations and normalization is None:
+            normalization = unit
+            unit = "SI"
+
+    values = self.values
+    norm_vector = None
 
     # Ignore symmetries if fft axis
     if self.name == "freqs" or self.name == "wavenumber":
@@ -34,10 +57,10 @@ def get_values(
 
     # Rebuild symmetries
     if is_smallestperiod:
-        return values
+        pass
     elif is_antiperiod:
         if "antiperiod" in self.symmetries:
-            return values
+            pass
         else:
             raise AxisError("ERROR: axis has no antiperiodicity")
     elif is_oneperiod:
@@ -46,11 +69,51 @@ def get_values(
             self.symmetries["antiperiod"] = 2
             values = rebuild_symmetries_axis(values, self.symmetries)
             self.symmetries["antiperiod"] = nper
-            return values
+            pass
         elif "period" in self.symmetries:
-            return values
+            pass
         else:
-            return values
+            pass
     else:
         values = rebuild_symmetries_axis(values, self.symmetries)
-        return values
+        if (
+            normalization is not None
+            and normalization in self.normalizations
+            and isinstance(self.normalizations[normalization], Norm_vector)
+        ):
+            norm_vector = self.normalizations[normalization].vector.copy()
+            self.normalizations[normalization].vector = rebuild_symmetries_axis(
+                norm_vector, self.symmetries
+            )
+
+    # fft/ifft
+    if operation is not None:
+        module = import_module("SciDataTool.Functions.conversions")
+        func = getattr(module, operation)  # Conversion function
+        values = array(func(values, is_real=is_real))
+
+    # Normalization
+    if normalization is not None:
+        if normalization in self.normalizations:
+            if (
+                self.normalizations[normalization].unit == "SI"
+                or self.normalizations[normalization].unit == self.unit
+            ):
+                # Axis is in the correct unit for the normalization
+                values = self.normalizations[normalization].normalize(values)
+            else:
+                raise NormError("Normalization is not available in this unit")
+        else:
+            raise NormError("Normalization is not available")
+
+    # Unit conversion
+    if unit != "SI" and unit != self.unit:
+        if corr_unit is not None:
+            values = convert(values, corr_unit, unit)
+        else:
+            values = convert(values, self.unit, unit)
+
+    if norm_vector is not None:
+        self.normalizations[normalization].vector = norm_vector
+
+    return values

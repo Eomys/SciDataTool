@@ -2,7 +2,7 @@
 from SciDataTool.Functions import AxisError
 
 
-def get_length(self, is_pattern=False):
+def get_length(self, is_pattern=False, is_smallestperiod=False):
     """Returns the length of the axis taking symmetries into account.
     Parameters
     ----------
@@ -14,8 +14,9 @@ def get_length(self, is_pattern=False):
     -------
     Length of axis
     """
-
-    if is_pattern:
+    if is_smallestperiod:
+        return len(self.values)
+    elif is_pattern:
         return len(self.values)
     else:
         return len(self.rebuild_indices)

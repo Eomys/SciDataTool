@@ -1,6 +1,7 @@
 def plot_3D_Data(
     self,
     *arg_list,
+    axis_data=None,
     is_norm=False,
     unit="SI",
     component_list=None,
@@ -14,7 +15,7 @@ def plot_3D_Data(
     z_range=None,
     is_auto_ticks=True,
     is_auto_range=False,
-    is_2D_view=False,
+    is_2D_view=True,
     is_same_size=False,
     N_stem=100,
     fig=None,
@@ -23,7 +24,7 @@ def plot_3D_Data(
     is_logscale_x=False,
     is_logscale_y=False,
     is_logscale_z=False,
-    thresh=0.02,
+    thresh=None,
     is_switch_axes=False,
     colormap="RdBu_r",
     win_title=None,
@@ -102,6 +103,7 @@ def plot_3D_Data(
 
         self.components[comp].plot_3D_Data(
             arg_list,
+            axis_data=axis_data,
             is_norm=is_norm,
             unit=unit,
             save_path=save_path_comp,

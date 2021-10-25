@@ -79,9 +79,20 @@ def get_interpolation(values, axis_values, new_axis_values, index):
     """
     if str(axis_values) == "whole":  # Whole axis -> no interpolation
         return values
-    elif len(new_axis_values) == 1:  # Single point -> use argmin
-        idx = argmin(np_abs(axis_values - new_axis_values[0]))
-        return take(values, [idx], axis=index)
+    elif (
+        len(new_axis_values) == 1
+    ):  # Single point -> use argmin or None if out of bounds
+        if new_axis_values[0] < min(axis_values) or new_axis_values[0] > max(
+            axis_values
+        ):
+            new_shape = list(values.shape)
+            new_shape[index] = 1
+            new_values = zeros(tuple(new_shape), dtype=values.dtype)
+            new_values[(slice(None),) * index] = None
+            return new_values
+        else:
+            idx = argmin(np_abs(axis_values - new_axis_values[0]))
+            return take(values, [idx], axis=index)
     elif len(axis_values) == len(new_axis_values) and all(
         isclose(axis_values, new_axis_values, rtol=1e-03)
     ):  # Same axes -> no interpolation
@@ -129,12 +140,19 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
         new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
         indice_take = where(isin(axis_values, new_axis_values))[0]
+        if len(indice_take) == 2:  # double point -> compute mean
+            return take(
+                values,
+                indice_take,
+                axis=index,
+            ).mean(axis=index)
 
-        return take(
-            values,
-            indice_take,
-            axis=index,
-        )
+        else:
+            return take(
+                values,
+                indice_take,
+                axis=index,
+            )
 
     else:
         new_shape = list(values.shape)
@@ -174,4 +192,14 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
                             values, j + 1, axis=index
                         )
                         break
+                    else:
+                        # Extrapolate for outer bounds
+                        if new_axis_values[i] <= axis_values[0]:
+                            new_values[(slice(None),) * index + (i,)] = take(
+                                values, 0, axis=index
+                            )
+                        elif new_axis_values[i] >= axis_values[-1]:
+                            new_values[(slice(None),) * index + (i,)] = take(
+                                values, -1, axis=index
+                            )
             return array(new_values)

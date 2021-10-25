@@ -29,36 +29,83 @@ def get_mag_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         args = args[0]  # if called from another script with *args
 
     if "radial" in self.components.keys() and "tangential" in self.components.keys():
-        # Extract from DataND
-        resultr = self.components["radial"].get_magnitude_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        # Extract first along whole "angle" axis
+        new_args = [arg for arg in args]
+        string = [s for s in args if "angle" in s]
+        if string != []:
+            new_args[args.index(string[0])] = "angle"
+        else:
+            new_args.extend(["angle"])
+        Datar = self.components["radial"].get_data_along(
+            *new_args,
+            unit=unit,
+            is_norm=is_norm,
+            axis_data=axis_data,
         )
-        resultphi = self.components["tangential"].get_magnitude_along(
-            args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        Dataphi = self.components["tangential"].get_data_along(
+            *new_args,
+            unit=unit,
+            is_norm=is_norm,
+            axis_data=axis_data,
         )
-        field_r = resultr[self.components["radial"].symbol]
-        field_c = resultphi[self.components["tangential"].symbol]
+        field_r = Datar.values
+        field_c = Dataphi.values
         shape = field_r.shape
-        if "angle" not in resultr:
-            raise AxisError(
-                "ERROR: need angle axis to convert to cartesian coordinates"
-            )
-        phi = resultr["angle"]
+        phi = Datar.get_axes("angle")[0].get_values()
         # Convert to cylindrical coordinates
         (field_x, field_y) = pol2cart(field_r, field_c, phi)
+        # Extract second time with true args
+        if "angle" not in args:
+            Datar.values = field_x
+            Dataphi.values = field_y
+            self.components["comp_x"] = Datar
+            self.components["comp_y"] = Dataphi
+            resultx = self.components["comp_x"].get_magnitude_along(
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+            )
+            field_x = resultx[self.components["comp_x"].symbol]
+            resulty = self.components["comp_y"].get_magnitude_along(
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+            )
+            field_y = resulty[self.components["comp_y"].symbol]
+            # Delete temporary Data objects
+            del self.components["comp_x"]
+            del self.components["comp_y"]
+        else:
+            # Need return dict to initialize results
+            resultx = self.components["radial"].get_magnitude_along(
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+            )
+        # Add axial component
         if "axial" in self.components.keys():
             resultz = self.components["axial"].get_magnitude_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
             )
             field_z = resultz[self.components["axial"].symbol]
         elif "comp_z" in self.components.keys():
             resultz = self.components["comp_z"].get_magnitude_along(
-                args, unit=unit, is_norm=is_norm, axis_data=axis_data
+                args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
             )
             field_z = resultz[self.components["comp_z"].symbol]
         else:
             field_z = zeros(shape)
-        return_dict = dict(resultr)
+        # Build return dict
+        return_dict = dict(resultx)
         del return_dict[self.components["radial"].symbol]
 
     elif "comp_x" in self.components.keys():
@@ -93,13 +140,13 @@ def get_mag_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         resulty = self.components["comp_y"].get_magnitude_along(
             args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
-        field_y = resultphi[self.components["comp_y"].symbol]
+        field_y = resulty[self.components["comp_y"].symbol]
         shape = field_y.shape
         if "comp_x" in self.components.keys():
             resultx = self.components["comp_x"].get_magnitude_along(
                 args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
-            field_x = resultphi[self.components["comp_x"].symbol]
+            field_x = resultx[self.components["comp_x"].symbol]
         else:
             field_x = zeros(shape)
         if "axial" in self.components.keys():

@@ -8,6 +8,7 @@ from numpy import (
     ceil,
     argmin,
     abs,
+    arange,
     squeeze,
     split,
     ndarray,
@@ -44,6 +45,7 @@ def plot_2D(
     y_min=None,
     y_max=None,
     xticks=None,
+    xticklabels=None,
     save_path=None,
     barwidth=5,
     is_show_fig=None,
@@ -56,6 +58,7 @@ def plot_2D(
     scale_units="x",
     scale=None,
     width=0.005,
+    symbol=".",
 ):
     """Plots a 2D graph (curve, bargraph or barchart) comparing fields in Ydatas
 
@@ -170,10 +173,9 @@ def plot_2D(
         # Repeat linewidths
         m = int(ceil(ndatas / len(linewidth_list)))
         linewidth_list = linewidth_list * m
-    if 1 == len(legend_list) < ndatas or len(legend_list) == 0:
-        # Set no legend for all curves
-        legend_list = list(repeat("", ndatas))
+    if (len(legend_list) == 1 and legend_list[0] == "") or len(legend_list) == 0:
         no_legend = True
+        legend_list = ["" for i in range(ndatas)]
     else:
         no_legend = False
 
@@ -192,6 +194,8 @@ def plot_2D(
             )
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
     elif type_plot == "bargraph":
         positions = range(-ndatas + 1, ndatas, 2)
         if x_max is not None:
@@ -220,6 +224,8 @@ def plot_2D(
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
             plt.xticks(rotation=90, ha="center", va="top")
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
 
     elif type_plot == "barchart":
         for i in range(ndatas):
@@ -248,13 +254,33 @@ def plot_2D(
             ["{:.2f}".format(f) for f in Xdatas[i_Xdatas[i]]],
             rotation=90,
         )
+    elif type_plot == "octave":
+        pos = arange(0, 1, 1 / (ndatas + 1))[:-1] - (ndatas - 1) / (2 * (ndatas + 1))
+        for i in range(ndatas):
+            x_axis = arange(len(Xdatas[i]))
+            ax.bar(
+                x_axis + pos[i],
+                Ydatas[i],
+                edgecolor=color_list[i],
+                width=1 / (ndatas + 1),
+                # fc="None",
+                # lw=1,
+                label=legend_list[i],
+                picker=True,
+            )
+        plt.xticks(
+            range(len(Xdatas[i_Xdatas[i]])),
+            [f"{f:g}" for f in Xdatas[i_Xdatas[i]]],
+            rotation=90,
+        )
+        x_min = -1
+        x_max = len(x_axis)
+        is_logscale_x = False
 
     elif type_plot == "quiver":
         for i in range(ndatas):
             x = [e[0] for e in Xdatas[i_Xdatas[i]]]
             y = [e[1] for e in Xdatas[i_Xdatas[i]]]
-            if scale == None:
-                scale = 25 * (np_max(Ydatas[0]))
             ax.quiver(
                 x,
                 y,
@@ -270,6 +296,7 @@ def plot_2D(
                 headwidth=2,
                 headlength=4,
             )
+
             ax.axis("equal")
 
     elif type_plot == "curve_point":
@@ -286,23 +313,22 @@ def plot_2D(
             ax.plot(
                 Xdatas[i_Xdatas[i]],
                 Ydatas[i],
-                ".",
+                symbol,
                 markerfacecolor=color_list[i],
                 markeredgecolor=color_list[i],
                 markersize=10,
-                picker=True,
-                pickradius=5,
             )
     elif type_plot == "point":
         for i in range(ndatas):
             ax.plot(
                 Xdatas[i_Xdatas[i]],
                 Ydatas[i],
-                ".",
+                symbol,
                 label=legend_list[i],
                 markerfacecolor=color_list[i],
                 markeredgecolor=color_list[i],
                 markersize=10,
+                mew=linewidth_list[i],
                 picker=True,
                 pickradius=5,
             )
@@ -351,8 +377,16 @@ def plot_2D(
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    ax.set_xlim([x_min, x_max])
-    ax.set_ylim([y_min, y_max])
+
+    if x_max is not None:
+        ax.set_xlim(right=x_max)
+    if x_min is not None:
+        ax.set_xlim(left=x_min)
+
+    if y_max is not None:
+        ax.set_ylim(top=y_max)
+    if y_min is not None:
+        ax.set_ylim(bottom=y_min)
 
     if is_logscale_x:
         ax.set_xscale("log")

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from numpy import mean, hanning, linspace, where, isclose, apply_along_axis
+from numpy import mean, hanning, linspace, where, isclose, apply_along_axis, around
 from numpy.fft import (
     fft,
     fftshift,
@@ -21,13 +21,18 @@ from numpy import (
     concatenate,
     conjugate,
     flip,
+    isin,
     append,
     take,
     insert,
     delete,
     abs as np_abs,
     angle as np_angle,
+    allclose,
+    real,
 )
+
+from SciDataTool.Functions.nudft_functions import is_uniform, nudftn, inudftn
 
 
 def comp_fft_freqs(time, is_time, is_real):
@@ -74,7 +79,7 @@ def comp_fft_time(freqs, is_angle, is_real):
     Time/space vector
     """
     if freqs.size == 1:
-        time = [0]
+        time = array([0])
     else:
         if is_real and not is_angle:
             N_tot = 2 * (len(freqs) - 1)  # Number of samples
@@ -212,46 +217,101 @@ def comp_fftn(values, axes_list, is_real=True):
     """
 
     axes = []
+    axes_dict_non_uniform = dict()
     shape = []
     is_onereal = False
     is_twice = False
     axis_names = [axis.name for axis in axes_list]
+
+    # Check if one or several axes is non-uniform
+    is_non_uniform = False
     for axis in axes_list:
         if axis.transform == "fft":
-            if is_real and axis.name == "freqs":
-                axes.append(axis.index)
-                shape.append(values.shape[axis.index])
-                is_onereal = True
-            elif (
-                is_real
-                and axis.name == "wavenumber"
-                and "freqs" not in axis_names
-                and min(axis.values) >= 0
-            ):
-                axes.append(axis.index)
-                shape.append(values.shape[axis.index])
-                is_twice = True
+            if axis.corr_values is not None:  # Timesteps
+                if not is_uniform(axis.corr_values):
+                    is_non_uniform = True
+                    axes_dict_non_uniform[axis.index] = [
+                        axis.corr_values,
+                        axis.input_data,
+                    ]
+                    # Keep only interpolation data
+                    axis.values = axis.input_data
+                    axis.input_data = None
+                    continue
+            if axis.input_data is not None:
+                if not isin(
+                    around(axis.input_data, decimals=5), around(axis.values, decimals=5)
+                ).all():
+                    is_non_uniform = True
+                    # Convert wavenumbers to frequencies if needed
+                    frequencies = (
+                        axis.input_data
+                        if axis.name == "freqs"
+                        else axis.input_data / (2 * pi)
+                    )
+                    axes_dict_non_uniform[axis.index] = [
+                        axis.corr_values,
+                        frequencies,
+                    ]
+                    # Keep only interpolation data
+                    axis.values = axis.input_data
+                    axis.input_data = None
+
+    # Apply DFT on non-uniform axes
+    if is_non_uniform:
+        values = nudftn(values, axes_dict=axes_dict_non_uniform)
+
+    # Find other fft axes
+    for axis in axes_list:
+        if axis.index not in axes_dict_non_uniform:
+            if axis.transform == "fft":
+                if is_real and axis.name == "freqs":
+                    axes.append(axis.index)
+                    shape.append(values.shape[axis.index])
+                    is_onereal = True
+                elif (
+                    is_real
+                    and axis.name == "wavenumber"
+                    and "freqs" not in axis_names
+                    and min(axis.values) >= 0
+                ):
+                    axes.append(axis.index)
+                    shape.append(values.shape[axis.index])
+                    is_twice = True
+                else:
+                    axes = [axis.index] + axes
+                    shape = [values.shape[axis.index]] + shape
+    if axes != []:
+        size = array(shape).prod()
+        if is_onereal:
+            values_FT = rfftn(values, axes=axes)
+            # Do not multiply constant component by 2 (f=0)
+            if axes_list[axes[-1]].corr_values is not None:
+                freqs = axes_list[axes[-1]].corr_values
             else:
-                axes = [axis.index] + axes
-                shape = [values.shape[axis.index]] + shape
-    size = array(shape).prod()
-    if is_onereal:
-        values_FT = rfftn(values, axes=axes)
-        slice_0 = take(values_FT, 0, axis=axes[-1])
-        slice_0 *= 0.5
-        other_values = delete(values_FT, 0, axis=axes[-1])
-        values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
-        values_FT2 = 2.0 * fftshift(values_FT, axes=axes[:-1]) / size
-    elif is_twice:
-        values_FT = fftn(values, axes=axes)
-        slice_0 = take(values_FT, 0, axis=axes[-1])
-        slice_0 *= 0.5
-        other_values = delete(values_FT, 0, axis=axes[-1])
-        values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
-        values_FT2 = 2.0 * fftshift(values_FT, axes=axes) / size
+                freqs = axes_list[axes[-1]].values
+            if freqs[0] == 0:
+                slice_0 = take(values_FT, 0, axis=axes[-1])
+                slice_0 *= 0.5
+                if is_twice:
+                    slice_0 *= 0.5
+                other_values = delete(values_FT, 0, axis=axes[-1])
+                values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
+            values_FT2 = 2.0 * fftshift(values_FT, axes=axes[:-1]) / size
+            if is_twice:
+                values_FT2 *= 2.0
+        elif is_twice:
+            values_FT = fftn(values, axes=axes)
+            slice_0 = take(values_FT, 0, axis=axes[-1])
+            slice_0 *= 0.5
+            other_values = delete(values_FT, 0, axis=axes[-1])
+            values_FT = insert(other_values, 0, slice_0, axis=axes[-1])
+            values_FT2 = 2.0 * fftshift(values_FT, axes=axes) / size
+        else:
+            values_FT = fftn(values, axes=axes)
+            values_FT2 = fftshift(values_FT, axes=axes) / size
     else:
-        values_FT = fftn(values, axes=axes)
-        values_FT2 = fftshift(values_FT, axes=axes) / size
+        values_FT2 = values
     return values_FT2
 
 
@@ -293,7 +353,64 @@ def comp_ifftn(values, axes_list, is_real=True):
     is_onereal = False
     is_half = False
     axis_names = [axis.name for axis in axes_list]
+    # Check if one or several axes is non-uniform
+    axes_dict_non_uniform = {}
+
     for axis in axes_list:
+        if axis.transform == "ifft":
+            if axis.input_data is not None:
+                if not is_uniform(axis.input_data):
+                    # Data is at least non uniform in "space"
+                    axes_dict_non_uniform[axis.index] = [
+                        axis.input_data,
+                        axis.corr_values,
+                    ]
+                    # Keep only interpolation data
+                    axis.values = axis.input_data
+                    axis.input_data = None
+                else:
+                    # Compare frequencies of interest with fft frequencies
+                    freqs = comp_fft_freqs(
+                        axis.input_data, axis.name == "time", is_real
+                    )
+                    if (
+                        not is_uniform(axis.corr_values)
+                        or (
+                            len(freqs) != len(axis.corr_values)
+                            and not isin(freqs, axis.corr_values).all()
+                        )
+                        or len(freqs) == len(axis.corr_values)
+                        and not allclose(
+                            freqs,
+                            axis.corr_values,
+                            rtol=1e-5,
+                            atol=1e-8,
+                            equal_nan=False,
+                        )
+                    ):
+                        # Data is at least non uniform in "frequency"
+                        # Convert wavenumbers to frequencies if needed
+                        frequencies = (
+                            axis.corr_values
+                            if axis.name == "time"
+                            else axis.corr_values / (2 * pi)
+                        )
+                        axes_dict_non_uniform[axis.index] = [
+                            axis.input_data,
+                            frequencies,
+                        ]
+                        # Keep only interpolation data
+                        axis.values = axis.input_data
+                        axis.input_data = None
+
+    # Compute non uniform inverse Fourier Transform for axes
+    if axes_dict_non_uniform:
+        values = inudftn(values, axes_dict=axes_dict_non_uniform)
+
+    for axis in axes_list:
+        # Exclude non uniform axes
+        if axis.index in axes_dict_non_uniform:
+            continue
         if axis.transform == "ifft":
             if is_real and axis.name == "time":
                 axes.append(axis.index)
@@ -306,26 +423,35 @@ def comp_ifftn(values, axes_list, is_real=True):
             else:
                 axes = [axis.index] + axes
                 shape = [values.shape[axis.index]] + shape
-    size = array(shape).prod()
-    if is_onereal:
-        values = values * size / 2
-        values_shift = ifftshift(values, axes=axes[:-1])
-        slice_0 = take(values_shift, 0, axis=axes[-1])
-        slice_0 *= 2
-        other_values = delete(values_shift, 0, axis=axes[-1])
-        values = insert(other_values, 0, slice_0, axis=axes[-1])
-        values_IFT = irfftn(values, axes=axes)
-    elif is_half:
-        values = values * size / 2
-        values_shift = ifftshift(values, axes=axes[:-1])
-        slice_0 = take(values_shift, 0, axis=axes[-1])
-        slice_0 *= 2
-        other_values = delete(values_shift, 0, axis=axes[-1])
-        values = insert(other_values, 0, slice_0, axis=axes[-1])
-        values_IFT = ifftn(values, axes=axes)
+    if axes:  # Check if ifftn has to be called
+        size = array(shape).prod()
+        if is_onereal:
+            values = values * size / 2
+            if is_half:
+                values *= 0.5
+            values_shift = ifftshift(values, axes=axes[:-1])
+            slice_0 = take(values_shift, 0, axis=axes[-1])
+            slice_0 *= 2
+            if is_half:
+                slice_0 *= 2
+            other_values = delete(values_shift, 0, axis=axes[-1])
+            values = insert(other_values, 0, slice_0, axis=axes[-1])
+            values_IFT = irfftn(values, axes=axes)
+        elif is_half:
+            values = values * size / 2
+            values_shift = ifftshift(values, axes=axes[:-1])
+            slice_0 = take(values_shift, 0, axis=axes[-1])
+            slice_0 *= 2
+            other_values = delete(values_shift, 0, axis=axes[-1])
+            values = insert(other_values, 0, slice_0, axis=axes[-1])
+            values_IFT = ifftn(values, axes=axes)
+        else:
+            values_shift = ifftshift(values, axes=axes) * size
+            values_IFT = ifftn(values_shift, axes=axes)
     else:
-        values_shift = ifftshift(values, axes=axes) * size
-        values_IFT = ifftn(values_shift, axes=axes)
+        values_IFT = values
+    if is_real:
+        values_IFT = real(values_IFT)
     return values_IFT
 
 

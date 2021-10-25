@@ -23,6 +23,7 @@ except ImportError as error:
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
+from .Normalization import Normalization
 
 
 class DataFreq(DataND):
@@ -61,7 +62,7 @@ class DataFreq(DataND):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
-        - __init__ (init_dict = d) d must be a dictionnary with property names as keys
+        - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
@@ -123,15 +124,19 @@ class DataFreq(DataND):
             return False
         return True
 
-    def compare(self, other, name="self"):
+    def compare(self, other, name="self", ignore_list=None):
         """Compare two objects and return list of differences"""
 
+        if ignore_list is None:
+            ignore_list = list()
         if type(other) != type(self):
             return ["type(" + name + ")"]
         diff_list = list()
 
         # Check the properties inherited from DataND
         diff_list.extend(super(DataFreq, self).compare(other, name=name))
+        # Filter ignore differences
+        diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
 
     def __sizeof__(self):
@@ -143,15 +148,23 @@ class DataFreq(DataND):
         S += super(DataFreq, self).__sizeof__()
         return S
 
-    def as_dict(self, **kwargs):
+    def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
         """
         Convert this object in a json serializable dict (can be use in __init__).
+        type_handle_ndarray: int
+            How to handle ndarray (0: tolist, 1: copy, 2: nothing)
+        keep_function : bool
+            True to keep the function object, else return str
         Optional keyword input parameter is for internal use only
         and may prevent json serializability.
         """
 
         # Get the properties inherited from DataND
-        DataFreq_dict = super(DataFreq, self).as_dict(**kwargs)
+        DataFreq_dict = super(DataFreq, self).as_dict(
+            type_handle_ndarray=type_handle_ndarray,
+            keep_function=keep_function,
+            **kwargs
+        )
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataFreq_dict["__class__"] = "DataFreq"

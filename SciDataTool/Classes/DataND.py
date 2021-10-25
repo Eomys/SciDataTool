@@ -135,9 +135,20 @@ try:
 except ImportError as error:
     set_Ftparameters = error
 
+try:
+    from ..Methods.DataND.orthogonal_mp import orthogonal_mp
+except ImportError as error:
+    orthogonal_mp = error
+
+try:
+    from ..Methods.DataND.summing import summing
+except ImportError as error:
+    summing = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
+from .Normalization import Normalization
 
 
 class DataND(Data):
@@ -398,6 +409,26 @@ class DataND(Data):
         )
     else:
         set_Ftparameters = set_Ftparameters
+    # cf Methods.DataND.orthogonal_mp
+    if isinstance(orthogonal_mp, ImportError):
+        orthogonal_mp = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method orthogonal_mp: " + str(orthogonal_mp)
+                )
+            )
+        )
+    else:
+        orthogonal_mp = orthogonal_mp
+    # cf Methods.DataND.summing
+    if isinstance(summing, ImportError):
+        summing = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method summing: " + str(summing))
+            )
+        )
+    else:
+        summing = summing
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -418,7 +449,7 @@ class DataND(Data):
         """Constructor of the class. Can be use in three ways :
         - __init__ (arg1 = 1, arg3 = 5) every parameters have name and default values
             for SciDataTool type, -1 will call the default constructor
-        - __init__ (init_dict = d) d must be a dictionnary with property names as keys
+        - __init__ (init_dict = d) d must be a dictionary with property names as keys
         - __init__ (init_str = s) s must be a string
         s is the file path to load
 
@@ -495,9 +526,11 @@ class DataND(Data):
             return False
         return True
 
-    def compare(self, other, name="self"):
+    def compare(self, other, name="self", ignore_list=None):
         """Compare two objects and return list of differences"""
 
+        if ignore_list is None:
+            ignore_list = list()
         if type(other) != type(self):
             return ["type(" + name + ")"]
         diff_list = list()
@@ -525,6 +558,8 @@ class DataND(Data):
             diff_list.append(name + ".values")
         if other._is_real != self._is_real:
             diff_list.append(name + ".is_real")
+        # Filter ignore differences
+        diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
 
     def __sizeof__(self):
@@ -544,22 +579,36 @@ class DataND(Data):
         S += getsizeof(self.is_real)
         return S
 
-    def as_dict(self, **kwargs):
+    def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
         """
         Convert this object in a json serializable dict (can be use in __init__).
+        type_handle_ndarray: int
+            How to handle ndarray (0: tolist, 1: copy, 2: nothing)
+        keep_function : bool
+            True to keep the function object, else return str
         Optional keyword input parameter is for internal use only
         and may prevent json serializability.
         """
 
         # Get the properties inherited from Data
-        DataND_dict = super(DataND, self).as_dict(**kwargs)
+        DataND_dict = super(DataND, self).as_dict(
+            type_handle_ndarray=type_handle_ndarray,
+            keep_function=keep_function,
+            **kwargs
+        )
         if self.axes is None:
             DataND_dict["axes"] = None
         else:
             DataND_dict["axes"] = list()
             for obj in self.axes:
                 if obj is not None:
-                    DataND_dict["axes"].append(obj.as_dict())
+                    DataND_dict["axes"].append(
+                        obj.as_dict(
+                            type_handle_ndarray=type_handle_ndarray,
+                            keep_function=keep_function,
+                            **kwargs
+                        )
+                    )
                 else:
                     DataND_dict["axes"].append(None)
         DataND_dict["FTparameters"] = (
@@ -568,7 +617,16 @@ class DataND(Data):
         if self.values is None:
             DataND_dict["values"] = None
         else:
-            DataND_dict["values"] = self.values.tolist()
+            if type_handle_ndarray == 0:
+                DataND_dict["values"] = self.values.tolist()
+            elif type_handle_ndarray == 1:
+                DataND_dict["values"] = self.values.copy()
+            elif type_handle_ndarray == 2:
+                DataND_dict["values"] = self.values
+            else:
+                raise Exception(
+                    "Unknown type_handle_ndarray: " + str(type_handle_ndarray)
+                )
         DataND_dict["is_real"] = self.is_real
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name

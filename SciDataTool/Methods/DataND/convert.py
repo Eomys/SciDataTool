@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-from numpy import abs as np_abs, apply_along_axis
+import numpy as np
 
 from SciDataTool.Functions import NormError, UnitError
 from SciDataTool.Functions.conversions import convert as convert_unit, to_dB, to_dBA
 
 
-def convert(self, values, unit, is_norm, axes_list):
+def convert(self, values, unit, is_norm, is_squeeze, axes_list):
     """Returns the values of the field transformed or converted.
     Parameters
     ----------
@@ -23,43 +22,53 @@ def convert(self, values, unit, is_norm, axes_list):
         values of the field
     """
 
+    if is_squeeze:
+        values = np.squeeze(values)
+
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
-                values = values / self.normalizations.get("ref")
-            except:
-                raise NormError(
-                    "ERROR: Reference value not specified for normalization"
-                )
+                values = self.normalizations["ref"].normalize(values)
+            except Exception:
+                raise NormError("Reference value not specified for normalization")
     elif unit == "dB":
         ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
-        values = to_dB(np_abs(values), self.unit, ref_value)
+        if "ref" in self.normalizations:
+            ref_value *= self.normalizations["ref"].ref
+        values = to_dB(np.abs(values), self.unit, ref_value)
     elif unit == "dBA":
         ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
+        if "ref" in self.normalizations:
+            ref_value *= self.normalizations["ref"].ref
         for axis in axes_list:
             is_match = False
             if axis.name == "freqs" or axis.corr_name == "freqs":
+                if axis.corr_values is not None and axis.unit not in [
+                    "SI",
+                    axis.corr_unit,
+                ]:
+                    axis_values = axis.corr_values
+                else:
+                    axis_values = axis.values
                 index = axis.index
-                values = apply_along_axis(
-                    to_dBA, index, values, axis.values, self.unit, ref_value
+                values = np.apply_along_axis(
+                    to_dBA, index, values, axis_values, self.unit, ref_value
                 )
                 is_match = True
             elif axis.name == "frequency":
+                if axis.corr_values is None:
+                    axis_values = axis.values
+                else:
+                    axis_values = axis.corr_values
                 index = axis.index
-                values = apply_along_axis(
-                    to_dBA, index, values, axis.values, self.unit, ref_value
+                values = np.apply_along_axis(
+                    to_dBA, index, values, axis_values, self.unit, ref_value
                 )
                 is_match = True
         if not is_match:
-            raise UnitError(
-                "ERROR: dBA conversion only available for fft with frequencies"
-            )
+            raise UnitError("dBA conversion only available for fft with frequencies")
     elif unit in self.normalizations:
-        values = values / self.normalizations.get(unit)
+        values = self.normalizations.get(unit).normalize(values)
     else:
         values = convert_unit(values, self.unit, unit)
 

@@ -26,10 +26,11 @@ def get_magnitude_along(
     """
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
-    return_dict = self.get_along(args, axis_data=axis_data, is_squeeze=is_squeeze)
+    return_dict = self.get_along(
+        args, axis_data=axis_data, is_squeeze=is_squeeze, is_magnitude=True
+    )
     values = return_dict[self.symbol]
-    # Compute magnitude
-    values = np_abs(values)
+
     # 1/nth octave band
     for axis in return_dict["axes_list"]:
         if axis.name == "freqs" or axis.corr_name == "freqs":
@@ -43,33 +44,39 @@ def get_magnitude_along(
     if unit == self.unit or unit == "SI":
         if is_norm:
             try:
-                values = values / self.normalizations.get("ref")
+                values = self.normalizations["ref"].normalize(values)
             except:
                 raise NormError(
                     "ERROR: Reference value not specified for normalization"
                 )
     elif unit == "dB":
         ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
+        if "ref" in self.normalizations:
+            ref_value *= self.normalizations["ref"].ref
         values = to_dB(values, self.unit, ref_value)
     elif unit == "dBA":
         ref_value = 1.0
-        if "ref" in self.normalizations.keys():
-            ref_value *= self.normalizations.get("ref")
+        if "ref" in self.normalizations:
+            ref_value *= self.normalizations["ref"].ref
         if "freqs" in return_dict.keys():
             for axis in return_dict["axes_list"]:
                 if axis.name == "freqs" or axis.corr_name == "freqs":
                     index = axis.index
+            if return_dict["axes_list"][index].corr_values is not None and return_dict[
+                "axes_list"
+            ][index].unit not in ["SI", return_dict["axes_list"][index].corr_unit]:
+                freqs = return_dict["axes_list"][index].corr_values
+            else:
+                freqs = return_dict["freqs"]
             values = apply_along_axis(
-                to_dBA, index, values, return_dict["freqs"], self.unit, ref_value
+                to_dBA, index, values, freqs, self.unit, ref_value
             )
         else:
             raise UnitError(
                 "ERROR: dBA conversion only available for fft with frequencies"
             )
     elif unit in self.normalizations:
-        values = values / self.normalizations.get(unit)
+        values = self.normalizations.get(unit).normalize(values)
     else:
         values = convert(values, self.unit, unit)
     return_dict[self.symbol] = values

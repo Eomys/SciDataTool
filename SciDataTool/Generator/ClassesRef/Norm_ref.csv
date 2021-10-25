@@ -1,0 +1,2 @@
+Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
+ref,,reference value,,float,1,,,,,Normalization,normalize,VERSION,1,Normalization with a reference value (values/ref),

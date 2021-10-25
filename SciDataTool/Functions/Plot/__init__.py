@@ -9,8 +9,12 @@ unit_dict = {
     "distance": "m",
     "loadcases": "",
     "eccentricity": "%",
+    "frequency": "Hz",
+    "revolution": "",
     "order": "",
     "cr_band": "Bark",
+    "speed": "rpm",
+    "modes": "",
 }
 
 norm_dict = {
@@ -20,9 +24,10 @@ norm_dict = {
     "distance": "Distance [m]",
     "angle_rotor": "Rotor mechanical angle [°]",
     "tooth_id": "Stator tooth number []",
-    "rpm": "Speed [rpm]",
+    "speed": "Speed [rpm]",
     "Hz": "Frequency [Hz]",
     "Bark": "Critical band rate [Bark]",
+    "time": "Time [s]",
 }
 
 axes_dict = {

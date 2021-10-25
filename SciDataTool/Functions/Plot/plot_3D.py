@@ -29,6 +29,8 @@ def plot_3D(
     zlabel="",
     xticks=None,
     yticks=None,
+    xticklabels=None,
+    yticklabels=None,
     fig=None,
     ax=None,
     is_logscale_x=False,
@@ -36,6 +38,7 @@ def plot_3D(
     is_logscale_z=False,
     is_disp_title=True,
     type_plot="stem",
+    is_contour=False,
     save_path=None,
     is_show_fig=None,
     is_switch_axes=False,
@@ -91,8 +94,10 @@ def plot_3D(
         boolean indicating if the z-axis must be set in logarithmic scale
     is_disp_title : bool
         boolean indicating if the title must be displayed
-    type : str
+    type_plot : str
         type of 3D graph : "stem", "surf", "pcolor" or "scatter"
+    is_contour : bool
+        True to show contour line if type_plot = "pcolor"
     save_path : str
         full path including folder, name and extension of the file to save if save_path is not None
     is_show_fig : bool
@@ -173,6 +178,10 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
         # white background
         ax.xaxis.pane.fill = False
         ax.yaxis.pane.fill = False
@@ -196,6 +205,10 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
         # white background
         ax.xaxis.pane.fill = False
         ax.yaxis.pane.fill = False
@@ -206,6 +219,15 @@ def plot_3D(
         if is_logscale_z:
             ax.zscale("log")
     elif type_plot == "pcolor":
+        Zdata[Zdata < z_min] = z_min
+        Zdata[Zdata > z_max] = z_max
+        # Handle descending order axes (e.g. spectrogram of run-down in freq/rpm map)
+        if Ydata[-1] < Ydata[0]:
+            Ydata = Ydata[::-1]
+            Zdata = Zdata[:, ::-1]
+        if Xdata[-1] < Xdata[0]:
+            Xdata = Xdata[::-1]
+            Zdata = Zdata[::-1, :]
         im = NonUniformImage(
             ax,
             interpolation="bilinear",
@@ -214,7 +236,10 @@ def plot_3D(
             picker=10,
         )
         im.set_data(Xdata, Ydata, Zdata.T)
+        im.set_clim(z_min, z_max)
         ax.images.append(im)
+        if is_contour:
+            ax.contour(Xdata, Ydata, Zdata.T, colors="black", linewidths=0.8)
         clb = fig.colorbar(im, ax=ax, format=clb_format)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
@@ -224,11 +249,23 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
         ax.set_xlim([x_min, x_max])
         ax.set_ylim([y_min, y_max])
     elif type_plot == "pcolormesh":
         c = ax.pcolormesh(
-            Xdata, Ydata, Zdata, cmap=colormap, shading="gouraud", antialiased=True
+            Xdata,
+            Ydata,
+            Zdata,
+            cmap=colormap,
+            shading="gouraud",
+            antialiased=True,
+            picker=True,
+            vmin=z_min,
+            vmax=z_max,
         )
         clb = fig.colorbar(c, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
@@ -239,6 +276,10 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
         ax.set_xlim([x_min, x_max])
         ax.set_ylim([y_min, y_max])
     elif type_plot == "scatter":
@@ -263,6 +304,10 @@ def plot_3D(
             ax.xaxis.set_ticks(xticks)
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels, rotation=90)
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
