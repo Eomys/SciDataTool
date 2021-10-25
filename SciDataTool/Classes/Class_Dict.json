@@ -248,6 +248,7 @@
             "get_axes",
             "get_data_along",
             "get_field",
+            "get_freqs",
             "get_harmonics",
             "get_magnitude_along",
             "get_phase_along",
@@ -258,8 +259,8 @@
             "plot_3D_Data",
             "rebuild_symmetries",
             "set_Ftparameters",
-            "orthogonal_mp",
-            "summing"
+            "summing",
+            "orthogonal_mp"
         ],
         "mother": "Data",
         "name": "DataND",
