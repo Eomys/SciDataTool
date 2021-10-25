@@ -56,6 +56,11 @@ except ImportError as error:
     get_xyz_along = error
 
 try:
+    from ..Methods.VectorField.get_vectorfield_along import get_vectorfield_along
+except ImportError as error:
+    get_vectorfield_along = error
+
+try:
     from ..Methods.VectorField.plot_2D_Data import plot_2D_Data
 except ImportError as error:
     plot_2D_Data = error
@@ -186,6 +191,18 @@ class VectorField(FrozenClass):
         )
     else:
         get_xyz_along = get_xyz_along
+    # cf Methods.VectorField.get_vectorfield_along
+    if isinstance(get_vectorfield_along, ImportError):
+        get_vectorfield_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_vectorfield_along: "
+                    + str(get_vectorfield_along)
+                )
+            )
+        )
+    else:
+        get_vectorfield_along = get_vectorfield_along
     # cf Methods.VectorField.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(

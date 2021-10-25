@@ -22,7 +22,9 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     a DataND object
     """
 
-    results = self.get_along(*args, is_squeeze=False)
+    results = self.get_along(
+        *args, is_squeeze=False, unit=unit, is_norm=is_norm, axis_data=axis_data
+    )
     values = results.pop(self.symbol)
     del results["axes_dict_other"]
     axes_list = results.pop("axes_list")
