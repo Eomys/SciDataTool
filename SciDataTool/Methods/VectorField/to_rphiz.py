@@ -30,7 +30,7 @@ def to_rphiz(self):
 
         Comp_r = self.components["comp_x"].copy()
         Comp_r.name = "Radial " + self.components["comp_x"].name.lower().replace(
-            " along x", ""
+            " along x-axis", ""
         )
         Comp_r.symbol = self.components["comp_x"].symbol.replace("_x", "_r")
         Comp_r.values = result["radial"]
@@ -38,7 +38,7 @@ def to_rphiz(self):
 
         Comp_t = self.components["comp_x"].copy()
         Comp_t.name = "Tangential " + self.components["comp_x"].name.lower().replace(
-            " along x", ""
+            " along x-axis", ""
         )
         Comp_t.symbol = self.components["comp_x"].symbol.replace("_r", "_y")
         Comp_t.values = result["tangential"]

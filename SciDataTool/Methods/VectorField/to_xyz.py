@@ -30,7 +30,8 @@ def to_xyz(self):
 
         Comp_x = self.components["radial"].copy()
         Comp_x.name = (
-            self.components["radial"].name.lower().replace("radial ", "") + " along x"
+            self.components["radial"].name.lower().replace("radial ", "")
+            + " along x-axis"
         )
         Comp_x.symbol = self.components["radial"].symbol.replace("_r", "_x")
         Comp_x.values = result["comp_x"]
@@ -38,7 +39,8 @@ def to_xyz(self):
 
         Comp_y = self.components["radial"].copy()
         Comp_y.name = (
-            self.components["radial"].name.lower().replace("radial ", "") + " along y"
+            self.components["radial"].name.lower().replace("radial ", "")
+            + " along y-axis"
         )
         Comp_y.symbol = self.components["radial"].symbol.replace("_r", "_y")
         Comp_y.values = result["comp_y"]
