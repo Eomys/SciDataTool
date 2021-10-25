@@ -31,13 +31,16 @@ def get_rphiz_along(
         args = args[0]  # if called from another script with *args
 
     if "comp_x" in self.components.keys() and "comp_y" in self.components.keys():
-        # Extract first along whole "angle" axis
+        # Extract first along whole or smallest period "angle" axis
         new_args = [arg for arg in args]
         string = [s for s in args if "angle" in s]
         if string != [] and "smallestperiod" not in string[0]:
             new_args[args.index(string[0])] = "angle"
         elif string == []:
-            new_args.extend(["angle"])
+            if "wavenumber" in args:
+                new_args[args.index("wavenumber")] = "angle"
+            else:
+                new_args.extend(["angle"])
         Datax = self.components["comp_x"].get_data_along(
             *new_args,
             unit=unit,
@@ -53,14 +56,14 @@ def get_rphiz_along(
         field_x = Datax.values
         field_y = Datay.values
         shape = field_x.shape
-        if "smallestperiod" in string[0]:
+        if string != [] and "smallestperiod" in string[0]:
             phi = Datax.get_axes("angle")[0].get_values(is_smallestperiod=True)
         else:
             phi = Datax.get_axes("angle")[0].get_values()
         # Convert to cylindrical coordinates
         (field_r, field_t) = cart2pol(field_x, field_y, phi)
         # Extract second time with true args
-        if "angle" not in args:
+        if "angle" not in args and "angle[smallestperiod]" not in args:
             Datax.values = field_r
             Datay.values = field_t
             self.components["radial"] = Datax

@@ -22,7 +22,10 @@ def to_rphiz(self):
     else:
         # Coordinate transform
         arg_list = [
-            axis.name + "[smallestperiod]" for axis in self.components["comp_x"].axes
+            axis.name
+            if axis.name in ["freqs", "wavenumber"]
+            else axis.name + "[smallestperiod]"
+            for axis in self.components["radial"].axes
         ]
         result = self.get_rphiz_along(*arg_list)
         # Store in new VectorField

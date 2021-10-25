@@ -35,7 +35,10 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeez
         if string != [] and "smallestperiod" not in string[0]:
             new_args[args.index(string[0])] = "angle"
         elif string == []:
-            new_args.extend(["angle"])
+            if "wavenumber" in args:
+                new_args[args.index("wavenumber")] = "angle"
+            else:
+                new_args.extend(["angle"])
         Datar = self.components["radial"].get_data_along(
             *new_args,
             unit=unit,
@@ -61,14 +64,14 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeez
                 axes=Datar.axes,
                 values=field_c,
             )
-        if "smallestperiod" in string[0]:
+        if string != [] and "smallestperiod" in string[0]:
             phi = Datar.get_axes("angle")[0].get_values(is_smallestperiod=True)
         else:
             phi = Datar.get_axes("angle")[0].get_values()
         # Convert to cylindrical coordinates
         (field_x, field_y) = pol2cart(field_r, field_c, phi)
         # Extract second time with true args
-        if "angle" not in args and "angle[smallestperiod]":
+        if "angle" not in args and "angle[smallestperiod]" not in args:
             Datar.values = field_x
             Dataphi.values = field_y
             self.components["comp_x"] = Datar
