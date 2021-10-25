@@ -86,6 +86,11 @@ except ImportError as error:
     get_field = error
 
 try:
+    from ..Methods.DataND.get_freqs import get_freqs
+except ImportError as error:
+    get_freqs = error
+
+try:
     from ..Methods.DataND.get_harmonics import get_harmonics
 except ImportError as error:
     get_harmonics = error
@@ -136,14 +141,14 @@ except ImportError as error:
     set_Ftparameters = error
 
 try:
-    from ..Methods.DataND.orthogonal_mp import orthogonal_mp
-except ImportError as error:
-    orthogonal_mp = error
-
-try:
     from ..Methods.DataND.summing import summing
 except ImportError as error:
     summing = error
+
+try:
+    from ..Methods.DataND.orthogonal_mp import orthogonal_mp
+except ImportError as error:
+    orthogonal_mp = error
 
 
 from numpy import array, array_equal
@@ -300,6 +305,15 @@ class DataND(Data):
         )
     else:
         get_field = get_field
+    # cf Methods.DataND.get_freqs
+    if isinstance(get_freqs, ImportError):
+        get_freqs = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method get_freqs: " + str(get_freqs))
+            )
+        )
+    else:
+        get_freqs = get_freqs
     # cf Methods.DataND.get_harmonics
     if isinstance(get_harmonics, ImportError):
         get_harmonics = property(
@@ -409,6 +423,15 @@ class DataND(Data):
         )
     else:
         set_Ftparameters = set_Ftparameters
+    # cf Methods.DataND.summing
+    if isinstance(summing, ImportError):
+        summing = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method summing: " + str(summing))
+            )
+        )
+    else:
+        summing = summing
     # cf Methods.DataND.orthogonal_mp
     if isinstance(orthogonal_mp, ImportError):
         orthogonal_mp = property(
@@ -420,15 +443,6 @@ class DataND(Data):
         )
     else:
         orthogonal_mp = orthogonal_mp
-    # cf Methods.DataND.summing
-    if isinstance(summing, ImportError):
-        summing = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method summing: " + str(summing))
-            )
-        )
-    else:
-        summing = summing
     # save and copy methods are available in all object
     save = save
     copy = copy

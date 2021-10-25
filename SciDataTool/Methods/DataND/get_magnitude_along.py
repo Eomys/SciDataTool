@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from SciDataTool.Functions import NormError, UnitError
 from SciDataTool.Functions.conversions import convert, to_dB, to_dBA, to_noct
-from numpy import apply_along_axis, abs as np_abs
+from numpy import apply_along_axis, apply_over_axes, abs as np_abs, meshgrid
 
 
 def get_magnitude_along(
@@ -62,19 +62,33 @@ def get_magnitude_along(
             for axis in return_dict["axes_list"]:
                 if axis.name == "freqs" or axis.corr_name == "freqs":
                     index = axis.index
-            if return_dict["axes_list"][index].corr_values is not None and return_dict[
-                "axes_list"
-            ][index].unit not in ["SI", return_dict["axes_list"][index].corr_unit]:
-                freqs = return_dict["axes_list"][index].corr_values
             else:
-                freqs = return_dict["freqs"]
+                if return_dict["axes_list"][
+                    index
+                ].corr_values is not None and return_dict["axes_list"][
+                    index
+                ].unit not in [
+                    "SI",
+                    return_dict["axes_list"][index].corr_unit,
+                ]:
+                    freqs = return_dict["axes_list"][index].corr_values
+                else:
+                    freqs = return_dict["freqs"]
             values = apply_along_axis(
                 to_dBA, index, values, freqs, self.unit, ref_value
             )
+        elif "speed" in return_dict and "order" in return_dict:
+            freqs = self.get_freqs()
+            freqs = freqs.ravel("C")
+            shape = values.shape
+            values = values.reshape(freqs.shape + shape[2:])
+            values = apply_along_axis(to_dBA, 0, values, freqs, self.unit, ref_value)
+            values = values.reshape(shape)
         else:
             raise UnitError(
                 "ERROR: dBA conversion only available for fft with frequencies"
             )
+
     elif unit in self.normalizations:
         values = self.normalizations.get(unit).normalize(values)
     else:
