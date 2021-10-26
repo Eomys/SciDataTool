@@ -59,11 +59,11 @@ def get_rphiz_along(
         else:
             phi = Datax.get_axes("angle")[0].get_values()
         # Convert to cylindrical coordinates
-        (field_r, field_t) = cart2pol(field_x, field_y, phi)
+        (field_r, field_c) = cart2pol(field_x, field_y, phi)
         # Extract second time with true args
         if "angle" not in args and "angle[smallestperiod]" not in args:
             Datax.values = field_r
-            Datay.values = field_t
+            Datay.values = field_c
             self.components["radial"] = Datax
             self.components["tangential"] = Datay
             resultr = self.components["radial"].get_along(
