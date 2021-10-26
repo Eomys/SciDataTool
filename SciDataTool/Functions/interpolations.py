@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from numpy import (
     array,
     linspace,
@@ -6,10 +5,8 @@ from numpy import (
     take,
     isclose,
     isin,
-    around,
     all,
     abs as np_abs,
-    interp,
     where,
     zeros,
 )

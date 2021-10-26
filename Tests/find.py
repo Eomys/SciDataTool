@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from numpy.random import random_sample, ranf
 
 PYTHON_TYPE = ["float", "int", "str", "bool", "complex"]

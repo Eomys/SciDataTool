@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-
-import numpy as np
-
-from typing import List
-from numpy import ndarray
 from SciDataTool.Classes.Data1D import Data1D
 from SciDataTool.Functions.omp import omp, comp_undersampled_axe
 

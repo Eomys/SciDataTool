@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from numpy import min as np_min, max as np_max, abs as np_abs, log10
 
 import matplotlib.pyplot as plt

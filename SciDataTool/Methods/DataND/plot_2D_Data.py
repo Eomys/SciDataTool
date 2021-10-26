@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
-
 from SciDataTool.Functions.Plot.plot_2D import plot_2D
 from SciDataTool.Functions.Plot import (
     unit_dict,
     norm_dict,
     axes_dict,
     COLORS,
-    LINESTYLES,
 )
 from numpy import (
     squeeze,

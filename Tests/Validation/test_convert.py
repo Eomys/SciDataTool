@@ -252,12 +252,46 @@ def test_dba():
     result_elec_order = Field.get_along("freqs->elec_order", unit="dBA")
     assert_array_almost_equal(result_Hz["X"], result_elec_order["X"])
 
-    result_Hz = Field.get_magnitude_along("freqs", unit="dBA")
-    result_elec_order = Field.get_magnitude_along("freqs->elec_order", unit="dBA")
-    assert_array_almost_equal(result_Hz["X"], result_elec_order["X"])
+
+@pytest.mark.validation
+def test_dba_speed_order():
+    Speed = DataLinspace(
+        name="speed",
+        unit="m/s",
+        initial=0,
+        final=10000,
+        number=11,
+        include_endpoint=True,
+    )
+    Order = Data1D(
+        name="order",
+        unit="",
+        values=["H" + str(i) for i in range(20)],
+    )
+    Loadcase = DataLinspace(
+        name="loadcases",
+        unit="",
+        initial=0,
+        final=5,
+        number=6,
+        include_endpoint=True,
+    )
+    field = 600000 * np.ones((11, 20, 6))
+    Field = DataFreq(
+        name="noise",
+        symbol="X",
+        unit="Pa",
+        values=field,
+        axes=[Speed, Order, Loadcase],
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+    )
+    result = Field.get_magnitude_along("speed", "order", unit="dBA")
+    assert result["X"].shape == (11, 20)
+    result = Field.get_magnitude_along("speed", "order", "loadcases", unit="dBA")
+    assert result["X"].shape == (11, 20, 6)
 
 
 if __name__ == "__main__":
-    test_units_fft()
+    test_dba_speed_order()
     # test_norm()
     print("Done")

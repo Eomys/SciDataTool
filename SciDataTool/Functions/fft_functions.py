@@ -1,33 +1,21 @@
-# -*- coding: utf-8 -*-
-from numpy import mean, hanning, linspace, where, isclose, apply_along_axis, around
+from numpy import linspace, where, isclose, around
 from numpy.fft import (
-    fft,
     fftshift,
-    ifft,
     ifftshift,
     rfftn,
     irfftn,
     fftn,
     ifftn,
-    rfftfreq,
 )
 from numpy import (
     array,
     pi,
-    zeros,
     exp,
     ceil,
-    iscomplex,
-    concatenate,
-    conjugate,
-    flip,
     isin,
-    append,
     take,
     insert,
     delete,
-    abs as np_abs,
-    angle as np_angle,
     allclose,
     real,
 )
@@ -455,80 +443,80 @@ def comp_ifftn(values, axes_list, is_real=True):
     return values_IFT
 
 
-def comp_magnitude(values):
-    """Computes the magnitude of the Fourier Transform
-    Parameters
-    ----------
-    values: ndarray
-        ndarray of the field
-    Returns
-    -------
-    Magnitude of the Fourier Transform
-    """
-    return np_abs(_comp_fft(values))
+# def comp_magnitude(values):
+#     """Computes the magnitude of the Fourier Transform
+#     Parameters
+#     ----------
+#     values: ndarray
+#         ndarray of the field
+#     Returns
+#     -------
+#     Magnitude of the Fourier Transform
+#     """
+#     return np_abs(_comp_fft(values))
 
 
 #    return np_abs(comp_stft_average(values))
-def comp_phase(values):
-    """Computes the phase of the Fourier Transform
-    Parameters
-    ----------
-    values: ndarray
-        ndarray of the field
-    Returns
-    -------
-    Phase of the Fourier Transform
-    """
-    return np_angle(_comp_fft(values))
+# def comp_phase(values):
+#     """Computes the phase of the Fourier Transform
+#     Parameters
+#     ----------
+#     values: ndarray
+#         ndarray of the field
+#     Returns
+#     -------
+#     Phase of the Fourier Transform
+#     """
+#     return np_angle(_comp_fft(values))
 
 
-def comp_stft_average(values):
-    """Computes the average of the Short-Time Fourier Transform
-    Parameters
-    ----------
-    values: ndarray
-        ndarray of the field
-    Returns
-    -------
-    Average of the Short-Time Fourier Transform
-    """
-    # To do
-    nperseg = 3200
-    noverlap = int(nperseg * 0.75)
-    f, t, Zxx = stft(
-        values, fs=48000, window="hann", nperseg=nperseg, noverlap=noverlap
-    )
-    window_size = nperseg / len(values)
-    values = mean(Zxx, axis=1) / (0.5)
-    #    values = 2.0 * mean(Zxx, axis=1)
-    print(values.shape)
-    return f, np_abs(values)
+# def comp_stft_average(values):
+#     """Computes the average of the Short-Time Fourier Transform
+#     Parameters
+#     ----------
+#     values: ndarray
+#         ndarray of the field
+#     Returns
+#     -------
+#     Average of the Short-Time Fourier Transform
+#     """
+#     # To do
+#     nperseg = 3200
+#     noverlap = int(nperseg * 0.75)
+#     f, t, Zxx = stft(
+#         values, fs=48000, window="hann", nperseg=nperseg, noverlap=noverlap
+#     )
+#     window_size = nperseg / len(values)
+#     values = mean(Zxx, axis=1) / (0.5)
+#     #    values = 2.0 * mean(Zxx, axis=1)
+#     print(values.shape)
+#     return f, np_abs(values)
 
 
-def comp_fft_average(values):
-    """Computes the average of the Short-Time Fourier Transform
-    Parameters
-    ----------
-    values: ndarray
-        ndarray of the field
-    Returns
-    -------
-    Average of the Short-Time Fourier Transform
-    """
-    # To do
-    nperseg = 3200
-    noverlap = int(nperseg * 0.75)
-    step = nperseg - noverlap
-    N_tot = len(values)
-    nwindows = int(N_tot / (2.0 * step))
-    values_fft = zeros(nperseg, dtype="complex128")
-    for i in range(nwindows):
-        values_fft += _comp_fft(
-            values[i * step : nperseg + i * step] * hanning(nperseg)
-        )
-    values = values_fft[int(nperseg / 2) :] / nwindows
-    f = linspace(0, int(N_tot / 2), int(nperseg / 2))
-    return f, np_abs(values)
+# def comp_fft_average(values):
+#     """Computes the average of the Short-Time Fourier Transform
+#     Parameters
+#     ----------
+#     values: ndarray
+#         ndarray of the field
+#     Returns
+#     -------
+#     Average of the Short-Time Fourier Transform
+#     """
+#     # To do
+#     nperseg = 3200
+#     noverlap = int(nperseg * 0.75)
+#     step = nperseg - noverlap
+#     N_tot = len(values)
+#     nwindows = int(N_tot / (2.0 * step))
+#     values_fft = zeros(nperseg, dtype="complex128")
+#     for i in range(nwindows):
+#         values_fft += _comp_fft(
+#             values[i * step : nperseg + i * step] * hanning(nperseg)
+#         )
+#     values = values_fft[int(nperseg / 2) :] / nwindows
+#     f = linspace(0, int(N_tot / 2), int(nperseg / 2))
+#     return f, np_abs(values)
 
 
 def rect_window(f, M, dt):

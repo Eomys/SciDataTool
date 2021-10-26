@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifftn
 

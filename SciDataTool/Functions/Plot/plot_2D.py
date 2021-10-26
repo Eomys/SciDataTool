@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from itertools import repeat
-
 import matplotlib.pyplot as plt
 
 from numpy import (
@@ -9,13 +5,10 @@ from numpy import (
     argmin,
     abs,
     arange,
-    squeeze,
-    split,
     ndarray,
     cumsum,
     zeros,
     shape,
-    max as np_max,
 )
 
 from SciDataTool.Functions.Plot.init_fig import init_fig

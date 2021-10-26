@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from numpy import array_equal, ndarray
 
 
