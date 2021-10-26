@@ -171,11 +171,18 @@ def get_axis(self, axis, is_real):
                     values = values * axis.symmetries["antiperiod"] / 2
         # Rebuild symmetries in ifft case
         if self.transform == "ifft":
-            if (
-                self.extension != "smallestperiod"
-                and self.extension != "oneperiod"
-                and self.extension != "antiperiod"
-            ):
+            if self.extension not in [
+                "smallestperiod",
+                "oneperiod",
+                "antiperiod",
+                "sum",
+                "mean",
+                "rms",
+                "rss",
+                "integrate",
+                "derivate",
+                "antiderivate",
+            ]:
                 values = rebuild_symmetries_axis(values, axis.symmetries)
         # Interpolate axis with input data
         if self.input_data is None:
