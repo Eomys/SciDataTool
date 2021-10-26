@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions import NormError
 from SciDataTool.Functions.conversions import convert
 from numpy import angle as np_angle
@@ -34,9 +33,7 @@ def get_phase_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             try:
                 values = self.normalizations["ref"].normalize(values)
             except:
-                raise NormError(
-                    "ERROR: Reference value not specified for normalization"
-                )
+                raise NormError("Reference value not specified for normalization")
     elif unit == "°":
         values = convert(values, "rad", "°")
     elif unit in self.normalizations:

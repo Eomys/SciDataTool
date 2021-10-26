@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from itertools import repeat
-
 import matplotlib.pyplot as plt
 
 from numpy import (
@@ -9,13 +5,10 @@ from numpy import (
     argmin,
     abs,
     arange,
-    squeeze,
-    split,
     ndarray,
     cumsum,
     zeros,
     shape,
-    max as np_max,
 )
 
 from SciDataTool.Functions.Plot.init_fig import init_fig
@@ -55,6 +48,7 @@ def plot_2D(
     font_size_label=10,
     font_size_legend=8,
     is_show_legend=True,
+    is_outside_legend=False,
     scale_units="x",
     scale=None,
     width=0.005,
@@ -112,6 +106,8 @@ def plot_2D(
         barwidth scaling factor, only if type_plot = "bargraph"
     is_show_fig : bool
         True to show figure after plot
+    is_outside_legend : bool
+        True to display legend outside the graph
     win_title : str
         Title of the plot window
     scale_units : str
@@ -406,6 +402,9 @@ def plot_2D(
 
     if not is_show_legend:
         ax.get_legend().remove()
+
+    if is_outside_legend:
+        ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
     plt.tight_layout()
     for item in (

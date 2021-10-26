@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_axes(self, *args):
     """Returns the list of axes.
     Parameters

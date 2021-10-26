@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_periodicity(self):
     """Gives periodicity of the axis.
     Parameters

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from json import dump
 from os.path import join, basename, isdir
 

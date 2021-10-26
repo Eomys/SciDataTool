@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from numpy import array, empty, int32, squeeze, expand_dims
 
 

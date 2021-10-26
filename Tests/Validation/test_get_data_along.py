@@ -183,6 +183,13 @@ def test_get_data_along_integrate():
     assert_array_almost_equal(Field_rms.values, A / np.sqrt(2), decimal=15)
     assert Field_rms.unit == "m"
 
+    Field.unit = "N/m^2"
+    Time.unit = "m"
+    Field_int = Field.get_data_along("time=integrate", "angle=integrate")
+    assert Field_int.unit == "N"
+    Time.unit = "s"
+    Field.unit = "m"
+
     # Anti-periodic signal
     Time0 = Time.get_axis_periodic(Nper=1, is_aper=True)
     ta0, at0 = np.meshgrid(Time0.get_values(is_smallestperiod=True), Angle.get_values())
@@ -310,7 +317,7 @@ def test_get_data_along_antiderivate():
 
     # Angle derivation
     Field_anti_a = Field.get_data_along("time", "angle=antiderivate")
-    assert Field_anti_a.unit == "mrad", "wrong unit: " + Field_anti_a.unit
+    assert Field_anti_a.unit == "m2", "wrong unit: " + Field_anti_a.unit
     field_anti_a_check = Field_anti_a.values
     field_anti_a_ref = 5 / 3 * np.sin(2 * np.pi * f * ta.T + 3 * at.T)
     assert_array_almost_equal(field_anti_a_check, field_anti_a_ref, decimal=3)
@@ -374,7 +381,7 @@ def test_get_data_along_derivate():
 
     # Angle derivation
     Field_diff_a = Field.get_data_along("time", "angle=derivate")
-    assert Field_diff_a.unit == "m/rad"
+    assert Field_diff_a.unit == ""
     field_diff_a_check = Field_diff_a.values
     field_diff_a_ref = -5 * 3 * np.sin(2 * np.pi * f * ta.T + 3 * at.T)
     assert_array_almost_equal(field_diff_a_check, field_diff_a_ref, decimal=1)

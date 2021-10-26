@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 import logging
-from os.path import normpath, join, abspath, dirname, isdir
+from os.path import join, abspath, dirname, isdir
 from os import makedirs
 from shutil import rmtree
 from matplotlib import use

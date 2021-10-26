@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions import UnitError
 from SciDataTool.Functions.fft_functions import (
     comp_fft_freqs,
@@ -28,6 +27,7 @@ from numpy import (
     take,
     zeros,
     floor,
+    ones,
 )
 
 # List of the unit symbols, their normalizing value and their dimensions "MLTTempAngleCurrent"
@@ -102,16 +102,19 @@ def get_dim_prefix(unit_str):
             if prefix_str in unit_prefixes.keys():
                 prefix = (unit_prefixes.get(prefix_str) * key[1]) ** p
             else:
-                raise UnitError("ERROR: Prefix " + prefix_str + " unknown")
+                raise UnitError("Prefix " + prefix_str + " unknown")
             break
     if not dim:
-        raise UnitError("ERROR: Unit " + unit_str + " unknown")
+        raise UnitError("Unit " + unit_str + " unknown")
     return (dim, prefix)
 
 
 def get_unit_derivate(unit_str, axis_unit):
+    unit_str = unit_str.replace("*", "").replace(" ", "").replace("^", "")
     if axis_unit == "Hz":
         axis_unit = "s"
+    if axis_unit == "rad":
+        axis_unit = "m"
     p = 0
     if "/" in unit_str:
         unit_num = unit_str.split("/")[0]
@@ -153,8 +156,11 @@ def get_unit_derivate(unit_str, axis_unit):
 
 
 def get_unit_integrate(unit_str, axis_unit):
+    unit_str = unit_str.replace("*", "").replace(" ", "").replace("^", "")
     if axis_unit == "Hz":
         axis_unit = "s"
+    if axis_unit == "rad":
+        axis_unit = "m"
     p = 0
     if "/" in unit_str:
         unit_num = unit_str.split("/")[0]
@@ -248,7 +254,7 @@ def convert(values, unit1, unit2):
         dim2 = [i - j for i, j in zip(dim2_num, dim2_denom)]
         if dim1 != dim2:
             raise UnitError(
-                "ERROR: Units " + unit1_save + " and " + unit2_save + " do not match"
+                "Units " + unit1_save + " and " + unit2_save + " do not match"
             )
         else:
             return (
@@ -281,7 +287,7 @@ def to_dB(values, unit, ref_value=1.0):
     try:
         convert(values, unit, "W")
         values_dB = 10.0 * where(mask, log10(values / ref_value, where=mask), 0)
-    except:
+    except Exception:
         values_dB = 20.0 * where(mask, log10(values / ref_value, where=mask), 0)
     return values_dB
 
@@ -407,11 +413,8 @@ def dB_to_dBA(values, freqs, noct=None):
         )
         Aweight = 2.0 + 20.0 * log10(RA)
         Aweight[isnan(Aweight)] = -100  # replacing NaN by -100 dB
-    try:
         values += Aweight
         return values
-    except:
-        raise UnitError("ERROR: dBA conversion only available for 1D fft")
 
 
 def to_noct(values, freqs, noct=3):
@@ -607,8 +610,16 @@ def cart2pol(field_x, field_y, phi):
     cos_phi = cos(phi)
     sin_phi = sin(phi)
 
-    field_r = cos_phi * field_x + sin_phi * field_y
-    field_phi = -sin_phi * field_x + cos_phi * field_y
+    dim_array = ones((1, field_x.ndim), int).ravel()
+    dim_array[1] = -1
+
+    # Reshape b with dim_array and perform elementwise multiplication with
+    # broadcasting along the singleton dimensions for the final output
+    cos_phi_reshaped = cos_phi.reshape(dim_array)
+    sin_phi_reshaped = sin_phi.reshape(dim_array)
+
+    field_r = field_x * cos_phi_reshaped + field_y * sin_phi_reshaped
+    field_phi = -field_x * sin_phi_reshaped + field_y * cos_phi_reshaped
 
     return (field_r, field_phi)
 
@@ -617,7 +628,15 @@ def pol2cart(field_r, field_phi, phi):
     cos_phi = cos(phi)
     sin_phi = sin(phi)
 
-    field_x = cos_phi * field_r - sin_phi * field_phi
-    field_y = sin_phi * field_r + cos_phi * field_phi
+    dim_array = ones((1, field_r.ndim), int).ravel()
+    dim_array[1] = -1
+
+    # Reshape b with dim_array and perform elementwise multiplication with
+    # broadcasting along the singleton dimensions for the final output
+    cos_phi_reshaped = cos_phi.reshape(dim_array)
+    sin_phi_reshaped = sin_phi.reshape(dim_array)
+
+    field_x = field_r * cos_phi_reshaped - field_phi * sin_phi_reshaped
+    field_y = field_r * sin_phi_reshaped + field_phi * cos_phi_reshaped
 
     return (field_x, field_y)

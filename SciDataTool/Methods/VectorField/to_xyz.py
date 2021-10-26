@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def to_xyz(self):
     """Performs the corrdinate change and stores the resulting field in a VectorField object.
     Parameters
@@ -21,14 +18,20 @@ def to_xyz(self):
 
     else:
         # Coordinate transform
-        arg_list = [axis.name for axis in self.components["radial"].axes]
-        result = self.get_xyz_along(*arg_list)
+        arg_list = [
+            axis.name
+            if axis.name in ["freqs", "wavenumber"]
+            else axis.name + "[smallestperiod]"
+            for axis in self.components["radial"].axes
+        ]
+        result = self.get_xyz_along(*arg_list, is_squeeze=False)
         # Store in new VectorField
         comp_dict = dict()
 
         Comp_x = self.components["radial"].copy()
         Comp_x.name = (
-            self.components["radial"].name.lower().replace("radial ", "") + " along x"
+            self.components["radial"].name.lower().replace("radial ", "")
+            + " along x-axis"
         )
         Comp_x.symbol = self.components["radial"].symbol.replace("_r", "_x")
         Comp_x.values = result["comp_x"]
@@ -36,7 +39,8 @@ def to_xyz(self):
 
         Comp_y = self.components["radial"].copy()
         Comp_y.name = (
-            self.components["radial"].name.lower().replace("radial ", "") + " along y"
+            self.components["radial"].name.lower().replace("radial ", "")
+            + " along y-axis"
         )
         Comp_y.symbol = self.components["radial"].symbol.replace("_r", "_y")
         Comp_y.values = result["comp_y"]

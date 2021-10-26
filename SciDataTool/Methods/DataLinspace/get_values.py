@@ -73,7 +73,7 @@ def get_values(
         if "antiperiod" in self.symmetries:
             pass
         else:
-            raise AxisError("ERROR: axis has no antiperiodicity")
+            raise AxisError("axis has no antiperiodicity")
     elif is_oneperiod:
         if "antiperiod" in self.symmetries:
             nper = self.symmetries["antiperiod"]

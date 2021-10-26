@@ -102,7 +102,7 @@ def read_input_strings(args, axis_data):
             try:
                 input_data = axis_data[name]
             except Exception:
-                raise AxisError("ERROR: No axis_data provided")
+                raise AxisError("No axis_data provided")
         # Detect above
         elif ">" in axis_str:
             elems = axis_str.split(">")

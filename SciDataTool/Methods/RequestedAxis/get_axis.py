@@ -61,14 +61,14 @@ def get_axis(self, axis, is_real):
                 is_antiperiod = False
                 self.extension = "smallestperiod"
         elif self.extension == "smallestperiod":
-            if isinstance(axis, DataPattern):
-                raise AxisError(
-                    "[smallestperiod] cannot be called with DataPattern axis"
-                )
-            else:
-                is_smallestperiod = True
-                is_oneperiod = False
-                is_antiperiod = False
+            # if isinstance(axis, DataPattern):
+            #     raise AxisError(
+            #         "[smallestperiod] cannot be called with DataPattern axis"
+            #     )
+            # else:
+            is_smallestperiod = True
+            is_oneperiod = False
+            is_antiperiod = False
         elif self.extension == "antiperiod":
             if isinstance(axis, DataPattern):
                 raise AxisError("[antiperiod] cannot be called with DataPattern axis")
