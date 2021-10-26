@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions import AxisError
 from numpy import tile, concatenate, negative, ones, append
 
@@ -50,9 +49,7 @@ def rebuild_symmetries_axis(values, symmetries):
                         values_new, values_new[-1] + symmetries["delta"]
                     )
                 else:
-                    raise AxisError(
-                        "ERROR: must provide delta for symmetries with one sample"
-                    )
+                    raise AxisError("must provide delta for symmetries with one sample")
             else:
                 values_new = concatenate(
                     (
@@ -68,9 +65,7 @@ def rebuild_symmetries_axis(values, symmetries):
                         values_new, values_new[-1] + symmetries["delta"]
                     )
                 else:
-                    raise AxisError(
-                        "ERROR: must provide delta for symmetries with one sample"
-                    )
+                    raise AxisError("must provide delta for symmetries with one sample")
             else:
                 values_new = concatenate(
                     (

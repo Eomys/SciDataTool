@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )

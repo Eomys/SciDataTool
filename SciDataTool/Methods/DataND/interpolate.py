@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions.interpolations import (
     get_interpolation,
     get_interpolation_step,
 )
-from numpy import apply_along_axis, squeeze
 
 
 def interpolate(self, values, axes_list):

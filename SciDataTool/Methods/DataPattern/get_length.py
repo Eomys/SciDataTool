@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-from SciDataTool.Functions import AxisError
-
-
 def get_length(self, is_pattern=False, is_smallestperiod=False):
     """Returns the length of the axis taking symmetries into account.
     Parameters

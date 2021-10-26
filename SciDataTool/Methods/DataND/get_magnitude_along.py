@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions import NormError, UnitError
 from SciDataTool.Functions.conversions import convert, to_dB, to_dBA, to_noct
-from numpy import apply_along_axis, apply_over_axes, abs as np_abs, meshgrid
+from numpy import apply_along_axis
 
 
 def get_magnitude_along(
@@ -46,9 +45,7 @@ def get_magnitude_along(
             try:
                 values = self.normalizations["ref"].normalize(values)
             except:
-                raise NormError(
-                    "ERROR: Reference value not specified for normalization"
-                )
+                raise NormError("Reference value not specified for normalization")
     elif unit == "dB":
         ref_value = 1.0
         if "ref" in self.normalizations:
@@ -85,9 +82,7 @@ def get_magnitude_along(
             values = apply_along_axis(to_dBA, 0, values, freqs, self.unit, ref_value)
             values = values.reshape(shape)
         else:
-            raise UnitError(
-                "ERROR: dBA conversion only available for fft with frequencies"
-            )
+            raise UnitError("dBA conversion only available for fft with frequencies")
 
     elif unit in self.normalizations:
         values = self.normalizations.get(unit).normalize(values)

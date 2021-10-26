@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def to_rphiz(self):
     """Performs the corrdinate change and stores the resulting field in a VectorField object.
     Parameters

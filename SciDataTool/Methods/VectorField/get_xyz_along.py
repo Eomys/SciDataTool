@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from numpy import zeros, ndarray
+from numpy import zeros
 
 from SciDataTool.Functions.conversions import pol2cart
 from SciDataTool.Functions import AxisError

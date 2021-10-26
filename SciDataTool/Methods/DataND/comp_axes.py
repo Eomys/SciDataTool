@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-from SciDataTool.Functions import AxisError, axes_dict, rev_axes_dict
-
-from numpy import inf
+from SciDataTool.Functions import axes_dict, rev_axes_dict
 
 
 def comp_axes(self, axes_list):

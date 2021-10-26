@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def time_to_freq(self):
     """Performs the Fourier Transform and stores the resulting field in a VectorField of DataFreq objects.
     Parameters

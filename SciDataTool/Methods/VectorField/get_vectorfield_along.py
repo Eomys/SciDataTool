@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def get_vectorfield_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     """Returns the sliced or interpolated version of the data, using conversions and symmetries if needed.
     Parameters

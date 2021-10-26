@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from numpy import zeros
 
 from SciDataTool.Functions.conversions import pol2cart

@@ -248,7 +248,7 @@ def convert(values, unit1, unit2):
         dim2 = [i - j for i, j in zip(dim2_num, dim2_denom)]
         if dim1 != dim2:
             raise UnitError(
-                "ERROR: Units " + unit1_save + " and " + unit2_save + " do not match"
+                "Units " + unit1_save + " and " + unit2_save + " do not match"
             )
         else:
             return (
@@ -407,11 +407,8 @@ def dB_to_dBA(values, freqs, noct=None):
         )
         Aweight = 2.0 + 20.0 * log10(RA)
         Aweight[isnan(Aweight)] = -100  # replacing NaN by -100 dB
-    try:
         values += Aweight
         return values
-    except Exception:
-        raise UnitError("ERROR: dBA conversion only available for 1D fft")
 
 
 def to_noct(values, freqs, noct=3):

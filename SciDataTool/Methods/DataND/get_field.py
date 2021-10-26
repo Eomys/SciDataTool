@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
-from numpy import (
-    sum as np_sum,
-    mean as np_mean,
-    sqrt,
-    trapz,
-    take,
-    min as np_min,
-    max as np_max,
-)
+from numpy import take
 from SciDataTool.Functions.symmetries import rebuild_symmetries
 
 

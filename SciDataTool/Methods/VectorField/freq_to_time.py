@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def freq_to_time(self):
     """Performs the Fourier Transform and stores the resulting field in a VectorField of DataTime objects.
     Parameters

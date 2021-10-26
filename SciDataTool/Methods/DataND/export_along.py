@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions.Plot import unit_dict
 
 import csv
@@ -91,12 +90,12 @@ def export_along(
             nfiles = len(axes_list_new[2].values)
         elif len(axes_list_new) == 3:
             raise Exception(
-                "ERROR: cannot export more than 2 dimensions in single csv file. Activate is_multiple_files to write in multiple csv files."
+                "cannot export more than 2 dimensions in single csv file. Activate is_multiple_files to write in multiple csv files."
             )
         elif len(axes_list_new) < 3:
             nfiles = 1
         else:
-            raise Exception("ERROR: cannot export more than 3 dimensions in csv file")
+            raise Exception("cannot export more than 3 dimensions in csv file")
 
         for i in range(nfiles):
             if nfiles > 1:
@@ -161,4 +160,4 @@ def export_along(
                 csvWriter.writerows(matrix)
 
     else:
-        raise Exception("ERROR: export format not supported")
+        raise Exception("export format not supported")
