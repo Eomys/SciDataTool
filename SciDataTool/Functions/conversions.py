@@ -110,8 +110,11 @@ def get_dim_prefix(unit_str):
 
 
 def get_unit_derivate(unit_str, axis_unit):
+    unit_str = unit_str.replace("*", "").replace(" ", "").replace("^", "")
     if axis_unit == "Hz":
         axis_unit = "s"
+    if axis_unit == "rad":
+        axis_unit = "m"
     p = 0
     if "/" in unit_str:
         unit_num = unit_str.split("/")[0]
@@ -153,8 +156,11 @@ def get_unit_derivate(unit_str, axis_unit):
 
 
 def get_unit_integrate(unit_str, axis_unit):
+    unit_str = unit_str.replace("*", "").replace(" ", "").replace("^", "")
     if axis_unit == "Hz":
         axis_unit = "s"
+    if axis_unit == "rad":
+        axis_unit = "m"
     p = 0
     if "/" in unit_str:
         unit_num = unit_str.split("/")[0]
