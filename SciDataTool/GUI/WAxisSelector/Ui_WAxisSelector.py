@@ -14,7 +14,7 @@ class Ui_WAxisSelector(object):
     def setupUi(self, WAxisSelector):
         if not WAxisSelector.objectName():
             WAxisSelector.setObjectName(u"WAxisSelector")
-        WAxisSelector.resize(338, 50)
+        WAxisSelector.resize(428, 109)
         self.horizontalLayout = QHBoxLayout(WAxisSelector)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.in_name = QLabel(WAxisSelector)
@@ -29,18 +29,31 @@ class Ui_WAxisSelector(object):
         self.c_axis.addItem("")
         self.c_axis.addItem("")
         self.c_axis.setObjectName(u"c_axis")
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.c_axis.sizePolicy().hasHeightForWidth())
+        self.c_axis.setSizePolicy(sizePolicy)
+        self.c_axis.setMinimumSize(QSize(50, 0))
+        self.c_axis.setMaximumSize(QSize(50, 16777215))
 
         self.horizontalLayout.addWidget(self.c_axis)
 
+        self.c_operation = QComboBox(WAxisSelector)
+        self.c_operation.addItem("")
+        self.c_operation.addItem("")
+        self.c_operation.addItem("")
+        self.c_operation.setObjectName(u"c_operation")
+        self.c_operation.setMinimumSize(QSize(0, 0))
+
+        self.horizontalLayout.addWidget(self.c_operation)
+
         self.c_unit = QComboBox(WAxisSelector)
-        self.c_unit.addItem("")
         self.c_unit.setObjectName(u"c_unit")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.c_unit.sizePolicy().hasHeightForWidth())
         self.c_unit.setSizePolicy(sizePolicy)
-        self.c_unit.setMaximumSize(QSize(16777215, 16777215))
+        self.c_unit.setMinimumSize(QSize(35, 0))
+        self.c_unit.setMaximumSize(QSize(35, 16777215))
 
         self.horizontalLayout.addWidget(self.c_unit)
 
@@ -68,7 +81,9 @@ class Ui_WAxisSelector(object):
         self.c_axis.setItemText(3, QCoreApplication.translate("WAxisSelector", u"frequency", None))
         self.c_axis.setItemText(4, QCoreApplication.translate("WAxisSelector", u"wavenumber", None))
 
-        self.c_unit.setItemText(0, QCoreApplication.translate("WAxisSelector", u"s", None))
+        self.c_operation.setItemText(0, "")
+        self.c_operation.setItemText(1, QCoreApplication.translate("WAxisSelector", u"FFT", None))
+        self.c_operation.setItemText(2, QCoreApplication.translate("WAxisSelector", u"Filter", None))
 
         self.b_filter.setText(QCoreApplication.translate("WAxisSelector", u"Filter", None))
     # retranslateUi

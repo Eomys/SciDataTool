@@ -68,11 +68,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         #Hide or show the ComboBox related to the component of a VectorField
         if not isinstance(self.data, VectorField):
-            self.c_component.hide()
-            self.in_component.hide()
+            self.w_vect_selector.hide()
         else:
-            self.c_component.show()
-            self.in_component.show()   
+            self.w_vect_selector.show()
+               
            
     def update_plot(self):
         """Method that update the plot according to the info given by the user

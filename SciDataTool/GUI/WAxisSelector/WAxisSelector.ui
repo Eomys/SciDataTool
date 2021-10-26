@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>338</width>
-    <height>50</height>
+    <width>428</width>
+    <height>109</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,6 +23,24 @@
    </item>
    <item>
     <widget class="QComboBox" name="c_axis">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>50</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>50</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <item>
       <property name="text">
        <string>time</string>
@@ -51,24 +69,50 @@
     </widget>
    </item>
    <item>
-    <widget class="QComboBox" name="c_unit">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
+    <widget class="QComboBox" name="c_operation">
+     <property name="minimumSize">
       <size>
-       <width>16777215</width>
-       <height>16777215</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
      <item>
       <property name="text">
-       <string>s</string>
+       <string/>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>FFT</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Filter</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="c_unit">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>35</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>35</width>
+       <height>16777215</height>
+      </size>
+     </property>
     </widget>
    </item>
    <item>
