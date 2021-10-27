@@ -62,6 +62,9 @@ def my_mean(values, ax_val, index, Nper, is_aper, is_phys):
         mean of values
     """
 
+    if ax_val.size == 1:  # Do not use integrate for single point axes
+        is_phys = False
+
     if is_phys:
         # Integrate values and take mean value by dividing by integration interval in integrate()
         values = integrate(values, ax_val, index, Nper, is_aper, is_phys, is_mean=True)
@@ -139,6 +142,9 @@ def root_sum_square(values, ax_val, index, Nper, is_aper, is_phys):
     if is_aper and Nper is not None:
         # Remove anti-periodicity since values is squared
         is_aper = False
+
+    if ax_val.size == 1:  # Do not use integrate for single point axes
+        is_phys = False
 
     if is_phys:
         values = integrate(values ** 2, ax_val, index, Nper, is_aper, is_phys)
