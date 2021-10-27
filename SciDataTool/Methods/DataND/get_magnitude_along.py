@@ -33,7 +33,7 @@ def get_magnitude_along(
         index_freq = None
         index_speed = None
         index_order = None
-        args_freqs = ["freqs", "frequency"]
+        args_freqs = ["freqs", "frequency", "time"]
         for i, axis in enumerate(self.axes):  # Find frequency axis
             if axis.name in args_freqs:
                 freq_name = axis.name
