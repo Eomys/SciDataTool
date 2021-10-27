@@ -73,7 +73,7 @@ def get_along(
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
     # Sums
-    values = self.summing(values, axes_list, is_magnitude)
+    values = self.summing(values, axes_list, is_magnitude, unit=self.unit)
     # Conversions
     values = self.convert(values, unit, is_norm, is_squeeze, axes_list)
     # Return axes and values

@@ -13,7 +13,7 @@ from SciDataTool.Functions.sum_mean import (
 )
 
 
-def summing(self, values, axes_list, is_magnitude):
+def summing(self, values, axes_list, is_magnitude, unit):
     """Returns the values of the field transformed or converted.
     Parameters
     ----------
@@ -52,10 +52,12 @@ def summing(self, values, axes_list, is_magnitude):
             is_freqs = False
         # sum over sum axes
         if extension in "sum":
-            values = my_sum(values, index, Nper, is_aper)
+            values = my_sum(values, index, Nper, is_aper, unit)
         # root sum square over rss axes
         elif extension == "rss":
-            values = root_sum_square(values, ax_val, index, Nper, is_aper, is_phys)
+            values = root_sum_square(
+                values, ax_val, index, Nper, is_aper, is_phys, unit
+            )
         # mean value over mean axes
         elif extension == "mean":
             values = my_mean(values, ax_val, index, Nper, is_aper, is_phys)

@@ -50,21 +50,21 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     name = axis.name
                     is_components = axis.is_components
                     axis_values = results[axis_name]
-                    unit = axis.unit
+                    ax_unit = axis.unit
                 elif axis_name in axes_dict:
                     if axes_dict[axis_name][0] == axis.name:
                         index = i
                         name = axis_name
                         is_components = axis.is_components
                         axis_values = results[axis_name]
-                        unit = axes_dict[axis_name][2]
+                        ax_unit = axes_dict[axis_name][2]
                 elif axis_name in rev_axes_dict:
                     if rev_axes_dict[axis_name][0] == axis.name:
                         index = i
                         name = axis_name
                         is_components = axis.is_components
                         axis_values = results[axis_name]
-                        unit = rev_axes_dict[axis_name][2]
+                        ax_unit = rev_axes_dict[axis_name][2]
             # Update symmetries
             if "smallestperiod" in args[index] or args[index] in [
                 "freqs",
@@ -76,20 +76,25 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
             Axes.append(
                 Data1D(
                     name=name,
-                    unit=unit,
+                    unit=ax_unit,
                     values=axis_values,
                     is_components=is_components,
                     normalizations=self.axes[index].normalizations,
                     symmetries=symmetries,
                 ).to_linspace()
             )
-    # Update unit if derivation or integration
-    unit = self.unit
-    for axis in axes_list:
-        if axis.extension in ["antiderivate", "integrate"]:
-            unit = get_unit_integrate(unit, axis.corr_unit)
-        elif axis.extension == "derivate":
-            unit = get_unit_derivate(unit, axis.corr_unit)
+
+    # Update unit if dB/dBA conversion
+    if "dB" in unit:
+        unit = unit
+    else:
+        # Update unit if derivation or integration
+        unit = self.unit
+        for axis in axes_list:
+            if axis.extension in ["antiderivate", "integrate"]:
+                unit = get_unit_integrate(unit, axis.corr_unit)
+            elif axis.extension == "derivate":
+                unit = get_unit_derivate(unit, axis.corr_unit)
 
     return DataClass(
         name=self.name,

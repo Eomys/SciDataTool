@@ -44,7 +44,7 @@ def get_axis(self, axis, is_real):
                 self.indices = list(range(len(values)))
             else:
                 self.values = values[self.indices]
-                self.extension = "interval"
+                self.extension = "list"
         elif self.extension not in operation_list and self.extension != "list":
             self.values = values
             self.extension = "whole"

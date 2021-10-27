@@ -1,9 +1,10 @@
 import numpy as np
 
 from SciDataTool.Functions.derivation_integration import integrate
+from SciDataTool.Functions.conversions import convert
 
 
-def my_sum(values, index, Nper, is_aper):
+def my_sum(values, index, Nper, is_aper, unit):
     """Returns the arithmetic sum of values along given axis
 
     Parameters
@@ -29,11 +30,17 @@ def my_sum(values, index, Nper, is_aper):
         shape0 = [s for ii, s in enumerate(shape) if ii != index]
         values = np.zeros(shape0, dtype=values.dtype)
     else:
-        # Take sum value multiplied by periodicity
-        if Nper is None:
-            # Set Nper to 1 in case of non-periodic axis
-            Nper = 1
-        values = Nper * np.sum(values, axis=index, keepdims=True)
+        # To sum dB or dBA
+        if "dB" in unit:
+            values = 10 * np.log10(
+                np.sum(10 ** (values / 10), axis=index, keepdims=True)
+            )
+        else:
+            # Take sum value multiplied by periodicity
+            if Nper is None:
+                # Set Nper to 1 in case of non-periodic axis
+                Nper = 1
+            values = Nper * np.sum(values, axis=index, keepdims=True)
 
     return values
 
@@ -115,7 +122,7 @@ def root_mean_square(values, ax_val, index, Nper, is_aper, is_phys):
     return np.sqrt(my_mean(values ** 2, ax_val, index, Nper, is_aper, is_phys))
 
 
-def root_sum_square(values, ax_val, index, Nper, is_aper, is_phys):
+def root_sum_square(values, ax_val, index, Nper, is_aper, is_phys, unit):
     """Returns the root sum square (arithmetic or integral) of values along given axis
 
     Parameters
@@ -139,16 +146,21 @@ def root_sum_square(values, ax_val, index, Nper, is_aper, is_phys):
         root sum square of values
     """
 
-    if is_aper and Nper is not None:
-        # Remove anti-periodicity since values is squared
-        is_aper = False
+    # To sum dB or dBA
+    if "dB" in unit:
+        return my_sum(values, index, Nper, is_aper, unit)
 
-    if ax_val.size == 1:  # Do not use integrate for single point axes
-        is_phys = False
-
-    if is_phys:
-        values = integrate(values ** 2, ax_val, index, Nper, is_aper, is_phys)
     else:
-        values = my_sum(values ** 2, index, Nper, is_aper)
+        if is_aper and Nper is not None:
+            # Remove anti-periodicity since values is squared
+            is_aper = False
 
-    return np.sqrt(values)
+        if ax_val.size == 1:  # Do not use integrate for single point axes
+            is_phys = False
+
+        if is_phys:
+            values = integrate(values ** 2, ax_val, index, Nper, is_aper, is_phys)
+        else:
+            values = my_sum(values ** 2, index, Nper, is_aper, unit)
+
+        return np.sqrt(values)

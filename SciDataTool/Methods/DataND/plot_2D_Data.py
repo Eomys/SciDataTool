@@ -17,6 +17,7 @@ from numpy import (
     min as np_min,
     linspace,
     log10,
+    nan,
 )
 
 
@@ -26,6 +27,7 @@ def plot_2D_Data(
     axis_data=None,
     is_norm=False,
     unit="SI",
+    is_overall=False,
     data_list=[],
     legend_list=[],
     color_list=None,
@@ -188,7 +190,7 @@ def plot_2D_Data(
     Ydatas = []
     data_list2 = [self] + data_list
     for i, d in enumerate(data_list2):
-        if is_fft:
+        if is_fft or "dB" in unit:
             result = d.get_magnitude_along(
                 arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
             )
@@ -196,8 +198,6 @@ def plot_2D_Data(
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            # Ydatas.append(result.pop(d.symbol))
-            # Xdatas.append(result[list(result)[0]])
         else:
             result = d.get_along(
                 arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
@@ -206,8 +206,6 @@ def plot_2D_Data(
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            # Ydatas.append(result.pop(d.symbol))
-            # Xdatas.append(result[list(result)[0]])
         Ydatas.append(result.pop(d.symbol))
         # in string case not overlay, Xdatas is a linspace
         if axes_list[0].is_components and axes_list[0].extension != "list":
@@ -217,16 +215,6 @@ def plot_2D_Data(
         else:
             xdata = result[list(result)[0]]
         Xdatas.append(xdata)
-
-    # Find main axis as the axis with the most values
-    # main_axis = axes_list[0]  # max(axes_list, key=lambda x: x.values.size)
-
-    # Remove axis that has been factorized from axis list
-    # [
-    #     axes_list.pop(i)
-    #     for i in range(len(axes_list))
-    #     if axes_list[i].extension in ["sum", "rss", "mean", "rms", "integrate"]
-    # ]
 
     # Build xlabel and title parts 2 and 3
     title2 = ""
@@ -341,22 +329,18 @@ def plot_2D_Data(
         legend_list = ["[" + d.name + "] " for d in data_list2]
     elif legend_list == []:
         legend_list = ["" for d in data_list2]
-    else:
-        legend_list = ["[" + leg + "] " for leg in legend_list]
+    # else:
+    #     legend_list = ["[" + leg + "] " for leg in legend_list]
     legends = []
     # Prepare colors
-    if curve_colors is None:
-        curve_colors = COLORS
     linestyle_list = linestyles
     for i, d in enumerate(data_list2):
         is_overlay = False
         for axis in axes_list:
             if axis.extension == "list":
                 is_overlay = True
-                if phase_colors is None:
-                    phase_colors = COLORS
-                    if linestyles is None:
-                        linestyles = ["dashed"]
+                if linestyles is None:
+                    linestyles = ["dashed"]
                 n_curves = len(axis.values)
                 if axis.unit == "SI":
                     if axis.name in unit_dict:
@@ -406,6 +390,35 @@ def plot_2D_Data(
         for i in range(len(data_list2)):
             Xdata += [Xdatas[i] for x in range(n_curves)]
         Xdatas = Xdata
+
+    if is_overall:  # assuming plot along first arg + overall on all other axes
+        if self.unit == "W":
+            op = "=sum"
+        else:
+            op = "=rss"
+        arg_list_ovl = [arg_list[0]] + [
+            axis.name + op for axis in self.axes if axis.name != arg_list[0]
+        ]
+        if is_fft or "dB" in unit:
+            result = self.get_magnitude_along(*arg_list_ovl, unit=unit)
+        else:
+            result = self.get_along(*arg_list_ovl, unit=unit)
+        Y_overall = result[self.symbol]
+        # in string case not overlay, Xdatas is a linspace
+        if axes_list[0].is_components and axes_list[0].extension != "list":
+            xdata = linspace(
+                0, len(result[list(result)[0]]) - 1, len(result[list(result)[0]])
+            )
+        else:
+            xdata = result[list(result)[0]]
+        Ydatas.insert(0, Y_overall)
+        Xdatas.insert(0, xdata)
+        color_list.insert(0, "#000000")
+        legends.insert(0, "Overall")
+
+    if "dB" in unit:  # Replace <=0 by nans
+        for ydata in Ydatas:
+            ydata[ydata <= 0] = nan
 
     # Call generic plot function
     if is_fft:
