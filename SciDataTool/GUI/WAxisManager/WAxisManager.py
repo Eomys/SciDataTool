@@ -3,9 +3,7 @@ from PySide2.QtWidgets import QSizePolicy, QSpacerItem, QWidget
 
 from ...GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
 from ...GUI.WDataExtractor.WDataExtractor import WDataExtractor
-from ...Functions.Plot import fft_dict,ifft_dict
-
-
+from ...Functions.Plot import fft_dict,ifft_dict,axes_dict
 
 class WAxisManager(Ui_WAxisManager, QWidget):
     """Widget that will handle the selection of the axis as well as generating WDataExtractor"""
@@ -28,8 +26,10 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_1.axisChanged.connect(self.axes_updated)
         self.w_axis_2.axisChanged.connect(self.gen_data_selec)
 
-        self.w_axis_1.opeChanged.connect(lambda: self.ope_updated(self.w_axis_1))
-        self.w_axis_2.opeChanged.connect(lambda: self.ope_updated(self.w_axis_2))
+        # self.w_axis_1.opeChanged.connect(self.ope_sync)
+        # self.w_axis_2.opeChanged.connect(self.ope_updated)
+
+
 
     def axes_updated(self):
         """Method that will check if the axes chosen are correct and if true it will update the comboboxes
@@ -46,7 +46,6 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_2.remove_axis(axis_selected)                #Removing the axis selected from the the second axis combobox
 
         self.gen_data_selec()                                   #Generating the DataSelection GroupBox
-
 
         
     def gen_data_selec(self):
@@ -66,20 +65,17 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_selected.append(self.w_axis_1.get_current_quantity())
         axes_selected.append(self.w_axis_2.get_current_quantity())
 
-        for ax in axes_selected: 
-            if ax in axes_list:
+        for ax in reversed(axes_list):
+            if ax in axes_selected:
                 axes_list.remove(ax)
-
 
         #Step 2 : Deleting items in the layout currently
         if isinstance(self.lay_data_extract.takeAt(self.lay_data_extract.count()-1),QSpacerItem):
-            self.lay_data_extract.takeAt(self.lay_data_extract.count()-1).widget().deleteLater()        #if isinstance(self.lay_data_extract.takeAt(self.lay_data_extract.count()-1),QSpacerItem):
+            self.lay_data_extract.takeAt(self.lay_data_extract.count()-1).widget().deleteLater()       
 
         for i in reversed(range (self.lay_data_extract.count())):
-            test = self.lay_data_extract.takeAt(i).widget()
-            test.deleteLater()
-
-            
+            self.lay_data_extract.takeAt(i).widget().deleteLater()
+       
         #Step  3: Adding a WDataExtractor widget for each axis inside the layout 
         for axis in axes_list:
             self.w_data_sel = WDataExtractor(self.layoutWidget)
@@ -89,27 +85,52 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
             self.lay_data_extract.addWidget(self.w_data_sel)
 
-            self.w_data_sel.update(axis)
+            if axis in axes_dict:
+                self.w_data_sel.update(axes_dict[axis])
+            else:
+                self.w_data_sel.update(axis)
 
         #Step 4 : Adding a spacer to improve the UI visually 
         self.verticalSpacer = QSpacerItem(296, 50, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.lay_data_extract.addItem(self.verticalSpacer)
 
-    def ope_updated(self,WAxisSelector):
-        """Method that will check the operation chosen and that update the unit combobox
-        Parameters
-        ----------
-        self : WAxisManager
-            a WAxisManager object
+    # def ope_sync(self):
+    #     """Method that will check the operation chosen and that update the other operation combobox.
+    #     So that, by default, we have FFT and FFT or "" and ""
+    #     Parameters
+    #     ----------
+    #     self : WAxisManager
+    #         a WAxisManager object
         
-        """
-        quantity = WAxisSelector.get_current_quantity()
-        #Changing the units available if the operation is an FFT or not
-        if WAxisSelector.get_current_ope_name() == "FFT" and quantity in fft_dict:
-            WAxisSelector.set_quantity(fft_dict[quantity])
+    #     """
+        
+    #     operation_selected = (self.w_axis_1.get_current_ope_name())
+    #     self.w_axis_2.set_operation(operation_selected)
+    #     self.ope_updated()
+
+
+    # def ope_updated(self):
+    #     """Method that will check the operation chosen and that update the unit combobox
+    #     Parameters
+    #     ----------
+    #     self : WAxisManager
+    #         a WAxisManager object
+        
+    #     """
+
+    #     #Changing the units available if the operation is an FFT or not
+    #     if self.w_axis_1.get_current_ope_name() == "FFT" and self.w_axis_1.get_current_quantity() in fft_dict:
+    #         self.w_axis_1.set_quantity(fft_dict[self.w_axis_1.get_current_quantity()])
             
-        elif WAxisSelector.get_current_ope_name() == "" and quantity in ifft_dict:
-            WAxisSelector.set_quantity(ifft_dict[quantity])
+    #     elif self.w_axis_1.get_current_ope_name() == "" and self.w_axis_1.get_current_quantity in ifft_dict:
+    #         self.w_axis_1.set_quantity(ifft_dict[self.w_axis_1.get_current_quantity()])
+
+    #     #Changing the units available if the operation is an FFT or not
+    #     if self.w_axis_2.get_current_ope_name() == "FFT" and self.w_axis_2.get_current_quantity() in fft_dict:
+    #         self.w_axis_2.set_quantity(fft_dict[self.w_axis_2.get_current_quantity()])
+            
+    #     elif self.w_axis_2.get_current_ope_name() == "" and self.w_axis_2.get_current_quantity in ifft_dict:
+    #         self.w_axis_2.set_quantity(ifft_dict[self.w_axis_2.get_current_quantity()])
            
 
     def set_axes(self,data):

@@ -12,6 +12,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
     axisChanged = Signal()
     opeChanged = Signal()
 
+
     def __init__(self, parent=None):
         """Initialize the GUI according to machine type
 
@@ -34,7 +35,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.b_filter.setDisabled(True)
 
         self.c_axis.currentTextChanged.connect(self.update_axis)
-        self.c_operation.currentTextChanged.connect(self.update_operation)
+        # self.c_operation.currentTextChanged.connect(self.update_operation)
 
     def change_name(self,axis_name):
         """Method to change of the label of the widget
@@ -74,20 +75,25 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         string
             name of the current axis selected
         """
-        return self.c_axis.currentText()
+        if self.c_axis.currentText() in [axes_dict[key] for key in axes_dict]:
+            return [key for key in axes_dict][[axes_dict[key] for key in axes_dict].index(self.c_axis.currentText())] 
+        else:
+            return self.c_axis.currentText() 
 
-    def get_current_ope_name(self):
-        """Method that return the operation currently selected
-        Parameters
-        ----------
-        self : WAxisSelector
-            a WAxisSelector object
-        Output
-        ---------
-        string
-            name of the current operation selected
-        """
-        return self.c_operation.currentText()
+        #return self.c_axis.currentText()
+
+    # def get_current_ope_name(self):
+    #     """Method that return the operation currently selected
+    #     Parameters
+    #     ----------
+    #     self : WAxisSelector
+    #         a WAxisSelector object
+    #     Output
+    #     ---------
+    #     string
+    #         name of the current operation selected
+    #     """
+    #     return self.c_operation.currentText()
 
 
     def get_current_quantity(self):
@@ -120,8 +126,14 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             #Building the new ComboBox
             self.c_axis.blockSignals(True)
             self.c_axis.clear()
-            self.c_axis.addItems(axes_list)
+            for i in range(len(axes_list)):
+                if axes_list[i] in axes_dict:
+                    self.c_axis.addItem(axes_dict[axes_list[i]])
+                else:
+                    self.c_axis.addItem(axes_list[i])
             self.c_axis.blockSignals(False)
+            
+            self.update_axis()
 
     def set_axis(self,data):
         """Method that will put the axes of data in the combobox of the widget
@@ -136,11 +148,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         
         #Step 1 : Getting the name of the different axes of the DataND object
         for axis in data.get_axes():
-            if any(axis.name in key for key in axes_dict):
-                self.axes_list.append(axes_dict[axis.name])
+            self.axes_list.append(axis.name)
 
-            else:
-                self.axes_list.append(axis.name)
+
 
         # At least one axis must be selected => impossible to have none for X axis
         if self.name.lower() != "x" : 
@@ -149,7 +159,28 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         #Step 2 : Replacing the items inside of the ComboBox with the axes recovered
         self.c_axis.clear()
-        self.c_axis.addItems(self.axes_list)
+        for i in range(len(self.axes_list)):
+            if self.axes_list[i] in axes_dict:
+                self.c_axis.addItem(axes_dict[self.axes_list[i]])
+            else:
+                self.c_axis.addItem(self.axes_list[i])
+
+    # def set_operation(self,operation):
+    #     """Method that set the operation of the WAxisSelector 
+    #     Parameters
+    #     ----------
+    #     self : WAxisSelector
+    #         a WAxisSelector object
+    #     operation : string
+    #         name of the new operation"""
+        
+    #     if operation =="":
+    #         self.c_operation.setCurrentIndex(0)
+
+    #     if operation == "FFT":
+    #         self.c_operation.setCurrentIndex(1)
+
+
 
     def set_quantity(self,new_quantity):
         """Method that set the quantity of the WAxisSelector 
@@ -162,10 +193,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         """
         self.quantity = new_quantity
-        self.set_unit(self.quantity)
+        self.set_unit()
+        print(self.quantity)
 
 
-    def set_unit(self,axis = ""):
+    def set_unit(self):
         """Method that update the unit comboxbox according to the axis selected in the other combobox.
            We can also give the axis selected and put its units inside the combobox
         Parameters
@@ -176,25 +208,19 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the axis that is selected
         """
 
-        if axis == "":
-            #Step 1 : Recovering the axis chosen 
-            quantity = self.c_axis.currentText()
-
-            #Step 2 : Adding the right units according to a dictionnary
-            if quantity == "None":
-                #If the axis is not selected, then we can not choose the unit
-                self.c_unit.clear()
-                self.c_unit.setDisabled(True)
-            else:
-                self.c_unit.setDisabled(False)
-                self.c_unit.clear()
-
-                if quantity in unit_dict:
-                    self.c_unit.addItem(unit_dict[quantity])
-
-        else:
+        #Step 2 : Adding the right units according to a dictionnary
+        if self.quantity == "None":
+            #If the axis is not selected, then we can not choose the unit
             self.c_unit.clear()
-            self.c_unit.addItem(unit_dict[axis])
+            self.c_unit.setDisabled(True)
+        else:
+            self.c_unit.setDisabled(False)
+            self.c_unit.clear()
+
+            if self.quantity in unit_dict:
+                self.c_unit.addItem(unit_dict[self.quantity])
+
+
 
     def update(self,data,axis_name = "X"):
         """Method used to update the widget by calling the other method for the label, the axes and the units
@@ -219,9 +245,12 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             a WAxisSelector object
 
         """
-        #Updating the units and the quantity seleted
-        self.set_unit()  
-        self.quantity = self.c_axis.currentText() 
+        #Updating the units and the quantity selected
+        #Making sure that self.quantity is a "tag" and not a "label". Example : z instead of axial direction
+        if self.c_axis.currentText() in [axes_dict[key] for key in axes_dict]:
+            self.quantity = [key for key in axes_dict][[axes_dict[key] for key in axes_dict].index(self.c_axis.currentText())] 
+        else:
+            self.quantity = self.c_axis.currentText() 
 
         #Handling specific case to disable certain parts of the GUI
         if self.c_axis.currentText() == "None":
@@ -229,21 +258,24 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         else:
             self.c_operation.setDisabled(False)
 
+        self.set_unit() 
+
+        #Emitting the signals
         self.refreshNeeded.emit()
         self.axisChanged.emit()
 
-    def update_operation(self):
-        """Method called when an operation is changed that will emit a signal as well as updating the units available
-        Parameters
-        ----------
-        self : WAxisSelector
-            a WAxisSelector object
+    # def update_operation(self):
+    #     """Method called when an operation is changed that will emit a signal as well as updating the units available
+    #     Parameters
+    #     ----------
+    #     self : WAxisSelector
+    #         a WAxisSelector object
 
-        """
-        if self.c_operation.currentText() == "Filter":
-            self.b_filter.setDisabled(False)
-        
-        else:
-            self.b_filter.setDisabled(True)
-            self.refreshNeeded.emit()
-            self.opeChanged.emit()
+    #     """
+    #     if self.c_operation.currentText() == "Filter":
+    #         self.b_filter.setDisabled(False)
+
+    #     else:
+    #         self.b_filter.setDisabled(True)
+    #         self.refreshNeeded.emit()
+    #         self.opeChanged.emit()
