@@ -23,25 +23,20 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
 
-        self.w_axis_1.axisChanged.connect(self.axes_updated)
+        #Managing the signal emitted by the WAxisSelector widgets
+        self.w_axis_1.axisChanged.connect(self.axis_1_updated)
         self.w_axis_2.axisChanged.connect(self.gen_data_selec)
-
-        # self.w_axis_1.opeChanged.connect(self.ope_sync)
-        # self.w_axis_2.opeChanged.connect(self.ope_updated)
+        self.w_axis_1.operationChanged.connect(self.operation_sync) #The operation in axis 2 is by default the one chosen in axis 1
 
 
-
-    def axes_updated(self):
-        """Method that will check if the axes chosen are correct and if true it will update the comboboxes
+    def axis_1_updated(self):
+        """Method that remove the axis selected in w_axis_1 from the the other WAxisSelector widget and generates Data Selection
         Parameters
         ----------
         self : WAxisManager
             a WAxisManager object
-        data : DataND
-            the DataND object that we want to plot
-        
         """
-         
+
         axis_selected = self.w_axis_1.get_current_axis_name()   #Recovering the axis selected by the user
         self.w_axis_2.remove_axis(axis_selected)                #Removing the axis selected from the the second axis combobox
 
@@ -49,35 +44,38 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         
     def gen_data_selec(self):
-        """Method that gen the right WDataExtrator widget according to axes_list 
+        """Method that gen the right WDataExtrator widget according to the axis selected by the user in the UI 
         Parameters
         ----------
         self : WAxisManager
             a WAxisManager object
-        data : axes_list
-            list of the axes that should be shown inside DataSelection
         """
 
         #Step 1 : Recovering the axis to generate (those that are not selected)
-        axes_list = self.w_axis_1.get_axes_name()[:]
+        #Getting all the possible axes
+        axes_list_1 = self.w_axis_1.get_axes_name()[:] 
+        axes_list_2 = self.w_axis_2.get_axes_name()[:]
 
-        axes_selected = list()
-        axes_selected.append(self.w_axis_1.get_current_quantity())
-        axes_selected.append(self.w_axis_2.get_current_quantity())
+        #Getting the axes selected and removing them from the right axes_list 
+        axis_selected_1 = self.w_axis_1.get_current_quantity()
+        axis_selected_2 = self.w_axis_2.get_current_quantity()
 
-        for ax in reversed(axes_list):
-            if ax in axes_selected:
-                axes_list.remove(ax)
+        axes_list_1.remove(axis_selected_1)
+        axes_list_2.remove(axis_selected_2)
 
-        #Step 2 : Deleting items in the layout currently
+        #Selecting the axes that are in common between the two axes lists
+        axes_gen = [ax for ax in axes_list_1 if ax in axes_list_2]
+
+        #Step 2 : Removing the items that are in the layout currently
+        #Add special case to handle error when we want to delete the spacer
         if isinstance(self.lay_data_extract.takeAt(self.lay_data_extract.count()-1),QSpacerItem):
             self.lay_data_extract.takeAt(self.lay_data_extract.count()-1).widget().deleteLater()       
 
         for i in reversed(range (self.lay_data_extract.count())):
             self.lay_data_extract.takeAt(i).widget().deleteLater()
        
-        #Step  3: Adding a WDataExtractor widget for each axis inside the layout 
-        for axis in axes_list:
+        #Step  3 : Adding a WDataExtractor widget for each axis inside the layout 
+        for axis in axes_gen:
             self.w_data_sel = WDataExtractor(self.layoutWidget)
             self.w_data_sel.setObjectName(axis)
             self.w_data_sel.setMinimumSize(QSize(0, 80))
@@ -94,44 +92,21 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.verticalSpacer = QSpacerItem(296, 50, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.lay_data_extract.addItem(self.verticalSpacer)
 
-    # def ope_sync(self):
-    #     """Method that will check the operation chosen and that update the other operation combobox.
-    #     So that, by default, we have FFT and FFT or "" and ""
-    #     Parameters
-    #     ----------
-    #     self : WAxisManager
-    #         a WAxisManager object
+    def operation_sync(self):
+        """Method that will check the operation chosen and that update the other operation combobox to have the same operation.
+        So that, by default, we have FFT and FFT or "" and ""
+        Parameters
+        ----------
+        self : WAxisManager
+            a WAxisManager object
         
-    #     """
+        """
         
-    #     operation_selected = (self.w_axis_1.get_current_ope_name())
-    #     self.w_axis_2.set_operation(operation_selected)
-    #     self.ope_updated()
+        operation_selected = (self.w_axis_1.get_current_operation_name())
+        self.w_axis_2.set_operation(operation_selected)
+        self.gen_data_selec()
 
 
-    # def ope_updated(self):
-    #     """Method that will check the operation chosen and that update the unit combobox
-    #     Parameters
-    #     ----------
-    #     self : WAxisManager
-    #         a WAxisManager object
-        
-    #     """
-
-    #     #Changing the units available if the operation is an FFT or not
-    #     if self.w_axis_1.get_current_ope_name() == "FFT" and self.w_axis_1.get_current_quantity() in fft_dict:
-    #         self.w_axis_1.set_quantity(fft_dict[self.w_axis_1.get_current_quantity()])
-            
-    #     elif self.w_axis_1.get_current_ope_name() == "" and self.w_axis_1.get_current_quantity in ifft_dict:
-    #         self.w_axis_1.set_quantity(ifft_dict[self.w_axis_1.get_current_quantity()])
-
-    #     #Changing the units available if the operation is an FFT or not
-    #     if self.w_axis_2.get_current_ope_name() == "FFT" and self.w_axis_2.get_current_quantity() in fft_dict:
-    #         self.w_axis_2.set_quantity(fft_dict[self.w_axis_2.get_current_quantity()])
-            
-    #     elif self.w_axis_2.get_current_ope_name() == "" and self.w_axis_2.get_current_quantity in ifft_dict:
-    #         self.w_axis_2.set_quantity(ifft_dict[self.w_axis_2.get_current_quantity()])
-           
 
     def set_axes(self,data):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
@@ -146,7 +121,6 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_2.blockSignals(True)
         self.w_axis_1.update(data)
         self.w_axis_2.update(data,axis_name="Y")
+        self.axis_1_updated()
         self.w_axis_1.blockSignals(False)
         self.w_axis_2.blockSignals(False)
-        self.axes_updated()
-
