@@ -28,7 +28,7 @@ def summing(self, values, axes_list, is_magnitude, unit):
     """
 
     # Take magnitude before summing
-    if is_magnitude:
+    if is_magnitude and "dB" not in unit:
         values = np_abs(values)
 
     # Apply sums, means, etc
@@ -75,5 +75,9 @@ def summing(self, values, axes_list, is_magnitude, unit):
         # derivation over derivation axes
         elif extension == "derivate":
             values = derivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs)
+
+    if is_magnitude and "dB" in unit:  # Correction for negative/small dB/dBA
+        values[values < 2] = 0
+        values = np_abs(values)
 
     return values
