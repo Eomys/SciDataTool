@@ -400,11 +400,11 @@ def plot_2D(
     if not no_legend:
         ax.legend(prop={"family": font_name, "size": font_size_legend})
 
-    if not is_show_legend:
-        ax.get_legend().remove()
-
     if is_outside_legend:
         ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+
+    if not is_show_legend:
+        ax.get_legend().remove()
 
     plt.tight_layout()
     for item in (
