@@ -27,7 +27,7 @@ def plot_2D_Data(
     axis_data=None,
     is_norm=False,
     unit="SI",
-    is_overall=False,
+    overall_axes=[],
     data_list=[],
     legend_list=[],
     color_list=None,
@@ -391,14 +391,28 @@ def plot_2D_Data(
             Xdata += [Xdatas[i] for x in range(n_curves)]
         Xdatas = Xdata
 
-    if is_overall:  # assuming plot along first arg + overall on all other axes
+    if overall_axes != []:  # assuming plot along first arg + overall on all other axes
         if self.unit == "W":
             op = "=sum"
         else:
             op = "=rss"
-        arg_list_ovl = [arg_list[0]] + [
-            axis.name + op for axis in self.axes if axis.name != arg_list[0]
-        ]
+        arg_list_ovl = [0 for i in range(len(arg_list))]
+        # Add sum to overall_axes
+        for axis in overall_axes:
+            ind_axis = None
+            for i, arg in enumerate(arg_list):
+                if axis in arg:
+                    ind_axis = i
+                    arg_list_ovl[i] = axis + op
+            if ind_axis is None:
+                arg_list_ovl.append(axis + op)
+        # Add other requested axes
+        for i, arg in enumerate(arg_list):
+            if arg_list_ovl[i] == 0:
+                arg_list_ovl[i] = arg
+        # arg_list_ovl = arg_list + [
+        #     axis.name + op for axis in self.axes if axis.name != arg_list[0]
+        # ]
         if is_fft or "dB" in unit:
             result = self.get_magnitude_along(*arg_list_ovl, unit=unit)
         else:
