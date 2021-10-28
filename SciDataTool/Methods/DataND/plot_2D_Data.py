@@ -413,6 +413,7 @@ def plot_2D_Data(
             xdata = result[list(result)[0]]
         Ydatas.insert(0, Y_overall)
         Xdatas.insert(0, xdata)
+        color_list = color_list.copy()
         color_list.insert(0, "#000000")
         legends.insert(0, "Overall")
 
