@@ -49,7 +49,7 @@ def plot_2D(
     font_size_legend=8,
     is_show_legend=True,
     is_outside_legend=False,
-    is_frame_legend=True,
+    is_frame_legend=None,
     scale_units="x",
     scale=None,
     width=0.005,
@@ -398,6 +398,13 @@ def plot_2D(
 
     if is_grid:
         ax.grid()
+
+    # Determine if frame is displayed
+    if is_frame_legend is None:
+        if is_outside_legend:
+            is_frame_legend = False
+        else:
+            is_frame_legend = True
 
     # if ndatas > 1 and not no_legend:
     if not no_legend:
