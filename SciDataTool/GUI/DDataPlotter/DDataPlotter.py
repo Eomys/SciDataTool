@@ -4,7 +4,10 @@ from matplotlib.figure import Figure
 from SciDataTool.Classes.VectorField import VectorField
 
 from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
-from matplotlib.backends.backend_qt5agg import (FigureCanvas, NavigationToolbar2QT as NavigationToolbar,)
+from matplotlib.backends.backend_qt5agg import (
+    FigureCanvas,
+    NavigationToolbar2QT as NavigationToolbar,
+)
 from ...Functions.Plot.init_fig import init_fig
 
 
@@ -21,27 +24,25 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         data : DataND
             A DataND object to plot
         is_auto_refresh : bool
-            True to remove 
+            True to remove
         """
 
         # Build the interface according to the .ui file
         QWidget.__init__(self)
         self.setupUi(self)
 
-        #Recovering the object that we want to show
+        # Recovering the object that we want to show
         self.data = data
         # is_auto_refresh = False
 
-        #Initializing the figure inside the UI
+        # Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
         self.set_figure(self.fig)
- 
 
-        #Building the interaction with the UI
+        # Building the interaction with the UI
         self.b_refresh.clicked.connect(self.update_plot)
         self.w_axis_manager.set_axes(self.data)
-
-
+        self.w_range.set_range(self.data)
 
         # if is_auto_refresh:
         # Update Graph
@@ -51,7 +52,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
     def set_figure(self, fig):
         """Method that set up the figure inside the GUI
-        
+
         Parameters
         ----------
         self : DDataPlotter
@@ -66,13 +67,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.plot_layout.addWidget(self.toolbar)
         self.plot_layout.addWidget(self.canvas)
 
-        #Hide or show the ComboBox related to the component of a VectorField
+        # Hide or show the ComboBox related to the component of a VectorField
         if not isinstance(self.data, VectorField):
             self.w_vect_selector.hide()
         else:
             self.w_vect_selector.show()
-               
-           
+
     def update_plot(self):
         """Method that update the plot according to the info given by the user
         Parameters
@@ -82,7 +82,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         """
 
-        self.data.plot_2D_Data("time",fig = self.fig, ax=self.ax) #Mandatory to give the figure and the axes to plot
-        
-
-
+        self.data.plot_2D_Data(
+            "z", fig=self.fig, ax=self.ax
+        )  # Mandatory to give the figure and the axes to plot
