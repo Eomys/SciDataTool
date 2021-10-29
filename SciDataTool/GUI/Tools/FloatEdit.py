@@ -5,6 +5,8 @@ from PySide2 import QtGui
 from PySide2.QtGui import QDoubleValidator
 from PySide2.QtWidgets import QLineEdit
 
+# from ...GUI import gui_option
+
 _float_re = compile(r"(([+-]?\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)")
 
 
@@ -27,7 +29,7 @@ def valid_float_string(string):
 class FloatEdit(QLineEdit):
     """A Line Edit Widget optimized to input float"""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, unit="", *args, **kwargs):
         """Same constructor as QLineEdit + config validator"""
 
         # Call the Line Edit constructor
@@ -107,7 +109,7 @@ class FloatValidator(QDoubleValidator):
             state = QtGui.QValidator.Invalid
         return (state, string, position)
 
-    def fixup_txt(self, text, gui_unit, val_unit):
+    def fixup_txt(self, text):
         """When the input text is wrong, fixup is called to correct it in
         the field
 
@@ -132,10 +134,6 @@ class FloatValidator(QDoubleValidator):
             try:
                 top = self.top()
                 bottom = self.bottom()
-                # Check unit
-                if val_unit == "m":
-                    top = gui_unit.get_m(top)
-                    bottom = gui_unit.get_m(bottom)
 
                 # If the input is too high...
                 if float(text) > top:

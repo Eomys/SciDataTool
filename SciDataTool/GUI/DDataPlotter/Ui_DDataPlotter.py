@@ -19,7 +19,7 @@ class Ui_DDataPlotter(object):
     def setupUi(self, DDataPlotter):
         if not DDataPlotter.objectName():
             DDataPlotter.setObjectName(u"DDataPlotter")
-        DDataPlotter.resize(879, 794)
+        DDataPlotter.resize(875, 785)
         self.horizontalLayout = QHBoxLayout(DDataPlotter)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.plot_layout = QVBoxLayout()
@@ -34,7 +34,7 @@ class Ui_DDataPlotter(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -18, 318, 797))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 318, 767))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.w_vect_selector = WVectorSelector(self.scrollAreaWidgetContents)

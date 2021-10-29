@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QWidget
 from matplotlib.figure import Figure
 
 from SciDataTool.Classes.VectorField import VectorField
+import matplotlib.pyplot as plt
 
 from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
 from matplotlib.backends.backend_qt5agg import (
@@ -9,6 +10,7 @@ from matplotlib.backends.backend_qt5agg import (
     NavigationToolbar2QT as NavigationToolbar,
 )
 from ...Functions.Plot.init_fig import init_fig
+from matplotlib.widgets import Cursor
 
 
 class DDataPlotter(Ui_DDataPlotter, QWidget):
@@ -81,7 +83,48 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a DDataPlotter object
 
         """
+        # Clear plots
+        for i in reversed(range(self.plot_layout.count())):
+            if self.plot_layout.itemAt(i).widget() is not None:
+                widgetToRemove = self.plot_layout.itemAt(i).widget()
+                # widgetToRemove.setParent(None)
+                widgetToRemove.deleteLater()
 
-        self.data.plot_2D_Data(
-            "z", fig=self.fig, ax=self.ax
-        )  # Mandatory to give the figure and the axes to plot
+        # plt.close()
+        if self.fig.get_axes():
+            self.fig.clear()
+
+        (self.fig, self.ax, _, _) = init_fig()
+        self.set_figure(self.fig)
+
+        # Recovering the axis selected and their units
+        axes_selected = self.w_axis_manager.get_axes_selected()
+        # print(axes_selected)
+
+        # Recovering the operation on the other axes
+        data_selection = self.w_axis_manager.get_dataselection_action()
+        # print(data_selection)
+
+        # Recovering the operation on the field values
+        output_range = self.w_range.get_field_selected()
+        # print(output_range)
+
+        if len(axes_selected) == 1:
+            self.data.plot_2D_Data(
+                axes_selected[0],
+                data_selection[0],
+                data_selection[1],
+                unit=output_range["unit"],
+                fig=self.fig,
+                ax=self.ax,
+            )
+
+        if len(axes_selected) == 2:
+            self.data.plot_3D_Data(
+                axes_selected[0],
+                axes_selected[1],
+                data_selection[0],
+                unit=output_range["unit"],
+                fig=self.fig,
+                ax=self.ax,
+            )

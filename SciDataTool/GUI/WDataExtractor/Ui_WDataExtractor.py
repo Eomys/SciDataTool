@@ -16,7 +16,7 @@ class Ui_WDataExtractor(object):
     def setupUi(self, WDataExtractor):
         if not WDataExtractor.objectName():
             WDataExtractor.setObjectName(u"WDataExtractor")
-        WDataExtractor.resize(318, 136)
+        WDataExtractor.resize(318, 151)
         self.verticalLayout = QVBoxLayout(WDataExtractor)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -94,6 +94,10 @@ class Ui_WDataExtractor(object):
         self.b_action.setMinimumSize(QSize(0, 20))
 
         self.verticalLayout.addWidget(self.b_action)
+
+        self.verticalSpacer_3 = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+        self.verticalLayout.addItem(self.verticalSpacer_3)
 
 
         self.retranslateUi(WDataExtractor)

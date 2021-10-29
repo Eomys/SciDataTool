@@ -24,6 +24,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
 
+        self.axes_list = list()
+
         # Managing the signal emitted by the WAxisSelector widgets
         self.w_axis_1.axisChanged.connect(self.axis_1_updated)
         self.w_axis_2.axisChanged.connect(self.gen_data_selec)
@@ -38,13 +40,14 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self : WAxisManager
             a WAxisManager object
         """
+        # Making sure that when axis 1 is updated, axis 1 and 2 are both on "" for the operation combobox
+        self.operation_sync()
 
-        axis_selected = (
-            self.w_axis_1.get_current_axis_name()
-        )  # Recovering the axis selected by the user
-        self.w_axis_2.remove_axis(
-            axis_selected
-        )  # Removing the axis selected from the the second axis combobox
+        # Recovering the axis selected by the user
+        axis_selected = self.w_axis_1.get_current_axis_name()
+
+        # Removing the axis selected from the the second axis combobox
+        self.w_axis_2.remove_axis(axis_selected)
 
         self.gen_data_selec()  # Generating the DataSelection GroupBox
 
@@ -84,16 +87,23 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.lay_data_extract.takeAt(i).widget().deleteLater()
 
         # Step  3 : Adding a WDataExtractor widget for each axis inside the layout
+        self.w_data_sel = list()
+
         for axis in axes_gen:
-            self.w_data_sel = WDataExtractor(self.layoutWidget)
-            self.w_data_sel.setObjectName(axis)
-            self.lay_data_extract.addWidget(self.w_data_sel)
+            temp = WDataExtractor(self.layoutWidget)
+            temp.setObjectName(axis)
+            for ax in self.axes_list:
+                if ax.name == axis:
+                    temp.update(ax)
+            self.w_data_sel.append(temp)
 
-            self.w_data_sel.update(axis)
+        for widget in self.w_data_sel:
+            self.lay_data_extract.addWidget(widget)
 
+        # TODO : change how we create data selection
         # Step 4 : Adding a spacer to improve the UI visually
         self.verticalSpacer = QSpacerItem(
-            296, 50, QSizePolicy.Minimum, QSizePolicy.Expanding
+            296, 0, QSizePolicy.Minimum, QSizePolicy.Expanding
         )
         self.lay_data_extract.addItem(self.verticalSpacer)
 
@@ -124,6 +134,50 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_2.blockSignals(True)
         self.w_axis_1.update(data)
         self.w_axis_2.update(data, axis_name="Y")
+        self.axes_list = data.get_axes()
         self.axis_1_updated()
         self.w_axis_1.blockSignals(False)
         self.w_axis_2.blockSignals(False)
+
+    def get_axes_selected(self):
+        """Method that return the axes chosen by the user and their unit as a string
+        so that we can use them to plot the data.
+        Parameters
+        ----------
+        self : WAxisManager
+            a WAxisManager object
+        Output
+        ---------
+        string
+            name of the axis and their units
+        """
+
+        axes_selected = list()
+
+        # Recovering the first axis
+        axes_selected.append(self.w_axis_1.get_axis_unit_selected())
+
+        # If a second axis is selected, then we add it as well
+        if self.w_axis_2.get_current_quantity() != "None":
+            axes_selected.append(self.w_axis_2.get_axis_unit_selected())
+
+        return axes_selected
+
+    def get_dataselection_action(self):
+        """Method that return the actions chosen by the user and the related axe as a string
+         so that we can use them to plot the data.
+        Parameters
+        ----------
+        self : WAxisManager
+            a WAxisManager object
+        Output
+        ---------
+        string
+            name of the action and its axis
+        """
+
+        actions_selected = list()
+        for widget in self.w_data_sel:
+            actions_selected.append(widget.get_actionSelected())
+
+        return actions_selected

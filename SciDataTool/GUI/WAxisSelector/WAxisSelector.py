@@ -29,14 +29,14 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.name = "X"  # Name of the axis
         self.axes_list = list()  # List of the different axes of the DataND object
-        self.quantity = (
-            "None"  # Name of the quantity of the axis (for ex: time, angle...)
-        )
 
+        self.quantity = "None"  # Name of the quantity of the axis (time, angle...)
+        self.unit = "None"  # Name of the unit of the axis (s,m...)
         self.b_filter.setDisabled(True)
 
         self.c_axis.currentTextChanged.connect(self.update_axis)
         self.c_operation.currentTextChanged.connect(self.update_operation)
+        self.c_unit.currentTextChanged.connect(self.update_unit)
 
     def change_name(self, axis_name):
         """Method to change of the label of the widget
@@ -197,7 +197,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         axis : string
             name of the axis that is selected
         """
-
+        self.c_unit.blockSignals(True)
         # Adding the right units according to a dictionnary
         if self.quantity == "None":
             # If the axis is not selected, then we can not choose the unit
@@ -209,7 +209,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
             # Adding the right unit according to the imported dictionary
             if self.quantity in unit_dict:
-                self.c_unit.addItem(unit_dict[self.quantity])
+                self.c_unit.addItems(unit_dict[self.quantity])
+        self.c_unit.blockSignals(False)
+        self.update_unit()
 
     def update(self, data, axis_name="X"):
         """Method used to update the widget by calling the other method for the label, the axes and the units
@@ -281,28 +283,76 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             a WAxisSelector object
 
         """
-
+        # If the operation selected is filter, then we enable the button
         if self.c_operation.currentText() == "Filter":
             self.b_filter.setDisabled(False)
 
         else:
             self.b_filter.setDisabled(True)
 
+        # Converting the axes according to operation selected if possible
         if self.c_operation.currentText() == "FFT" and self.quantity in fft_dict:
+            self.axes_list.insert(
+                self.axes_list.index(self.quantity), fft_dict[self.quantity]
+            )
             self.axes_list.remove(self.quantity)
             self.quantity = fft_dict[self.quantity]
-            self.axes_list.append(self.quantity)
 
         elif self.c_operation.currentText() == "" and self.quantity in ifft_dict:
+            self.axes_list.insert(
+                self.axes_list.index(self.quantity), ifft_dict[self.quantity]
+            )
             self.axes_list.remove(self.quantity)
             self.quantity = ifft_dict[self.quantity]
-            self.axes_list.append(self.quantity)
 
+        # Handling the case where quantity is updated but axes_list is not
+        # We check if fft(quantity) is in the list and when it is the case we replace it by quantity
         if not self.quantity in self.axes_list:
             if fft_dict[self.quantity] in self.axes_list:
+                self.axes_list.insert(
+                    self.axes_list.index(fft_dict[self.quantity]), self.quantity
+                )
                 self.axes_list.remove(fft_dict[self.quantity])
-                self.axes_list.append(self.quantity)
 
+        # Now that the quantiy has been updated according to the operation, we can set the units and emit the signals
         self.set_unit()
         self.refreshNeeded.emit()
         self.operationChanged.emit()
+
+    def update_unit(self):
+        """Method called when a new unit is selected so that we can update self.unit
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+
+        """
+        self.unit = self.c_unit.currentText()
+
+    def get_current_unit(self):
+        """Method that return the unit currently selected
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        Output
+        ---------
+        string
+            name of the current unit selected
+        """
+
+        return self.unit
+
+    def get_axis_unit_selected(self):
+        """Method that return the axis and the unit currently selected so that we can use it in the plot method
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        Output
+        ---------
+        string
+            name of the current axis and unit selected in the right format
+        """
+
+        return self.quantity + "{" + self.unit + "}"

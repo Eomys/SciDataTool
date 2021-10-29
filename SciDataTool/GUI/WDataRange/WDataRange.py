@@ -94,3 +94,20 @@ class WDataRange(Ui_WDataRange, QWidget):
         # Setting the FloatEdit with the right value
         self.lf_min.setValue(min_field)
         self.lf_max.setValue(max_field)
+
+    def get_field_selected(self):
+        """Method that will sent the operation on the field selected by the user (unit and min/max)
+        Parameters
+        ----------
+        self : WDataRange
+            a WDataRange object
+        Output
+        ---------
+        string
+            name of the action on the field
+        """
+        return {
+            "unit": self.c_unit.currentText(),
+            "min": self.lf_min.value(),
+            "max": self.lf_max.value(),
+        }
