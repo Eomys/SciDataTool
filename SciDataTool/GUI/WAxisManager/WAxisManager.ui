@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>369</width>
+    <width>330</width>
     <height>600</height>
    </rect>
   </property>
@@ -41,7 +41,7 @@
     </size>
    </property>
    <property name="title">
-    <string>Data Selection</string>
+    <string>Slices/Operations</string>
    </property>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
@@ -98,7 +98,7 @@
       <x>10</x>
       <y>20</y>
       <width>251</width>
-      <height>91</height>
+      <height>92</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="lay_axes">

@@ -19,7 +19,7 @@ class Ui_DDataPlotter(object):
     def setupUi(self, DDataPlotter):
         if not DDataPlotter.objectName():
             DDataPlotter.setObjectName(u"DDataPlotter")
-        DDataPlotter.resize(875, 785)
+        DDataPlotter.resize(1068, 844)
         self.horizontalLayout = QHBoxLayout(DDataPlotter)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.plot_layout = QVBoxLayout()
@@ -34,9 +34,15 @@ class Ui_DDataPlotter(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 318, 767))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 318, 837))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.c_autoRefresh = QCheckBox(self.scrollAreaWidgetContents)
+        self.c_autoRefresh.setObjectName(u"c_autoRefresh")
+        self.c_autoRefresh.setChecked(False)
+
+        self.verticalLayout.addWidget(self.c_autoRefresh)
+
         self.w_vect_selector = WVectorSelector(self.scrollAreaWidgetContents)
         self.w_vect_selector.setObjectName(u"w_vect_selector")
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -65,20 +71,20 @@ class Ui_DDataPlotter(object):
         self.g_range.setObjectName(u"g_range")
         sizePolicy1.setHeightForWidth(self.g_range.sizePolicy().hasHeightForWidth())
         self.g_range.setSizePolicy(sizePolicy1)
-        self.g_range.setMinimumSize(QSize(296, 120))
-        self.g_range.setMaximumSize(QSize(296, 120))
+        self.g_range.setMinimumSize(QSize(296, 150))
+        self.g_range.setMaximumSize(QSize(296, 140))
         self.verticalLayout_3 = QVBoxLayout(self.g_range)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.w_range = WDataRange(self.g_range)
         self.w_range.setObjectName(u"w_range")
-        self.w_range.setMinimumSize(QSize(0, 60))
+        self.w_range.setMinimumSize(QSize(0, 120))
 
         self.verticalLayout_3.addWidget(self.w_range)
 
 
         self.verticalLayout.addWidget(self.g_range)
 
-        self.verticalSpacer = QSpacerItem(20, 60, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
@@ -97,13 +103,29 @@ class Ui_DDataPlotter(object):
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.b_refresh.sizePolicy().hasHeightForWidth())
         self.b_refresh.setSizePolicy(sizePolicy2)
-        self.b_refresh.setMinimumSize(QSize(93, 0))
-        self.b_refresh.setMaximumSize(QSize(93, 30))
+        self.b_refresh.setMinimumSize(QSize(93, 28))
+        self.b_refresh.setMaximumSize(QSize(93, 28))
 
         self.refresh_layout.addWidget(self.b_refresh)
 
 
         self.verticalLayout.addLayout(self.refresh_layout)
+
+        self.animate_layout = QHBoxLayout()
+        self.animate_layout.setObjectName(u"animate_layout")
+        self.horizontalSpacer_2 = QSpacerItem(182, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
+
+        self.animate_layout.addItem(self.horizontalSpacer_2)
+
+        self.b_animate = QPushButton(self.scrollAreaWidgetContents)
+        self.b_animate.setObjectName(u"b_animate")
+        self.b_animate.setMinimumSize(QSize(93, 28))
+        self.b_animate.setMaximumSize(QSize(93, 28))
+
+        self.animate_layout.addWidget(self.b_animate)
+
+
+        self.verticalLayout.addLayout(self.animate_layout)
 
         self.w_export = WExport(self.scrollAreaWidgetContents)
         self.w_export.setObjectName(u"w_export")
@@ -116,6 +138,8 @@ class Ui_DDataPlotter(object):
         self.w_axis_manager.raise_()
         self.w_export.raise_()
         self.w_vect_selector.raise_()
+        self.c_autoRefresh.raise_()
+        self.b_animate.raise_()
 
         self.horizontalLayout.addWidget(self.scrollArea)
 
@@ -127,7 +151,9 @@ class Ui_DDataPlotter(object):
 
     def retranslateUi(self, DDataPlotter):
         DDataPlotter.setWindowTitle(QCoreApplication.translate("DDataPlotter", u"Data Plot", None))
-        self.g_range.setTitle(QCoreApplication.translate("DDataPlotter", u"Output Range", None))
+        self.c_autoRefresh.setText(QCoreApplication.translate("DDataPlotter", u"Auto Refresh", None))
+        self.g_range.setTitle(QCoreApplication.translate("DDataPlotter", u"Range", None))
         self.b_refresh.setText(QCoreApplication.translate("DDataPlotter", u"Refresh", None))
+        self.b_animate.setText(QCoreApplication.translate("DDataPlotter", u"Animate", None))
     # retranslateUi
 

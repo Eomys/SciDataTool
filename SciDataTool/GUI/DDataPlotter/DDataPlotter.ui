@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>875</width>
-    <height>785</height>
+    <width>1068</width>
+    <height>844</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,10 +40,20 @@
         <x>0</x>
         <y>0</y>
         <width>318</width>
-        <height>767</height>
+        <height>837</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QCheckBox" name="c_autoRefresh">
+         <property name="text">
+          <string>Auto Refresh</string>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="WVectorSelector" name="w_vect_selector" native="true">
          <property name="sizePolicy">
@@ -99,17 +109,17 @@
          <property name="minimumSize">
           <size>
            <width>296</width>
-           <height>120</height>
+           <height>150</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>296</width>
-           <height>120</height>
+           <height>140</height>
           </size>
          </property>
          <property name="title">
-          <string>Output Range</string>
+          <string>Range</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
@@ -117,7 +127,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>60</height>
+              <height>120</height>
              </size>
             </property>
            </widget>
@@ -136,7 +146,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>60</height>
+           <height>40</height>
           </size>
          </property>
         </spacer>
@@ -176,17 +186,56 @@
            <property name="minimumSize">
             <size>
              <width>93</width>
-             <height>0</height>
+             <height>28</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
              <width>93</width>
-             <height>30</height>
+             <height>28</height>
             </size>
            </property>
            <property name="text">
             <string>Refresh</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="animate_layout">
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Minimum</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>182</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="b_animate">
+           <property name="minimumSize">
+            <size>
+             <width>93</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>93</width>
+             <height>28</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Animate</string>
            </property>
           </widget>
          </item>
@@ -207,6 +256,9 @@
       <zorder>w_axis_manager</zorder>
       <zorder>w_export</zorder>
       <zorder>w_vect_selector</zorder>
+      <zorder>c_autoRefresh</zorder>
+      <zorder>b_animate</zorder>
+      <zorder>horizontalSpacer_2</zorder>
      </widget>
     </widget>
    </item>

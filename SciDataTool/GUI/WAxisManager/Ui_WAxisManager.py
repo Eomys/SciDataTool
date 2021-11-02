@@ -16,7 +16,7 @@ class Ui_WAxisManager(object):
     def setupUi(self, WAxisManager):
         if not WAxisManager.objectName():
             WAxisManager.setObjectName(u"WAxisManager")
-        WAxisManager.resize(369, 600)
+        WAxisManager.resize(330, 600)
         self.g_data_extract = QGroupBox(WAxisManager)
         self.g_data_extract.setObjectName(u"g_data_extract")
         self.g_data_extract.setGeometry(QRect(11, 138, 271, 450))
@@ -47,7 +47,7 @@ class Ui_WAxisManager(object):
         self.g_axes.setMaximumSize(QSize(296, 16777215))
         self.layoutWidget = QWidget(self.g_axes)
         self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(10, 20, 251, 91))
+        self.layoutWidget.setGeometry(QRect(10, 20, 251, 92))
         self.lay_axes = QVBoxLayout(self.layoutWidget)
         self.lay_axes.setObjectName(u"lay_axes")
         self.lay_axes.setContentsMargins(0, 0, 0, 0)
@@ -78,7 +78,7 @@ class Ui_WAxisManager(object):
 
     def retranslateUi(self, WAxisManager):
         WAxisManager.setWindowTitle(QCoreApplication.translate("WAxisManager", u"WAxisManager", None))
-        self.g_data_extract.setTitle(QCoreApplication.translate("WAxisManager", u"Data Selection", None))
+        self.g_data_extract.setTitle(QCoreApplication.translate("WAxisManager", u"Slices/Operations", None))
         self.g_axes.setTitle(QCoreApplication.translate("WAxisManager", u"Axes", None))
     # retranslateUi
 

@@ -2,10 +2,13 @@ from PySide2.QtWidgets import QWidget
 
 from ...GUI.WDataRange.Ui_WDataRange import Ui_WDataRange
 from ...Functions.Plot import unit_dict
+from PySide2.QtCore import Signal
 
 
 class WDataRange(Ui_WDataRange, QWidget):
     """Widget to select the Data/output range"""
+
+    refreshNeeded = Signal()
 
     def __init__(self, parent=None):
         """Initialize the GUI according to machine type
@@ -23,6 +26,27 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.setupUi(self)
         self.name = ""
         self.unit_list = list()
+
+        self.c_unit.currentTextChanged.connect(self.updateNeeded)
+        self.lf_min.editingFinished.connect(self.updateNeeded)
+        self.lf_max.editingFinished.connect(self.updateNeeded)
+
+    def get_field_selected(self):
+        """Method that will sent the operation on the field selected by the user (unit and min/max)
+        Parameters
+        ----------
+        self : WDataRange
+            a WDataRange object
+        Output
+        ---------
+        string
+            name of the action on the field
+        """
+        return {
+            "unit": self.c_unit.currentText(),
+            "min": self.lf_min.value(),
+            "max": self.lf_max.value(),
+        }
 
     def set_range(self, data):
         """Method that set the data range widget with the value from data
@@ -95,19 +119,11 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.lf_min.setValue(min_field)
         self.lf_max.setValue(max_field)
 
-    def get_field_selected(self):
-        """Method that will sent the operation on the field selected by the user (unit and min/max)
+    def updateNeeded(self):
+        """Method that emit a signal to automatically refresh the plot inside the GUI
         Parameters
         ----------
         self : WDataRange
             a WDataRange object
-        Output
-        ---------
-        string
-            name of the action on the field
         """
-        return {
-            "unit": self.c_unit.currentText(),
-            "min": self.lf_min.value(),
-            "max": self.lf_max.value(),
-        }
+        self.refreshNeeded.emit()

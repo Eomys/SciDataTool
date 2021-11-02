@@ -16,7 +16,7 @@ class Ui_WDataRange(object):
     def setupUi(self, WDataRange):
         if not WDataRange.objectName():
             WDataRange.setObjectName(u"WDataRange")
-        WDataRange.resize(154, 102)
+        WDataRange.resize(207, 96)
         self.gridLayout = QGridLayout(WDataRange)
         self.gridLayout.setObjectName(u"gridLayout")
         self.in_unit = QLabel(WDataRange)
@@ -26,6 +26,7 @@ class Ui_WDataRange(object):
 
         self.c_unit = QComboBox(WDataRange)
         self.c_unit.setObjectName(u"c_unit")
+        self.c_unit.setMinimumSize(QSize(0, 24))
 
         self.gridLayout.addWidget(self.c_unit, 0, 1, 1, 1)
 
@@ -41,6 +42,7 @@ class Ui_WDataRange(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lf_min.sizePolicy().hasHeightForWidth())
         self.lf_min.setSizePolicy(sizePolicy)
+        self.lf_min.setMinimumSize(QSize(0, 24))
         self.lf_min.setMaximumSize(QSize(70, 16777215))
 
         self.gridLayout.addWidget(self.lf_min, 1, 1, 1, 1)
@@ -54,6 +56,7 @@ class Ui_WDataRange(object):
         self.lf_max.setObjectName(u"lf_max")
         sizePolicy.setHeightForWidth(self.lf_max.sizePolicy().hasHeightForWidth())
         self.lf_max.setSizePolicy(sizePolicy)
+        self.lf_max.setMinimumSize(QSize(0, 24))
         self.lf_max.setMaximumSize(QSize(70, 16777215))
 
         self.gridLayout.addWidget(self.lf_max, 2, 1, 1, 1)

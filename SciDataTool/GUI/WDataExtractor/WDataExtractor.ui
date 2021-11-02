@@ -89,16 +89,6 @@
          <string>superimpose/filter</string>
         </property>
        </item>
-       <item>
-        <property name="text">
-         <string>animate</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>
@@ -198,7 +188,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Superimpose selection / Animate</string>
+      <string>Superimpose selection</string>
      </property>
     </widget>
    </item>

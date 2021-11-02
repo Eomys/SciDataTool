@@ -65,6 +65,20 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         return self.axes_list
 
+    def get_axis_unit_selected(self):
+        """Method that return the axis and the unit currently selected so that we can use it in the plot method
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        Output
+        ---------
+        string
+            name of the current axis and unit selected in the right format
+        """
+
+        return self.quantity + "{" + self.unit + "}"
+
     def get_current_axis_name(self):
         """Method that return the axis currently selected
         Parameters
@@ -108,6 +122,20 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the quantity
         """
         return self.quantity
+
+    def get_current_unit(self):
+        """Method that return the unit currently selected
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        Output
+        ---------
+        string
+            name of the current unit selected
+        """
+
+        return self.unit
 
     def remove_axis(self, axis_to_remove):
         """Method that remove a given axis from the axis ComboBox.
@@ -328,31 +356,3 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         """
         self.unit = self.c_unit.currentText()
-
-    def get_current_unit(self):
-        """Method that return the unit currently selected
-        Parameters
-        ----------
-        self : WAxisSelector
-            a WAxisSelector object
-        Output
-        ---------
-        string
-            name of the current unit selected
-        """
-
-        return self.unit
-
-    def get_axis_unit_selected(self):
-        """Method that return the axis and the unit currently selected so that we can use it in the plot method
-        Parameters
-        ----------
-        self : WAxisSelector
-            a WAxisSelector object
-        Output
-        ---------
-        string
-            name of the current axis and unit selected in the right format
-        """
-
-        return self.quantity + "{" + self.unit + "}"
