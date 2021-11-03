@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1068</width>
-    <height>844</height>
+    <height>825</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,7 +40,7 @@
         <x>0</x>
         <y>0</y>
         <width>318</width>
-        <height>837</height>
+        <height>801</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -109,47 +109,35 @@
          <property name="minimumSize">
           <size>
            <width>296</width>
-           <height>150</height>
+           <height>130</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>296</width>
-           <height>140</height>
+           <height>130</height>
           </size>
          </property>
          <property name="title">
           <string>Range</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="WDataRange" name="w_range" native="true">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>120</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="WDataRange" name="w_range" native="true">
+          <property name="geometry">
+           <rect>
+            <x>12</x>
+            <y>17</y>
+            <width>272</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>100</height>
+           </size>
+          </property>
+         </widget>
         </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
        <item>
         <layout class="QHBoxLayout" name="refresh_layout">
@@ -251,14 +239,29 @@
          </property>
         </widget>
        </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Ignored</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>200</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
-      <zorder>g_range</zorder>
       <zorder>w_axis_manager</zorder>
       <zorder>w_export</zorder>
       <zorder>w_vect_selector</zorder>
       <zorder>c_autoRefresh</zorder>
-      <zorder>b_animate</zorder>
-      <zorder>horizontalSpacer_2</zorder>
+      <zorder>g_range</zorder>
+      <zorder>verticalSpacer</zorder>
      </widget>
     </widget>
    </item>

@@ -13,6 +13,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
     """Widget that will handle the selection of the axis as well as generating WDataExtractor"""
 
     refreshNeeded = Signal()
+    refreshRange = Signal()
 
     def __init__(self, parent=None):
         """Initialize the GUI according to machine type
@@ -33,13 +34,10 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         # Managing the signal emitted by the WAxisSelector widgets
         self.w_axis_1.axisChanged.connect(self.axis_1_updated)
-        self.w_axis_2.axisChanged.connect(self.gen_data_selec)
+        self.w_axis_2.axisChanged.connect(self.axis_2_updated)
 
         # The operation in axis 2 is by default the one chosen in axis 1
         self.w_axis_1.operationChanged.connect(self.operation_sync)
-
-        # self.w_axis_1.refreshNeeded.connect(self.updateNeeded)
-        # self.w_axis_2.refreshNeeded.connect(self.updateNeeded)
 
     def axis_1_updated(self):
         """Method that remove the axis selected in w_axis_1 from the the other WAxisSelector widget and generates Data Selection
@@ -57,7 +55,21 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         # Removing the axis selected from the the second axis combobox
         self.w_axis_2.remove_axis(axis_selected)
 
-        self.gen_data_selec()  # Generating the DataSelection GroupBox
+        # Generating the DataSelection GroupBox
+        self.gen_data_selec()
+
+    def axis_2_updated(self):
+        """Method that make sure that when axis 2 is selected (None->?) it has the same operation as axis1 then generates Data Selection
+        Parameters
+        ----------
+        self : WAxisManager
+            a WAxisManager object
+        """
+        # Making sure that when axis 1 is updated, axis 1 and 2 are both on "" for the operation combobox
+        self.operation_sync()
+
+        # Generating the DataSelection GroupBox
+        self.gen_data_selec()
 
     def gen_data_selec(self):
         """Method that gen the right WDataExtrator widget according to the axis selected by the user in the UI
@@ -84,15 +96,16 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         # Step 2 : Removing the items that are in the layout currently
         # Add special case to handle error when we want to delete the spacer
-        if isinstance(
-            self.lay_data_extract.takeAt(self.lay_data_extract.count() - 1), QSpacerItem
-        ):
-            self.lay_data_extract.takeAt(
-                self.lay_data_extract.count() - 1
-            ).widget().deleteLater()
+        # if isinstance(
+        #     self.lay_data_extract.takeAt(self.lay_data_extract.count() - 1), QSpacerItem
+        # ):
+        #     self.lay_data_extract.takeAt(
+        #         self.lay_data_extract.count() - 1
+        #     ).widget().deleteLater()
 
         for i in reversed(range(self.lay_data_extract.count())):
-            self.lay_data_extract.takeAt(i).widget().deleteLater()
+            if not isinstance(self.lay_data_extract.itemAt(i), QSpacerItem):
+                self.lay_data_extract.takeAt(i).widget().deleteLater()
 
         # Step  3 : Adding a WDataExtractor widget for each axis inside the layout
         self.w_data_sel = list()
@@ -106,15 +119,15 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_data_sel.append(temp)
 
         for wid in self.w_data_sel:
-            self.lay_data_extract.addWidget(wid)
+            self.lay_data_extract.insertWidget(self.lay_data_extract.count() - 1, wid)
             wid.refreshNeeded.connect(self.updateNeeded)
 
         # TODO : change how we create data selection
         # Step 4 : Adding a spacer to improve the UI visually
-        self.verticalSpacer = QSpacerItem(
-            296, 0, QSizePolicy.Minimum, QSizePolicy.Expanding
-        )
-        self.lay_data_extract.addItem(self.verticalSpacer)
+        # self.verticalSpacer = QSpacerItem(
+        #     296, 0, QSizePolicy.Minimum, QSizePolicy.Expanding
+        # )
+        # self.lay_data_extract.addItem(self.verticalSpacer)
 
         self.updateNeeded()
 
@@ -203,3 +216,4 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         """
 
         self.refreshNeeded.emit()
+        self.refreshRange.emit()

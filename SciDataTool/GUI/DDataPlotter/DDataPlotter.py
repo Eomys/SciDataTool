@@ -73,14 +73,32 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Building the interaction with the UI
         self.b_refresh.clicked.connect(self.update_plot)
         self.w_axis_manager.set_axes(self.data)
-        self.w_range.set_range(self.data)
-
+        #        self.w_range.set_range(self.data)
+        self.update_range()
         self.update_plot()
+
+        self.w_axis_manager.refreshRange.connect(self.update_range)
 
         # Linking the signals for the autoRefresh
         self.c_autoRefresh.toggled.connect(self.updateAutoRefresh)
         self.w_axis_manager.refreshNeeded.connect(self.autoUpdate)
         self.w_range.refreshNeeded.connect(self.autoUpdate)
+
+    def update_range(self):
+        """Method that will update the range widget to make sure that the value set by default are those of the right matrix
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+        """
+        self.w_range.blockSignals(True)
+        # Recovering the axis selected and their units
+        axes_selected = self.w_axis_manager.get_axes_selected()
+        # Recovering the operation on the other axes
+        data_selection = self.w_axis_manager.get_dataselection_action()
+
+        self.w_range.set_range(self.data, axes_selected, data_selection)
+        self.w_range.blockSignals(False)
 
     def autoUpdate(self):
         """Method that checks if the autorefresh is enabled.If true; then it updates the plot.

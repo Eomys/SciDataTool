@@ -16,7 +16,7 @@ class Ui_WDataExtractor(object):
     def setupUi(self, WDataExtractor):
         if not WDataExtractor.objectName():
             WDataExtractor.setObjectName(u"WDataExtractor")
-        WDataExtractor.resize(318, 151)
+        WDataExtractor.resize(318, 100)
         self.verticalLayout = QVBoxLayout(WDataExtractor)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -51,10 +51,6 @@ class Ui_WDataExtractor(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout)
 
-        self.verticalSpacer = QSpacerItem(296, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
-
-        self.verticalLayout.addItem(self.verticalSpacer)
-
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.lf_value = FloatEdit(WDataExtractor)
@@ -81,10 +77,6 @@ class Ui_WDataExtractor(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
-        self.verticalSpacer_2 = QSpacerItem(296, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
-
-        self.verticalLayout.addItem(self.verticalSpacer_2)
-
         self.b_action = QPushButton(WDataExtractor)
         self.b_action.setObjectName(u"b_action")
         sizePolicy.setHeightForWidth(self.b_action.sizePolicy().hasHeightForWidth())
@@ -92,10 +84,6 @@ class Ui_WDataExtractor(object):
         self.b_action.setMinimumSize(QSize(0, 20))
 
         self.verticalLayout.addWidget(self.b_action)
-
-        self.verticalSpacer_3 = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
-
-        self.verticalLayout.addItem(self.verticalSpacer_3)
 
 
         self.retranslateUi(WDataExtractor)

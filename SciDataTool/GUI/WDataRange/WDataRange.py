@@ -1,4 +1,5 @@
 from PySide2.QtWidgets import QWidget
+from matplotlib.pyplot import axes
 
 from ...GUI.WDataRange.Ui_WDataRange import Ui_WDataRange
 from ...Functions.Plot import unit_dict
@@ -48,7 +49,7 @@ class WDataRange(Ui_WDataRange, QWidget):
             "max": self.lf_max.value(),
         }
 
-    def set_range(self, data):
+    def set_range(self, data, axes_selected, data_selection):
         """Method that set the data range widget with the value from data
 
         Parameters
@@ -61,7 +62,7 @@ class WDataRange(Ui_WDataRange, QWidget):
 
         self.set_name(data.name)
         self.set_unit(data)
-        self.set_min_max(data)
+        self.set_min_max(data, axes_selected, data_selection)
 
     def set_name(self, field_name):
         """Method that set the name of the widget which is the name of the field that we are plotting
@@ -99,7 +100,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.c_unit.clear()
         self.c_unit.addItems(self.unit_list)
 
-    def set_min_max(self, field):
+    def set_min_max(self, field, axes_selected, data_selection):
         """Method that will set the FloatEdit of the widget that are responsible for the min value and for the max value.
         Parameters
         ----------
@@ -109,11 +110,28 @@ class WDataRange(Ui_WDataRange, QWidget):
             the data object that hold the field that we want to plot
         """
 
-        # Recovering the minimum and the maximum of the
-        field_value = field.values
+        # Recovering the minimum and the maximum of the field
+        if len(axes_selected) == 1:
 
-        min_field = min(field_value.flatten())
-        max_field = max(field_value.flatten())
+            # field_value = field.get_along("angle = 0.0 {°}", "z = -1.0{m}",)
+
+            field_value = field.get_along(
+                data_selection[0], data_selection[1], axes_selected[0]
+            )
+
+            min_field = field_value[field.symbol].min()
+            max_field = field_value[field.symbol].max()
+
+        elif len(axes_selected) == 2:
+
+            # field_value = field.get_along("angle = 0.0 {°}", "z = -1.0{m}",)
+
+            field_value = field.get_along(
+                data_selection[0], axes_selected[0], axes_selected[1]
+            )
+
+            min_field = field_value[field.symbol].min()
+            max_field = field_value[field.symbol].max()
 
         # Setting the FloatEdit with the right value
         self.lf_min.setValue(min_field)

@@ -19,11 +19,11 @@
      <x>11</x>
      <y>138</y>
      <width>271</width>
-     <height>450</height>
+     <height>211</height>
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -31,7 +31,7 @@
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>450</height>
+     <height>210</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -49,7 +49,7 @@
       <x>10</x>
       <y>20</y>
       <width>251</width>
-      <height>411</height>
+      <height>181</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="lay_data_extract">
@@ -59,6 +59,22 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
    </widget>
   </widget>
