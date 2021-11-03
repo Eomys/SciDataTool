@@ -40,8 +40,8 @@ def convert(self, values, unit, is_norm, is_squeeze, axes_list):
         ref_value = 1.0
         if "ref" in self.normalizations:
             ref_value *= self.normalizations["ref"].ref
+        is_match = False
         for axis in axes_list:
-            is_match = False
             if axis.name == "freqs" or axis.corr_name == "freqs":
                 if axis.corr_values is not None and axis.unit not in [
                     "SI",
