@@ -413,8 +413,8 @@ def dB_to_dBA(values, freqs, noct=None):
         )
         Aweight = 2.0 + 20.0 * log10(RA)
         Aweight[isnan(Aweight)] = -100  # replacing NaN by -100 dB
-        values += Aweight
-        return values
+        values_dBA = values + Aweight
+        return values_dBA
 
 
 def to_noct(values, freqs, noct=3):

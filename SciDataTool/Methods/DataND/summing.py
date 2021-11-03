@@ -13,7 +13,7 @@ from SciDataTool.Functions.sum_mean import (
 )
 
 
-def summing(self, values, axes_list, is_magnitude):
+def summing(self, values, axes_list, is_magnitude, unit):
     """Returns the values of the field transformed or converted.
     Parameters
     ----------
@@ -28,7 +28,7 @@ def summing(self, values, axes_list, is_magnitude):
     """
 
     # Take magnitude before summing
-    if is_magnitude:
+    if is_magnitude and "dB" not in unit:
         values = np_abs(values)
 
     # Apply sums, means, etc
@@ -52,10 +52,12 @@ def summing(self, values, axes_list, is_magnitude):
             is_freqs = False
         # sum over sum axes
         if extension in "sum":
-            values = my_sum(values, index, Nper, is_aper)
+            values = my_sum(values, index, Nper, is_aper, unit)
         # root sum square over rss axes
         elif extension == "rss":
-            values = root_sum_square(values, ax_val, index, Nper, is_aper, is_phys)
+            values = root_sum_square(
+                values, ax_val, index, Nper, is_aper, is_phys, unit
+            )
         # mean value over mean axes
         elif extension == "mean":
             values = my_mean(values, ax_val, index, Nper, is_aper, is_phys)
@@ -73,5 +75,9 @@ def summing(self, values, axes_list, is_magnitude):
         # derivation over derivation axes
         elif extension == "derivate":
             values = derivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs)
+
+    if is_magnitude and "dB" in unit:  # Correction for negative/small dB/dBA
+        values[values < 2] = 0
+        values = np_abs(values)
 
     return values
