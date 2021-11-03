@@ -40,8 +40,8 @@ def convert(self, values, unit, is_norm, is_squeeze, axes_list):
         ref_value = 1.0
         if "ref" in self.normalizations:
             ref_value *= self.normalizations["ref"].ref
+        is_match = False
         for axis in axes_list:
-            is_match = False
             if axis.name == "freqs" or axis.corr_name == "freqs":
                 if axis.corr_values is not None and axis.unit not in [
                     "SI",
@@ -66,7 +66,20 @@ def convert(self, values, unit, is_norm, is_squeeze, axes_list):
                 )
                 is_match = True
         if not is_match:
-            raise UnitError("dBA conversion only available for fft with frequencies")
+            axis_names = [axis.name for axis in self.axes]
+            if "speed" in axis_names and "order" in axis_names:
+                freqs = self.get_freqs()
+                freqs = freqs.ravel("C")
+                shape = values.shape
+                values = values.reshape(freqs.shape + shape[2:])
+                values = np.apply_along_axis(
+                    to_dBA, 0, values, freqs, self.unit, ref_value
+                )
+                values = values.reshape(shape)
+            else:
+                raise UnitError(
+                    "dBA conversion only available for fft with frequencies"
+                )
     elif unit in self.normalizations:
         values = self.normalizations.get(unit).normalize(values)
     else:
