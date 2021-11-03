@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from numpy import log10, abs as np_abs, max as np_max, NaN, zeros_like
 import matplotlib.pyplot as plt
 
 from SciDataTool.Functions.Plot.init_fig import init_fig
+import numpy as np
 
 
 def plot_4D(
@@ -26,6 +29,7 @@ def plot_4D(
     xticklabels=None,
     yticklabels=None,
     annotations=None,
+    annotation_threshold=0.01,
     fig=None,
     ax=None,
     is_logscale_x=False,
@@ -42,6 +46,8 @@ def plot_4D(
     font_size_label=10,
     font_size_legend=8,
     is_grid=False,
+    grid_xlw=None,
+    grid_ylw=None,
 ):
     """Plots a 4D graph
 
@@ -89,6 +95,8 @@ def plot_4D(
         list of tick labels to use for the x-axis
     annotations : list
         list of annotations to apply to data
+    annotation_threshold : float
+        threshold to plot annotation (percentage of the maximum value)
     fig : Matplotlib.figure.Figure
         existing figure to use if None create a new one
     ax : Matplotlib.axes.Axes object
@@ -109,6 +117,12 @@ def plot_4D(
         True to show figure after plot
     is_switch_axes : bool
         to switch x and y axes
+    is_grid : bool
+        to plot grid
+    grid_xlw : float
+        grid linewidth along x
+    grid_ylw : float
+        grid linewidth along y
     """
 
     # Set figure/subplot
@@ -194,7 +208,7 @@ def plot_4D(
             ax.set_yticklabels(yticklabels)
         if annotations is not None:
             for i, txt in enumerate(annotations):
-                if Zdata[i] > z_max * 0.01:
+                if Zdata[i] > z_max * annotation_threshold and txt is not None:
                     ax.annotate(
                         str(txt) + " [Hz]",
                         (Xdata[i], Ydata[i]),
@@ -236,7 +250,17 @@ def plot_4D(
     ax.title.set_fontname(font_name)
 
     if is_grid:
-        ax.grid()
+        if grid_xlw is not None:
+            ax.xaxis.grid(lw=grid_xlw)
+        else:
+            ax.xaxis.grid()
+        if grid_ylw is not None:
+            ax.yaxis.grid(lw=grid_ylw)
+        else:
+            ax.yaxis.grid()
+        # ax.xaxis.grid(False) #To remove grid along x
+        # Plot grid below data
+        ax.set_axisbelow(True)
 
     if save_path is not None:
         save_path = save_path.replace("\\", "/")

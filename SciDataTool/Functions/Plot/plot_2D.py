@@ -49,6 +49,7 @@ def plot_2D(
     font_size_legend=8,
     is_show_legend=True,
     is_outside_legend=False,
+    is_frame_legend=None,
     scale_units="x",
     scale=None,
     width=0.005,
@@ -108,6 +109,8 @@ def plot_2D(
         True to show figure after plot
     is_outside_legend : bool
         True to display legend outside the graph
+    is_frame_legend : bool
+        True to display legend in a frame
     win_title : str
         Title of the plot window
     scale_units : str
@@ -396,12 +399,28 @@ def plot_2D(
     if is_grid:
         ax.grid()
 
+    # Determine if frame is displayed
+    if is_frame_legend is None:
+        if is_outside_legend:
+            is_frame_legend = False
+        else:
+            is_frame_legend = True
+
     # if ndatas > 1 and not no_legend:
     if not no_legend:
-        ax.legend(prop={"family": font_name, "size": font_size_legend})
-
-    if is_outside_legend:
-        ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+        if is_outside_legend:
+            ax.legend(
+                prop={"family": font_name, "size": font_size_legend},
+                loc="upper left",
+                bbox_to_anchor=(1, 1),
+                frameon=is_frame_legend,
+            )
+        else:
+            ax.legend(
+                prop={"family": font_name, "size": font_size_legend},
+                loc="center left",
+                frameon=is_frame_legend,
+            )
 
     if not is_show_legend:
         ax.get_legend().remove()
