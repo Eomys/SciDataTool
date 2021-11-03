@@ -391,7 +391,8 @@ def plot_2D_Data(
             Xdata += [Xdatas[i] for x in range(n_curves)]
         Xdatas = Xdata
 
-    if overall_axes != []:  # assuming plot along first arg + overall on all other axes
+    # Overall computation
+    if overall_axes != []:
         if self.unit == "W":
             op = "=sum"
         else:
@@ -399,20 +400,17 @@ def plot_2D_Data(
         arg_list_ovl = [0 for i in range(len(arg_list))]
         # Add sum to overall_axes
         for axis in overall_axes:
-            ind_axis = None
+            is_match = False
             for i, arg in enumerate(arg_list):
                 if axis in arg:
-                    ind_axis = i
+                    is_match = True
                     arg_list_ovl[i] = axis + op
-            if ind_axis is None:
+            if not is_match:
                 arg_list_ovl.append(axis + op)
         # Add other requested axes
         for i, arg in enumerate(arg_list):
             if arg_list_ovl[i] == 0:
                 arg_list_ovl[i] = arg
-        # arg_list_ovl = arg_list + [
-        #     axis.name + op for axis in self.axes if axis.name != arg_list[0]
-        # ]
         if is_fft or "dB" in unit:
             result = self.get_magnitude_along(*arg_list_ovl, unit=unit)
         else:
