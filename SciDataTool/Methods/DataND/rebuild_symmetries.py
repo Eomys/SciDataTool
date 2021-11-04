@@ -36,6 +36,7 @@ def rebuild_symmetries(
                     "mean",
                     "rms",
                     "integrate",
+                    "integrate_local",
                     "derivate",
                     "smallestperiod",
                 ]

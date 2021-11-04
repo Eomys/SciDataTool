@@ -13,6 +13,7 @@ operation_list = [
     "mean",
     "rms",
     "integrate",
+    "integrate_local",
     "derivate",
     "antiderivate",
 ]
@@ -180,6 +181,7 @@ def get_axis(self, axis, is_real):
                 "rms",
                 "rss",
                 "integrate",
+                "integrate_local",
                 "derivate",
                 "antiderivate",
             ]:
