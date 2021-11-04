@@ -82,6 +82,56 @@ def antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
 
     return values
 
+def integrate_local(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
+    """Returns the local integral of values along given axis (does not change the axis)
+
+    Parameters
+    ----------
+    values: ndarray
+        array to derivate
+    ax_val: ndarray
+        axis values
+    index: int
+        index of axis along which to derivate
+    Nper: int
+        number of periods to replicate
+    is_aper: bool
+        True if values is anti-periodic along axis
+    is_phys: bool
+        True if physical quantity (time/angle/z)
+    is_freqs: bool
+        True if frequency axis
+
+    Returns
+    -------
+    values_integ: ndarray
+        local integration of values
+    """
+
+    if not is_phys:
+        raise AxisError("Integration only available for time/angle/z")
+
+    if ax_val.size > 1:
+        # Compute primitive
+        values = antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs)
+        values = np.swapaxes(values, index, 0)
+        values_integ = np.zeros(values.shape, dtype=values.dtype)
+
+        # Evaluate the difference between two consecutive primitive values = integral on each segment
+        values_diff = values[0:-1, ...] - values[1:, ...]
+
+        # Distribute the integral of each segment on correspond points
+        for ival, val in enumerate(values_diff):
+            values_integ[ival] = val/2
+            values_integ[ival+1] = val/2
+
+        values_integ = np.swapaxes(values_integ, index, 0)
+
+    else:
+        raise Exception("Cannot anti-derivate along axis if axis size is 1")
+
+    return values_integ
+
 
 def integrate(values, ax_val, index, Nper, is_aper, is_phys, is_mean=False):
     """Returns the integral of values along given axis

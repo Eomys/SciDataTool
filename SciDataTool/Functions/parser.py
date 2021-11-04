@@ -62,6 +62,10 @@ def read_input_strings(args, axis_data):
             name = elems[0]
             extension = "mean"
         # Detect integrate
+        elif "integrate_local" in axis_str:
+            elems = axis_str.split("=integrate_local")
+            name = elems[0]
+            extension = "integrate_local"
         elif "integrate" in axis_str:
             elems = axis_str.split("=integrate")
             name = elems[0]
