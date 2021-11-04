@@ -9,6 +9,21 @@ from ...GUI.WDataExtractor.WDataExtractor import WDataExtractor
 from ...Functions.Plot import fft_dict, ifft_dict, axes_dict
 
 
+EXTENSION_DICT = {
+    "slice": ["rss", "sum", "rms", "mean", "integrate", "list", "single"],
+    "axis": [
+        "derivate",
+        "oneperiod",
+        "antiperiod",
+        "smallestperiod",
+        "pattern",
+        "axis_data",
+        "interval",
+        "whole",
+    ],
+}
+
+
 class WAxisManager(Ui_WAxisManager, QWidget):
     """Widget that will handle the selection of the axis as well as generating WDataExtractor"""
 
@@ -95,14 +110,6 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_gen = [ax for ax in axes_list_1 if ax in axes_list_2]
 
         # Step 2 : Removing the items that are in the layout currently
-        # Add special case to handle error when we want to delete the spacer
-        # if isinstance(
-        #     self.lay_data_extract.takeAt(self.lay_data_extract.count() - 1), QSpacerItem
-        # ):
-        #     self.lay_data_extract.takeAt(
-        #         self.lay_data_extract.count() - 1
-        #     ).widget().deleteLater()
-
         for i in reversed(range(self.lay_data_extract.count())):
             if not isinstance(self.lay_data_extract.itemAt(i), QSpacerItem):
                 self.lay_data_extract.takeAt(i).widget().deleteLater()
@@ -121,13 +128,6 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         for wid in self.w_data_sel:
             self.lay_data_extract.insertWidget(self.lay_data_extract.count() - 1, wid)
             wid.refreshNeeded.connect(self.updateNeeded)
-
-        # TODO : change how we create data selection
-        # Step 4 : Adding a spacer to improve the UI visually
-        # self.verticalSpacer = QSpacerItem(
-        #     296, 0, QSizePolicy.Minimum, QSizePolicy.Expanding
-        # )
-        # self.lay_data_extract.addItem(self.verticalSpacer)
 
         self.updateNeeded()
 
@@ -188,7 +188,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_2.set_operation(operation_selected)
         self.gen_data_selec()
 
-    def set_axes(self, data):
+    def set_axes(self, data, user_input_list):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
         ----------
@@ -197,14 +197,58 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         data : DataND
             The DataND object that we want to plot
         """
-        self.w_axis_1.blockSignals(True)
-        self.w_axis_2.blockSignals(True)
-        self.w_axis_1.update(data)
-        self.w_axis_2.update(data, axis_name="Y")
-        self.axes_list = data.get_axes()
-        self.axis_1_updated()
-        self.w_axis_1.blockSignals(False)
-        self.w_axis_2.blockSignals(False)
+
+        # Step 1 : If setting are given, we have to process them
+        axes_list = list()
+        slices_op_list = list()
+
+        for axis in user_input_list:
+            if axis.extension in EXTENSION_DICT["axis"]:
+                axes_list.append(axis)
+
+            elif axis.extension in EXTENSION_DICT["slice"]:
+                slices_op_list.append(axis)
+
+        # Step 2 : Setting the UI according to def setting if we have user input or by default if there are not user input
+
+        if len(user_input_list) == 0:
+
+            self.w_axis_1.blockSignals(True)
+            self.w_axis_2.blockSignals(True)
+
+            self.w_axis_1.update(data)
+            self.w_axis_2.update(data, axis_name="Y")
+            self.axes_list = data.get_axes()
+            self.axis_1_updated()
+
+            self.w_axis_1.blockSignals(False)
+            self.w_axis_2.blockSignals(False)
+
+        else:
+            self.w_axis_1.blockSignals(True)
+            self.w_axis_2.blockSignals(True)
+
+            self.w_axis_1.update(data)
+            self.w_axis_1.set_axis_default(axes_list[0])
+
+            self.w_axis_2.update(data, axis_name="Y")
+            self.axes_list = data.get_axes()
+            self.axis_1_updated()
+
+            if len(axes_list) == 2:
+                self.w_axis_2.set_axis_default(axes_list[1])
+
+            self.axis_2_updated()
+
+            self.set_data_selec(slices_op_list)
+
+            self.w_axis_1.blockSignals(False)
+            self.w_axis_2.blockSignals(False)
+
+    def set_data_selec(self, user_input_list):
+
+        for wid in self.w_data_sel:
+            wid.set_op(user_input_list[self.w_data_sel.index(wid)])
 
     def updateNeeded(self):
         """Method that emits a signal that will be used to automaticaly update the plot inside the GUI.

@@ -272,33 +272,39 @@ def plot_3D_Data(
             axis_unit = norm_dict[axis.unit]
         else:
             axis_unit = axis.unit
-        title4 += (
-            axis.name
-            + "="
-            + array2string(
-                result[axis.name],
-                formatter={"float_kind": "{:.3g}".format},
+
+        if isinstance(result[axis.name], str):
+            axis_str = result[axis.name]
+        else:
+            axis_str = (
+                array2string(
+                    result[axis.name],
+                    formatter={"float_kind": "{:.3g}".format},
+                )
+                .replace(" ", ", ")
+                .replace("[", "")
+                .replace("]", "")
+                + " ["
+                + axis_unit
+                + "], "
             )
-            .replace(" ", ", ")
-            .replace("[", "")
-            .replace("]", "")
-            + " ["
-            + axis_unit
-            + "], "
-        )
+
+        title4 += axis.name + "=" + axis_str
+
     title5 = ""
     for axis_name in axes_dict_other:
-        title5 += (
-            axis_name
-            + "="
-            + array2string(
+        if isinstance(axes_dict_other[axis_name][0], str):
+            axis_str = axes_dict_other[axis_name][0]
+        else:
+            axis_str = array2string(
                 axes_dict_other[axis_name][0],
                 formatter={"float_kind": "{:.3g}".format},
             ).replace(" ", ", ")
-            + " ["
-            + axes_dict_other[axis_name][1]
-            + "], "
-        )
+            +" ["
+            +axes_dict_other[axis_name][1]
+            +"], "
+
+        title5 += axis_name + "=" + axis_str
 
     if title4 == " for " and title5 == "":
         title4 = ""

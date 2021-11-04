@@ -45,7 +45,7 @@ def latex(string):
 class DDataPlotter(Ui_DDataPlotter, QWidget):
     """Main windows of to plot a Data object"""
 
-    def __init__(self, data, is_auto_refresh=False):
+    def __init__(self, data, user_input_list, user_input_dict, is_auto_refresh=False):
         """Initialize the GUI according to machine type
 
         Parameters
@@ -71,12 +71,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.set_figure(self.fig)
 
         # Building the interaction with the UI
-        self.b_refresh.clicked.connect(self.update_plot)
-        self.w_axis_manager.set_axes(self.data)
-        #        self.w_range.set_range(self.data)
-        self.update_range()
+        self.w_axis_manager.set_axes(self.data, user_input_list)
+        self.update_range(user_input_dict)
         self.update_plot()
 
+        self.b_refresh.clicked.connect(self.update_plot)
         self.w_axis_manager.refreshRange.connect(self.update_range)
 
         # Linking the signals for the autoRefresh
@@ -84,7 +83,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.w_axis_manager.refreshNeeded.connect(self.autoUpdate)
         self.w_range.refreshNeeded.connect(self.autoUpdate)
 
-    def update_range(self):
+    def update_range(self, user_input_dict=dict()):
         """Method that will update the range widget to make sure that the value set by default are those of the right matrix
         Parameters
         ----------
@@ -92,12 +91,17 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a DDataPlotter object
         """
         self.w_range.blockSignals(True)
+
         # Recovering the axis selected and their units
         axes_selected = self.w_axis_manager.get_axes_selected()
         # Recovering the operation on the other axes
         data_selection = self.w_axis_manager.get_dataselection_action()
 
         self.w_range.set_range(self.data, axes_selected, data_selection)
+
+        if len(user_input_dict) != 0:
+            self.w_range.set_user_input(user_input_dict)
+
         self.w_range.blockSignals(False)
 
     def autoUpdate(self):
@@ -378,8 +382,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 unit=output_range["unit"],
                 fig=self.fig,
                 ax=self.ax,
-                # y_min=output_range["min"],
-                # y_max=output_range["max"],
+                y_min=output_range["min"],
+                y_max=output_range["max"],
             )
 
         if len(axes_selected) == 2:
@@ -391,6 +395,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 fig=self.fig,
                 ax=self.ax,
                 is_2D_view=True,
-                # y_min=output_range["min"],
-                # y_max=output_range["max"],
+                z_min=output_range["min"],
+                z_max=output_range["max"],
             )

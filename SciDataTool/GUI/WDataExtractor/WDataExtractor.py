@@ -8,7 +8,7 @@ from numpy import where
 from numpy import argmin, abs as np_abs
 
 type_extraction_dict = {
-    "slice": "=",
+    "slice": "[",
     "rms": "=rms",
     "rss": "=rss",
     "sum": "=sum",
@@ -59,8 +59,8 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         action_type = self.c_type_extraction.currentText()
 
         if action_type == "slice":
-            slice_value = self.axis_value[self.slider.value()]
-            action = type_extraction_dict[action_type] + str(slice_value)
+            slice_index = self.slider.value()
+            action = type_extraction_dict[action_type] + str(slice_index) + "]"
 
         else:
             action = type_extraction_dict[action_type]
@@ -91,6 +91,46 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             self.in_name.setText(name)
 
         self.name = name
+
+    def set_op(self, user_input):
+
+        # Recovering the type of the operation and on which axis we are applying it
+        op_type = user_input.extension
+        op_name = user_input.name
+
+        # Setting the label with the right name
+        self.set_name(op_name)
+
+        # Converting type of the operation if we have a slice or a superimpose/filter
+        if op_type == "single":
+            op_type = "slice"
+
+        elif op_type == "list":
+            op_type = "superimpose/filter"
+
+        # Setting operation combobox
+        self.c_type_extraction.blockSignals(True)
+
+        for i in range(self.c_type_extraction.count()):
+            self.c_type_extraction.setCurrentIndex(i)
+
+            if self.c_type_extraction.currentText() == op_type:
+                break
+
+        self.c_type_extraction.blockSignals(False)
+        self.update_layout()
+
+        # setting slider
+
+        if op_type == "slice":
+            self.set_slider(user_input.indices[0])
+
+    def set_slider(self, index):
+
+        self.slider.blockSignals(True)
+        self.slider.setValue(index)
+        self.slider.blockSignals(False)
+        self.update_floatEdit()
 
     def set_slider_floatedit(self):
         """Method that set the value of the slider and the one of the floatEdit
@@ -175,5 +215,6 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self.slider.blockSignals(True)
         index = argmin(np_abs(self.axis_value - self.lf_value.value()))
         self.slider.setValue(index)
+        self.lf_value.setValue(self.axis_value[index])
         self.slider.blockSignals(False)
         self.refreshNeeded.emit()

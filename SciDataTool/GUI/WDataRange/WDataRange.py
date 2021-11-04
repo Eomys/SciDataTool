@@ -2,8 +2,9 @@ from PySide2.QtWidgets import QWidget
 from matplotlib.pyplot import axes
 
 from ...GUI.WDataRange.Ui_WDataRange import Ui_WDataRange
-from ...Functions.Plot import unit_dict
+from ...Functions.Plot import unit_dict, ifft_dict
 from PySide2.QtCore import Signal
+from SciDataTool.Functions import parser
 
 
 class WDataRange(Ui_WDataRange, QWidget):
@@ -110,25 +111,41 @@ class WDataRange(Ui_WDataRange, QWidget):
             the data object that hold the field that we want to plot
         """
 
+        axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
+
         # Recovering the minimum and the maximum of the field
         if len(axes_selected) == 1:
 
-            # field_value = field.get_along("angle = 0.0 {°}", "z = -1.0{m}",)
+            # Checking if the field is plotted in fft, then we use get_magnitude_along
+            # Otherwise we use get_along
 
-            field_value = field.get_along(
-                data_selection[0], data_selection[1], axes_selected[0]
-            )
+            if axes_selected_parsed[0].name in ifft_dict:
+                field_value = field.get_magnitude_along(
+                    data_selection[0], data_selection[1], axes_selected[0]
+                )
+            else:
+                field_value = field.get_along(
+                    data_selection[0], data_selection[1], axes_selected[0]
+                )
 
             min_field = field_value[field.symbol].min()
             max_field = field_value[field.symbol].max()
 
         elif len(axes_selected) == 2:
 
-            # field_value = field.get_along("angle = 0.0 {°}", "z = -1.0{m}",)
-
-            field_value = field.get_along(
-                data_selection[0], axes_selected[0], axes_selected[1]
-            )
+            # Checking if the field is plotted in fft, then we use get_magnitude_along
+            # Otherwise we use get_along
+            if (
+                axes_selected_parsed[0].name in ifft_dict
+                and axes_selected_parsed[1].name in ifft_dict
+            ):
+                field_value = field.get_magnitude_along(
+                    data_selection[0], axes_selected[0], axes_selected[1]
+                )
+            else:
+                field_value = field.get_along(
+                    data_selection[0], axes_selected[0], axes_selected[1]
+                )
 
             min_field = field_value[field.symbol].min()
             max_field = field_value[field.symbol].max()
@@ -145,3 +162,28 @@ class WDataRange(Ui_WDataRange, QWidget):
             a WDataRange object
         """
         self.refreshNeeded.emit()
+
+    def set_user_input(self, user_input_dict):
+        """Method that modify the unit selected and the floatEdit according to the input given to have an auto plot
+        Parameters
+        ----------
+        self : WDataRange
+            a WDataRange object
+        user_input_dict : dictionnary
+            dictionnary that stores all the argument given to have an auto-plot
+        """
+
+        if "unit" in user_input_dict:
+            # Selecting the right unit inside the unit combobox
+            for i in range(self.c_unit.count()):
+                self.c_unit.setCurrentIndex(i)
+                if self.c_unit.currentText() == user_input_dict["unit"]:
+                    break
+
+        if "zmax" in user_input_dict:
+            # Setting max float edit
+            self.lf_max.setValue(float(user_input_dict["zmax"]))
+
+        if "zmin" in user_input_dict:
+            # Setting min float edit
+            self.lf_min.setValue(float(user_input_dict["zmin"]))
