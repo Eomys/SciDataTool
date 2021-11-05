@@ -118,12 +118,12 @@ def integrate_local(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
         values_integ = np.zeros(values.shape, dtype=values.dtype)
 
         # Evaluate the difference between two consecutive primitive values = integral on each segment
-        values_diff = values[0:-1, ...] - values[1:, ...]
+        values_diff = values[1:, ...] - values[0:-1, ...]
 
         # Distribute the integral of each segment on correspond points
         for ival, val in enumerate(values_diff):
-            values_integ[ival] = val/2
-            values_integ[ival+1] = val/2
+            values_integ[ival] += val/2
+            values_integ[ival+1] += val/2
 
         values_integ = np.swapaxes(values_integ, index, 0)
 

@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from numpy.testing import assert_array_almost_equal
+from numpy.testing import assert_array_almost_equal, assert_equal
 
 from SciDataTool import DataLinspace, DataTime, Norm_ref, Data1D
 
@@ -182,6 +182,9 @@ def test_get_data_along_integrate():
     Field_rms = Field.get_data_along("time=rms", "angle")
     assert_array_almost_equal(Field_rms.values, A / np.sqrt(2), decimal=15)
     assert Field_rms.unit == "m"
+    Field_int_loc = Field.get_data_along("time=integrate_local", "angle")
+    assert_array_almost_equal(np.sum(Field_int_loc.values), 0, decimal=16)
+    assert Field_int_loc.unit == "ms"
 
     Field.unit = "N/m^2"
     Time.unit = "m"
@@ -210,6 +213,9 @@ def test_get_data_along_integrate():
     assert_array_almost_equal(Field_sum0.values, 0, decimal=14)
     Field_rms0 = Field0.get_data_along("time=rms", "angle")
     assert_array_almost_equal(Field_rms0.values, A / np.sqrt(2), decimal=15)
+
+    Field_int_loc0 = Field0.get_data_along("time=integrate_local", "angle")
+    assert_array_almost_equal(np.sum(Field_int_loc0.values), 0, decimal=16)
 
     # Test integrate / sum / mean / rms with and without periodicity
     f = 32.1258
@@ -435,10 +441,58 @@ def test_get_data_along_to_linspace():
 
     assert_array_almost_equal(Time.get_values(), Time_lin.get_values())
 
+@pytest.mark.validation
+def test_get_data_along_integrate_local():
+
+    # Test integrate / sum / mean / rms with and without anti-periodicity
+    f = 50
+    A = 5
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=10,
+        include_endpoint=False,
+    )
+    Angle = DataLinspace(
+        name="angle",
+        unit="rad",
+        initial=0,
+        final=2 * np.pi,
+        number=20,
+        include_endpoint=False,
+    )
+    ta, at = np.meshgrid(Time.get_values(), Angle.get_values())
+    field = A * np.ones(ta.shape)
+    Field = DataTime(
+        name="Example field",
+        symbol="X",
+        unit="m",
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+        axes=[Time, Angle],
+        values=field.T,
+    )
+
+    # Time derivation
+    Field_anti_t = Field.get_data_along("time=antiderivate", "angle")
+    field_anti_t_check = Field_anti_t.values
+    field_anti_t_ref = ta.T*A
+    assert_array_almost_equal(field_anti_t_check, field_anti_t_ref, decimal=5)
+
+    Field_int_loc = Field.get_along("time=integrate_local", "angle")["X"]
+    assert_equal(Field_int_loc.shape, (10, 20))
+
+    DtA = A/(10*f)
+    Field_int_loc = Field.get_along("time=integrate_local", "angle[0]")["X"]
+    assert_array_almost_equal(np.sum(Field_int_loc.values), 0, decimal=16)
+    assert Field_int_loc.unit == "ms"
+
 
 if __name__ == "__main__":
-    test_get_data_along_single()
-    test_get_data_along_integrate()
-    test_get_data_along_derivate()
-    test_get_data_along_antiderivate()
-    test_get_data_along_to_linspace()
+    # test_get_data_along_single()
+    # test_get_data_along_integrate()
+    # test_get_data_along_derivate()
+    # test_get_data_along_antiderivate()
+    # test_get_data_along_to_linspace()
+    test_get_data_along_integrate_local()
