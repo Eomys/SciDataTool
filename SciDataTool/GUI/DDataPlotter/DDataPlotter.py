@@ -2,7 +2,6 @@ from PySide2.QtWidgets import QWidget
 from matplotlib.figure import Figure
 
 from SciDataTool.Classes.VectorField import VectorField
-import matplotlib.pyplot as plt
 
 from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
 from matplotlib.backends.backend_qt5agg import (
@@ -54,6 +53,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a DDataPlotter object
         data : DataND
             A DataND object to plot
+        user_input_list:
+            list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
+        user_input_dict:
+            dict of info which are given for the auto-plot (setting up WDataRange)
         is_auto_refresh : bool
             True to remove
         """
@@ -70,8 +73,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         (self.fig, self.ax, _, _) = init_fig()
         self.set_figure(self.fig)
 
-        # Building the interaction with the UI
-        self.w_axis_manager.set_axes(self.data, user_input_list)
+        # Building the interaction with the UI and the UI itself
+        self.w_axis_manager.set_axis_widgets(self.data, user_input_list)
         self.update_range(user_input_dict)
         self.update_plot()
 
@@ -79,32 +82,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.w_axis_manager.refreshRange.connect(self.update_range)
 
         # Linking the signals for the autoRefresh
-        self.c_autoRefresh.toggled.connect(self.updateAutoRefresh)
-        self.w_axis_manager.refreshNeeded.connect(self.autoUpdate)
-        self.w_range.refreshNeeded.connect(self.autoUpdate)
+        self.c_auto_refresh.toggled.connect(self.set_auto_refresh)
+        self.w_axis_manager.refreshNeeded.connect(self.auto_update)
+        self.w_range.refreshNeeded.connect(self.auto_update)
 
-    def update_range(self, user_input_dict=dict()):
-        """Method that will update the range widget to make sure that the value set by default are those of the right matrix
-        Parameters
-        ----------
-        self : DDataPlotter
-            a DDataPlotter object
-        """
-        self.w_range.blockSignals(True)
-
-        # Recovering the axis selected and their units
-        axes_selected = self.w_axis_manager.get_axes_selected()
-        # Recovering the operation on the other axes
-        data_selection = self.w_axis_manager.get_dataselection_action()
-
-        self.w_range.set_range(self.data, axes_selected, data_selection)
-
-        if len(user_input_dict) != 0:
-            self.w_range.set_user_input(user_input_dict)
-
-        self.w_range.blockSignals(False)
-
-    def autoUpdate(self):
+    def auto_update(self):
         """Method that checks if the autorefresh is enabled.If true; then it updates the plot.
         Parameters
         ----------
@@ -115,6 +97,18 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         if self.is_auto_refresh == True:
             self.update_plot()
+
+    def set_auto_refresh(self):
+        """Method that update the refresh policy according to the checkbox inside the UI
+
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+
+        """
+
+        self.is_auto_refresh = self.c_auto_refresh.isChecked()
 
     def set_figure(self, fig):
         """Method that set up the figure inside the GUI
@@ -328,20 +322,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.canvas.mpl_connect("pick_event", set_cursor)
         self.canvas.mpl_connect("button_press_event", delete_cursor)
 
-    def updateAutoRefresh(self):
-        """Method that update the refresh policy by enabling or disabling the autorefresh of the plot
-
-        Parameters
-        ----------
-        self : DDataPlotter
-            a DDataPlotter object
-
-        """
-
-        self.is_auto_refresh = self.c_autoRefresh.isChecked()
-
     def update_plot(self):
-        """Method that update the plot according to the info given by the user
+        """Method that update the plot according to the info selected in the UI
         Parameters
         ----------
         self : DDataPlotter
@@ -355,7 +337,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 # widgetToRemove.setParent(None)
                 widgetToRemove.deleteLater()
 
-        # plt.close()
         if self.fig.get_axes():
             self.fig.clear()
 
@@ -367,7 +348,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         print(axes_selected)
 
         # Recovering the operation on the other axes
-        data_selection = self.w_axis_manager.get_dataselection_action()
+        data_selection = self.w_axis_manager.get_operation_selected()
         print(data_selection)
 
         # Recovering the operation on the field values
@@ -398,3 +379,26 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 z_min=output_range["min"],
                 z_max=output_range["max"],
             )
+
+    def update_range(self, user_input_dict=dict()):
+        """Method that will update the range widget with either the user input or the default value of the DataND object
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+        """
+        self.w_range.blockSignals(True)
+
+        # Recovering the axis selected and their units
+        axes_selected = self.w_axis_manager.get_axes_selected()
+        # Recovering the operation on the other axes
+        data_selection = self.w_axis_manager.get_operation_selected()
+
+        # Setting the WDataRange by sending the necessary info to the widget
+        self.w_range.set_range(self.data, axes_selected, data_selection)
+
+        # If user inputs have been sent (auto plot), then we modify the WDataRange according to these info
+        if len(user_input_dict) != 0:
+            self.w_range.set_range_user_input(user_input_dict)
+
+        self.w_range.blockSignals(False)

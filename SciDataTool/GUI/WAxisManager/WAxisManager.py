@@ -52,41 +52,40 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_2.axisChanged.connect(self.axis_2_updated)
 
         # The operation in axis 2 is by default the one chosen in axis 1
-        self.w_axis_1.operationChanged.connect(self.operation_sync)
+        self.w_axis_1.operationChanged.connect(self.fft_sync)
 
     def axis_1_updated(self):
-        """Method that remove the axis selected in w_axis_1 from the the other WAxisSelector widget and generates Data Selection
+        """Method that remove the axis selected in w_axis_1 from w_axis_2 and call the method that generates
+        the layout with the WDataExtractor.
         Parameters
         ----------
         self : WAxisManager
             a WAxisManager object
         """
         # Making sure that when axis 1 is updated, axis 1 and 2 are both on "" for the operation combobox
-        self.operation_sync()
+        self.fft_sync()
 
-        # Recovering the axis selected by the user
-        axis_selected = self.w_axis_1.get_current_axis_name()
+        # Recovering the axis selected by the user removing it from the the second axis combobox
+        self.w_axis_2.remove_axis(self.w_axis_1.get_current_axis_name())
 
-        # Removing the axis selected from the the second axis combobox
-        self.w_axis_2.remove_axis(axis_selected)
-
-        # Generating the DataSelection GroupBox
-        self.gen_data_selec()
+        # Generating the GroupBox
+        self.gen_data_selection()
 
     def axis_2_updated(self):
-        """Method that make sure that when axis 2 is selected (None->?) it has the same operation as axis1 then generates Data Selection
+        """Method that make sure that when axis 2 is selected (None->?) it has the same fft/ifft combobox selected as axis1
+         then generates Data Selection
         Parameters
         ----------
         self : WAxisManager
             a WAxisManager object
         """
         # Making sure that when axis 1 is updated, axis 1 and 2 are both on "" for the operation combobox
-        self.operation_sync()
+        self.fft_sync()
 
         # Generating the DataSelection GroupBox
-        self.gen_data_selec()
+        self.gen_data_selection()
 
-    def gen_data_selec(self):
+    def gen_data_selection(self):
         """Method that gen the right WDataExtrator widget according to the axis selected by the user in the UI
         Parameters
         ----------
@@ -94,14 +93,14 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
         """
 
-        # Step 1 : Recovering the axis to generate (those that are not selected)
+        # Step 1 : Recovering the axis that must be generated (those that are not selected)
         # Getting all the possible axes
         axes_list_1 = self.w_axis_1.get_axes_name()[:]
         axes_list_2 = self.w_axis_2.get_axes_name()[:]
 
         # Getting the axes selected and removing them from the right axes_list
-        axis_selected_1 = self.w_axis_1.get_current_quantity()
-        axis_selected_2 = self.w_axis_2.get_current_quantity()
+        axis_selected_1 = self.w_axis_1.get_current_axis_selected()
+        axis_selected_2 = self.w_axis_2.get_current_axis_selected()
 
         axes_list_1.remove(axis_selected_1)
         axes_list_2.remove(axis_selected_2)
@@ -114,7 +113,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             if not isinstance(self.lay_data_extract.itemAt(i), QSpacerItem):
                 self.lay_data_extract.takeAt(i).widget().deleteLater()
 
-        # Step  3 : Adding a WDataExtractor widget for each axis inside the layout
+        # Step 3 : For each axis, adding a WDataExtractor widget inside the layout
         self.w_data_sel = list()
 
         for axis in axes_gen:
@@ -127,9 +126,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         for wid in self.w_data_sel:
             self.lay_data_extract.insertWidget(self.lay_data_extract.count() - 1, wid)
-            wid.refreshNeeded.connect(self.updateNeeded)
+            wid.refreshNeeded.connect(self.update_needed)
 
-        self.updateNeeded()
+        self.update_needed()
 
     def get_axes_selected(self):
         """Method that return the axes chosen by the user and their unit as a string
@@ -150,13 +149,13 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_selected.append(self.w_axis_1.get_axis_unit_selected())
 
         # If a second axis is selected, then we add it as well
-        if self.w_axis_2.get_current_quantity() != "None":
+        if self.w_axis_2.get_current_axis_selected() != "None":
             axes_selected.append(self.w_axis_2.get_axis_unit_selected())
 
         return axes_selected
 
-    def get_dataselection_action(self):
-        """Method that return the actions chosen by the user and the related axe as a string
+    def get_operation_selected(self):
+        """Method that return the actions chosen by the user and the related axis as a string
          so that we can use them to plot the data.
         Parameters
         ----------
@@ -170,11 +169,11 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         actions_selected = list()
         for widget in self.w_data_sel:
-            actions_selected.append(widget.get_actionSelected())
+            actions_selected.append(widget.get_operation_selected())
 
         return actions_selected
 
-    def operation_sync(self):
+    def fft_sync(self):
         """Method that will check the operation chosen and that update the other operation combobox to have the same operation.
         So that, by default, we have FFT and FFT or "" and ""
         Parameters
@@ -186,9 +185,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         operation_selected = self.w_axis_1.get_current_operation_name()
         self.w_axis_2.set_operation(operation_selected)
-        self.gen_data_selec()
+        self.gen_data_selection()
 
-    def set_axes(self, data, user_input_list):
+    def set_axis_widgets(self, data, user_input_list):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
         ----------
@@ -196,9 +195,11 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
         data : DataND
             The DataND object that we want to plot
+        user_input_list : list
+            list of the inputs from the user to set the axes (auto-plot)
         """
 
-        # Step 1 : If setting are given, we have to process them
+        # Step 1 : If user_input are given (auto-plot), we have to process them
         axes_list = list()
         slices_op_list = list()
 
@@ -209,50 +210,61 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             elif axis.extension in EXTENSION_DICT["slice"]:
                 slices_op_list.append(axis)
 
-        # Step 2 : Setting the UI according to def setting if we have user input or by default if there are not user input
+        # Step 2 : Ff we have user input, the we set the UI according to user_input.
+        # Otherwise we use the default info
+        self.w_axis_1.blockSignals(True)
+        self.w_axis_2.blockSignals(True)
 
         if len(user_input_list) == 0:
-
-            self.w_axis_1.blockSignals(True)
-            self.w_axis_2.blockSignals(True)
-
+            # Case where no user_input was given
+            # Sending the info of data to the widget (mainly the axis)
             self.w_axis_1.update(data)
             self.w_axis_2.update(data, axis_name="Y")
             self.axes_list = data.get_axes()
-            self.axis_1_updated()
 
-            self.w_axis_1.blockSignals(False)
-            self.w_axis_2.blockSignals(False)
+            # Updating w_axis_2 according to w_axis_1 then generating DataSelection
+            self.axis_1_updated()
 
         else:
-            self.w_axis_1.blockSignals(True)
-            self.w_axis_2.blockSignals(True)
-
+            # Case where a userinput was given (auto plot)
+            # Sending the info of data to the widget (mainly the axis)
             self.w_axis_1.update(data)
-            self.w_axis_1.set_axis_default(axes_list[0])
-
+            # Setting the axis selected in w_axis_1 according to user_input_list
+            self.w_axis_1.set_axis(axes_list[0])
             self.w_axis_2.update(data, axis_name="Y")
             self.axes_list = data.get_axes()
+
+            # Updating w_axis_2 according to w_axis_1 then generating DataSelection
             self.axis_1_updated()
 
+            # Setting the axis selected in w_axis_1 according to user_input_list if we have a second axis
             if len(axes_list) == 2:
-                self.w_axis_2.set_axis_default(axes_list[1])
+                self.w_axis_2.set_axis(axes_list[1])
 
+            # Making sure that we have the same fft/ifft selected for both axis and generating DataSelection again
             self.axis_2_updated()
-
             self.set_data_selec(slices_op_list)
 
-            self.w_axis_1.blockSignals(False)
-            self.w_axis_2.blockSignals(False)
+        self.w_axis_1.blockSignals(False)
+        self.w_axis_2.blockSignals(False)
 
     def set_data_selec(self, user_input_list):
-
+        """Method that set the right operation inside each WDataExtractor inside of w_data_sel
+        according to user input (auto plot).
+        Parameters
+        ----------
+        self : WAxisManager
+            a WAxisManager object
+        user_input_list : list
+            list of the inputs from the user to set the DataSelection (auto-plot)
+        """
         for wid in self.w_data_sel:
-            wid.set_op(user_input_list[self.w_data_sel.index(wid)])
+            wid.set_operation(user_input_list[self.w_data_sel.index(wid)])
 
-    def updateNeeded(self):
-        """Method that emits a signal that will be used to automaticaly update the plot inside the GUI.
+    def update_needed(self):
+        """Method that emits a signal (refreshNeeded) that will be used to automaticaly update the plot inside the GUI.
         This signal is triggered by other signals comming from WDataExtractor or WAxisSelector.
+        refreshRange is a different signal that we use to update the values of min and max inside w_range
         Parameters
         ----------
         self : WAxisManager

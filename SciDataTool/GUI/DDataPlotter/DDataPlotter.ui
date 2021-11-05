@@ -45,7 +45,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QCheckBox" name="c_autoRefresh">
+        <widget class="QCheckBox" name="c_auto_refresh">
          <property name="text">
           <string>Auto Refresh</string>
          </property>
@@ -259,7 +259,7 @@
       <zorder>w_axis_manager</zorder>
       <zorder>w_export</zorder>
       <zorder>w_vect_selector</zorder>
-      <zorder>c_autoRefresh</zorder>
+      <zorder>c_auto_refresh</zorder>
       <zorder>g_range</zorder>
       <zorder>verticalSpacer</zorder>
      </widget>

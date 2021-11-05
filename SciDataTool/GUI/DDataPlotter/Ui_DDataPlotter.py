@@ -37,11 +37,11 @@ class Ui_DDataPlotter(object):
         self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 318, 801))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.c_autoRefresh = QCheckBox(self.scrollAreaWidgetContents)
-        self.c_autoRefresh.setObjectName(u"c_autoRefresh")
-        self.c_autoRefresh.setChecked(False)
+        self.c_auto_refresh = QCheckBox(self.scrollAreaWidgetContents)
+        self.c_auto_refresh.setObjectName(u"c_auto_refresh")
+        self.c_auto_refresh.setChecked(False)
 
-        self.verticalLayout.addWidget(self.c_autoRefresh)
+        self.verticalLayout.addWidget(self.c_auto_refresh)
 
         self.w_vect_selector = WVectorSelector(self.scrollAreaWidgetContents)
         self.w_vect_selector.setObjectName(u"w_vect_selector")
@@ -133,7 +133,7 @@ class Ui_DDataPlotter(object):
         self.w_axis_manager.raise_()
         self.w_export.raise_()
         self.w_vect_selector.raise_()
-        self.c_autoRefresh.raise_()
+        self.c_auto_refresh.raise_()
         self.g_range.raise_()
 
         self.horizontalLayout.addWidget(self.scrollArea)
@@ -146,7 +146,7 @@ class Ui_DDataPlotter(object):
 
     def retranslateUi(self, DDataPlotter):
         DDataPlotter.setWindowTitle(QCoreApplication.translate("DDataPlotter", u"Data Plot", None))
-        self.c_autoRefresh.setText(QCoreApplication.translate("DDataPlotter", u"Auto Refresh", None))
+        self.c_auto_refresh.setText(QCoreApplication.translate("DDataPlotter", u"Auto Refresh", None))
         self.g_range.setTitle(QCoreApplication.translate("DDataPlotter", u"Range", None))
         self.b_refresh.setText(QCoreApplication.translate("DDataPlotter", u"Refresh", None))
         self.b_animate.setText(QCoreApplication.translate("DDataPlotter", u"Animate", None))

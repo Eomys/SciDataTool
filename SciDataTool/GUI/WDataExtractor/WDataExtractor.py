@@ -42,7 +42,7 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.lf_value.editingFinished.connect(self.update_slider)
 
-    def get_actionSelected(self):
+    def get_operation_selected(self):
         """Method that return a string of the action selected by the user on the axis of the widget.
         Parameters
         ----------
@@ -54,14 +54,13 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         string
             name of the current action selected
         """
-
         # Recovering the action selected by the user
         action_type = self.c_type_extraction.currentText()
 
+        # Formatting the string to have the right syntax
         if action_type == "slice":
             slice_index = self.slider.value()
             action = type_extraction_dict[action_type] + str(slice_index) + "]"
-
         else:
             action = type_extraction_dict[action_type]
 
@@ -85,6 +84,7 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         name : string
             string that hold the name of the axis
         """
+        # Checking if the name of the axis is the name as the one displayed (z =/= axial direction for example)
         if name in axes_dict:
             self.in_name.setText(axes_dict[name])
         else:
@@ -92,41 +92,54 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
 
         self.name = name
 
-    def set_op(self, user_input):
-
+    def set_operation(self, user_input):
+        """Method that set the operation of the combobox of the WDataExtractor
+        Parameters
+        ----------
+        self : WDataExtractor
+            a WDataExtractor object
+        user_input : list
+            list of RequestedAxis that we use to set up the UI for the auto-plot
+        """
         # Recovering the type of the operation and on which axis we are applying it
-        op_type = user_input.extension
-        op_name = user_input.name
+        operation_type = user_input.extension
+        operation_name = user_input.name
 
-        # Setting the label with the right name
-        self.set_name(op_name)
+        # Setting the label of the widget with the right name
+        self.set_name(operation_name)
 
         # Converting type of the operation if we have a slice or a superimpose/filter
-        if op_type == "single":
-            op_type = "slice"
+        if operation_type == "single":
+            operation_type = "slice"
 
-        elif op_type == "list":
-            op_type = "superimpose/filter"
+        elif operation_type == "list":
+            operation_type = "superimpose/filter"
 
-        # Setting operation combobox
+        # Setting operation combobox to the right operation
         self.c_type_extraction.blockSignals(True)
 
         for i in range(self.c_type_extraction.count()):
             self.c_type_extraction.setCurrentIndex(i)
 
-            if self.c_type_extraction.currentText() == op_type:
+            if self.c_type_extraction.currentText() == operation_type:
                 break
 
         self.c_type_extraction.blockSignals(False)
         self.update_layout()
 
-        # setting slider
-
-        if op_type == "slice":
+        # Setting the slider to the right value if the operation is slice
+        if operation_type == "slice":
             self.set_slider(user_input.indices[0])
 
     def set_slider(self, index):
-
+        """Method that set the value of the slider of the WDataExtractor and then update floatEdit
+        Parameters
+        ----------
+        self : WDataExtractor
+            a WDataExtractor object
+        index : int
+            index at which the slider should be placed
+        """
         self.slider.blockSignals(True)
         self.slider.setValue(index)
         self.slider.blockSignals(False)
@@ -140,14 +153,18 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self : WDataExtractor
             a WDataExtractor object
         """
-
+        # Converting the axis from rad to degree if the axis is angle as we do slice in degrees
+        # Recovering the value from the axis as well
         if self.axis.name == "angle":
             self.axis_value = self.axis.get_values(unit="°")
             self.unit = "°"
         else:
             self.axis_value = self.axis.get_values()
 
+        # Setting the initial value of the floatEdit to the minimum inside the axis
         self.lf_value.setValue(min(self.axis_value))
+
+        # Setting the slider by giving the number of index according to the size of the axis
         self.slider.setMinimum(0)
         self.slider.setMaximum(len(self.axis_value) - 1)
 
@@ -167,8 +184,8 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self.set_slider_floatedit()
 
     def update_floatEdit(self):
-        """Method that set the value of the floatEdit according to the value of the slider
-        according to the axis sent by WAxisManager.
+        """Method that set the value of the floatEdit according to the value returned by the slider
+        and the axis sent by WAxisManager.
         Parameters
         ----------
         self : WDataExtractor
@@ -186,9 +203,10 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self : WDataExtractor
             a WDataExtractor object
         """
-
+        # Recovering the operation selected
         extraction_selected = self.c_type_extraction.currentText()
 
+        # If the operation selected is a slice, then we show the slider and the floatEdit
         if extraction_selected == "slice" or extraction_selected == "slice (fft)":
             self.lf_value.show()
             self.slider.show()
@@ -197,6 +215,7 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             self.lf_value.hide()
             self.slider.hide()
 
+        # If the operation selected is superimpose/filter then we show the related button
         if extraction_selected == "superimpose/filter":
             self.b_action.show()
             self.b_action.setText(extraction_selected)
@@ -212,9 +231,12 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self : WDataExtractor
             a WDataExtractor object
         """
+
         self.slider.blockSignals(True)
+        # We set the value of the slider to the index closest to the value given
         index = argmin(np_abs(self.axis_value - self.lf_value.value()))
         self.slider.setValue(index)
+        # We update the value of floatEdit to the index selected
         self.lf_value.setValue(self.axis_value[index])
         self.slider.blockSignals(False)
         self.refreshNeeded.emit()

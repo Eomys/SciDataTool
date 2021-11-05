@@ -30,86 +30,13 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.name = "X"  # Name of the axis
         self.axes_list = list()  # List of the different axes of the DataND object
 
-        self.quantity = "None"  # Name of the quantity of the axis (time, angle...)
+        self.axis_selected = "None"  # Name of the axis selected (time, angle...)
         self.unit = "None"  # Name of the unit of the axis (s,m...)
         self.b_filter.setDisabled(True)
 
         self.c_axis.currentTextChanged.connect(self.update_axis)
         self.c_operation.currentTextChanged.connect(self.update_operation)
         self.c_unit.currentTextChanged.connect(self.update_unit)
-
-    def set_axis_default(self, axis):
-        """Method that will set the comboboxes to have the axis given as an input when calling the plot method.
-        Parameters
-        ----------
-        self : WAxisSelector
-            a WAxisSelector object
-        axis : RequestedAxis
-            axis that we want to have in the WAxisSelector
-        """
-        # Step 1 : Getting the name of the axis and selecting the right combobox (axis and operation)
-
-        self.c_axis.blockSignals(True)
-        self.c_operation.blockSignals(True)
-
-        axis_name = axis.name
-
-        # If the axis is freqs or wavenumber, then we have to select time/angle and fft
-        if axis_name in ifft_dict:
-
-            # Selecting the right axis
-            for i in range(self.c_axis.count()):
-                self.c_axis.setCurrentIndex(i)
-                if self.c_axis.currentText() == ifft_dict[axis_name]:
-                    break
-
-            self.update_axis(emit_signal=False)
-
-            # Making sure that we select FFT
-            self.c_operation.setCurrentIndex(1)
-
-        else:
-            # Selecting the right axis
-            for i in range(self.c_axis.count()):
-                self.c_axis.setCurrentIndex(i)
-                if self.c_axis.currentText() == axis_name:
-                    break
-
-            self.update_axis(emit_signal=False)
-
-        self.c_axis.blockSignals(False)
-        self.c_operation.blockSignals(False)
-
-        self.blockSignals(True)
-        self.update_operation()
-        self.blockSignals(False)
-
-        # Step 2 : Recovering the unit and setting the combobox according to it
-        self.c_unit.blockSignals(True)
-        unit_name = axis.unit
-
-        if unit_name in unit_dict:
-            for i in range(self.c_unit.count()):
-                self.c_unit.setCurrentIndex(i)
-                if self.c_unit.currentText() == unit_name:
-                    break
-
-        self.c_unit.blockSignals(False)
-        self.update_unit()
-
-    def change_name(self, axis_name):
-        """Method to change of the label of the widget
-        Parameters
-        ----------
-        self : WAxisSelector
-            a WAxisSelector object
-        axis_name : string
-            string that we will use to set the in_name of the widget
-
-        """
-
-        self.name = axis_name
-        self.in_name.setText(axis_name)
 
     def get_axes_name(self):
         """Method that return the axes that can be selected
@@ -136,7 +63,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the current axis and unit selected in the right format
         """
 
-        return self.quantity + "{" + self.unit + "}"
+        return self.axis_selected + "{" + self.unit + "}"
 
     def get_current_axis_name(self):
         """Method that return the axis currently selected
@@ -150,6 +77,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the current axis selected
         """
         if self.c_axis.currentText() in [axes_dict[key] for key in axes_dict]:
+
             return [key for key in axes_dict][
                 [axes_dict[key] for key in axes_dict].index(self.c_axis.currentText())
             ]
@@ -169,8 +97,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         return self.c_operation.currentText()
 
-    def get_current_quantity(self):
-        """Method that return the name of the quantity of the WAxisSelector
+    def get_current_axis_selected(self):
+        """Method that return the name of the axis selected of the WAxisSelector
         Parameters
         ----------
         self : WAxisSelector
@@ -178,9 +106,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         Output
         ---------
         string
-            name of the quantity
+            name of the axis selected
         """
-        return self.quantity
+        return self.axis_selected
 
     def get_current_unit(self):
         """Method that return the unit currently selected
@@ -208,7 +136,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         if axis_to_remove in self.axes_list:
             axes_list = self.axes_list[:]  # Getting the axes available
-            axes_list.remove(axis_to_remove)  # Removing the axis seleted
+            axes_list.remove(axis_to_remove)  # Removing the axis selected
 
             # Building the new ComboBox
             self.c_axis.blockSignals(True)
@@ -222,7 +150,70 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
             self.update_axis()
 
-    def set_axis(self, data):
+    def set_axis(self, axis):
+        """Method that will set the comboboxes to have the axis given as an input when calling the plot method (auto-plot).
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        axis : RequestedAxis
+            axis that we want to have in the WAxisSelector
+        """
+        # Step 1 : Getting the name of the axis and selecting the right combobox (axis and operation)
+
+        self.c_axis.blockSignals(True)
+        self.c_operation.blockSignals(True)
+
+        axis_name = axis.name
+
+        # If the axis is freqs or wavenumber, then we have to select time/angle and fft
+        if axis_name in ifft_dict:
+
+            # Selecting the right axis
+            for i in range(self.c_axis.count()):
+                self.c_axis.setCurrentIndex(i)
+                if self.c_axis.currentText() == ifft_dict[axis_name]:
+                    break
+
+            self.blockSignals(True)
+            self.update_axis()
+            self.blockSignals(False)
+
+            # Making sure that we select FFT
+            self.c_operation.setCurrentIndex(1)
+
+        else:
+            # Selecting the right axis
+            for i in range(self.c_axis.count()):
+                self.c_axis.setCurrentIndex(i)
+                if self.c_axis.currentText() == axis_name:
+                    break
+
+            self.blockSignals(True)
+            self.update_axis()
+            self.blockSignals(False)
+
+        self.c_axis.blockSignals(False)
+        self.c_operation.blockSignals(False)
+
+        self.blockSignals(True)
+        self.update_operation()
+        self.blockSignals(False)
+
+        # Step 2 : Recovering the unit and setting the combobox according to it
+        self.c_unit.blockSignals(True)
+        unit_name = axis.unit
+
+        if unit_name in unit_dict:
+            for i in range(self.c_unit.count()):
+                self.c_unit.setCurrentIndex(i)
+                if self.c_unit.currentText() == unit_name:
+                    break
+
+        self.c_unit.blockSignals(False)
+        self.update_unit()
+
+    def set_axis_options(self, data):
         """Method that will put the axes of data in the combobox of the widget
         Parameters
         ----------
@@ -250,13 +241,27 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.c_axis.blockSignals(False)
 
-        # Step 3 : Modifying quantity
+        # Step 3 : Modifying axis_selected
         if self.c_axis.currentText() in [axes_dict[key] for key in axes_dict]:
-            self.quantity = [key for key in axes_dict][
+            self.axis_selected = [key for key in axes_dict][
                 [axes_dict[key] for key in axes_dict].index(self.c_axis.currentText())
             ]
         else:
-            self.quantity = self.c_axis.currentText()
+            self.axis_selected = self.c_axis.currentText()
+
+    def set_name(self, axis_name):
+        """Method to change of the label of the widget
+        Parameters
+        ----------
+        self : WAxisSelector
+            a WAxisSelector object
+        axis_name : string
+            string that we will use to set the in_name of the widget
+
+        """
+
+        self.name = axis_name
+        self.in_name.setText(axis_name)
 
     def set_operation(self, operation):
         """Method that set the operation of the WAxisSelector
@@ -286,7 +291,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         self.c_unit.blockSignals(True)
         # Adding the right units according to a dictionnary
-        if self.quantity == "None":
+        if self.axis_selected == "None":
             # If the axis is not selected, then we can not choose the unit
             self.c_unit.clear()
             self.c_unit.setDisabled(True)
@@ -295,8 +300,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.c_unit.clear()
 
             # Adding the right unit according to the imported dictionary
-            if self.quantity in unit_dict:
-                self.c_unit.addItems(unit_dict[self.quantity])
+            if self.axis_selected in unit_dict:
+                self.c_unit.addItems(unit_dict[self.axis_selected])
         self.c_unit.blockSignals(False)
         self.update_unit()
 
@@ -312,12 +317,12 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             string that will set the text of in_name (=name of the axis)
         """
 
-        self.change_name(axis_name)
-        self.set_axis(data)
+        self.set_name(axis_name)
+        self.set_axis_options(data)
         self.set_unit()
 
-    def update_axis(self, emit_signal=True):
-        """Method called when an axis is changed that change the quantity, the units available and the operation combobox.
+    def update_axis(self):
+        """Method called when an axis is changed that change axis_selected, the units available and the operation combobox.
         It will also emit a signal used in WAxisManager.
         Parameters
         ----------
@@ -327,14 +332,14 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.blockSignals(True)
         self.c_operation.setCurrentIndex(0)
 
-        # Updating the units and the quantity selected
-        # Making sure that self.quantity is a "tag" and not a "label". Example : z instead of axial direction
+        # Updating the units and the axis selected
+        # Making sure that self.axis_selected is a "tag" and not a "label". Example : z instead of axial direction
         if self.c_axis.currentText() in [axes_dict[key] for key in axes_dict]:
-            self.quantity = [key for key in axes_dict][
+            self.axis_selected = [key for key in axes_dict][
                 [axes_dict[key] for key in axes_dict].index(self.c_axis.currentText())
             ]
         else:
-            self.quantity = self.c_axis.currentText()
+            self.axis_selected = self.c_axis.currentText()
 
         self.set_unit()
 
@@ -345,7 +350,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         else:
             self.c_operation.setDisabled(False)
 
-        if self.quantity in fft_dict:
+        if self.axis_selected in fft_dict:
             operation = ["", "FFT", "Filter"]
             self.c_operation.clear()
             self.c_operation.addItems(operation)
@@ -358,13 +363,12 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.blockSignals(False)
 
         # Emitting the signals
-        if emit_signal:
-            self.refreshNeeded.emit()
-            self.axisChanged.emit()
+        self.refreshNeeded.emit()
+        self.axisChanged.emit()
 
     def update_operation(self):
-        """Method called when an operation is changed that will change the quantity of the axis,
-        update the units available and emit a signal
+        """Method called when an operation is changed that will change axis_selected,
+        update the units available and emit a signal.
         Parameters
         ----------
         self : WAxisSelector
@@ -379,28 +383,29 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.b_filter.setDisabled(True)
 
         # Converting the axes according to operation selected if possible
-        if self.c_operation.currentText() == "FFT" and self.quantity in fft_dict:
+        if self.c_operation.currentText() == "FFT" and self.axis_selected in fft_dict:
             self.axes_list.insert(
-                self.axes_list.index(self.quantity), fft_dict[self.quantity]
+                self.axes_list.index(self.axis_selected), fft_dict[self.axis_selected]
             )
-            self.axes_list.remove(self.quantity)
-            self.quantity = fft_dict[self.quantity]
+            self.axes_list.remove(self.axis_selected)
+            self.axis_selected = fft_dict[self.axis_selected]
 
-        elif self.c_operation.currentText() == "" and self.quantity in ifft_dict:
+        elif self.c_operation.currentText() == "" and self.axis_selected in ifft_dict:
             self.axes_list.insert(
-                self.axes_list.index(self.quantity), ifft_dict[self.quantity]
+                self.axes_list.index(self.axis_selected), ifft_dict[self.axis_selected]
             )
-            self.axes_list.remove(self.quantity)
-            self.quantity = ifft_dict[self.quantity]
+            self.axes_list.remove(self.axis_selected)
+            self.axis_selected = ifft_dict[self.axis_selected]
 
-        # Handling the case where quantity is updated but axes_list is not
-        # We check if fft(quantity) is in the list and when it is the case we replace it by quantity
-        if not self.quantity in self.axes_list:
-            if fft_dict[self.quantity] in self.axes_list:
+        # Handling the case where axis_selected is updated but axes_list is not
+        # We check if fft(axis_selected) is in the list and when it is the case we replace it by axis_selected
+        if not self.axis_selected in self.axes_list:
+            if fft_dict[self.axis_selected] in self.axes_list:
                 self.axes_list.insert(
-                    self.axes_list.index(fft_dict[self.quantity]), self.quantity
+                    self.axes_list.index(fft_dict[self.axis_selected]),
+                    self.axis_selected,
                 )
-                self.axes_list.remove(fft_dict[self.quantity])
+                self.axes_list.remove(fft_dict[self.axis_selected])
 
         # Now that the quantiy has been updated according to the operation, we can set the units and emit the signals
         self.set_unit()
