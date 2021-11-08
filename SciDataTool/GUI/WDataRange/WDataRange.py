@@ -135,7 +135,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.set_min_max(data, axes_selected, data_selection)
 
     def set_range_user_input(self, user_input_dict):
-        """Method that modify the unit selected and the floatEdit according to the input given by the user (auto-plot)
+        """Method that modify the unit selected and the floatEdit according to the inputs given by the user (auto-plot)
         Parameters
         ----------
         self : WDataRange

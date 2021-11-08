@@ -76,13 +76,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         string
             name of the current axis selected
         """
-        if self.c_axis.currentText() in [axes_dict[key] for key in axes_dict]:
 
-            return [key for key in axes_dict][
-                [axes_dict[key] for key in axes_dict].index(self.c_axis.currentText())
-            ]
-        else:
-            return self.c_axis.currentText()
+        return self.c_axis.currentText()
 
     def get_current_operation_name(self):
         """Method that return the operation currently selected

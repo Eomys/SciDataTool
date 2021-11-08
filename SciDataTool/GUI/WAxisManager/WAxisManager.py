@@ -66,7 +66,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.fft_sync()
 
         # Recovering the axis selected by the user removing it from the the second axis combobox
-        self.w_axis_2.remove_axis(self.w_axis_1.get_current_axis_name())
+        self.w_axis_2.remove_axis(self.w_axis_1.get_current_axis_selected())
 
         # Generating the GroupBox
         self.gen_data_selection()

@@ -6,14 +6,7 @@ import numpy as np
 
 
 if __name__ == "__main__":
-    X = DataLinspace(
-        name="time",
-        unit="s",
-        initial=0,
-        final=10,
-        number=11,
-        normalizations={"elec_order": Norm_ref(ref=0.0909)},
-    )
+    X = DataLinspace(name="time", unit="s", initial=0, final=10, number=11)
     Y = DataLinspace(name="angle", unit="rad", initial=0, final=2 * np.pi, number=21)
     Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3)
     y, x = np.meshgrid(Y.get_values(), X.get_values())

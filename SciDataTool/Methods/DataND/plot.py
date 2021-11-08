@@ -4,7 +4,7 @@ from PySide2.QtWidgets import QApplication
 from SciDataTool.Functions import parser
 
 
-def plot(self, *args, is_create_appli=True, **kwargs):
+def plot(self, *args, is_create_appli=True, is_test=False, **kwargs):
     """Plot the Data object in the GUI
 
     Parameters:
@@ -23,7 +23,12 @@ def plot(self, *args, is_create_appli=True, **kwargs):
     user_input_dict = kwargs
 
     wid = DDataPlotter(self, user_input_list, user_input_dict)
-    wid.show()
 
-    if is_create_appli:
-        exit(a.exec_())
+    if not is_test:
+        wid.show()
+
+        if is_create_appli:
+            exit(a.exec_())
+
+    else:
+        return a, wid
