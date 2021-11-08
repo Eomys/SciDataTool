@@ -355,30 +355,33 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         output_range = self.w_range.get_field_selected()
         print(output_range)
 
-        if len(axes_selected) == 1:
-            self.data.plot_2D_Data(
-                axes_selected[0],
-                data_selection[0],
-                data_selection[1],
-                unit=output_range["unit"],
-                fig=self.fig,
-                ax=self.ax,
-                y_min=output_range["min"],
-                y_max=output_range["max"],
-            )
+        if not None in data_selection:
+            if len(axes_selected) == 1:
+                self.data.plot_2D_Data(
+                    axes_selected[0],
+                    data_selection[0],
+                    data_selection[1],
+                    unit=output_range["unit"],
+                    fig=self.fig,
+                    ax=self.ax,
+                    y_min=output_range["min"],
+                    y_max=output_range["max"],
+                )
 
-        if len(axes_selected) == 2:
-            self.data.plot_3D_Data(
-                axes_selected[0],
-                axes_selected[1],
-                data_selection[0],
-                unit=output_range["unit"],
-                fig=self.fig,
-                ax=self.ax,
-                is_2D_view=True,
-                z_min=output_range["min"],
-                z_max=output_range["max"],
-            )
+            if len(axes_selected) == 2:
+                self.data.plot_3D_Data(
+                    axes_selected[0],
+                    axes_selected[1],
+                    data_selection[0],
+                    unit=output_range["unit"],
+                    fig=self.fig,
+                    ax=self.ax,
+                    is_2D_view=True,
+                    z_min=output_range["min"],
+                    z_max=output_range["max"],
+                )
+        else:
+            print("Operation not implemented yet, range could not be updated")
 
     def update_range(self, user_input_dict=dict()):
         """Method that will update the range widget with either the user input or the default value of the DataND object

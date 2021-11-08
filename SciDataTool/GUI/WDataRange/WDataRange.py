@@ -67,45 +67,51 @@ class WDataRange(Ui_WDataRange, QWidget):
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
 
         # Recovering the minimum and the maximum of the field
-        if len(axes_selected) == 1:
+        if not None in data_selection:
+            if len(axes_selected) == 1:
 
-            # Checking if the field is plotted in fft, then we use get_magnitude_along
-            # Otherwise we use get_along
+                # Checking if the field is plotted in fft, then we use get_magnitude_along
+                # Otherwise we use get_along
 
-            if axes_selected_parsed[0].name in ifft_dict:
-                field_value = field.get_magnitude_along(
-                    data_selection[0], data_selection[1], axes_selected[0]
-                )
-            else:
-                field_value = field.get_along(
-                    data_selection[0], data_selection[1], axes_selected[0]
-                )
+                if axes_selected_parsed[0].name in ifft_dict:
+                    field_value = field.get_magnitude_along(
+                        data_selection[0], data_selection[1], axes_selected[0]
+                    )
+                else:
+                    field_value = field.get_along(
+                        data_selection[0], data_selection[1], axes_selected[0]
+                    )
 
-            field_min = field_value[field.symbol].min()
-            field_max = field_value[field.symbol].max()
+                field_min = field_value[field.symbol].min()
+                field_max = field_value[field.symbol].max()
 
-        elif len(axes_selected) == 2:
+            elif len(axes_selected) == 2:
 
-            # Checking if the field is plotted in fft, then we use get_magnitude_along
-            # Otherwise we use get_along
-            if (
-                axes_selected_parsed[0].name in ifft_dict
-                and axes_selected_parsed[1].name in ifft_dict
-            ):
-                field_value = field.get_magnitude_along(
-                    data_selection[0], axes_selected[0], axes_selected[1]
-                )
-            else:
-                field_value = field.get_along(
-                    data_selection[0], axes_selected[0], axes_selected[1]
-                )
+                # Checking if the field is plotted in fft, then we use get_magnitude_along
+                # Otherwise we use get_along
+                if (
+                    axes_selected_parsed[0].name in ifft_dict
+                    and axes_selected_parsed[1].name in ifft_dict
+                ):
+                    field_value = field.get_magnitude_along(
+                        data_selection[0], axes_selected[0], axes_selected[1]
+                    )
+                else:
+                    field_value = field.get_along(
+                        data_selection[0], axes_selected[0], axes_selected[1]
+                    )
 
-            field_min = field_value[field.symbol].min()
-            field_max = field_value[field.symbol].max()
+                field_min = field_value[field.symbol].min()
+                field_max = field_value[field.symbol].max()
 
-        # Setting the FloatEdit with the value recovered
-        self.lf_min.setValue(field_min)
-        self.lf_max.setValue(field_max)
+            # Setting the FloatEdit with the value recovered
+            self.lf_min.setValue(field_min)
+            self.lf_max.setValue(field_max)
+
+        else:
+            print(
+                "One of the operation not implemented yet, range could not be updated"
+            )
 
     def set_name(self, field_name):
         """Method that set the name of the widget which is the name of the field that we are plotting

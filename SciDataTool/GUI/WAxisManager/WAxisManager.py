@@ -5,7 +5,7 @@ from PySide2.QtCore import Signal
 from SciDataTool.GUI.WAxisSelector.WAxisSelector import WAxisSelector
 
 from ...GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
-from ...GUI.WDataExtractor.WDataExtractor import WDataExtractor
+from ...GUI.WDataExtractor.WDataExtractor import WDataExtractor, type_extraction_dict
 from ...Functions.Plot import fft_dict, ifft_dict, axes_dict
 
 

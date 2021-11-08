@@ -58,13 +58,14 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         action_type = self.c_type_extraction.currentText()
 
         # Formatting the string to have the right syntax
-        if action_type == "slice":
-            slice_index = self.slider.value()
-            action = type_extraction_dict[action_type] + str(slice_index) + "]"
-        else:
-            action = type_extraction_dict[action_type]
+        if action_type in type_extraction_dict:
+            if action_type == "slice":
+                slice_index = self.slider.value()
+                action = type_extraction_dict[action_type] + str(slice_index) + "]"
+            else:
+                action = type_extraction_dict[action_type]
 
-        return self.axis.name + action + "{" + self.unit + "}"
+            return self.axis.name + action + "{" + self.unit + "}"
 
     def get_name(self):
         """Method that return the name of the axis of the WDataExtractor

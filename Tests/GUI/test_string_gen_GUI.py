@@ -43,7 +43,7 @@ class TestGUI(object):
 
     @pytest.mark.gui
     def string_gen(self):
-        """Test that will make sure that the UI is set up correctly according to the Data object given to him"""
+        """Test that will make sure that the strings are generated the right way and that they are fllowing the changes in the UI"""
 
         # Checking that the string are correctly generated
         # Making sure that the string is updated according to the change of the UI (FFT to '' for ex)

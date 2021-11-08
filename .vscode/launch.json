@@ -66,7 +66,7 @@
             "name": "Python: Run test_GUI",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/Tests/GUI/test_gui_2.py",
+            "program": "${workspaceFolder}/Tests/GUI/dev_GUI.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "env": {
