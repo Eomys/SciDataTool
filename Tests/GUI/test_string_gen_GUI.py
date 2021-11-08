@@ -42,16 +42,18 @@ class TestGUI(object):
         cls.app.quit()
 
     @pytest.mark.gui
-    def axis_interaction(self):
+    def string_gen(self):
         """Test that will make sure that the UI is set up correctly according to the Data object given to him"""
 
         # Checking that the string are correctly generated
-        # Making sure that the string is updated according to the change of the UI
+        # Making sure that the string is updated according to the change of the UI (FFT to '' for ex)
+        # When modifiyng WDataRange, making sure that the string is updated correctly
+        # When modifiyng DataSelection, making sure that the string is updated correctly (slice to sum for ex)
 
 
 if __name__ == "__main__":
     a = TestGUI()
     a.setup_class()
-    a.axis_interaction()
+    a.string_gen()
     a.teardown_class()
     print("Done")

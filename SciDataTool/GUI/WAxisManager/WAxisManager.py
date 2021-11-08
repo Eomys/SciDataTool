@@ -182,7 +182,6 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
 
         """
-
         operation_selected = self.w_axis_1.get_current_operation_name()
         self.w_axis_2.set_operation(operation_selected)
         self.gen_data_selection()
