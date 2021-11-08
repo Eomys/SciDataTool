@@ -70,7 +70,7 @@ def summing(self, values, axes_list, is_magnitude, unit):
             values = integrate(values, ax_val, index, Nper, is_aper, is_phys)
         # local integration over integration axes
         elif extension == "integrate_local":
-            values = integrate_local(values, ax_val, index, Nper, is_aper, is_phys)
+            values = integrate_local(values, ax_val, index, Nper, is_aper, is_phys, is_freqs)
         # antiderivation over antiderivation axes
         elif extension == "antiderivate":
             values = antiderivate(
