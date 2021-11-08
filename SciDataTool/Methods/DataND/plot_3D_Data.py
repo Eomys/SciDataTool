@@ -328,11 +328,7 @@ def plot_3D_Data(
                 thresh = 0.02
 
         if "dB" in unit:
-            indices = where(
-                Z_flat
-                > 10 * log10(thresh * self.normalizations["ref"].ref)
-                + abs(np_max(Zdata))
-            )[0]
+            indices = where(Z_flat > 10 * log10(thresh) + abs(np_max(Zdata)))[0]
         else:
             indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
 
