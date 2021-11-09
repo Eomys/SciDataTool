@@ -1,6 +1,6 @@
 from SciDataTool.Functions import AxisError, NormError, UnitError
 from SciDataTool.Functions.conversions import convert, to_dB, to_dBA, to_noct
-from numpy import apply_along_axis
+from numpy import apply_along_axis, add
 
 
 def get_magnitude_along(
@@ -144,7 +144,18 @@ def get_magnitude_along(
             ref_value = 1.0
             if "ref" in self.normalizations:
                 ref_value *= self.normalizations["ref"].ref
-            if "freqs" in return_dict.keys():
+            if "A-weight" in self.normalizations:
+                values = to_dB(values, self.unit, ref_value)
+                # Flatten to apply A-weighting
+                A_weight = self.normalizations["A-weight"].vector.ravel("C")
+                shape = values.shape
+                values = values.reshape(
+                    A_weight.shape
+                    + shape[len(self.normalizations["A-weight"].vector.shape) :]
+                )
+                values = apply_along_axis(add, 0, values, A_weight)
+                values = values.reshape(shape)
+            elif "freqs" in return_dict.keys():
                 for axis in return_dict["axes_list"]:
                     if axis.name == "freqs" or axis.corr_name == "freqs":
                         index = axis.index
