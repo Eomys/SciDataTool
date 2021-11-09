@@ -1,3 +1,4 @@
+from types import FrameType
 import pytest
 from PySide2.QtWidgets import *
 
@@ -33,8 +34,6 @@ class TestGUI(object):
             values=field,
         )
 
-        cls.app, cls.UI = cls.Field.plot(is_test=True)
-
     @classmethod
     def teardown_class(cls):
         """Exit the app after the test"""
@@ -42,15 +41,48 @@ class TestGUI(object):
         cls.app.quit()
 
     @pytest.mark.gui
-    def check_autoplot(self):
-        """Test to make sure that the auto-plot functions"""
+    def check_axis(self):
+        """Test to make sure that the auto-plot functions for its axes"""
 
-        # testing the string generated for differents inputs
+        # Checking case where everything is given to the autoplot
+        self.app, self.UI = self.Field.plot(
+            "time", "angle{°}", "z[2]", is_test=True, unit="T", zmax="50"
+        )
+
+        # Checking that the axis are correct, that the slice are correct, datarange is correct
+
+        # Check if one axis is given and full dict
+        self.app, self.UI = self.Field.plot("time", is_test=True, unit="T", zmax="50")
+        # Checking that the axis are correct, that the default slice are correct, datarange is correct
+
+        # Checking case where the dict is not given to the autoplot
+        self.app, self.UI = self.Field.plot("time", "angle{°}", "z[2]", is_test=True)
+        # Checking that the axis are correct, that the slice are correct, default datarange is correct
+
+        # Checking case where different axis are given (transformation necessary)
+        self.app, self.UI = self.Field.plot(
+            "freqs", "wavenumber", "z[2]", is_test=True, unit="T", zmax="50"
+        )
+
+        # Checking case with all of the operation
+        self.app, self.UI = self.Field.plot(
+            "time", "angle{°}", "z[2]", is_test=True, unit="T", zmax="50"
+        )
+
+    @pytest.mark.gui
+    def check_spec_axis(self):
+        """Test to make sure that the auto-plot functions for other axes (fft axes)"""
 
 
 if __name__ == "__main__":
     a = TestGUI()
     a.setup_class()
-    a.check_autoplot()
+
+    # Checking the auto setup of the axes
+    a.check_axis()
+    # Checking the auto setup of data_selection
+
+    # Checking the auto setup of WDataRange
+
     a.teardown_class()
     print("Done")

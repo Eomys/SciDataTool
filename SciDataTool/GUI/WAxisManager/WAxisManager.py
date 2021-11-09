@@ -228,9 +228,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             # Case where a userinput was given (auto plot)
             # Sending the info of data to the widget (mainly the axis)
             self.w_axis_1.update(data)
+            self.w_axis_2.update(data, axis_name="Y")
             # Setting the axis selected in w_axis_1 according to user_input_list
             self.w_axis_1.set_axis(axes_list[0])
-            self.w_axis_2.update(data, axis_name="Y")
             self.axes_list = data.get_axes()
 
             # Updating w_axis_2 according to w_axis_1 then generating DataSelection
@@ -240,9 +240,14 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             if len(axes_list) == 2:
                 self.w_axis_2.set_axis(axes_list[1])
 
-            # Making sure that we have the same fft/ifft selected for both axis and generating DataSelection again
+            # Making sure that we have the same fft/ifft selected for both axis
             self.axis_2_updated()
-            self.set_data_selec(slices_op_list)
+
+            # Generating DataSelection with the input of user if they are given or by default (like in a manual plot)
+            if len(slices_op_list) != 0:
+                self.set_data_selec(slices_op_list)
+            else:
+                self.gen_data_selection()
 
         self.w_axis_1.blockSignals(False)
         self.w_axis_2.blockSignals(False)

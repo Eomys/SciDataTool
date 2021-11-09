@@ -155,10 +155,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             axis that we want to have in the WAxisSelector
         """
         # Step 1 : Getting the name of the axis and selecting the right combobox (axis and operation)
-
-        self.c_axis.blockSignals(True)
-        self.c_operation.blockSignals(True)
-
         axis_name = axis.name
 
         # If the axis is freqs or wavenumber, then we have to select time/angle and fft
@@ -170,10 +166,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 if self.c_axis.currentText() == ifft_dict[axis_name]:
                     break
 
-            self.blockSignals(True)
             self.update_axis()
-            self.blockSignals(False)
-
             # Making sure that we select FFT
             self.c_operation.setCurrentIndex(1)
 
@@ -184,16 +177,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 if self.c_axis.currentText() == axis_name:
                     break
 
-            self.blockSignals(True)
             self.update_axis()
-            self.blockSignals(False)
 
-        self.c_axis.blockSignals(False)
-        self.c_operation.blockSignals(False)
-
-        self.blockSignals(True)
         self.update_operation()
-        self.blockSignals(False)
 
         # Step 2 : Recovering the unit and setting the combobox according to it
         self.c_unit.blockSignals(True)
@@ -324,7 +310,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self : WAxisSelector
             a WAxisSelector object
         """
-        self.blockSignals(True)
+
         self.c_operation.setCurrentIndex(0)
 
         # Updating the units and the axis selected
@@ -355,8 +341,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.c_operation.clear()
             self.c_operation.addItems(operation)
 
-        self.blockSignals(False)
-
         # Emitting the signals
         self.refreshNeeded.emit()
         self.axisChanged.emit()
@@ -377,7 +361,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         else:
             self.b_filter.setDisabled(True)
 
-        # Converting the axes according to operation selected if possible
+        # Converting the axes according to operation selected if possible/necessary
         if self.c_operation.currentText() == "FFT" and self.axis_selected in fft_dict:
             self.axes_list.insert(
                 self.axes_list.index(self.axis_selected), fft_dict[self.axis_selected]
