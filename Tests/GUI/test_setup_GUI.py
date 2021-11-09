@@ -42,13 +42,6 @@ class TestGUI(object):
         cls.app.quit()
 
     @pytest.mark.gui
-    def axis_setup(self):
-        """Test that will make sure that the UI is set up correctly according to the Data object given to him"""
-
-        self.check_axes()
-        self.check_data_sel()
-        self.check_range()
-
     def check_axes(self):
         """Checking that the axes_list inside WAxisSelector corresponds to the axes of Field"""
         axes_expected = [axis.name for axis in self.Field.get_axes()]
@@ -57,6 +50,7 @@ class TestGUI(object):
         axes_expected.insert(0, "None")
         assert self.UI.w_axis_manager.w_axis_2.axes_list == axes_expected
 
+    @pytest.mark.gui
     def check_data_sel(self):
         """Checking the axis/axes of DataSelection have not been selected by the user before"""
 
@@ -68,6 +62,7 @@ class TestGUI(object):
         for wid in self.UI.w_axis_manager.w_data_sel:
             assert not wid.axis in axes_selected
 
+    @pytest.mark.gui
     def check_range(self):
         """Method that check that the units and the values of min and max set by default in the app corresponds to those of the field."""
 
@@ -127,6 +122,10 @@ class TestGUI(object):
 if __name__ == "__main__":
     a = TestGUI()
     a.setup_class()
-    a.axis_setup()
+
+    a.check_axes()
+    a.check_data_sel()
+    a.check_range()
+
     a.teardown_class()
     print("Done")

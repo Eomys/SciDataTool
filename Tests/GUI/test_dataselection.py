@@ -42,13 +42,6 @@ class TestGUI(object):
         cls.app.quit()
 
     @pytest.mark.gui
-    def gen_dataselection(self):
-        """Test that will make sure that the DataSelection is set up correctly according to the info given to him"""
-        # Checking the interaction between the slider and floatEdit
-        self.check_slider_floatEdit()
-        # Checking the generation of the layout
-        self.check_layout()
-
     def check_layout(self):
         """Test that the layout is set up according to the operation selected"""
 
@@ -88,6 +81,7 @@ class TestGUI(object):
 
                 wid.blockSignals(False)
 
+    @pytest.mark.gui
     def check_slider_floatEdit(self):
         """Testing that the slider is updated correctly according to the slider and vice versa"""
 
@@ -108,6 +102,11 @@ class TestGUI(object):
 if __name__ == "__main__":
     a = TestGUI()
     a.setup_class()
-    a.gen_dataselection()
+
+    # Checking the interaction between the slider and floatEdit
+    a.check_slider_floatEdit()
+    # Checking the generation of the layout
+    a.check_layout()
+
     a.teardown_class()
     print("Done")

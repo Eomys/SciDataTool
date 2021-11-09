@@ -43,18 +43,6 @@ class TestGUI(object):
         cls.app.quit()
 
     @pytest.mark.gui
-    def string_gen(self):
-        """Test that will make sure that the strings are generated the right way and that they are following the changes in the UI"""
-
-        # Checking that the string generated for the axes are correct
-        self.check_axes_strings()
-        # Making sure that the string is updated according to the change of the UI (FFT to '' for ex)
-        self.check_axis_updated()
-        # When modifying WDataRange, making sure that the string is updated correctly
-        self.check_range_updated()
-        # When modifying DataSelection, making sure that the string is updated correctly (slice to sum for ex)
-        self.check_string_dataselection()
-
     def check_axes_strings(self):
         "Testing that the string generated corresponds to the info given by the user"
 
@@ -138,6 +126,7 @@ class TestGUI(object):
                     for action in action_selected:
                         assert action.name != axes_selected[0].name
 
+    @pytest.mark.gui
     def check_axis_updated(self):
         """Test to make sure that when we switch from time to frequency (or from angle to wavenb), the string is updated correclty"""
 
@@ -157,6 +146,7 @@ class TestGUI(object):
 
                 assert axes_parsed[1].name == fft_dict[axes_parsed[0].name]
 
+    @pytest.mark.gui
     def check_range_updated(self):
         """Testing how WDataRange string are generated after updating the widget"""
 
@@ -188,6 +178,7 @@ class TestGUI(object):
 
                 assert dict_gen["unit"] == self.UI.w_range.c_unit.currentText()
 
+    @pytest.mark.gui
     def check_string_dataselection(self):
         """Test to make sure that when DataSelection is modified, the string is updated correctly"""
 
@@ -252,6 +243,15 @@ class TestGUI(object):
 if __name__ == "__main__":
     a = TestGUI()
     a.setup_class()
-    a.string_gen()
+
+    # Checking that the string generated for the axes are correct
+    a.check_axes_strings()
+    # Making sure that the string is updated according to the change of the UI (FFT to '' for ex)
+    a.check_axis_updated()
+    # When modifying WDataRange, making sure that the string is updated correctly
+    a.check_range_updated()
+    # When modifying DataSelection, making sure that the string is updated correctly (slice to sum for ex)
+    a.check_string_dataselection()
+
     a.teardown_class()
     print("Done")

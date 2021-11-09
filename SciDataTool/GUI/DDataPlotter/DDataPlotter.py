@@ -69,6 +69,9 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.data = data
         self.is_auto_refresh = is_auto_refresh
 
+        # Adding an argument for testing autorefresh
+        self.is_plot_updated = False
+
         # Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
         self.set_figure(self.fig)
@@ -97,6 +100,9 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         if self.is_auto_refresh == True:
             self.update_plot()
+            self.is_plot_updated = True
+        else:
+            self.is_plot_updated = False
 
     def set_auto_refresh(self):
         """Method that update the refresh policy according to the checkbox inside the UI
@@ -334,7 +340,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         for i in reversed(range(self.plot_layout.count())):
             if self.plot_layout.itemAt(i).widget() is not None:
                 widgetToRemove = self.plot_layout.itemAt(i).widget()
-                # widgetToRemove.setParent(None)
                 widgetToRemove.deleteLater()
 
         if self.fig.get_axes():
@@ -345,15 +350,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Recovering the axis selected and their units
         axes_selected = self.w_axis_manager.get_axes_selected()
-        print(axes_selected)
 
         # Recovering the operation on the other axes
         data_selection = self.w_axis_manager.get_operation_selected()
-        print(data_selection)
 
         # Recovering the operation on the field values
         output_range = self.w_range.get_field_selected()
-        print(output_range)
 
         if not None in data_selection:
             if len(axes_selected) == 1:
