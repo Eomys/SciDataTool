@@ -44,6 +44,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         string
             name of the action on the field
         """
+
         return {
             "unit": self.c_unit.currentText(),
             "min": self.lf_min.value(),
@@ -196,4 +197,11 @@ class WDataRange(Ui_WDataRange, QWidget):
         self : WDataRange
             a WDataRange object
         """
+        # Making sure that we always have min < max
+        if self.lf_min.value() > self.lf_max.value():
+
+            temp = self.lf_max.value()
+            self.lf_max.setValue(self.lf_min.value())
+            self.lf_min.setValue(temp)
+
         self.refreshNeeded.emit()
