@@ -142,7 +142,10 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             index at which the slider should be placed
         """
         self.slider.blockSignals(True)
-        self.slider.setValue(index)
+        if index >= 0:
+            self.slider.setValue(index)
+        else:
+            self.slider.setValue(self.slider.maximum() + index)
         self.slider.blockSignals(False)
         self.update_floatEdit()
 

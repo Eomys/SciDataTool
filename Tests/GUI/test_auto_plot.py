@@ -6,7 +6,7 @@ from numpy import linspace, pi
 from numpy.random import random
 from SciDataTool import DataLinspace, DataTime
 from SciDataTool.Functions.Plot import ifft_dict, fft_dict, unit_dict
-from SciDataTool.Functions import NormError, parser
+from SciDataTool.Functions import parser
 
 a_p_list = list()
 
@@ -201,13 +201,126 @@ class TestGUI(object):
             )
 
         # Recovering the string generated
-        axes = self.UI.w_axis_manager.get_axes_selected()
-        actions = self.UI.w_axis_manager.get_operation_selected()
+        axes_sent = parser.read_input_strings(
+            self.UI.w_axis_manager.get_axes_selected(), axis_data=None
+        )
+        axes_given = parser.read_input_strings(test_dict["axis"], axis_data=None)
+
+        actions_sent = parser.read_input_strings(
+            self.UI.w_axis_manager.get_operation_selected(), axis_data=None
+        )
+
         drange = self.UI.w_range.get_field_selected()
 
-        print(axes)
-        print(actions)
-        print(drange)
+        # Step 1 : Checking the axes (1 and 2 if given)
+        assert len(axes_sent) == len(test_dict["axis"])
+
+        assert axes_sent[0].name == axes_given[0].name
+
+        if axes_given[0].unit == "SI":
+            assert (
+                axes_sent[0].unit == self.UI.w_axis_manager.w_axis_1.get_current_unit()
+            )
+        else:
+            assert axes_sent[0].unit == axes_given[0].unit
+
+        if len(axes_sent) == 2:
+            assert axes_sent[1].name == axes_given[1].name
+            if axes_given[1].unit == "SI":
+                assert (
+                    axes_sent[1].unit
+                    == self.UI.w_axis_manager.w_axis_2.get_current_unit()
+                )
+
+        # Step 2 : Checking the actions
+        if test_dict["action"] != [None]:
+
+            actions_given = parser.read_input_strings(
+                test_dict["action"], axis_data=None
+            )
+            assert len(actions_sent) == len(actions_given)
+
+            for i in range(len(actions_sent)):
+                # Checking the name of the axis
+                assert actions_sent[i].name == actions_given[i].name
+
+                # Checking the operation given
+                assert actions_sent[i].extension == actions_given[i].extension
+
+                # Special case when slice is the operation selected
+                if actions_sent[i].extension == "single":
+
+                    if actions_given[i].indices[0] < 0:
+                        assert (
+                            actions_sent[i].indices[0]
+                            == self.UI.w_axis_manager.w_data_sel[i].slider.maximum()
+                            + actions_given[i].indices[0]
+                        )
+                    else:
+                        assert actions_sent[i].indices[0] == actions_given[i].indices[0]
+
+                # Checking the units
+                if actions_given[i].unit == "SI":
+                    assert (
+                        actions_sent[i].unit
+                        == self.UI.w_axis_manager.w_data_sel[i].unit
+                    )
+                else:
+                    assert actions_sent[i].unit == actions_given[i].unit
+        else:
+            # If no action are specified, then we apply a slice on the first index
+            for i in range(len(actions_sent)):
+                assert (
+                    actions_sent[i].name
+                    == self.UI.w_axis_manager.w_data_sel[i].axis.name
+                )
+                assert actions_sent[i].extension == "single"
+                assert actions_sent[i].indices[0] == 0
+                assert actions_sent[i].unit == self.UI.w_axis_manager.w_data_sel[i].unit
+
+        # Comparing the info given to range with those emitted
+        if test_dict["unit"] == None:
+            assert drange["unit"] == self.UI.w_range.c_unit.currentText()
+        else:
+            assert drange["unit"] == test_dict["unit"]
+
+        if test_dict["zmin"] == None or test_dict["zmin"] == None:
+            if len(axes_given) == 1:
+                if axes_given[0].name in ifft_dict:
+                    field_value = self.Field.get_magnitude_along(
+                        self.UI.w_axis_manager.get_operation_selected()[0],
+                        self.UI.w_axis_manager.get_operation_selected()[1],
+                        self.UI.w_axis_manager.get_axes_selected()[0],
+                    )
+                else:
+                    field_value = self.Field.get_along(
+                        self.UI.w_axis_manager.get_operation_selected()[0],
+                        self.UI.w_axis_manager.get_operation_selected()[1],
+                        self.UI.w_axis_manager.get_axes_selected()[0],
+                    )
+
+            elif len(axes_given) == 2:
+                if axes_given[0].name in ifft_dict and axes_given[1].name in ifft_dict:
+                    field_value = self.Field.get_magnitude_along(
+                        self.UI.w_axis_manager.get_operation_selected()[0],
+                        self.UI.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_axis_manager.get_axes_selected()[1],
+                    )
+                else:
+                    field_value = self.Field.get_along(
+                        self.UI.w_axis_manager.get_operation_selected()[0],
+                        self.UI.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_axis_manager.get_axes_selected()[1],
+                    )
+            if test_dict["zmin"] == None:
+                eps = 1e-7
+                assert drange["min"] - field_value[self.Field.symbol].min() < eps
+            if test_dict["zmax"] == None:
+                eps = 1e-7
+                assert drange["max"] - field_value[self.Field.symbol].max() < eps
+        else:
+            assert drange["min"] == float(test_dict["zmin"])
+            assert drange["max"] == float(test_dict["zmax"])
 
 
 if __name__ == "__main__":
