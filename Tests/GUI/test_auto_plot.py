@@ -175,7 +175,7 @@ class TestGUI(object):
     def check_axis(self, test_dict):
         """Test to make sure that the auto-plot functions for its axes"""
 
-        # Launching the auto plot according to the info given by the user
+        # Launching the auto plot with info from the dict
         if len(test_dict["axis"]) == 1:
             self.UI = self.Field.plot(
                 test_dict["axis"][0],
@@ -204,7 +204,6 @@ class TestGUI(object):
         axes_sent = parser.read_input_strings(
             self.UI.w_axis_manager.get_axes_selected(), axis_data=None
         )
-        axes_given = parser.read_input_strings(test_dict["axis"], axis_data=None)
 
         actions_sent = parser.read_input_strings(
             self.UI.w_axis_manager.get_operation_selected(), axis_data=None
@@ -215,18 +214,25 @@ class TestGUI(object):
         # Step 1 : Checking the axes (1 and 2 if given)
         assert len(axes_sent) == len(test_dict["axis"])
 
+        axes_given = parser.read_input_strings(test_dict["axis"], axis_data=None)
+
+        # Checking the name of the axes
         assert axes_sent[0].name == axes_given[0].name
 
+        # Checking the unit
         if axes_given[0].unit == "SI":
+            # If the unit is not given, then we make sure that the unit by default is selected
             assert (
                 axes_sent[0].unit == self.UI.w_axis_manager.w_axis_1.get_current_unit()
             )
         else:
             assert axes_sent[0].unit == axes_given[0].unit
 
+        # Checking axis 2 if we have one
         if len(axes_sent) == 2:
             assert axes_sent[1].name == axes_given[1].name
             if axes_given[1].unit == "SI":
+                # If the unit is not given, then we make sure that the unit by default is selected
                 assert (
                     axes_sent[1].unit
                     == self.UI.w_axis_manager.w_axis_2.get_current_unit()
@@ -247,10 +253,11 @@ class TestGUI(object):
                 # Checking the operation given
                 assert actions_sent[i].extension == actions_given[i].extension
 
-                # Special case when slice is the operation selected
+                # Special case when slice is the operation selected (we have to check the index)
                 if actions_sent[i].extension == "single":
 
                     if actions_given[i].indices[0] < 0:
+                        # if we gave a negative index, we have to update the value nmanally (slider accept/return only positive value)
                         assert (
                             actions_sent[i].indices[0]
                             == self.UI.w_axis_manager.w_data_sel[i].slider.maximum()
@@ -262,13 +269,14 @@ class TestGUI(object):
                 # Checking the units
                 if actions_given[i].unit == "SI":
                     assert (
+                        # If the unit is not given, then we make sure that the unit by default is selected
                         actions_sent[i].unit
                         == self.UI.w_axis_manager.w_data_sel[i].unit
                     )
                 else:
                     assert actions_sent[i].unit == actions_given[i].unit
         else:
-            # If no action are specified, then we apply a slice on the first index
+            # If no action are specified, then we apply a slice on the first index for all the axes
             for i in range(len(actions_sent)):
                 assert (
                     actions_sent[i].name
@@ -279,11 +287,14 @@ class TestGUI(object):
                 assert actions_sent[i].unit == self.UI.w_axis_manager.w_data_sel[i].unit
 
         # Comparing the info given to range with those emitted
+
+        # Checking the unit of the field
         if test_dict["unit"] == None:
             assert drange["unit"] == self.UI.w_range.c_unit.currentText()
         else:
             assert drange["unit"] == test_dict["unit"]
 
+        # To check the value of min and max when they are not given we have to do a get_along/get_magnitude_along to recover min and max
         if test_dict["zmin"] == None or test_dict["zmin"] == None:
             if len(axes_given) == 1:
                 if axes_given[0].name in ifft_dict:
@@ -313,12 +324,15 @@ class TestGUI(object):
                         self.UI.w_axis_manager.get_axes_selected()[1],
                     )
             if test_dict["zmin"] == None:
+                # Making sure that the value are equal with a threshold of 1e-7
                 eps = 1e-7
                 assert drange["min"] - field_value[self.Field.symbol].min() < eps
             if test_dict["zmax"] == None:
+                # Making sure that the value are equal with a threshold of 1e-7
                 eps = 1e-7
                 assert drange["max"] - field_value[self.Field.symbol].max() < eps
         else:
+            # If min and max are given, we just have to compare them
             assert drange["min"] == float(test_dict["zmin"])
             assert drange["max"] == float(test_dict["zmax"])
 
