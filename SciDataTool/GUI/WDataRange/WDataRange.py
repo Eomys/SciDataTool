@@ -151,18 +151,18 @@ class WDataRange(Ui_WDataRange, QWidget):
             dictionnary that stores all the argument given to have an auto-plot
         """
 
-        if "unit" in user_input_dict:
+        if "unit" in user_input_dict and user_input_dict["unit"] != None:
             # Selecting the right unit inside the unit combobox
             for i in range(self.c_unit.count()):
                 self.c_unit.setCurrentIndex(i)
                 if self.c_unit.currentText() == user_input_dict["unit"]:
                     break
 
-        if "zmax" in user_input_dict:
+        if "zmax" in user_input_dict and user_input_dict["zmax"] != None:
             # Setting max float edit
             self.lf_max.setValue(float(user_input_dict["zmax"]))
 
-        if "zmin" in user_input_dict:
+        if "zmin" in user_input_dict and user_input_dict["zmin"] != None:
             # Setting min float edit
             self.lf_min.setValue(float(user_input_dict["zmin"]))
 

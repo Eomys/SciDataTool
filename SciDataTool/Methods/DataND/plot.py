@@ -19,7 +19,9 @@ def plot(self, *args, is_create_appli=True, is_test=False, **kwargs):
     if is_create_appli:
         a = QApplication(argv)
 
-    user_input_list = parser.read_input_strings(args, axis_data=None)
+    user_input_list = parser.read_input_strings(
+        [arg for arg in args if arg != None], axis_data=None
+    )
     user_input_dict = kwargs
 
     wid = DDataPlotter(self, user_input_list, user_input_dict)
@@ -31,4 +33,4 @@ def plot(self, *args, is_create_appli=True, is_test=False, **kwargs):
             exit(a.exec_())
 
     else:
-        return a, wid
+        return wid

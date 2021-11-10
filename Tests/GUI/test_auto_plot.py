@@ -6,12 +6,148 @@ from numpy import linspace, pi
 from numpy.random import random
 from SciDataTool import DataLinspace, DataTime
 from SciDataTool.Functions.Plot import ifft_dict, fft_dict, unit_dict
-from SciDataTool.Functions import parser
+from SciDataTool.Functions import NormError, parser
+
+a_p_list = list()
+
+a_p_list.append(
+    {
+        "axis": ["time"],
+        "action": ["angle[-1]", "z[2]"],
+        "is_create_appli": True,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot for XY plot
+
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": ["z[2]"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot for 2D plot
+
+a_p_list.append(
+    {
+        "axis": ["freqs"],
+        "action": ["angle[-1]", "z[1]"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot for XY FFT plot
+
+a_p_list.append(
+    {
+        "axis": ["freqs", "wavenumber"],
+        "action": ["z[1]"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot for 2D FFT plot
+
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": ["z=sum"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot with sum as action on z
+
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": ["z=rms"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot with rms as action on z
+
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": ["z=rss"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot with rss as action on z
+
+
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": ["z=mean"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot with mean as action on z
+
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": [None],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot for 2D plot without giving any action
+
+
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": ["z[2]"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": None,
+        "zmin": None,
+        "zmax": None,
+    }
+)  # Testing the autoplot without WDataRange given
+
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": [None],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": None,
+        "zmin": None,
+        "zmax": None,
+    }
+)  # Testing the autoplot for 2D plot without giving slice and WdataRange
 
 
 class TestGUI(object):
     @classmethod
-    def setup_class(cls):
+    def setup_class(self):
         f = 50
         Nt_tot = 16
         Na_tot = 20
@@ -26,7 +162,7 @@ class TestGUI(object):
 
         field = random((Nt_tot, Na_tot, 3))
 
-        cls.Field = DataTime(
+        self.Field = DataTime(
             name="Airgap flux density",
             symbol="B_r",
             unit="T",
@@ -34,55 +170,50 @@ class TestGUI(object):
             values=field,
         )
 
-    @classmethod
-    def teardown_class(cls):
-        """Exit the app after the test"""
-
-        cls.app.quit()
-
     @pytest.mark.gui
-    def check_axis(self):
+    @pytest.mark.parametrize("test_dict", a_p_list)
+    def check_axis(self, test_dict):
         """Test to make sure that the auto-plot functions for its axes"""
 
-        # Checking case where everything is given to the autoplot
-        self.app, self.UI = self.Field.plot(
-            "time", "angle{°}", "z[2]", is_test=True, unit="T", zmax="50"
-        )
+        # Launching the auto plot according to the info given by the user
+        if len(test_dict["axis"]) == 1:
+            self.UI = self.Field.plot(
+                test_dict["axis"][0],
+                test_dict["action"][0],
+                test_dict["action"][1],
+                is_create_appli=test_dict["is_create_appli"],
+                is_test=test_dict["is_test"],
+                unit=test_dict["unit"],
+                zmin=test_dict["zmin"],
+                zmax=test_dict["zmax"],
+            )
 
-        # Checking that the axis are correct, that the slice are correct, datarange is correct
+        elif len(test_dict["axis"]) == 2:
+            self.UI = self.Field.plot(
+                test_dict["axis"][0],
+                test_dict["axis"][1],
+                test_dict["action"][0],
+                is_create_appli=test_dict["is_create_appli"],
+                is_test=test_dict["is_test"],
+                unit=test_dict["unit"],
+                zmin=test_dict["zmin"],
+                zmax=test_dict["zmax"],
+            )
 
-        # Check if one axis is given and full dict
-        self.app, self.UI = self.Field.plot("time", is_test=True, unit="T", zmax="50")
-        # Checking that the axis are correct, that the default slice are correct, datarange is correct
+        # Recovering the string generated
+        axes = self.UI.w_axis_manager.get_axes_selected()
+        actions = self.UI.w_axis_manager.get_operation_selected()
+        drange = self.UI.w_range.get_field_selected()
 
-        # Checking case where the dict is not given to the autoplot
-        self.app, self.UI = self.Field.plot("time", "angle{°}", "z[2]", is_test=True)
-        # Checking that the axis are correct, that the slice are correct, default datarange is correct
-
-        # Checking case where different axis are given (transformation necessary)
-        self.app, self.UI = self.Field.plot(
-            "freqs", "wavenumber", "z[2]", is_test=True, unit="T", zmax="50"
-        )
-
-        # Checking case with all of the operation
-        self.app, self.UI = self.Field.plot(
-            "time", "angle{°}", "z[2]", is_test=True, unit="T", zmax="50"
-        )
-
-    @pytest.mark.gui
-    def check_spec_axis(self):
-        """Test to make sure that the auto-plot functions for other axes (fft axes)"""
+        print(axes)
+        print(actions)
+        print(drange)
 
 
 if __name__ == "__main__":
-    a = TestGUI()
-    a.setup_class()
 
-    # Checking the auto setup of the axes
-    a.check_axis()
-    # Checking the auto setup of data_selection
-
-    # Checking the auto setup of WDataRange
-
-    a.teardown_class()
-    print("Done")
+    for ii, a_p_test in enumerate(a_p_list):
+        a = TestGUI()
+        a.setup_class()
+        a.check_axis(a_p_test)
+        print("Test n°" + str(ii) + " done")

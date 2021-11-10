@@ -23,9 +23,9 @@ if __name__ == "__main__":
         values=field_3d,
     )
 
-    # Field.plot()
+    Field.plot()
 
-    Field.plot("time", "angle{°}", unit="T", zmax="50")
+    # Field.plot("time", "angle{°}", "z[2]", unit="T", zmax="50")
     # Field.plot("time", "angle[0]", "z[2]", unit="T", zmax="10")
     # Field.plot("wavenumber", "freqs", "z[2]", unit="T", zmax="50")
     # Field.plot("freqs", "wavenumber", "z=mean", unit="T", zmax="50")

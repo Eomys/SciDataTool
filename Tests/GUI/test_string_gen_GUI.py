@@ -11,7 +11,7 @@ from SciDataTool.GUI.WDataExtractor.WDataExtractor import type_extraction_dict
 
 class TestGUI(object):
     @classmethod
-    def setup_class(cls):
+    def setup_class(self):
         f = 50
         Nt_tot = 16
         Na_tot = 20
@@ -26,7 +26,7 @@ class TestGUI(object):
 
         field = random((Nt_tot, Na_tot, 3))
 
-        cls.Field = DataTime(
+        self.Field = DataTime(
             name="Airgap flux density",
             symbol="B_r",
             unit="T",
@@ -34,13 +34,7 @@ class TestGUI(object):
             values=field,
         )
 
-        cls.app, cls.UI = cls.Field.plot(is_test=True)
-
-    @classmethod
-    def teardown_class(cls):
-        """Exit the app after the test"""
-
-        cls.app.quit()
+        self.UI = self.Field.plot(is_test=True)
 
     @pytest.mark.gui
     def check_axes_strings(self):
@@ -253,5 +247,4 @@ if __name__ == "__main__":
     # When modifying DataSelection, making sure that the string is updated correctly (slice to sum for ex)
     a.check_string_dataselection()
 
-    a.teardown_class()
     print("Done")
