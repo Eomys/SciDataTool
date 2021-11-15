@@ -399,6 +399,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Recovering the operation on the other axes
         data_selection = self.w_axis_manager.get_operation_selected()
 
+        # Updating the name of the groupBox according to the number of axes selected
+        if len(axes_selected) == 1:
+            self.g_range.setTitle("Y")
+        elif len(axes_selected) == 2:
+            self.g_range.setTitle("Z")
+
         # Setting the WDataRange by sending the necessary info to the widget
         self.w_range.set_range(self.data, axes_selected, data_selection)
 

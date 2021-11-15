@@ -10,7 +10,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
     refreshNeeded = Signal()
     axisChanged = Signal()
-    operationChanged = Signal()
+    actionChanged = Signal()
 
     def __init__(self, parent=None):
         """Initialize the GUI according to machine type
@@ -35,7 +35,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.b_filter.setDisabled(True)
 
         self.c_axis.currentTextChanged.connect(self.update_axis)
-        self.c_operation.currentTextChanged.connect(self.update_operation)
+        self.c_action.currentTextChanged.connect(self.update_action)
         self.c_unit.currentTextChanged.connect(self.update_unit)
 
     def get_axes_name(self):
@@ -79,8 +79,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         return self.c_axis.currentText()
 
-    def get_current_operation_name(self):
-        """Method that return the operation currently selected
+    def get_current_action_name(self):
+        """Method that return the action currently selected
         Parameters
         ----------
         self : WAxisSelector
@@ -88,9 +88,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         Output
         ---------
         string
-            name of the current operation selected
+            name of the current action selected
         """
-        return self.c_operation.currentText()
+        return self.c_action.currentText()
 
     def get_current_axis_selected(self):
         """Method that return the name of the axis selected of the WAxisSelector
@@ -154,7 +154,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         axis : RequestedAxis
             axis that we want to have in the WAxisSelector
         """
-        # Step 1 : Getting the name of the axis and selecting the right combobox (axis and operation)
+        # Step 1 : Getting the name of the axis and selecting the right combobox (axis and action)
         axis_name = axis.name
 
         # If the axis is freqs or wavenumber, then we have to select time/angle and fft
@@ -168,7 +168,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
             self.update_axis()
             # Making sure that we select FFT
-            self.c_operation.setCurrentIndex(1)
+            self.c_action.setCurrentIndex(1)
 
         else:
             # Selecting the right axis
@@ -179,7 +179,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
             self.update_axis()
 
-        self.update_operation()
+        self.update_action()
 
         # Step 2 : Recovering the unit and setting the combobox according to it
         self.c_unit.blockSignals(True)
@@ -244,21 +244,19 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.name = axis_name
         self.in_name.setText(axis_name)
 
-    def set_operation(self, operation):
-        """Method that set the operation of the WAxisSelector
+    def set_action(self, action):
+        """Method that set the action of the WAxisSelector
         Parameters
         ----------
         self : WAxisSelector
             a WAxisSelector object
-        operation : string
-            name of the new operation"""
+        action : string
+            name of the new action"""
 
-        operation_list = [
-            self.c_operation.itemText(i) for i in range(self.c_operation.count())
-        ]
+        action_list = [self.c_action.itemText(i) for i in range(self.c_action.count())]
 
-        if operation in operation_list and operation != "Filter":
-            self.c_operation.setCurrentIndex(operation_list.index(operation))
+        if action in action_list and action != "Filter":
+            self.c_action.setCurrentIndex(action_list.index(action))
 
     def set_unit(self):
         """Method that update the unit comboxbox according to the axis selected in the other combobox.
@@ -303,7 +301,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.set_unit()
 
     def update_axis(self):
-        """Method called when an axis is changed that change axis_selected, the units available and the operation combobox.
+        """Method called when an axis is changed that change axis_selected, the units available and the action combobox.
         It will also emit a signal used in WAxisManager.
         Parameters
         ----------
@@ -311,7 +309,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             a WAxisSelector object
         """
 
-        self.c_operation.setCurrentIndex(0)
+        self.c_action.setCurrentIndex(0)
 
         # Updating the units and the axis selected
         # Making sure that self.axis_selected is a "tag" and not a "label". Example : z instead of axial direction
@@ -324,29 +322,29 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.set_unit()
 
-        # Updating the operation combobox
+        # Updating the action combobox
         # Handling specific case to disable certain parts of the GUI
         if self.c_axis.currentText() == "None":
-            self.c_operation.setDisabled(True)
+            self.c_action.setDisabled(True)
         else:
-            self.c_operation.setDisabled(False)
+            self.c_action.setDisabled(False)
 
         if self.axis_selected in fft_dict:
-            operation = ["", "FFT", "Filter"]
-            self.c_operation.clear()
-            self.c_operation.addItems(operation)
+            action = ["None", "FFT", "Filter"]
+            self.c_action.clear()
+            self.c_action.addItems(action)
 
         else:
-            operation = ["", "Filter"]
-            self.c_operation.clear()
-            self.c_operation.addItems(operation)
+            action = ["None", "Filter"]
+            self.c_action.clear()
+            self.c_action.addItems(action)
 
         # Emitting the signals
         self.refreshNeeded.emit()
         self.axisChanged.emit()
 
-    def update_operation(self):
-        """Method called when an operation is changed that will change axis_selected,
+    def update_action(self):
+        """Method called when an action is changed that will change axis_selected,
         update the units available and emit a signal.
         Parameters
         ----------
@@ -354,22 +352,22 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             a WAxisSelector object
 
         """
-        # If the operation selected is filter, then we enable the button
-        if self.c_operation.currentText() == "Filter":
+        # If the action selected is filter, then we enable the button
+        if self.c_action.currentText() == "Filter":
             self.b_filter.setDisabled(False)
 
         else:
             self.b_filter.setDisabled(True)
 
-        # Converting the axes according to operation selected if possible/necessary
-        if self.c_operation.currentText() == "FFT" and self.axis_selected in fft_dict:
+        # Converting the axes according to action selected if possible/necessary
+        if self.c_action.currentText() == "FFT" and self.axis_selected in fft_dict:
             self.axes_list.insert(
                 self.axes_list.index(self.axis_selected), fft_dict[self.axis_selected]
             )
             self.axes_list.remove(self.axis_selected)
             self.axis_selected = fft_dict[self.axis_selected]
 
-        elif self.c_operation.currentText() == "" and self.axis_selected in ifft_dict:
+        elif self.c_action.currentText() == "None" and self.axis_selected in ifft_dict:
             self.axes_list.insert(
                 self.axes_list.index(self.axis_selected), ifft_dict[self.axis_selected]
             )
@@ -386,11 +384,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 )
                 self.axes_list.remove(fft_dict[self.axis_selected])
 
-        # Now that the quantiy has been updated according to the operation, we can set the units and emit the signals
+        # Now that the quantiy has been updated according to the action, we can set the units and emit the signals
         self.set_unit()
 
         self.refreshNeeded.emit()
-        self.operationChanged.emit()
+        self.actionChanged.emit()
 
     def update_unit(self):
         """Method called when a new unit is selected so that we can update self.unit

@@ -101,7 +101,7 @@ class Ui_WDataExtractor(object):
         self.c_type_extraction.setItemText(4, QCoreApplication.translate("WDataExtractor", u"sum", None))
         self.c_type_extraction.setItemText(5, QCoreApplication.translate("WDataExtractor", u"mean", None))
         self.c_type_extraction.setItemText(6, QCoreApplication.translate("WDataExtractor", u"integrate", None))
-        self.c_type_extraction.setItemText(7, QCoreApplication.translate("WDataExtractor", u"superimpose/filter", None))
+        self.c_type_extraction.setItemText(7, QCoreApplication.translate("WDataExtractor", u"overlay/filter", None))
 
         self.lf_value.setText(QCoreApplication.translate("WDataExtractor", u"0.314", None))
         self.b_action.setText(QCoreApplication.translate("WDataExtractor", u"Superimpose selection", None))

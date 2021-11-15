@@ -86,7 +86,7 @@
        </item>
        <item>
         <property name="text">
-         <string>superimpose/filter</string>
+         <string>overlay/filter</string>
         </property>
        </item>
       </widget>

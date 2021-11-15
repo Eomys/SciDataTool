@@ -51,8 +51,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_1.axisChanged.connect(self.axis_1_updated)
         self.w_axis_2.axisChanged.connect(self.axis_2_updated)
 
-        # The operation in axis 2 is by default the one chosen in axis 1
-        self.w_axis_1.operationChanged.connect(self.fft_sync)
+        # The action in axis 2 is by default the one chosen in axis 1
+        self.w_axis_1.actionChanged.connect(self.fft_sync)
 
     def axis_1_updated(self):
         """Method that remove the axis selected in w_axis_1 from w_axis_2 and call the method that generates
@@ -62,7 +62,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self : WAxisManager
             a WAxisManager object
         """
-        # Making sure that when axis 1 is updated, axis 1 and 2 are both on "" for the operation combobox
+        # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
         self.fft_sync()
 
         # Recovering the axis selected by the user removing it from the the second axis combobox
@@ -79,7 +79,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self : WAxisManager
             a WAxisManager object
         """
-        # Making sure that when axis 1 is updated, axis 1 and 2 are both on "" for the operation combobox
+        # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
         self.fft_sync()
 
         # Generating the DataSelection GroupBox
@@ -155,7 +155,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         return axes_selected
 
     def get_operation_selected(self):
-        """Method that return the actions chosen by the user and the related axis as a string
+        """Method that return the operations chosen by the user and the related axis as a string
          so that we can use them to plot the data.
         Parameters
         ----------
@@ -164,26 +164,26 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         Output
         ---------
         string
-            name of the action and its axis
+            name of the operation and its axis
         """
 
-        actions_selected = list()
+        operations_selected = list()
         for widget in self.w_data_sel:
-            actions_selected.append(widget.get_operation_selected())
+            operations_selected.append(widget.get_operation_selected())
 
-        return actions_selected
+        return operations_selected
 
     def fft_sync(self):
-        """Method that will check the operation chosen and that update the other operation combobox to have the same operation.
-        So that, by default, we have FFT and FFT or "" and ""
+        """Method that will check the action chosen and that update the other action combobox to have the same action.
+        So that, by default, we have FFT and FFT or "None" and "None"
         Parameters
         ----------
         self : WAxisManager
             a WAxisManager object
 
         """
-        operation_selected = self.w_axis_1.get_current_operation_name()
-        self.w_axis_2.set_operation(operation_selected)
+        action_selected = self.w_axis_1.get_current_action_name()
+        self.w_axis_2.set_action(action_selected)
         self.gen_data_selection()
 
     def set_axis_widgets(self, data, user_input_list):

@@ -39,14 +39,14 @@ class Ui_WAxisSelector(object):
 
         self.horizontalLayout.addWidget(self.c_axis)
 
-        self.c_operation = QComboBox(WAxisSelector)
-        self.c_operation.addItem("")
-        self.c_operation.addItem("")
-        self.c_operation.addItem("")
-        self.c_operation.setObjectName(u"c_operation")
-        self.c_operation.setMinimumSize(QSize(0, 0))
+        self.c_action = QComboBox(WAxisSelector)
+        self.c_action.addItem("")
+        self.c_action.addItem("")
+        self.c_action.addItem("")
+        self.c_action.setObjectName(u"c_action")
+        self.c_action.setMinimumSize(QSize(0, 0))
 
-        self.horizontalLayout.addWidget(self.c_operation)
+        self.horizontalLayout.addWidget(self.c_action)
 
         self.c_unit = QComboBox(WAxisSelector)
         self.c_unit.setObjectName(u"c_unit")
@@ -81,9 +81,9 @@ class Ui_WAxisSelector(object):
         self.c_axis.setItemText(3, QCoreApplication.translate("WAxisSelector", u"frequency", None))
         self.c_axis.setItemText(4, QCoreApplication.translate("WAxisSelector", u"wavenumber", None))
 
-        self.c_operation.setItemText(0, "")
-        self.c_operation.setItemText(1, QCoreApplication.translate("WAxisSelector", u"FFT", None))
-        self.c_operation.setItemText(2, QCoreApplication.translate("WAxisSelector", u"Filter", None))
+        self.c_action.setItemText(0, QCoreApplication.translate("WAxisSelector", u"None", None))
+        self.c_action.setItemText(1, QCoreApplication.translate("WAxisSelector", u"FFT", None))
+        self.c_action.setItemText(2, QCoreApplication.translate("WAxisSelector", u"Filter", None))
 
         self.b_filter.setText(QCoreApplication.translate("WAxisSelector", u"Filter", None))
     # retranslateUi

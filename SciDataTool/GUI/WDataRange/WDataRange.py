@@ -34,7 +34,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.lf_max.editingFinished.connect(self.update_needed)
 
     def get_field_selected(self):
-        """Method that will sent the operation on the field selected by the user (unit and min/max)
+        """Method that will sent the parameters on the field selected by the user (unit and min/max)
         Parameters
         ----------
         self : WDataRange

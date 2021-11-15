@@ -109,12 +109,12 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         # Setting the label of the widget with the right name
         self.set_name(operation_name)
 
-        # Converting type of the operation if we have a slice or a superimpose/filter
+        # Converting type of the operation if we have a slice or a overlay/filter
         if operation_type == "single":
             operation_type = "slice"
 
         elif operation_type == "list":
-            operation_type = "superimpose/filter"
+            operation_type = "overlay/filter"
 
         # Setting operation combobox to the right operation
         self.c_type_extraction.blockSignals(True)
@@ -219,8 +219,8 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             self.lf_value.hide()
             self.slider.hide()
 
-        # If the operation selected is superimpose/filter then we show the related button
-        if extraction_selected == "superimpose/filter":
+        # If the operation selected is overlay/filter then we show the related button
+        if extraction_selected == "overlay/filter":
             self.b_action.show()
             self.b_action.setText(extraction_selected)
         else:
