@@ -2,13 +2,14 @@ from PySide2.QtWidgets import QWidget
 
 from ...GUI.WDataExtractor.Ui_WDataExtractor import Ui_WDataExtractor
 from PySide2.QtCore import Signal
-from ...Functions.Plot import axes_dict
+from ...Functions.Plot import axes_dict, fft_dict
 from ...Classes.Data import Data
 from numpy import where
 from numpy import argmin, abs as np_abs
 
 type_extraction_dict = {
     "slice": "[",
+    "slice (fft)": "[",
     "rms": "=rms",
     "rss": "=rss",
     "sum": "=sum",
@@ -38,7 +39,7 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self.name = "angle"
         self.axis = Data
 
-        self.c_type_extraction.currentTextChanged.connect(self.update_layout)
+        self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.lf_value.editingFinished.connect(self.update_slider)
 
@@ -55,13 +56,20 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             name of the current action selected
         """
         # Recovering the action selected by the user
-        action_type = self.c_type_extraction.currentText()
+        action_type = self.c_operation.currentText()
 
         # Formatting the string to have the right syntax
         if action_type in type_extraction_dict:
             if action_type == "slice":
                 slice_index = self.slider.value()
                 action = type_extraction_dict[action_type] + str(slice_index) + "]"
+
+            elif action_type == "slice (fft)":
+                slice_index = self.slider.value()
+                action = type_extraction_dict[action_type] + str(slice_index) + "]"
+
+                return fft_dict[self.axis.name] + action
+
             else:
                 action = type_extraction_dict[action_type]
 
@@ -117,15 +125,15 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             operation_type = "overlay/filter"
 
         # Setting operation combobox to the right operation
-        self.c_type_extraction.blockSignals(True)
+        self.c_operation.blockSignals(True)
 
-        for i in range(self.c_type_extraction.count()):
-            self.c_type_extraction.setCurrentIndex(i)
+        for i in range(self.c_operation.count()):
+            self.c_operation.setCurrentIndex(i)
 
-            if self.c_type_extraction.currentText() == operation_type:
+            if self.c_operation.currentText() == operation_type:
                 break
 
-        self.c_type_extraction.blockSignals(False)
+        self.c_operation.blockSignals(False)
         self.update_layout()
 
         # Setting the slider to the right value if the operation is slice
@@ -187,6 +195,22 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self.update_layout()
         self.set_slider_floatedit()
 
+        # Depending on the axis we add or remove the slice (fft) operation
+        self.c_operation.blockSignals(True)
+        operation_list = list()
+        for i in range(self.c_operation.count()):
+            self.c_operation.setCurrentIndex(i)
+            operation_list.append(self.c_operation.currentText())
+
+        if "slice (fft)" in operation_list and not self.axis.name in fft_dict:
+            operation_list.remove("slice (fft)")
+        elif not "slice (fft)" in operation_list and self.axis.name in fft_dict:
+            operation_list.insert(1, "slice (fft)")
+
+        self.c_operation.clear()
+        self.c_operation.addItems(operation_list)
+        self.c_operation.blockSignals(False)
+
     def update_floatEdit(self):
         """Method that set the value of the floatEdit according to the value returned by the slider
         and the axis sent by WAxisManager.
@@ -208,7 +232,7 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             a WDataExtractor object
         """
         # Recovering the operation selected
-        extraction_selected = self.c_type_extraction.currentText()
+        extraction_selected = self.c_operation.currentText()
 
         # If the operation selected is a slice, then we show the slider and the floatEdit
         if extraction_selected == "slice" or extraction_selected == "slice (fft)":

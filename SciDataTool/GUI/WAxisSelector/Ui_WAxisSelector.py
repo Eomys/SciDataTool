@@ -37,7 +37,6 @@ class Ui_WAxisSelector(object):
         self.c_axis.setSizePolicy(sizePolicy)
         self.c_axis.setMinimumSize(QSize(0, 0))
         self.c_axis.setMaximumSize(QSize(16777215, 16777215))
-        self.c_axis.setSizeAdjustPolicy(QComboBox.AdjustToContents)
 
         self.verticalLayout.addWidget(self.c_axis)
 
@@ -47,7 +46,6 @@ class Ui_WAxisSelector(object):
         self.c_action.addItem("")
         self.c_action.setObjectName(u"c_action")
         self.c_action.setMinimumSize(QSize(0, 0))
-        self.c_action.setSizeAdjustPolicy(QComboBox.AdjustToContents)
 
         self.verticalLayout.addWidget(self.c_action)
 
@@ -57,7 +55,6 @@ class Ui_WAxisSelector(object):
         self.c_unit.setSizePolicy(sizePolicy)
         self.c_unit.setMinimumSize(QSize(0, 0))
         self.c_unit.setMaximumSize(QSize(16777215, 16777215))
-        self.c_unit.setSizeAdjustPolicy(QComboBox.AdjustToContents)
 
         self.verticalLayout.addWidget(self.c_unit)
 

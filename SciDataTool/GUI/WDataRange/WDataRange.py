@@ -69,15 +69,23 @@ class WDataRange(Ui_WDataRange, QWidget):
 
         # Recovering the minimum and the maximum of the field
         if not None in data_selection and not len(data_selection) == 0:
+            data_selection_parsed = parser.read_input_strings(
+                data_selection, axis_data=None
+            )
             if len(axes_selected) == 1:
 
                 # Checking if the field is plotted in fft, then we use get_magnitude_along
                 # Otherwise we use get_along
 
-                if axes_selected_parsed[0].name in ifft_dict:
+                if (
+                    axes_selected_parsed[0].name in ifft_dict
+                    or data_selection_parsed[0].name in ifft_dict
+                    or data_selection_parsed[1].name in ifft_dict
+                ):
                     field_value = field.get_magnitude_along(
                         data_selection[0], data_selection[1], axes_selected[0]
                     )
+
                 else:
                     field_value = field.get_along(
                         data_selection[0], data_selection[1], axes_selected[0]
@@ -93,7 +101,7 @@ class WDataRange(Ui_WDataRange, QWidget):
                 if (
                     axes_selected_parsed[0].name in ifft_dict
                     and axes_selected_parsed[1].name in ifft_dict
-                ):
+                ) or data_selection_parsed[0].name in ifft_dict:
                     field_value = field.get_magnitude_along(
                         data_selection[0], axes_selected[0], axes_selected[1]
                     )
