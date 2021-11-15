@@ -230,6 +230,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         else:
             self.axis_selected = self.c_axis.currentText()
 
+        self.c_axis.view().setMinimumWidth(max([len(ax) for ax in self.axes_list]) * 6)
+
     def set_name(self, axis_name):
         """Method to change of the label of the widget
         Parameters
@@ -281,6 +283,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             # Adding the right unit according to the imported dictionary
             if self.axis_selected in unit_dict:
                 self.c_unit.addItems(unit_dict[self.axis_selected])
+
+            self.c_unit.view().setMinimumWidth(
+                max([len(un) for un in unit_dict[self.axis_selected]]) * 6
+            )
         self.c_unit.blockSignals(False)
         self.update_unit()
 
@@ -338,6 +344,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             action = ["None", "Filter"]
             self.c_action.clear()
             self.c_action.addItems(action)
+
+        self.c_action.view().setMinimumWidth(max([len(ac) for ac in action]) * 6)
 
         # Emitting the signals
         self.refreshNeeded.emit()

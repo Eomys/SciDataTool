@@ -68,7 +68,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
 
         # Recovering the minimum and the maximum of the field
-        if not None in data_selection and not data_selection == []:
+        if not None in data_selection and not len(data_selection) == 0:
             if len(axes_selected) == 1:
 
                 # Checking if the field is plotted in fft, then we use get_magnitude_along
@@ -104,6 +104,20 @@ class WDataRange(Ui_WDataRange, QWidget):
 
                 field_min = field_value[field.symbol].min()
                 field_max = field_value[field.symbol].max()
+
+            # Setting the FloatEdit with the value recovered
+            self.lf_min.setValue(field_min)
+            self.lf_max.setValue(field_max)
+
+        elif len(data_selection) == 0:
+
+            if axes_selected_parsed[0].name in ifft_dict:
+                field_value = field.get_magnitude_along(axes_selected[0])
+            else:
+                field_value = field.get_along(axes_selected[0])
+
+            field_min = field_value[field.symbol].min()
+            field_max = field_value[field.symbol].max()
 
             # Setting the FloatEdit with the value recovered
             self.lf_min.setValue(field_min)
