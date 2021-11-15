@@ -68,7 +68,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
 
         # Recovering the minimum and the maximum of the field
-        if not None in data_selection:
+        if not None in data_selection and not data_selection == []:
             if len(axes_selected) == 1:
 
                 # Checking if the field is plotted in fft, then we use get_magnitude_along

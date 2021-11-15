@@ -117,7 +117,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_data_sel = list()
 
         for axis in axes_gen:
-            temp = WDataExtractor(self.layoutWidget)
+            temp = WDataExtractor(self.g_data_extract)
             temp.setObjectName(axis)
             for ax in self.axes_list:
                 if ax.name == axis:

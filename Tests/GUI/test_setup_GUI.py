@@ -72,6 +72,8 @@ class TestGUI(object):
 
         # Recovering the minimum and the maximum of the field
         if len(axes_selected) == 1:
+            # Checking that the right name is given to the groupBow with WDataRange
+            assert self.UI.g_range.title() == "Y"
 
             # Checking if the field is plotted in fft, then we use get_magnitude_along
             # Otherwise we use get_along
@@ -89,6 +91,8 @@ class TestGUI(object):
             field_max = field_value[self.Field.symbol].max()
 
         elif len(axes_selected) == 2:
+            # Checking that the right name is given to the groupBow with WDataRange
+            assert self.UI.g_range.title() == "Z"
 
             # Checking if the field is plotted in fft, then we use get_magnitude_along
             # Otherwise we use get_along

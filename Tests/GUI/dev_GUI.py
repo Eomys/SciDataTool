@@ -11,15 +11,16 @@ if __name__ == "__main__":
     Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3)
     y, x = np.meshgrid(Y.get_values(), X.get_values())
     field = x + y
-    field_3d = np.zeros((11, 21, 3))
-    for i in range(3):
-        field_3d[:, :, i] = (i + 1) * field
+    field_3d = np.zeros(11)  # , 21, 3))
+    # for i in range(3):
+    #     field_3d[:, :, i] = (i + 1) * field
 
     Field = DataTime(
         name="Airgap flux density",
         symbol="B_r",
         unit="T",
-        axes=[X, Y, Z],
+        # axes=[X, Y, Z],
+        axes=[X],
         values=field_3d,
     )
 

@@ -136,8 +136,16 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Hide or show the ComboBox related to the component of a VectorField
         if not isinstance(self.data, VectorField):
             self.w_vect_selector.hide()
+            self.w_axis_manager.g_data_extract.hide()
         else:
             self.w_vect_selector.show()
+            self.w_axis_manager.g_data_extract.show()
+
+        # If only one axis is given with the object, then we hide w_axis_2
+        if len(self.data.get_axes()) == 1:
+            self.w_axis_manager.w_axis_2.hide()
+        else:
+            self.w_axis_manager.w_axis_2.show()
 
         self.text = None
         self.circle = None
@@ -357,7 +365,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Recovering the operation on the field values
         output_range = self.w_range.get_field_selected()
 
-        if not None in data_selection:
+        if not None in data_selection and not data_selection == []:
             if len(axes_selected) == 1:
                 self.data.plot_2D_Data(
                     axes_selected[0],
@@ -383,7 +391,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     z_max=output_range["max"],
                 )
         else:
-            print("Operation not implemented yet, range could not be updated")
+            print("Operation not implemented yet, plot could not be updated")
 
     def update_range(self, user_input_dict=dict()):
         """Method that will update the range widget with either the user input or the default value of the DataND object

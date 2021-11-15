@@ -16,10 +16,10 @@ class Ui_WAxisManager(object):
     def setupUi(self, WAxisManager):
         if not WAxisManager.objectName():
             WAxisManager.setObjectName(u"WAxisManager")
-        WAxisManager.resize(330, 600)
+        WAxisManager.resize(414, 543)
         self.g_data_extract = QGroupBox(WAxisManager)
         self.g_data_extract.setObjectName(u"g_data_extract")
-        self.g_data_extract.setGeometry(QRect(11, 138, 271, 211))
+        self.g_data_extract.setGeometry(QRect(10, 180, 271, 211))
         sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -41,8 +41,8 @@ class Ui_WAxisManager(object):
 
         self.g_axes = QGroupBox(WAxisManager)
         self.g_axes.setObjectName(u"g_axes")
-        self.g_axes.setGeometry(QRect(11, 11, 271, 120))
-        sizePolicy1 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Minimum)
+        self.g_axes.setGeometry(QRect(11, 11, 271, 161))
+        sizePolicy1 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.g_axes.sizePolicy().hasHeightForWidth())
@@ -51,25 +51,61 @@ class Ui_WAxisManager(object):
         self.g_axes.setMaximumSize(QSize(296, 16777215))
         self.layoutWidget = QWidget(self.g_axes)
         self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(10, 20, 251, 92))
-        self.lay_axes = QVBoxLayout(self.layoutWidget)
+        self.layoutWidget.setGeometry(QRect(11, 21, 251, 137))
+        self.lay_axes = QHBoxLayout(self.layoutWidget)
         self.lay_axes.setObjectName(u"lay_axes")
         self.lay_axes.setContentsMargins(0, 0, 0, 0)
-        self.w_axis_1 = WAxisSelector(self.layoutWidget)
-        self.w_axis_1.setObjectName(u"w_axis_1")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalSpacer_2 = QSpacerItem(20, 35, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout.addItem(self.verticalSpacer_2)
+
+        self.label_4 = QLabel(self.layoutWidget)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setMinimumSize(QSize(0, 18))
+
+        self.verticalLayout.addWidget(self.label_4)
+
+        self.label_2 = QLabel(self.layoutWidget)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setMinimumSize(QSize(0, 20))
+
+        self.verticalLayout.addWidget(self.label_2)
+
+        self.label_3 = QLabel(self.layoutWidget)
+        self.label_3.setObjectName(u"label_3")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.w_axis_1.sizePolicy().hasHeightForWidth())
-        self.w_axis_1.setSizePolicy(sizePolicy2)
+        sizePolicy2.setHeightForWidth(self.label_3.sizePolicy().hasHeightForWidth())
+        self.label_3.setSizePolicy(sizePolicy2)
+        self.label_3.setMinimumSize(QSize(0, 18))
+
+        self.verticalLayout.addWidget(self.label_3)
+
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout.addItem(self.verticalSpacer_3)
+
+
+        self.lay_axes.addLayout(self.verticalLayout)
+
+        self.w_axis_1 = WAxisSelector(self.layoutWidget)
+        self.w_axis_1.setObjectName(u"w_axis_1")
+        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.w_axis_1.sizePolicy().hasHeightForWidth())
+        self.w_axis_1.setSizePolicy(sizePolicy3)
         self.w_axis_1.setMinimumSize(QSize(0, 30))
 
         self.lay_axes.addWidget(self.w_axis_1)
 
         self.w_axis_2 = WAxisSelector(self.layoutWidget)
         self.w_axis_2.setObjectName(u"w_axis_2")
-        sizePolicy2.setHeightForWidth(self.w_axis_2.sizePolicy().hasHeightForWidth())
-        self.w_axis_2.setSizePolicy(sizePolicy2)
+        sizePolicy3.setHeightForWidth(self.w_axis_2.sizePolicy().hasHeightForWidth())
+        self.w_axis_2.setSizePolicy(sizePolicy3)
         self.w_axis_2.setMinimumSize(QSize(0, 30))
 
         self.lay_axes.addWidget(self.w_axis_2)
@@ -84,5 +120,8 @@ class Ui_WAxisManager(object):
         WAxisManager.setWindowTitle(QCoreApplication.translate("WAxisManager", u"WAxisManager", None))
         self.g_data_extract.setTitle(QCoreApplication.translate("WAxisManager", u"Slices/Operations", None))
         self.g_axes.setTitle(QCoreApplication.translate("WAxisManager", u"Axes", None))
+        self.label_4.setText(QCoreApplication.translate("WAxisManager", u"Axis", None))
+        self.label_2.setText(QCoreApplication.translate("WAxisManager", u"Action", None))
+        self.label_3.setText(QCoreApplication.translate("WAxisManager", u"Unit", None))
     # retranslateUi
 
