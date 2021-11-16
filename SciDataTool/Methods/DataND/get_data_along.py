@@ -22,7 +22,14 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     a DataND object
     """
 
-    results = self.get_along(*args, is_squeeze=False)
+    if "dB" in unit:
+        results = self.get_magnitude_along(
+            *args, is_squeeze=False, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
+    else:
+        results = self.get_along(
+            *args, is_squeeze=False, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
     values = results.pop(self.symbol)
     del results["axes_dict_other"]
     axes_list = results.pop("axes_list")
@@ -48,43 +55,51 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                     name = axis.name
                     is_components = axis.is_components
                     axis_values = results[axis_name]
-                    unit = axis.unit
+                    ax_unit = axis.unit
                 elif axis_name in axes_dict:
                     if axes_dict[axis_name][0] == axis.name:
                         index = i
                         name = axis_name
                         is_components = axis.is_components
                         axis_values = results[axis_name]
-                        unit = axes_dict[axis_name][2]
+                        ax_unit = axes_dict[axis_name][2]
                 elif axis_name in rev_axes_dict:
                     if rev_axes_dict[axis_name][0] == axis.name:
                         index = i
                         name = axis_name
                         is_components = axis.is_components
                         axis_values = results[axis_name]
-                        unit = rev_axes_dict[axis_name][2]
+                        ax_unit = rev_axes_dict[axis_name][2]
             # Update symmetries
-            if "smallestperiod" in args[index]:
+            if "smallestperiod" in args[index] or args[index] in [
+                "freqs",
+                "wavenumber",
+            ]:
                 symmetries = self.axes[index].symmetries
             else:
                 symmetries = dict()
             Axes.append(
                 Data1D(
                     name=name,
-                    unit=unit,
+                    unit=ax_unit,
                     values=axis_values,
                     is_components=is_components,
                     normalizations=self.axes[index].normalizations,
                     symmetries=symmetries,
                 ).to_linspace()
             )
-    # Update unit if derivation or integration
-    unit = self.unit
-    for axis in axes_list:
-        if axis.extension == "integrate":
-            unit = get_unit_integrate(self.unit, axis.corr_unit)
-        elif axis.extension == "derivate":
-            unit = get_unit_derivate(self.unit, axis.corr_unit)
+
+    # Update unit if dB/dBA conversion
+    if "dB" in unit:
+        unit = unit
+    else:
+        # Update unit if derivation or integration
+        unit = self.unit
+        for axis in axes_list:
+            if axis.extension in ["antiderivate", "integrate", "integrate_local"]:
+                unit = get_unit_integrate(unit, axis.corr_unit)
+            elif axis.extension == "derivate":
+                unit = get_unit_derivate(unit, axis.corr_unit)
 
     return DataClass(
         name=self.name,

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from numpy import min as np_min, max as np_max, abs as np_abs, log10
 
 import matplotlib.pyplot as plt
@@ -39,6 +37,7 @@ def plot_3D(
     is_disp_title=True,
     type_plot="stem",
     is_contour=False,
+    is_shading_flat=False,
     save_path=None,
     is_show_fig=None,
     is_switch_axes=False,
@@ -98,6 +97,8 @@ def plot_3D(
         type of 3D graph : "stem", "surf", "pcolor" or "scatter"
     is_contour : bool
         True to show contour line if type_plot = "pcolor"
+    is_shading_flat : bool
+        True to use flat shading instead of Gouraud
     save_path : str
         full path including folder, name and extension of the file to save if save_path is not None
     is_show_fig : bool
@@ -256,14 +257,20 @@ def plot_3D(
         ax.set_xlim([x_min, x_max])
         ax.set_ylim([y_min, y_max])
     elif type_plot == "pcolormesh":
+        if is_shading_flat:
+            shading = "flat"
+        else:
+            shading = "gouraud"
         c = ax.pcolormesh(
             Xdata,
             Ydata,
             Zdata,
             cmap=colormap,
-            shading="gouraud",
+            shading=shading,
             antialiased=True,
             picker=True,
+            vmin=z_min,
+            vmax=z_max,
         )
         clb = fig.colorbar(c, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)

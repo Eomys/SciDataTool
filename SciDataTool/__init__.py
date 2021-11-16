@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Classes.Data import Data
 from SciDataTool.Classes.Data1D import Data1D
 from SciDataTool.Classes.DataFreq import DataFreq
@@ -14,4 +13,4 @@ from SciDataTool.Classes.Norm_vector import Norm_vector
 from SciDataTool.Classes.Norm_indices import Norm_indices
 from SciDataTool.Classes.Norm_ref import Norm_ref
 
-__version__ = "1.4.12"
+__version__ = "1.4.19"

@@ -1,5 +1,5 @@
-def freq_to_time(self):
-    """Performs the Fourier Transform and stores the resulting field in a VectorField of DataTime objects.
+def get_vectorfield_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
+    """Returns the sliced or interpolated version of the data, using conversions and symmetries if needed.
     Parameters
     ----------
     self : VectorField
@@ -14,7 +14,10 @@ def freq_to_time(self):
     VectorField = getattr(module, "VectorField")
 
     comp_dict = dict()
-    for key, comp in self.components.items():
-        comp_dict[key] = comp.freq_to_time()
+
+    for comp in self.components:  # Call get_data_along on each component
+        comp_dict[comp] = self.components[comp].get_data_along(
+            *args, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
 
     return VectorField(name=self.name, symbol=self.symbol, components=comp_dict)

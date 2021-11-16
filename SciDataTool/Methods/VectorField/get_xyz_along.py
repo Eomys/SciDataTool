@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from numpy import zeros, ndarray
+from numpy import zeros
 
 from SciDataTool.Functions.conversions import pol2cart
 from SciDataTool.Functions import AxisError
@@ -28,34 +26,47 @@ def get_xyz_along(self, *args, unit="SI", is_norm=False, axis_data=[], is_squeez
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
 
-    if "radial" in self.components.keys() and "tangential" in self.components.keys():
-        # Extract first along whole "angle" axis
+    if "radial" in self.components.keys() or "tangential" in self.components.keys():
+        # Extract first along whole or smallest period "angle" axis
         new_args = [arg for arg in args]
         string = [s for s in args if "angle" in s]
-        if string != []:
+        if string != [] and "smallestperiod" not in string[0]:
             new_args[args.index(string[0])] = "angle"
-        else:
-            new_args.extend(["angle"])
+        elif string == []:
+            if "wavenumber" in args:
+                new_args[args.index("wavenumber")] = "angle[smallestperiod]"
+            else:
+                new_args.extend(["angle[smallestperiod]"])
         Datar = self.components["radial"].get_data_along(
             *new_args,
             unit=unit,
             is_norm=is_norm,
             axis_data=axis_data,
         )
-        Dataphi = self.components["tangential"].get_data_along(
-            *new_args,
-            unit=unit,
-            is_norm=is_norm,
-            axis_data=axis_data,
-        )
         field_r = Datar.values
-        field_c = Dataphi.values
         shape = field_r.shape
-        phi = Datar.get_axes("angle")[0].get_values()
+        if "tangential" in self.components.keys():
+            Dataphi = self.components["tangential"].get_data_along(
+                *new_args,
+                unit=unit,
+                is_norm=is_norm,
+                axis_data=axis_data,
+            )
+            field_c = Dataphi.values
+        else:
+            field_c = zeros(shape, dtype=field_r.dtype)
+            Dataphi = type(Datar)(
+                name=Datar.name,
+                unit=Datar.unit,
+                symbol=Datar.symbol,
+                axes=Datar.axes,
+                values=field_c,
+            )
+        phi = Datar.get_axes("angle")[0].get_values(is_smallestperiod=True)
         # Convert to cylindrical coordinates
         (field_x, field_y) = pol2cart(field_r, field_c, phi)
         # Extract second time with true args
-        if "angle" not in args:
+        if "angle" not in args and "angle[smallestperiod]" not in args:
             Datar.values = field_x
             Dataphi.values = field_y
             self.components["comp_x"] = Datar

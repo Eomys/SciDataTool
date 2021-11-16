@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
-
 from SciDataTool.Functions.Plot.plot_2D import plot_2D
 from SciDataTool.Functions.Plot import (
     unit_dict,
     norm_dict,
     axes_dict,
     COLORS,
-    LINESTYLES,
 )
 from numpy import (
     squeeze,
@@ -20,6 +17,7 @@ from numpy import (
     min as np_min,
     linspace,
     log10,
+    nan,
 )
 
 
@@ -29,6 +27,7 @@ def plot_2D_Data(
     axis_data=None,
     is_norm=False,
     unit="SI",
+    overall_axes=[],
     data_list=[],
     legend_list=[],
     color_list=None,
@@ -62,6 +61,8 @@ def plot_2D_Data(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
+    is_outside_legend=False,
+    is_frame_legend=True,
 ):
     """Plots a field as a function of time
 
@@ -119,6 +120,10 @@ def plot_2D_Data(
         Title of the plot window
     thresh : float
         threshold for automatic fft ticks
+    is_outside_legend : bool
+        True to display legend outside the graph
+    is_frame_legend : bool
+        True to display legend in a frame
     """
 
     # Extract arg_list it the function called from another script with *arg_list
@@ -188,7 +193,7 @@ def plot_2D_Data(
     Ydatas = []
     data_list2 = [self] + data_list
     for i, d in enumerate(data_list2):
-        if is_fft:
+        if is_fft or "dB" in unit:
             result = d.get_magnitude_along(
                 arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
             )
@@ -196,8 +201,6 @@ def plot_2D_Data(
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            # Ydatas.append(result.pop(d.symbol))
-            # Xdatas.append(result[list(result)[0]])
         else:
             result = d.get_along(
                 arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
@@ -206,8 +209,6 @@ def plot_2D_Data(
                 axes_list = result.pop("axes_list")
                 axes_dict_other = result.pop("axes_dict_other")
                 result_0 = result
-            # Ydatas.append(result.pop(d.symbol))
-            # Xdatas.append(result[list(result)[0]])
         Ydatas.append(result.pop(d.symbol))
         # in string case not overlay, Xdatas is a linspace
         if axes_list[0].is_components and axes_list[0].extension != "list":
@@ -217,16 +218,6 @@ def plot_2D_Data(
         else:
             xdata = result[list(result)[0]]
         Xdatas.append(xdata)
-
-    # Find main axis as the axis with the most values
-    # main_axis = axes_list[0]  # max(axes_list, key=lambda x: x.values.size)
-
-    # Remove axis that has been factorized from axis list
-    # [
-    #     axes_list.pop(i)
-    #     for i in range(len(axes_list))
-    #     if axes_list[i].extension in ["sum", "rss", "mean", "rms", "integrate"]
-    # ]
 
     # Build xlabel and title parts 2 and 3
     title2 = ""
@@ -341,22 +332,18 @@ def plot_2D_Data(
         legend_list = ["[" + d.name + "] " for d in data_list2]
     elif legend_list == []:
         legend_list = ["" for d in data_list2]
-    else:
-        legend_list = ["[" + leg + "] " for leg in legend_list]
+    # else:
+    #     legend_list = ["[" + leg + "] " for leg in legend_list]
     legends = []
     # Prepare colors
-    if curve_colors is None:
-        curve_colors = COLORS
     linestyle_list = linestyles
     for i, d in enumerate(data_list2):
         is_overlay = False
         for axis in axes_list:
             if axis.extension == "list":
                 is_overlay = True
-                if phase_colors is None:
-                    phase_colors = COLORS
-                    if linestyles is None:
-                        linestyles = ["dashed"]
+                if linestyles is None:
+                    linestyles = ["dashed"]
                 n_curves = len(axis.values)
                 if axis.unit == "SI":
                     if axis.name in unit_dict:
@@ -406,6 +393,48 @@ def plot_2D_Data(
         for i in range(len(data_list2)):
             Xdata += [Xdatas[i] for x in range(n_curves)]
         Xdatas = Xdata
+
+    # Overall computation
+    if overall_axes != []:
+        if self.unit == "W":
+            op = "=sum"
+        else:
+            op = "=rss"
+        arg_list_ovl = [0 for i in range(len(arg_list))]
+        # Add sum to overall_axes
+        for axis in overall_axes:
+            is_match = False
+            for i, arg in enumerate(arg_list):
+                if axis in arg:
+                    is_match = True
+                    arg_list_ovl[i] = axis + op
+            if not is_match:
+                arg_list_ovl.append(axis + op)
+        # Add other requested axes
+        for i, arg in enumerate(arg_list):
+            if arg_list_ovl[i] == 0:
+                arg_list_ovl[i] = arg
+        if is_fft or "dB" in unit:
+            result = self.get_magnitude_along(*arg_list_ovl, unit=unit)
+        else:
+            result = self.get_along(*arg_list_ovl, unit=unit)
+        Y_overall = result[self.symbol]
+        # in string case not overlay, Xdatas is a linspace
+        if axes_list[0].is_components and axes_list[0].extension != "list":
+            xdata = linspace(
+                0, len(result[list(result)[0]]) - 1, len(result[list(result)[0]])
+            )
+        else:
+            xdata = result[list(result)[0]]
+        Ydatas.insert(0, Y_overall)
+        Xdatas.insert(0, xdata)
+        color_list = color_list.copy()
+        color_list.insert(0, "#000000")
+        legends.insert(0, "Overall")
+
+    if "dB" in unit:  # Replace <=0 by nans
+        for ydata in Ydatas:
+            ydata[ydata <= 0] = nan
 
     # Call generic plot function
     if is_fft:
@@ -495,6 +524,8 @@ def plot_2D_Data(
             font_size_title=font_size_title,
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
+            is_outside_legend=is_outside_legend,
+            is_frame_legend=is_frame_legend,
         )
 
     else:
@@ -535,4 +566,6 @@ def plot_2D_Data(
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
             is_show_legend=True,
+            is_outside_legend=is_outside_legend,
+            is_frame_legend=is_frame_legend,
         )

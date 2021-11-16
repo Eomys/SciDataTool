@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-
 from SciDataTool.Functions.Plot.plot_4D import plot_4D
 from SciDataTool.Functions.Plot.plot_3D import plot_3D
 from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
+from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
     where,
     meshgrid,
@@ -31,7 +30,7 @@ def plot_3D_Data(
     z_range=None,
     is_auto_ticks=True,
     is_auto_range=True,
-    is_2D_view=False,
+    is_2D_view=True,
     is_contour=False,
     is_same_size=False,
     N_stem=100,
@@ -264,6 +263,20 @@ def plot_3D_Data(
     else:
         yticklabels = None
 
+    # Detect discontinuous axis (Norm_indices) to use flat shading
+    is_shading_flat = False
+    type_plot = "pcolor"
+    for axis in axes_list:
+        if axis.unit in self.axes[axis.index].normalizations:
+            if isinstance(
+                self.axes[axis.index].normalizations[axis.unit], Norm_indices
+            ):
+                is_shading_flat = True
+
+    if is_shading_flat:
+        type_plot = "pcolormesh"
+        Ydata, Xdata = meshgrid(Ydata, Xdata)
+
     title4 = " for "
     for axis in axes_list[2:]:
         if axis.unit == "SI":
@@ -321,11 +334,7 @@ def plot_3D_Data(
                 thresh = 0.02
 
         if "dB" in unit:
-            indices = where(
-                Z_flat
-                > 10 * log10(thresh * self.normalizations["ref"].ref)
-                + abs(np_max(Zdata))
-            )[0]
+            indices = where(Z_flat > 10 * log10(thresh) + abs(np_max(Zdata)))[0]
         else:
             indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
 
@@ -441,8 +450,9 @@ def plot_3D_Data(
                 yticklabels=yticklabels,
                 fig=fig,
                 ax=ax,
-                type_plot="pcolor",
+                type_plot=type_plot,
                 is_contour=is_contour,
+                is_shading_flat=is_shading_flat,
                 save_path=save_path,
                 is_show_fig=is_show_fig,
                 is_logscale_x=is_logscale_x,

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from matplotlib.pyplot import subplots
 import io
 import pickle

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool import Data1D
 from SciDataTool.Functions import AxisError
 
@@ -35,7 +34,7 @@ def time_to_freq(self):
         axes_str.append(axis_str)
     if axes_str == [axis.name for axis in self.axes]:
         raise AxisError(
-            "ERROR: No available axis is compatible with fft (should be time or angle)"
+            "No available axis is compatible with fft (should be time or angle)"
         )
     else:
         results = self.get_along(*axes_str)

@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
-
 from os.path import isdir, join
 from os import walk, getcwd, chdir
-from .Load.load_json import load_json
-from .Load.load_hdf5 import load_hdf5
-from .Load.load_pkl import load_pkl
-from .Load.import_class import import_class
-from ..Classes._check import InitUnKnowClassError
+from SciDataTool.Functions.Load.load_json import load_json
+from SciDataTool.Functions.Load.load_hdf5 import load_hdf5
+from SciDataTool.Functions.Load.load_pkl import load_pkl
+from SciDataTool.Functions.Load.import_class import import_class
 
 
 def init_data(obj, file_path):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions.symmetries import (
     rebuild_symmetries as rebuild_symmetries_fct,
 )
@@ -37,6 +36,7 @@ def rebuild_symmetries(
                     "mean",
                     "rms",
                     "integrate",
+                    "integrate_local",
                     "derivate",
                     "smallestperiod",
                 ]

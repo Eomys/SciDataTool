@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 def has_period(self):
     """Indicates if a field has symmetries.
     Parameters

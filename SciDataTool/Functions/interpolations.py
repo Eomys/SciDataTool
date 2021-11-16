@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from numpy import (
     array,
     linspace,
@@ -6,10 +5,8 @@ from numpy import (
     take,
     isclose,
     isin,
-    around,
     all,
     abs as np_abs,
-    interp,
     where,
     zeros,
 )
@@ -140,12 +137,19 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
         new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
         indice_take = where(isin(axis_values, new_axis_values))[0]
+        if len(indice_take) == 2:  # double point -> compute mean
+            return take(
+                values,
+                indice_take,
+                axis=index,
+            ).mean(axis=index)
 
-        return take(
-            values,
-            indice_take,
-            axis=index,
-        )
+        else:
+            return take(
+                values,
+                indice_take,
+                axis=index,
+            )
 
     else:
         new_shape = list(values.shape)

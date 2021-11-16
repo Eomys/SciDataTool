@@ -1,11 +1,22 @@
-# -*- coding: utf-8 -*-
-from SciDataTool.Functions.conversions import convert
-from SciDataTool.Functions.interpolations import get_common_base
-from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
-from SciDataTool.Classes.DataPattern import DataPattern
-from SciDataTool.Functions import AxisError
-from numpy import array, ndarray
+from numpy import array
+
 from importlib import import_module
+
+from SciDataTool.Classes.DataPattern import DataPattern
+
+from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
+from SciDataTool.Functions import AxisError
+
+operation_list = [
+    "sum",
+    "rss",
+    "mean",
+    "rms",
+    "integrate",
+    "integrate_local",
+    "derivate",
+    "antiderivate",
+]
 
 
 def get_axis(self, axis, is_real):
@@ -17,6 +28,7 @@ def get_axis(self, axis, is_real):
     axis: Axis
         an Axis object
     """
+
     if self.operation is not None:
         module = import_module("SciDataTool.Functions.conversions")
         func = getattr(module, self.operation)  # Conversion function
@@ -33,16 +45,8 @@ def get_axis(self, axis, is_real):
                 self.indices = list(range(len(values)))
             else:
                 self.values = values[self.indices]
-                self.extension = "interval"
-        elif not self.extension in [
-            "sum",
-            "rss",
-            "mean",
-            "rms",
-            "integrate",
-            "derivate",
-            "list",
-        ]:
+                self.extension = "list"
+        elif self.extension not in operation_list and self.extension != "list":
             self.values = values
             self.extension = "whole"
         else:
@@ -51,43 +55,38 @@ def get_axis(self, axis, is_real):
     else:
         if self.extension == "pattern":
             if not self.is_pattern:
-                raise AxisError(
-                    "ERROR: [pattern] cannot be called with non DataPattern axis"
-                )
+                raise AxisError("[pattern] cannot be called with non DataPattern axis")
             else:
                 is_smallestperiod = True
                 is_oneperiod = False
                 is_antiperiod = False
                 self.extension = "smallestperiod"
         elif self.extension == "smallestperiod":
-            if isinstance(axis, DataPattern):
-                raise AxisError(
-                    "ERROR: [smallestperiod] cannot be called with DataPattern axis"
-                )
-            else:
-                is_smallestperiod = True
-                is_oneperiod = False
-                is_antiperiod = False
+            # if isinstance(axis, DataPattern):
+            #     raise AxisError(
+            #         "[smallestperiod] cannot be called with DataPattern axis"
+            #     )
+            # else:
+            is_smallestperiod = True
+            is_oneperiod = False
+            is_antiperiod = False
         elif self.extension == "antiperiod":
             if isinstance(axis, DataPattern):
-                raise AxisError(
-                    "ERROR: [antiperiod] cannot be called with DataPattern axis"
-                )
+                raise AxisError("[antiperiod] cannot be called with DataPattern axis")
             else:
                 is_smallestperiod = False
                 is_oneperiod = False
                 is_antiperiod = True
         elif self.extension == "oneperiod" or self.transform == "fft":
             if isinstance(axis, DataPattern):
-                raise AxisError(
-                    "ERROR: [oneperiod] cannot be called with DataPattern axis"
-                )
+                raise AxisError("[oneperiod] cannot be called with DataPattern axis")
             else:
                 is_smallestperiod = False
                 is_oneperiod = True
                 is_antiperiod = False
-        elif self.extension in ["sum", "rss", "mean", "rms", "integrate", "derivate"]:
-            is_smallestperiod = False
+        elif self.extension in operation_list:
+            # Remove periodicities in case of DataPattern otherwise operations can be applied on periodic signals
+            is_smallestperiod = not self.is_pattern
             is_oneperiod = False
             is_antiperiod = False
         # Ignore symmetries if fft axis
@@ -173,11 +172,19 @@ def get_axis(self, axis, is_real):
                     values = values * axis.symmetries["antiperiod"] / 2
         # Rebuild symmetries in ifft case
         if self.transform == "ifft":
-            if (
-                self.extension != "smallestperiod"
-                and self.extension != "oneperiod"
-                and self.extension != "antiperiod"
-            ):
+            if self.extension not in [
+                "smallestperiod",
+                "oneperiod",
+                "antiperiod",
+                "sum",
+                "mean",
+                "rms",
+                "rss",
+                "integrate",
+                "integrate_local",
+                "derivate",
+                "antiderivate",
+            ]:
                 values = rebuild_symmetries_axis(values, axis.symmetries)
         # Interpolate axis with input data
         if self.input_data is None:
@@ -202,5 +209,5 @@ def get_axis(self, axis, is_real):
                 self.values = values
         if self.indices is not None:
             self.values = values[self.indices]
-            if self.extension in ["sum", "rss", "mean", "rms", "integrate", "derivate"]:
+            if self.extension in operation_list:
                 self.indices = None

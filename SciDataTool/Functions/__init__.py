@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 class FTError(Exception):
     """Raised when there is an error within the Fourier Transform methods (Data Object)"""
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifftn
 
@@ -73,12 +72,20 @@ def get_along(
     values = self.rebuild_symmetries(values, axes_list)
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
+    # Sums
+    values = self.summing(values, axes_list, is_magnitude, unit=self.unit)
     # Conversions
-    values = self.convert(values, unit, is_norm, is_squeeze, is_magnitude, axes_list)
+    values = self.convert(values, unit, is_norm, is_squeeze, axes_list)
     # Return axes and values
     return_dict = {}
     for axis_requested in axes_list:
-        if axis_requested.extension in ["sum", "rss", "mean", "rms", "integrate"]:
+        if axis_requested.extension in [
+            "sum",
+            "rss",
+            "mean",
+            "rms",
+            "integrate",
+        ]:
             return_dict[axis_requested.name] = axis_requested.extension
         else:
             return_dict[axis_requested.name] = axis_requested.values

@@ -56,6 +56,11 @@ except ImportError as error:
     get_xyz_along = error
 
 try:
+    from ..Methods.VectorField.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
     from ..Methods.VectorField.plot_2D_Data import plot_2D_Data
 except ImportError as error:
     plot_2D_Data = error
@@ -76,9 +81,14 @@ except ImportError as error:
     time_to_freq = error
 
 try:
-    from ..Methods.VectorField.plot import plot
+    from ..Methods.VectorField.to_rphiz import to_rphiz
 except ImportError as error:
-    plot = error
+    to_rphiz = error
+
+try:
+    from ..Methods.VectorField.to_xyz import to_xyz
+except ImportError as error:
+    to_xyz = error
 
 
 from ._check import InitUnKnowClassError
@@ -181,6 +191,15 @@ class VectorField(FrozenClass):
         )
     else:
         get_xyz_along = get_xyz_along
+    # cf Methods.VectorField.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VectorField method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # cf Methods.VectorField.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(
@@ -226,15 +245,24 @@ class VectorField(FrozenClass):
         )
     else:
         time_to_freq = time_to_freq
-    # cf Methods.VectorField.plot
-    if isinstance(plot, ImportError):
-        plot = property(
+    # cf Methods.VectorField.to_rphiz
+    if isinstance(to_rphiz, ImportError):
+        to_rphiz = property(
             fget=lambda x: raise_(
-                ImportError("Can't use VectorField method plot: " + str(plot))
+                ImportError("Can't use VectorField method to_rphiz: " + str(to_rphiz))
             )
         )
     else:
-        plot = plot
+        to_rphiz = to_rphiz
+    # cf Methods.VectorField.to_xyz
+    if isinstance(to_xyz, ImportError):
+        to_xyz = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VectorField method to_xyz: " + str(to_xyz))
+            )
+        )
+    else:
+        to_xyz = to_xyz
     # save and copy methods are available in all object
     save = save
     copy = copy

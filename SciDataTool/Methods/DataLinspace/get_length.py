@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from SciDataTool.Functions import AxisError
 
 
@@ -29,7 +28,7 @@ def get_length(self, is_oneperiod=False, is_antiperiod=False, is_smallestperiod=
         if "antiperiod" in self.symmetries:
             return N
         else:
-            raise AxisError("ERROR: axis has no antiperiodicity")
+            raise AxisError("axis has no antiperiodicity")
     elif is_oneperiod:
         if "antiperiod" in self.symmetries:
             return N * 2

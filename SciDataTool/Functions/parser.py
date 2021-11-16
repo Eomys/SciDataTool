@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from numpy import pi, sqrt, inf  # for eval
 from SciDataTool.Functions import AxisError
 from SciDataTool.Classes.RequestedAxis import RequestedAxis
@@ -63,10 +62,19 @@ def read_input_strings(args, axis_data):
             name = elems[0]
             extension = "mean"
         # Detect integrate
+        elif "integrate_local" in axis_str:
+            elems = axis_str.split("=integrate_local")
+            name = elems[0]
+            extension = "integrate_local"
         elif "integrate" in axis_str:
             elems = axis_str.split("=integrate")
             name = elems[0]
             extension = "integrate"
+        # Detect antiderivate
+        elif "antiderivate" in axis_str:
+            elems = axis_str.split("=antiderivate")
+            name = elems[0]
+            extension = "antiderivate"
         # Detect derivate
         elif "derivate" in axis_str:
             elems = axis_str.split("=derivate")
@@ -97,8 +105,8 @@ def read_input_strings(args, axis_data):
             extension = "axis_data"
             try:
                 input_data = axis_data[name]
-            except:
-                raise AxisError("ERROR: No axis_data provided")
+            except Exception:
+                raise AxisError("No axis_data provided")
         # Detect above
         elif ">" in axis_str:
             elems = axis_str.split(">")

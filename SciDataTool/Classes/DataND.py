@@ -86,6 +86,11 @@ except ImportError as error:
     get_field = error
 
 try:
+    from ..Methods.DataND.get_freqs import get_freqs
+except ImportError as error:
+    get_freqs = error
+
+try:
     from ..Methods.DataND.get_harmonics import get_harmonics
 except ImportError as error:
     get_harmonics = error
@@ -109,6 +114,16 @@ try:
     from ..Methods.DataND.interpolate import interpolate
 except ImportError as error:
     interpolate = error
+
+try:
+    from ..Methods.DataND.orthogonal_mp import orthogonal_mp
+except ImportError as error:
+    orthogonal_mp = error
+
+try:
+    from ..Methods.DataND.plot import plot
+except ImportError as error:
+    plot = error
 
 try:
     from ..Methods.DataND.plot_2D_Data import plot_2D_Data
@@ -136,14 +151,9 @@ except ImportError as error:
     set_Ftparameters = error
 
 try:
-    from ..Methods.DataND.orthogonal_mp import orthogonal_mp
+    from ..Methods.DataND.summing import summing
 except ImportError as error:
-    orthogonal_mp = error
-
-try:
-    from ..Methods.DataND.plot import plot
-except ImportError as error:
-    plot = error
+    summing = error
 
 
 from numpy import array, array_equal
@@ -300,6 +310,15 @@ class DataND(Data):
         )
     else:
         get_field = get_field
+    # cf Methods.DataND.get_freqs
+    if isinstance(get_freqs, ImportError):
+        get_freqs = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method get_freqs: " + str(get_freqs))
+            )
+        )
+    else:
+        get_freqs = get_freqs
     # cf Methods.DataND.get_harmonics
     if isinstance(get_harmonics, ImportError):
         get_harmonics = property(
@@ -352,6 +371,26 @@ class DataND(Data):
         )
     else:
         interpolate = interpolate
+    # cf Methods.DataND.orthogonal_mp
+    if isinstance(orthogonal_mp, ImportError):
+        orthogonal_mp = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method orthogonal_mp: " + str(orthogonal_mp)
+                )
+            )
+        )
+    else:
+        orthogonal_mp = orthogonal_mp
+    # cf Methods.DataND.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # cf Methods.DataND.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(
@@ -409,26 +448,15 @@ class DataND(Data):
         )
     else:
         set_Ftparameters = set_Ftparameters
-    # cf Methods.DataND.orthogonal_mp
-    if isinstance(orthogonal_mp, ImportError):
-        orthogonal_mp = property(
+    # cf Methods.DataND.summing
+    if isinstance(summing, ImportError):
+        summing = property(
             fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method orthogonal_mp: " + str(orthogonal_mp)
-                )
+                ImportError("Can't use DataND method summing: " + str(summing))
             )
         )
     else:
-        orthogonal_mp = orthogonal_mp
-    # cf Methods.DataND.plot
-    if isinstance(plot, ImportError):
-        plot = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method plot: " + str(plot))
-            )
-        )
-    else:
-        plot = plot
+        summing = summing
     # save and copy methods are available in all object
     save = save
     copy = copy

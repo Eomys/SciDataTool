@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
-from numpy import (
-    sum as np_sum,
-    mean as np_mean,
-    sqrt,
-    trapz,
-    take,
-    min as np_min,
-    max as np_max,
-)
+from numpy import take
 from SciDataTool.Functions.symmetries import rebuild_symmetries
 
 
@@ -29,47 +20,35 @@ def get_field(self, axes_list):
     for axis_requested in axes_list:
         # Rebuild symmetries when needed
         axis_symmetries = self.axes[axis_requested.index].symmetries
-        if (
+        if axis_requested.is_pattern and (
             axis_requested.transform == "fft"
-            and axis_requested.is_pattern
             or axis_requested.extension
-            in ["sum", "rss", "mean", "rms", "integrate", "derivate"]
+            in [
+                "sum",
+                "rss",
+                "mean",
+                "rms",
+                "integrate",
+                "integrate_local",
+                "derivate",
+                "antiderivate",
+            ]
             and axis_requested.is_pattern
         ):
+            # DataPattern case where all values are requested
             values = take(values, axis_requested.rebuild_indices, axis_requested.index)
         elif axis_requested.transform == "fft" and "antiperiod" in axis_symmetries:
+            # FFT case if axis is anti-periodic
             nper = axis_symmetries["antiperiod"]
             axis_symmetries["antiperiod"] = 2
             values = rebuild_symmetries(values, axis_requested.index, axis_symmetries)
             axis_symmetries["antiperiod"] = nper
-        elif axis_requested.indices is not None:
-            if (
-                axis_requested.extension
-                in ["sum", "rss", "mean", "rms", "integrate", "derivate"]
-                or max(axis_requested.indices) > values.shape[axis_requested.index]
-            ):
-                values = rebuild_symmetries(
-                    values, axis_requested.index, axis_symmetries
-                )
-                self.axes[axis_requested.index].symmetries = dict()
+        elif (
+            axis_requested.indices is not None
+            and max(axis_requested.indices) > values.shape[axis_requested.index]
+        ):
+            # Slicing case where requested indices are among other periods
+            values = rebuild_symmetries(values, axis_requested.index, axis_symmetries)
+            self.axes[axis_requested.index].symmetries = dict()
 
-        # # sum over sum axes
-        # if axis_requested.extension == "sum":
-        #     values = np_sum(values, axis=axis_requested.index, keepdims=True)
-        # # root sum square over rss axes
-        # elif axis_requested.extension == "rss":
-        #     values = sqrt(np_sum(values ** 2, axis=axis_requested.index, keepdims=True))
-        # # mean value over mean axes
-        # elif axis_requested.extension == "mean":
-        #     values = np_mean(values, axis=axis_requested.index, keepdims=True)
-        # # RMS over rms axes
-        # elif axis_requested.extension == "rms":
-        #     values = sqrt(
-        #         np_mean(values ** 2, axis=axis_requested.index, keepdims=True)
-        #     )
-        # # integration over integration axes
-        # elif axis_requested.extension == "integrate":
-        #     values = trapz(
-        #         values, x=axis_requested.values, axis=axis_requested.index
-        #     ) / (np_max(axis_requested.values) - np_min(axis_requested.values))
     return values
