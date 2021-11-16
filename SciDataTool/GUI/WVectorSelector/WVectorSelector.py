@@ -10,7 +10,7 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
     refreshComponent = Signal()
 
     def __init__(self, parent=None):
-        """Initialize the GUI according to machine type
+        """Initialize the UI and linking buttons to their methods
 
         Parameters
         ----------
@@ -68,4 +68,4 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
             a WVectorSelector object
 
         """
-        return self.c_component.currentText()
+        return self.c_component.currentText(), self.c_referential.currentText()

@@ -23,7 +23,7 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
     refreshNeeded = Signal()
 
     def __init__(self, parent=None):
-        """Initialize the GUI according to machine type
+        """Initialize the GUI according to info given by the WAxisManager widget
 
         Parameters
         ----------

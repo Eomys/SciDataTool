@@ -13,7 +13,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
     actionChanged = Signal()
 
     def __init__(self, parent=None):
-        """Initialize the GUI according to machine type
+        """Initialize the arguments, linking the buttons and setting up the UI
 
         Parameters
         ----------

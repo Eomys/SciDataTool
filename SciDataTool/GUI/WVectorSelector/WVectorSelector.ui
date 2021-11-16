@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>WVectorSelector</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -74,12 +74,7 @@
       </item>
       <item>
        <property name="text">
-        <string>radtanz</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string/>
+        <string>radphiz</string>
        </property>
       </item>
      </widget>

@@ -13,7 +13,7 @@ class WDataRange(Ui_WDataRange, QWidget):
     refreshNeeded = Signal()
 
     def __init__(self, parent=None):
-        """Initialize the GUI according to machine type
+        """Linking the button with their method + initializing the arguments used
 
         Parameters
         ----------

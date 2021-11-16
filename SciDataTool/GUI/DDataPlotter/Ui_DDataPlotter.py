@@ -48,9 +48,7 @@ class Ui_DDataPlotter(object):
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.w_vect_selector.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy.setHeightForWidth(self.w_vect_selector.sizePolicy().hasHeightForWidth())
         self.w_vect_selector.setSizePolicy(sizePolicy)
         self.w_vect_selector.setMinimumSize(QSize(0, 70))
         self.w_vect_selector.setMaximumSize(QSize(296, 70))
@@ -62,9 +60,7 @@ class Ui_DDataPlotter(object):
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(
-            self.w_axis_manager.sizePolicy().hasHeightForWidth()
-        )
+        sizePolicy1.setHeightForWidth(self.w_axis_manager.sizePolicy().hasHeightForWidth())
         self.w_axis_manager.setSizePolicy(sizePolicy1)
         self.w_axis_manager.setMinimumSize(QSize(296, 420))
         self.w_axis_manager.setMaximumSize(QSize(296, 16777215))
@@ -87,9 +83,7 @@ class Ui_DDataPlotter(object):
         self.refresh_layout = QHBoxLayout()
         self.refresh_layout.setObjectName(u"refresh_layout")
         self.refresh_layout.setSizeConstraint(QLayout.SetMinimumSize)
-        self.horizontalSpacer = QSpacerItem(
-            182, 20, QSizePolicy.Minimum, QSizePolicy.Minimum
-        )
+        self.horizontalSpacer = QSpacerItem(182, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         self.refresh_layout.addItem(self.horizontalSpacer)
 
@@ -106,13 +100,12 @@ class Ui_DDataPlotter(object):
 
         self.refresh_layout.addWidget(self.b_refresh)
 
+
         self.verticalLayout.addLayout(self.refresh_layout)
 
         self.animate_layout = QHBoxLayout()
         self.animate_layout.setObjectName(u"animate_layout")
-        self.horizontalSpacer_2 = QSpacerItem(
-            182, 20, QSizePolicy.Minimum, QSizePolicy.Minimum
-        )
+        self.horizontalSpacer_2 = QSpacerItem(182, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         self.animate_layout.addItem(self.horizontalSpacer_2)
 
@@ -123,6 +116,7 @@ class Ui_DDataPlotter(object):
 
         self.animate_layout.addWidget(self.b_animate)
 
+
         self.verticalLayout.addLayout(self.animate_layout)
 
         self.w_export = WExport(self.scrollAreaWidgetContents)
@@ -131,9 +125,7 @@ class Ui_DDataPlotter(object):
 
         self.verticalLayout.addWidget(self.w_export)
 
-        self.verticalSpacer = QSpacerItem(
-            20, 200, QSizePolicy.Minimum, QSizePolicy.Ignored
-        )
+        self.verticalSpacer = QSpacerItem(20, 200, QSizePolicy.Minimum, QSizePolicy.Ignored)
 
         self.verticalLayout.addItem(self.verticalSpacer)
 
@@ -146,27 +138,17 @@ class Ui_DDataPlotter(object):
 
         self.horizontalLayout.addWidget(self.scrollArea)
 
+
         self.retranslateUi(DDataPlotter)
 
         QMetaObject.connectSlotsByName(DDataPlotter)
-
     # setupUi
 
     def retranslateUi(self, DDataPlotter):
-        DDataPlotter.setWindowTitle(
-            QCoreApplication.translate("DDataPlotter", u"Data Plot", None)
-        )
-        self.c_auto_refresh.setText(
-            QCoreApplication.translate("DDataPlotter", u"Auto Refresh", None)
-        )
-        self.g_range.setTitle(
-            QCoreApplication.translate("DDataPlotter", u"Range", None)
-        )
-        self.b_refresh.setText(
-            QCoreApplication.translate("DDataPlotter", u"Refresh", None)
-        )
-        self.b_animate.setText(
-            QCoreApplication.translate("DDataPlotter", u"Animate", None)
-        )
-
+        DDataPlotter.setWindowTitle(QCoreApplication.translate("DDataPlotter", u"Data Plot", None))
+        self.c_auto_refresh.setText(QCoreApplication.translate("DDataPlotter", u"Auto Refresh", None))
+        self.g_range.setTitle(QCoreApplication.translate("DDataPlotter", u"Range", None))
+        self.b_refresh.setText(QCoreApplication.translate("DDataPlotter", u"Refresh", None))
+        self.b_animate.setText(QCoreApplication.translate("DDataPlotter", u"Animate", None))
     # retranslateUi
+

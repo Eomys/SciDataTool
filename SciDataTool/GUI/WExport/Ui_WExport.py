@@ -17,9 +17,7 @@ class Ui_WExport(object):
         WExport.resize(265, 50)
         self.horizontalLayout = QHBoxLayout(WExport)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalSpacer = QSpacerItem(
-            140, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
-        )
+        self.horizontalSpacer = QSpacerItem(140, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
@@ -28,14 +26,14 @@ class Ui_WExport(object):
 
         self.horizontalLayout.addWidget(self.b_export)
 
+
         self.retranslateUi(WExport)
 
         QMetaObject.connectSlotsByName(WExport)
-
     # setupUi
 
     def retranslateUi(self, WExport):
         self.b_export.setText(QCoreApplication.translate("WExport", u"Export", None))
         pass
-
     # retranslateUi
+

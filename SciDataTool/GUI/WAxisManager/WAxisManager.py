@@ -31,7 +31,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
     refreshRange = Signal()
 
     def __init__(self, parent=None):
-        """Initialize the GUI according to machine type
+        """Initializing the widget by hiding/showing widget and connecting buttons
 
         Parameters
         ----------

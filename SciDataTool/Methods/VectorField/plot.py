@@ -6,12 +6,12 @@ from SciDataTool.Functions import parser
 
 
 def plot(self, *args, is_create_appli=True, is_test=False, **kwargs):
-    """Plot the Data object in the GUI
+    """Plot the VectorField object in the SciDataTool GUI
 
     Parameters:
     -----------
-    self : DataND
-        A DataND object
+    self : VectorField
+        A VectorField object
     is_create_appli : bool
         True to create an QApplication
         (required if not already created)

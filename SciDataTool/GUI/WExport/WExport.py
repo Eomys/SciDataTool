@@ -7,7 +7,7 @@ class WExport(Ui_WExport, QWidget):
     """Widget to select how to export the data"""
 
     def __init__(self, parent=None):
-        """Initialize the GUI according to machine type
+        """Initialize the UI
 
         Parameters
         ----------

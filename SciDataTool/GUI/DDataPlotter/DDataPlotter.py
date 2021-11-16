@@ -40,7 +40,7 @@ def latex(string):
 
 
 class DDataPlotter(Ui_DDataPlotter, QWidget):
-    """Main windows of to plot a Data object"""
+    """Main windows of the SciDataTool UI"""
 
     def __init__(
         self,
@@ -121,8 +121,14 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a DDataPlotter object
 
         """
-        component_name = self.w_vect_selector.get_component_selected()
-        self.data = self.data_obj.components[component_name]
+        [component_name, referential] = self.w_vect_selector.get_component_selected()
+        if referential == "xyz":
+            self.data = self.data_obj.components[component_name]
+        elif referential == "radphiz":
+            self.data = self.data_obj.components[component_name]
+        else:
+            self.data = self.data_obj.components[component_name]
+
         self.w_axis_manager.set_axis_widgets(self.data, list())
 
     def auto_update(self):
