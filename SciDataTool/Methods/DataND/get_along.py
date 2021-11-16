@@ -79,7 +79,13 @@ def get_along(
     # Return axes and values
     return_dict = {}
     for axis_requested in axes_list:
-        if axis_requested.extension in ["sum", "rss", "mean", "rms", "integrate"]:
+        if axis_requested.extension in [
+            "sum",
+            "rss",
+            "mean",
+            "rms",
+            "integrate",
+        ]:
             return_dict[axis_requested.name] = axis_requested.extension
         else:
             return_dict[axis_requested.name] = axis_requested.values

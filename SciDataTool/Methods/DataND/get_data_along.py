@@ -22,9 +22,14 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
     a DataND object
     """
 
-    results = self.get_along(
-        *args, is_squeeze=False, unit=unit, is_norm=is_norm, axis_data=axis_data
-    )
+    if "dB" in unit:
+        results = self.get_magnitude_along(
+            *args, is_squeeze=False, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
+    else:
+        results = self.get_along(
+            *args, is_squeeze=False, unit=unit, is_norm=is_norm, axis_data=axis_data
+        )
     values = results.pop(self.symbol)
     del results["axes_dict_other"]
     axes_list = results.pop("axes_list")
@@ -91,7 +96,7 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
         # Update unit if derivation or integration
         unit = self.unit
         for axis in axes_list:
-            if axis.extension in ["antiderivate", "integrate"]:
+            if axis.extension in ["antiderivate", "integrate", "integrate_local"]:
                 unit = get_unit_integrate(unit, axis.corr_unit)
             elif axis.extension == "derivate":
                 unit = get_unit_derivate(unit, axis.corr_unit)

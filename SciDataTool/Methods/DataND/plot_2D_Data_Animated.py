@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import imageio
-from SciDataTool.Methods.DataND.plot_2D_Data import plot_2D_Data
 
 
 def plot_2D_Data_Animated(

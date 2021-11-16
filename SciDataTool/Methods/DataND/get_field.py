@@ -23,7 +23,16 @@ def get_field(self, axes_list):
         if axis_requested.is_pattern and (
             axis_requested.transform == "fft"
             or axis_requested.extension
-            in ["sum", "rss", "mean", "rms", "integrate", "derivate", "antiderivate"]
+            in [
+                "sum",
+                "rss",
+                "mean",
+                "rms",
+                "integrate",
+                "integrate_local",
+                "derivate",
+                "antiderivate",
+            ]
             and axis_requested.is_pattern
         ):
             # DataPattern case where all values are requested
