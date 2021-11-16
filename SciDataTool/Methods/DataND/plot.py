@@ -28,11 +28,10 @@ def plot(self, *args, is_create_appli=True, is_test=False, **kwargs):
 
     wid = DDataPlotter(self, user_input_list, user_input_dict)
 
-    if not is_test:
+    if is_test:
+        return wid
+    else:
         wid.show()
 
         if is_create_appli:
             exit(a.exec_())
-
-    else:
-        return wid

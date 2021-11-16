@@ -47,25 +47,36 @@ class Ui_WVectorSelector(object):
         self.c_referential.addItem("")
         self.c_referential.addItem("")
         self.c_referential.setObjectName(u"c_referential")
-        sizePolicy.setHeightForWidth(self.c_referential.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.c_referential.sizePolicy().hasHeightForWidth()
+        )
         self.c_referential.setSizePolicy(sizePolicy)
         self.c_referential.setMinimumSize(QSize(100, 0))
 
         self.gridLayout.addWidget(self.c_referential, 1, 1, 1, 1)
 
-
         self.retranslateUi(WVectorSelector)
 
         QMetaObject.connectSlotsByName(WVectorSelector)
+
     # setupUi
 
     def retranslateUi(self, WVectorSelector):
-        WVectorSelector.setWindowTitle(QCoreApplication.translate("WVectorSelector", u"WVectorSelector", None))
-        self.in_component.setText(QCoreApplication.translate("WVectorSelector", u"Component", None))
-        self.in_referential.setText(QCoreApplication.translate("WVectorSelector", u"Referential", None))
-        self.c_referential.setItemText(0, QCoreApplication.translate("WVectorSelector", u"xyz", None))
-        self.c_referential.setItemText(1, QCoreApplication.translate("WVectorSelector", u"radtanz", None))
+        WVectorSelector.setWindowTitle(
+            QCoreApplication.translate("WVectorSelector", u"WVectorSelector", None)
+        )
+        self.in_component.setText(
+            QCoreApplication.translate("WVectorSelector", u"Component", None)
+        )
+        self.in_referential.setText(
+            QCoreApplication.translate("WVectorSelector", u"Referential", None)
+        )
+        self.c_referential.setItemText(
+            0, QCoreApplication.translate("WVectorSelector", u"xyz", None)
+        )
+        self.c_referential.setItemText(
+            1, QCoreApplication.translate("WVectorSelector", u"radtanz", None)
+        )
         self.c_referential.setItemText(2, "")
 
     # retranslateUi
-

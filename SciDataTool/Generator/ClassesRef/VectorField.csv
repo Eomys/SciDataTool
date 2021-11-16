@@ -11,3 +11,4 @@ components,,Dict of the components,,{SciDataTool.Classes.DataND},-1,,,,,,get_har
 ,,,,,,,,,,,plot_2D_Data_Animated,,,,
 ,,,,,,,,,,,plot_3D_Data,,,,
 ,,,,,,,,,,,time_to_freq,,,,
+,,,,,,,,,,,plot,,,,

@@ -75,6 +75,11 @@ try:
 except ImportError as error:
     time_to_freq = error
 
+try:
+    from ..Methods.VectorField.plot import plot
+except ImportError as error:
+    plot = error
+
 
 from ._check import InitUnKnowClassError
 
@@ -221,6 +226,15 @@ class VectorField(FrozenClass):
         )
     else:
         time_to_freq = time_to_freq
+    # cf Methods.VectorField.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VectorField method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # save and copy methods are available in all object
     save = save
     copy = copy

@@ -23,7 +23,9 @@ class Ui_WAxisManager(object):
         sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.g_data_extract.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.g_data_extract.sizePolicy().hasHeightForWidth()
+        )
         self.g_data_extract.setSizePolicy(sizePolicy)
         self.g_data_extract.setMinimumSize(QSize(0, 210))
         self.g_data_extract.setMaximumSize(QSize(296, 16777215))
@@ -35,7 +37,9 @@ class Ui_WAxisManager(object):
         self.lay_data_extract.setObjectName(u"lay_data_extract")
         self.lay_data_extract.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.lay_data_extract.setContentsMargins(0, 0, 0, 0)
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(
+            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
+        )
 
         self.lay_data_extract.addItem(self.verticalSpacer)
 
@@ -57,7 +61,9 @@ class Ui_WAxisManager(object):
         self.lay_axes.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalSpacer_2 = QSpacerItem(20, 35, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(
+            20, 35, QSizePolicy.Minimum, QSizePolicy.Expanding
+        )
 
         self.verticalLayout.addItem(self.verticalSpacer_2)
 
@@ -84,10 +90,11 @@ class Ui_WAxisManager(object):
 
         self.verticalLayout.addWidget(self.label_3)
 
-        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_3 = QSpacerItem(
+            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding
+        )
 
         self.verticalLayout.addItem(self.verticalSpacer_3)
-
 
         self.lay_axes.addLayout(self.verticalLayout)
 
@@ -110,18 +117,24 @@ class Ui_WAxisManager(object):
 
         self.lay_axes.addWidget(self.w_axis_2)
 
-
         self.retranslateUi(WAxisManager)
 
         QMetaObject.connectSlotsByName(WAxisManager)
+
     # setupUi
 
     def retranslateUi(self, WAxisManager):
-        WAxisManager.setWindowTitle(QCoreApplication.translate("WAxisManager", u"WAxisManager", None))
-        self.g_data_extract.setTitle(QCoreApplication.translate("WAxisManager", u"Slices/Operations", None))
+        WAxisManager.setWindowTitle(
+            QCoreApplication.translate("WAxisManager", u"WAxisManager", None)
+        )
+        self.g_data_extract.setTitle(
+            QCoreApplication.translate("WAxisManager", u"Slices/Operations", None)
+        )
         self.g_axes.setTitle(QCoreApplication.translate("WAxisManager", u"Axes", None))
         self.label_4.setText(QCoreApplication.translate("WAxisManager", u"Axis", None))
-        self.label_2.setText(QCoreApplication.translate("WAxisManager", u"Action", None))
+        self.label_2.setText(
+            QCoreApplication.translate("WAxisManager", u"Action", None)
+        )
         self.label_3.setText(QCoreApplication.translate("WAxisManager", u"Unit", None))
-    # retranslateUi
 
+    # retranslateUi

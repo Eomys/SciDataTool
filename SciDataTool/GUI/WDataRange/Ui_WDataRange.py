@@ -61,10 +61,10 @@ class Ui_WDataRange(object):
 
         self.gridLayout.addWidget(self.lf_max, 2, 1, 1, 1)
 
-
         self.retranslateUi(WDataRange)
 
         QMetaObject.connectSlotsByName(WDataRange)
+
     # setupUi
 
     def retranslateUi(self, WDataRange):
@@ -74,5 +74,5 @@ class Ui_WDataRange(object):
         self.lf_min.setText(QCoreApplication.translate("WDataRange", u"0.314", None))
         self.in_max.setText(QCoreApplication.translate("WDataRange", u"max", None))
         self.lf_max.setText(QCoreApplication.translate("WDataRange", u"0.314", None))
-    # retranslateUi
 
+    # retranslateUi

@@ -206,6 +206,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         self.c_axis.blockSignals(True)
         # Step 1 : Getting the name of the different axes of the DataND object
+        self.axes_list = list()
         self.axes_list += [axis.name for axis in data.get_axes()]
 
         # At least one axis must be selected => impossible to have none for X axis

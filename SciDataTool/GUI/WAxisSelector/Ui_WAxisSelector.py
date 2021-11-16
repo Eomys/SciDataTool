@@ -63,25 +63,43 @@ class Ui_WAxisSelector(object):
 
         self.verticalLayout.addWidget(self.b_filter)
 
-
         self.retranslateUi(WAxisSelector)
 
         QMetaObject.connectSlotsByName(WAxisSelector)
+
     # setupUi
 
     def retranslateUi(self, WAxisSelector):
         WAxisSelector.setWindowTitle("")
         self.in_name.setText(QCoreApplication.translate("WAxisSelector", u"X", None))
-        self.c_axis.setItemText(0, QCoreApplication.translate("WAxisSelector", u"time", None))
-        self.c_axis.setItemText(1, QCoreApplication.translate("WAxisSelector", u"angle", None))
-        self.c_axis.setItemText(2, QCoreApplication.translate("WAxisSelector", u"axial direction", None))
-        self.c_axis.setItemText(3, QCoreApplication.translate("WAxisSelector", u"frequency", None))
-        self.c_axis.setItemText(4, QCoreApplication.translate("WAxisSelector", u"wavenumber", None))
+        self.c_axis.setItemText(
+            0, QCoreApplication.translate("WAxisSelector", u"time", None)
+        )
+        self.c_axis.setItemText(
+            1, QCoreApplication.translate("WAxisSelector", u"angle", None)
+        )
+        self.c_axis.setItemText(
+            2, QCoreApplication.translate("WAxisSelector", u"axial direction", None)
+        )
+        self.c_axis.setItemText(
+            3, QCoreApplication.translate("WAxisSelector", u"frequency", None)
+        )
+        self.c_axis.setItemText(
+            4, QCoreApplication.translate("WAxisSelector", u"wavenumber", None)
+        )
 
-        self.c_action.setItemText(0, QCoreApplication.translate("WAxisSelector", u"None", None))
-        self.c_action.setItemText(1, QCoreApplication.translate("WAxisSelector", u"FFT", None))
-        self.c_action.setItemText(2, QCoreApplication.translate("WAxisSelector", u"Filter", None))
+        self.c_action.setItemText(
+            0, QCoreApplication.translate("WAxisSelector", u"None", None)
+        )
+        self.c_action.setItemText(
+            1, QCoreApplication.translate("WAxisSelector", u"FFT", None)
+        )
+        self.c_action.setItemText(
+            2, QCoreApplication.translate("WAxisSelector", u"Filter", None)
+        )
 
-        self.b_filter.setText(QCoreApplication.translate("WAxisSelector", u"Filter", None))
+        self.b_filter.setText(
+            QCoreApplication.translate("WAxisSelector", u"Filter", None)
+        )
+
     # retranslateUi
-

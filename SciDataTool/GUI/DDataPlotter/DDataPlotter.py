@@ -1,8 +1,6 @@
 from PySide2.QtWidgets import QWidget
 from matplotlib.figure import Figure
 
-from SciDataTool.Classes.VectorField import VectorField
-
 from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
 from matplotlib.backends.backend_qt5agg import (
     FigureCanvas,
@@ -44,7 +42,14 @@ def latex(string):
 class DDataPlotter(Ui_DDataPlotter, QWidget):
     """Main windows of to plot a Data object"""
 
-    def __init__(self, data, user_input_list, user_input_dict, is_auto_refresh=False):
+    def __init__(
+        self,
+        data,
+        user_input_list,
+        user_input_dict,
+        is_auto_refresh=False,
+        is_VectorField=False,
+    ):
         """Initialize the GUI according to machine type
 
         Parameters
@@ -67,6 +72,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Recovering the object that we want to show
         self.data = data
+        self.data_obj = data
         self.is_auto_refresh = is_auto_refresh
 
         # Adding an argument for testing autorefresh
@@ -76,18 +82,48 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         (self.fig, self.ax, _, _) = init_fig()
         self.set_figure(self.fig)
 
-        # Building the interaction with the UI and the UI itself
-        self.w_axis_manager.set_axis_widgets(self.data, user_input_list)
-        self.update_range(user_input_dict)
-        self.update_plot()
+        # Hide or show the ComboBox related to the component of a VectorField
+        if is_VectorField:
+            self.w_vect_selector.show()
+        else:
+            self.w_vect_selector.hide()
 
+        # If only one axis is given with the object, then we hide w_axis_2
+        if len(self.data.get_axes()) == 1:
+            self.w_axis_manager.w_axis_2.hide()
+            self.w_axis_manager.g_data_extract.hide()
+        else:
+            self.w_axis_manager.w_axis_2.show()
+            self.w_axis_manager.g_data_extract.show()
+
+        # Building the interaction with the UI and the UI itself
         self.b_refresh.clicked.connect(self.update_plot)
         self.w_axis_manager.refreshRange.connect(self.update_range)
+        self.w_vect_selector.refreshComponent.connect(self.update_component)
+
+        if is_VectorField:
+            self.w_vect_selector.update(self.data)
+        else:
+            self.w_axis_manager.set_axis_widgets(self.data, user_input_list)
+        self.update_range(user_input_dict)
+        self.update_plot()
 
         # Linking the signals for the autoRefresh
         self.c_auto_refresh.toggled.connect(self.set_auto_refresh)
         self.w_axis_manager.refreshNeeded.connect(self.auto_update)
         self.w_range.refreshNeeded.connect(self.auto_update)
+
+    def update_component(self):
+        """Method that update data according to the component selected in w_vect_selector.
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+
+        """
+        component_name = self.w_vect_selector.get_component_selected()
+        self.data = self.data_obj.components[component_name]
+        self.w_axis_manager.set_axis_widgets(self.data, list())
 
     def auto_update(self):
         """Method that checks if the autorefresh is enabled.If true; then it updates the plot.
@@ -132,20 +168,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.toolbar = NavigationToolbar(self.canvas, self)
         self.plot_layout.addWidget(self.toolbar)
         self.plot_layout.addWidget(self.canvas)
-
-        # Hide or show the ComboBox related to the component of a VectorField
-        if not isinstance(self.data, VectorField):
-            self.w_vect_selector.hide()
-        else:
-            self.w_vect_selector.show()
-
-        # If only one axis is given with the object, then we hide w_axis_2
-        if len(self.data.get_axes()) == 1:
-            self.w_axis_manager.w_axis_2.hide()
-            self.w_axis_manager.g_data_extract.hide()
-        else:
-            self.w_axis_manager.w_axis_2.show()
-            self.w_axis_manager.g_data_extract.show()
 
         self.text = None
         self.circle = None
@@ -358,10 +380,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Recovering the axis selected and their units
         axes_selected = self.w_axis_manager.get_axes_selected()
-
+        # print(axes_selected)
         # Recovering the operation on the other axes
         data_selection = self.w_axis_manager.get_operation_selected()
-
+        # print(data_selection)
         # Recovering the operation on the field values
         output_range = self.w_range.get_field_selected()
 
