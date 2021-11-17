@@ -280,7 +280,7 @@ def plot_3D_Data(
     title4 = " for "
     for axis in axes_list[2:]:
         if axis.unit == "SI":
-            axis_unit = unit_dict[axis.name]
+            axis_unit = unit_dict[axis.name][0]
         elif axis.unit in norm_dict:
             axis_unit = norm_dict[axis.unit]
         else:

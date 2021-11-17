@@ -16,9 +16,12 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>140</width>
+       <width>190</width>
        <height>20</height>
       </size>
      </property>
@@ -26,6 +29,24 @@
    </item>
    <item>
     <widget class="QPushButton" name="b_export">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>72</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>72</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="text">
       <string>Export</string>
      </property>

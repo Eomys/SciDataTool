@@ -85,6 +85,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Hide or show the ComboBox related to the component of a VectorField
         if is_VectorField:
             self.w_vect_selector.show()
+            self.w_vect_selector.refreshComponent.connect(self.update_component)
+            self.update_component()
         else:
             self.w_vect_selector.hide()
 
@@ -99,12 +101,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Building the interaction with the UI and the UI itself
         self.b_refresh.clicked.connect(self.update_plot)
         self.w_axis_manager.refreshRange.connect(self.update_range)
-        self.w_vect_selector.refreshComponent.connect(self.update_component)
 
-        if is_VectorField:
-            self.w_vect_selector.update(self.data)
-        else:
-            self.w_axis_manager.set_axis_widgets(self.data, user_input_list)
+        self.w_axis_manager.set_axis_widgets(self.data, user_input_list)
         self.update_range(user_input_dict)
         self.update_plot()
 
@@ -121,13 +119,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a DDataPlotter object
 
         """
-        [component_name, referential] = self.w_vect_selector.get_component_selected()
-        if referential == "xyz":
-            self.data = self.data_obj.components[component_name]
-        elif referential == "radphiz":
-            self.data = self.data_obj.components[component_name]
-        else:
-            self.data = self.data_obj.components[component_name]
+        component_name = self.w_vect_selector.get_component_selected()
+
+        if component_name in ["radial", "tangential", "axial"]:
+            self.data = self.data_obj.to_rphiz().components[component_name]
+        elif component_name in ["comp_x", "comp_y", "comp_z"]:
+            self.data = self.data_obj.to_xyz().components[component_name]
 
         self.w_axis_manager.set_axis_widgets(self.data, list())
 
@@ -393,39 +390,28 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Recovering the operation on the field values
         output_range = self.w_range.get_field_selected()
 
-        if not None in data_selection and not len(data_selection) == 0:
-            if len(axes_selected) == 1:
-                self.data.plot_2D_Data(
-                    axes_selected[0],
-                    data_selection[0],
-                    data_selection[1],
-                    unit=output_range["unit"],
-                    fig=self.fig,
-                    ax=self.ax,
-                    y_min=output_range["min"],
-                    y_max=output_range["max"],
-                )
+        input = [*axes_selected, *data_selection]
 
-            if len(axes_selected) == 2:
-                self.data.plot_3D_Data(
-                    axes_selected[0],
-                    axes_selected[1],
-                    data_selection[0],
-                    unit=output_range["unit"],
-                    fig=self.fig,
-                    ax=self.ax,
-                    is_2D_view=True,
-                    z_min=output_range["min"],
-                    z_max=output_range["max"],
-                )
-        elif len(data_selection) == 0:
+        # if not None in data_selection and not len(data_selection) == 0:
+        if len(axes_selected) == 1:
             self.data.plot_2D_Data(
-                axes_selected[0],
+                *input,
                 unit=output_range["unit"],
                 fig=self.fig,
                 ax=self.ax,
                 y_min=output_range["min"],
                 y_max=output_range["max"],
+            )
+
+        elif len(axes_selected) == 2:
+            self.data.plot_3D_Data(
+                *input,
+                unit=output_range["unit"],
+                fig=self.fig,
+                ax=self.ax,
+                is_2D_view=True,
+                z_min=output_range["min"],
+                z_max=output_range["max"],
             )
 
         else:
@@ -447,9 +433,9 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Updating the name of the groupBox according to the number of axes selected
         if len(axes_selected) == 1:
-            self.g_range.setTitle("Y")
+            self.w_range.g_range.setTitle("Y")
         elif len(axes_selected) == 2:
-            self.g_range.setTitle("Z")
+            self.w_range.g_range.setTitle("Z")
 
         # Setting the WDataRange by sending the necessary info to the widget
         self.w_range.set_range(self.data, axes_selected, data_selection)
