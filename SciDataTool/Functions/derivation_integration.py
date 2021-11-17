@@ -82,6 +82,7 @@ def antiderivate(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
 
     return values
 
+
 def integrate_local(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
     """Returns the local integral of values along given axis (does not change the axis)
 
@@ -122,8 +123,8 @@ def integrate_local(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
 
         # Distribute the integral of each segment on correspond points
         for ival, val in enumerate(values_diff):
-            values_integ[ival] += val/2
-            values_integ[ival+1] += val/2
+            values_integ[ival] += val / 2
+            values_integ[ival + 1] += val / 2
 
         values_integ = np.swapaxes(values_integ, index, 0)
 
@@ -200,7 +201,7 @@ def integrate(values, ax_val, index, Nper, is_aper, is_phys, is_mean=False):
 
             if is_mean:
                 # Taking mean value by dividing by integration interval
-                interval = Nper * (np.max(ax_full) - np.min(ax_full))
+                interval = Nper * (np.nanmax(ax_full) - np.nanmin(ax_full))
                 values /= interval
 
     else:

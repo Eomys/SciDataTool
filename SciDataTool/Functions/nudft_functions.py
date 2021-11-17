@@ -4,9 +4,9 @@ from typing import Dict, List
 import numpy as np
 from numpy import all as np_all
 from numpy import allclose, exp, linspace
-from numpy import max as np_max
+from numpy import nanmax as np_max
 from numpy import mean
-from numpy import min as np_min
+from numpy import nanmin as np_min
 from numpy import moveaxis, ndarray, outer, pi, tensordot, where
 
 
