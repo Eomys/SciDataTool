@@ -34,7 +34,7 @@ SYMBOL_DICT = {
 
 def latex(string):
     """format a string for latex"""
-    if "_" in string or "^" in string:
+    if "_" in string or "^" in string or "\\" in string:
         string = r"$" + string + "$"
     return string
 
