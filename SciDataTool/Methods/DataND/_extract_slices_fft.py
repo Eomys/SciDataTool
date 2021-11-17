@@ -1,7 +1,7 @@
 from numpy import take
 
 
-def extract_slices(self, values, axes_list):
+def _extract_slices_fft(self, values, axes_list):
     """Returns the values of the field (with symmetries and transformations).
     Parameters
     ----------
@@ -17,8 +17,6 @@ def extract_slices(self, values, axes_list):
         values of the field
     """
 
-    axes_dict_other = {}
-
     # Extract the slices of the field
     for index, axis in enumerate(self.axes):
         is_match = False
@@ -27,10 +25,9 @@ def extract_slices(self, values, axes_list):
                 is_match = True
                 if (
                     axis_requested.indices is not None
-                    and axis_requested.transform != "fft"
+                    and axis_requested.transform == "fft"
                 ):
                     values = take(values, axis_requested.indices, axis=index)
         if not is_match:  # Axis was not specified -> take slice at the first value
-            axes_dict_other[axis.name] = [axis.get_values()[0], axis.unit]
             values = take(values, [0], axis=index)
-    return values, axes_dict_other
+    return values

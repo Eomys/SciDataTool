@@ -6,6 +6,7 @@ WARNING! All changes made in this file will be lost!
 
 from ..Classes.Data import Data
 from ..Classes.Data1D import Data1D
+from ..Classes.DataDual import DataDual
 from ..Classes.DataFreq import DataFreq
 from ..Classes.DataLinspace import DataLinspace
 from ..Classes.DataND import DataND

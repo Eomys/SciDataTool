@@ -4,7 +4,7 @@ from SciDataTool.Functions import NormError, UnitError
 from SciDataTool.Functions.conversions import convert as convert_unit, to_dB, to_dBA
 
 
-def convert(self, values, unit, is_norm, is_squeeze, axes_list):
+def _convert(self, values, unit, is_norm, is_squeeze, axes_list):
     """Returns the values of the field transformed or converted.
     Parameters
     ----------
@@ -68,7 +68,7 @@ def convert(self, values, unit, is_norm, is_squeeze, axes_list):
         if not is_match:
             axis_names = [axis.name for axis in self.axes]
             if "speed" in axis_names and "order" in axis_names:
-                freqs = self.get_freqs()
+                freqs = self._get_freqs()
                 freqs = freqs.ravel("C")
                 shape = values.shape
                 values = values.reshape(freqs.shape + shape[2:])

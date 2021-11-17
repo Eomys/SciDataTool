@@ -14,7 +14,7 @@ from SciDataTool.Functions.sum_mean import (
 )
 
 
-def summing(self, values, axes_list, is_magnitude, unit):
+def _summing(self, values, axes_list, is_magnitude, unit):
     """Returns the values of the field transformed or converted.
     Parameters
     ----------
@@ -70,7 +70,9 @@ def summing(self, values, axes_list, is_magnitude, unit):
             values = integrate(values, ax_val, index, Nper, is_aper, is_phys)
         # local integration over integration axes
         elif extension == "integrate_local":
-            values = integrate_local(values, ax_val, index, Nper, is_aper, is_phys, is_freqs)
+            values = integrate_local(
+                values, ax_val, index, Nper, is_aper, is_phys, is_freqs
+            )
         # antiderivation over antiderivation axes
         elif extension == "antiderivate":
             values = antiderivate(
