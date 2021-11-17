@@ -189,14 +189,14 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
                             values, j + 1, axis=index
                         )
                         break
-                    else:
-                        # Extrapolate for outer bounds
-                        if new_axis_values[i] <= axis_values[0]:
-                            new_values[(slice(None),) * index + (i,)] = take(
-                                values, 0, axis=index
-                            )
-                        elif new_axis_values[i] >= axis_values[-1]:
-                            new_values[(slice(None),) * index + (i,)] = take(
-                                values, -1, axis=index
-                            )
+                    # else:
+                    #     # Extrapolate for outer bounds
+                    #     if new_axis_values[i] <= axis_values[0]:
+                    #         new_values[(slice(None),) * index + (i,)] = take(
+                    #             values, 0, axis=index
+                    #         )
+                    #     elif new_axis_values[i] >= axis_values[-1]:
+                    #         new_values[(slice(None),) * index + (i,)] = take(
+                    #             values, -1, axis=index
+                    #         )
             return array(new_values)
