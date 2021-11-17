@@ -1,39 +1,14 @@
 import pytest
 from PySide2.QtWidgets import *
 
-from numpy import linspace, pi
-from numpy.random import random
-from SciDataTool import DataLinspace, DataTime
-from SciDataTool.Functions.Plot import ifft_dict, fft_dict, unit_dict
-from SciDataTool.Functions import parser
+from Tests.GUI import Field
+from SciDataTool.Functions.Plot import fft_dict, unit_dict
 
 
 class TestGUI(object):
     @classmethod
     def setup_class(self):
-        f = 50
-        Nt_tot = 16
-        Na_tot = 20
-
-        Time = DataLinspace(
-            name="time", unit="s", initial=0, final=1 / (2 * f), number=Nt_tot
-        )
-        Angle = DataLinspace(
-            name="angle", unit="rad", initial=0, final=2 * pi, number=Na_tot
-        )
-        Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3)
-
-        field = random((Nt_tot, Na_tot, 3))
-
-        self.Field = DataTime(
-            name="Airgap flux density",
-            symbol="B_r",
-            unit="T",
-            axes=[Time, Angle, Z],
-            values=field,
-        )
-
-        self.UI = self.Field.plot(is_test=True)
+        self.UI = Field.plot(is_test=True)
 
     @pytest.mark.gui
     def check_axis_removal(self):
@@ -56,10 +31,10 @@ class TestGUI(object):
         self.UI.w_axis_manager.w_axis_1.c_axis.setCurrentIndex(0)
         self.UI.w_axis_manager.w_axis_2.c_axis.setCurrentIndex(0)
 
-        for index in range(self.UI.w_axis_manager.w_axis_1.c_operation.count()):
-            self.UI.w_axis_manager.w_axis_1.c_operation.setCurrentIndex(index)
+        for index in range(self.UI.w_axis_manager.w_axis_1.c_action.count()):
+            self.UI.w_axis_manager.w_axis_1.c_action.setCurrentIndex(index)
 
-            if self.UI.w_axis_manager.w_axis_1.c_operation.currentText() == "Filter":
+            if self.UI.w_axis_manager.w_axis_1.c_action.currentText() == "Filter":
                 assert self.UI.w_axis_manager.w_axis_1.b_filter.isEnabled()
             else:
                 assert not self.UI.w_axis_manager.w_axis_1.b_filter.isEnabled()
@@ -72,13 +47,13 @@ class TestGUI(object):
             self.UI.w_axis_manager.w_axis_1.c_axis.setCurrentIndex(index_axis)
 
             operation_list = list()
-            for index_ope in range(self.UI.w_axis_manager.w_axis_1.c_operation.count()):
-                self.UI.w_axis_manager.w_axis_1.c_operation.setCurrentIndex(index_ope)
+            for index_ope in range(self.UI.w_axis_manager.w_axis_1.c_action.count()):
+                self.UI.w_axis_manager.w_axis_1.c_action.setCurrentIndex(index_ope)
                 operation_list.append(
-                    self.UI.w_axis_manager.w_axis_1.c_operation.currentText()
+                    self.UI.w_axis_manager.w_axis_1.c_action.currentText()
                 )
 
-            assert "" in operation_list
+            assert "None" in operation_list
             assert "Filter" in operation_list
 
             if self.UI.w_axis_manager.w_axis_1.c_axis.currentText() in fft_dict:
@@ -94,16 +69,16 @@ class TestGUI(object):
         # selecting angle
         self.UI.w_axis_manager.w_axis_2.c_axis.setCurrentIndex(1)
 
-        for index in range(self.UI.w_axis_manager.w_axis_1.c_operation.count()):
-            self.UI.w_axis_manager.w_axis_1.c_operation.setCurrentIndex(index)
+        for index in range(self.UI.w_axis_manager.w_axis_1.c_action.count()):
+            self.UI.w_axis_manager.w_axis_1.c_action.setCurrentIndex(index)
 
             if (
-                self.UI.w_axis_manager.w_axis_1.c_operation.currentText() == ""
-                or self.UI.w_axis_manager.w_axis_1.c_operation.currentText() == "FFT"
+                self.UI.w_axis_manager.w_axis_1.c_action.currentText() == ""
+                or self.UI.w_axis_manager.w_axis_1.c_action.currentText() == "FFT"
             ):
                 assert (
-                    self.UI.w_axis_manager.w_axis_1.c_operation.currentText()
-                    == self.UI.w_axis_manager.w_axis_2.c_operation.currentText()
+                    self.UI.w_axis_manager.w_axis_1.c_action.currentText()
+                    == self.UI.w_axis_manager.w_axis_2.c_action.currentText()
                 )
 
     @pytest.mark.gui
@@ -113,8 +88,8 @@ class TestGUI(object):
         # Gathering all the units available for a specific combination and we compare it with the reference with is unit_dict
         for index_axis in range(self.UI.w_axis_manager.w_axis_1.c_axis.count()):
             self.UI.w_axis_manager.w_axis_1.c_axis.setCurrentIndex(index_axis)
-            for index_ope in range(self.UI.w_axis_manager.w_axis_1.c_operation.count()):
-                self.UI.w_axis_manager.w_axis_1.c_operation.setCurrentIndex(index_ope)
+            for index_ope in range(self.UI.w_axis_manager.w_axis_1.c_action.count()):
+                self.UI.w_axis_manager.w_axis_1.c_action.setCurrentIndex(index_ope)
 
                 unit_list = list()
                 for index_unit in range(self.UI.w_axis_manager.w_axis_1.c_unit.count()):

@@ -390,7 +390,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Recovering the operation on the field values
         output_range = self.w_range.get_field_selected()
 
-        input = [*axes_selected, *data_selection]
+        if not None in data_selection and not len(data_selection) == 0:
+            input = [*axes_selected]
+        else:
+            input = [*axes_selected, *data_selection]
 
         # if not None in data_selection and not len(data_selection) == 0:
         if len(axes_selected) == 1:

@@ -8,8 +8,6 @@ from numpy import where
 from numpy import argmin, abs as np_abs
 
 type_extraction_dict = {
-    "slice": "[",
-    "slice (fft)": "[",
     "rms": "=rms",
     "rss": "=rss",
     "sum": "=sum",
@@ -59,21 +57,21 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         action_type = self.c_operation.currentText()
 
         # Formatting the string to have the right syntax
-        if action_type in type_extraction_dict:
-            if action_type == "slice":
-                slice_index = self.slider.value()
-                action = type_extraction_dict[action_type] + str(slice_index) + "]"
-
-            elif action_type == "slice (fft)":
-                slice_index = self.slider.value()
-                action = type_extraction_dict[action_type] + str(slice_index) + "]"
-
-                return fft_dict[self.axis.name] + action
-
-            else:
-                action = type_extraction_dict[action_type]
-
+        if action_type == "slice":
+            slice_index = self.slider.value()
+            action = "[" + str(slice_index) + "]"
             return self.axis.name + action + "{" + self.unit + "}"
+
+        elif action_type == "slice (fft)":
+            slice_index = self.slider.value()
+            action = "[" + str(slice_index) + "]"
+            return fft_dict[self.axis.name] + action
+
+        elif action_type in type_extraction_dict:
+            action = type_extraction_dict[action_type]
+            return self.axis.name + action + "{" + self.unit + "}"
+        else:
+            return None
 
     def get_name(self):
         """Method that return the name of the axis of the WDataExtractor
