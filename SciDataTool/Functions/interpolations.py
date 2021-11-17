@@ -1,5 +1,6 @@
 from numpy import (
     array,
+    stack,
     linspace,
     argmin,
     take,
@@ -9,6 +10,7 @@ from numpy import (
     abs as np_abs,
     where,
     zeros,
+    unique,
 )
 from scipy.interpolate import interp1d
 
@@ -136,20 +138,18 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
     elif isin(
         new_axis_values, axis_values
     ).all():  # New axis is subset -> no interpolation
+        values_slices = []
         indice_take = where(isin(axis_values, new_axis_values))[0]
-        if len(indice_take) == 2:  # double point -> compute mean
-            return take(
-                values,
-                indice_take,
-                axis=index,
-            ).mean(axis=index)
-
-        else:
-            return take(
-                values,
-                indice_take,
-                axis=index,
+        _, idx_start, count = unique(
+            axis_values[indice_take], return_counts=True, return_index=True
+        )
+        for i, ii in enumerate(idx_start):
+            values_slices.append(
+                take(values, indice_take[ii : ii + count[i]], axis=index).mean(
+                    axis=index
+                )
             )
+        return stack(values_slices, axis=index)
 
     else:
         new_shape = list(values.shape)
