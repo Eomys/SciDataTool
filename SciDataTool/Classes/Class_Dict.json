@@ -125,27 +125,47 @@
         "daughters": [],
         "desc": "Class for fields defined in both time and freq domains",
         "is_internal": false,
-        "methods": [],
+        "methods": [
+            "get_along"
+        ],
         "mother": "DataND",
         "name": "DataDual",
         "package": "",
         "path": "SciDataTool/Generator/ClassesRef/DataDual.csv",
         "properties": [
             {
-                "desc": "",
+                "desc": "List of the Data1D objects corresponding to the axes in time/space domain",
                 "max": "",
                 "min": "",
-                "name": "TimePart",
-                "type": "DataTime",
+                "name": "axes_dt",
+                "type": "[SciDataTool.Classes.Data]",
+                "unit": "",
+                "value": "None"
+            },
+            {
+                "desc": "Values of the field in time/space domain",
+                "max": "",
+                "min": "",
+                "name": "values_dt",
+                "type": "ndarray",
                 "unit": "",
                 "value": null
             },
             {
-                "desc": "",
+                "desc": "List of the Data1D objects corresponding to the axes in fourier domain",
                 "max": "",
                 "min": "",
-                "name": "FreqPart",
-                "type": "DataFreq",
+                "name": "axes_df",
+                "type": "[SciDataTool.Classes.Data]",
+                "unit": "",
+                "value": "None"
+            },
+            {
+                "desc": "Values of the field in fourier domain",
+                "max": "",
+                "min": "",
+                "name": "values_df",
+                "type": "ndarray",
                 "unit": "",
                 "value": null
             }
@@ -162,7 +182,8 @@
         "desc": "Class for fields defined in Fourier space",
         "is_internal": false,
         "methods": [
-            "freq_to_time"
+            "freq_to_time",
+            "to_datadual"
         ],
         "mother": "DataND",
         "name": "DataFreq",
@@ -437,7 +458,8 @@
         "desc": "Class for fields defined in time space",
         "is_internal": false,
         "methods": [
-            "time_to_freq"
+            "time_to_freq",
+            "to_datadual"
         ],
         "mother": "DataND",
         "name": "DataTime",

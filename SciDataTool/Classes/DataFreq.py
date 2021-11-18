@@ -20,6 +20,11 @@ try:
 except ImportError as error:
     freq_to_time = error
 
+try:
+    from ..Methods.DataFreq.to_datadual import to_datadual
+except ImportError as error:
+    to_datadual = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -31,6 +36,7 @@ class DataFreq(DataND):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.DataFreq.freq_to_time
     if isinstance(freq_to_time, ImportError):
         freq_to_time = property(
@@ -42,6 +48,17 @@ class DataFreq(DataND):
         )
     else:
         freq_to_time = freq_to_time
+    # cf Methods.DataFreq.to_datadual
+    if isinstance(to_datadual, ImportError):
+        to_datadual = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataFreq method to_datadual: " + str(to_datadual)
+                )
+            )
+        )
+    else:
+        to_datadual = to_datadual
     # save and copy methods are available in all object
     save = save
     copy = copy
