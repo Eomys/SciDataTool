@@ -26,10 +26,15 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         self.setupUi(self)
 
         self.c_component.currentTextChanged.connect(self.update_needed)
+
+        self.c_referential.hide()
+        self.in_referential.hide()
+
         # self.c_referential.currentTextChanged.connect(self.update_needed)
 
         self.component_selected = None
 
+        # Adding items inside the combobox to name the two sets of coordinates
         model = self.c_component.model()
 
         item = QStandardItem("Polar coordinates")
@@ -46,14 +51,15 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         item.setEnabled(False)
         model.insertRow(4, item)
 
+        # Modifying the width of the dropdown list to make sure that all the element are readable
         component_list = [
             self.c_component.itemText(i) for i in range(self.c_component.count())
         ]
         width_drop_down = max([len(ac) for ac in component_list]) * 6
         self.c_component.view().setMinimumWidth(width_drop_down)
 
-    def update_needed(self):
-        """Emit a signal when the component must be changed
+    def update(self, data):
+        """Updating the combobox according to the components store in the VectorField
 
         Parameters
         ----------
@@ -62,6 +68,26 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         data : VectorField
             the object that we want to plot
         """
+        if not "axial" in data.components:
+            for i in reversed(range(self.c_component.count())):
+                self.c_component.setCurrentIndex(i)
+                if self.c_component.currentText() in ["axial", "comp_z"]:
+                    self.c_component.removeItem(i)
+
+    def update_needed(self):
+        """Emit a signal when the component must be changed
+
+        Parameters
+        ----------
+        self : WExport
+            a WVectorSelector object
+
+        """
+        if self.c_component.currentText() in [
+            "Polar coordinates",
+            "Cartesian coordinates",
+        ]:
+            self.c_component.setCurrentIndex(self.c_component.currentIndex() + 1)
 
         self.refreshComponent.emit()
 

@@ -72,7 +72,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Recovering the object that we want to show
         self.data = data
-        self.data_obj = data
         self.is_auto_refresh = is_auto_refresh
 
         # Adding an argument for testing autorefresh
@@ -84,7 +83,9 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Hide or show the ComboBox related to the component of a VectorField
         if is_VectorField:
+            self.data_obj = data  # storing the Vectorfield with all the components while data will only have one component
             self.w_vect_selector.show()
+            self.w_vect_selector.update(self.data_obj)
             self.w_vect_selector.refreshComponent.connect(self.update_component)
             self.update_component()
         else:
