@@ -139,6 +139,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         """
 
         if self.is_auto_refresh == True:
+            self.update_range()
             self.update_plot()
             self.is_plot_updated = True
         else:
@@ -384,22 +385,18 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Recovering the axis selected and their units
         axes_selected = self.w_axis_manager.get_axes_selected()
-        # print(axes_selected)
+
         # Recovering the operation on the other axes
         data_selection = self.w_axis_manager.get_operation_selected()
-        # print(data_selection)
+
         # Recovering the operation on the field values
         output_range = self.w_range.get_field_selected()
 
-        if not None in data_selection and not len(data_selection) == 0:
-            input = [*axes_selected]
-        else:
-            input = [*axes_selected, *data_selection]
-
-        # if not None in data_selection and not len(data_selection) == 0:
+        # To improve the code, we use a list with the inputs of the user to pass as parameters thanks to *list
+        # We have to take into account the
         if len(axes_selected) == 1:
             self.data.plot_2D_Data(
-                *input,
+                *[*axes_selected, *data_selection],
                 unit=output_range["unit"],
                 fig=self.fig,
                 ax=self.ax,
@@ -409,7 +406,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         elif len(axes_selected) == 2:
             self.data.plot_3D_Data(
-                *input,
+                *[*axes_selected, *data_selection],
                 unit=output_range["unit"],
                 fig=self.fig,
                 ax=self.ax,

@@ -113,21 +113,29 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             if not isinstance(self.lay_data_extract.itemAt(i), QSpacerItem):
                 self.lay_data_extract.takeAt(i).widget().deleteLater()
 
-        # Step 3 : For each axis, adding a WDataExtractor widget inside the layout
-        self.w_data_sel = list()
+        # Step 3 : For each axis available, adding a WDataExtractor widget inside the layout
+        # If there are no slice to do (two axis available and selected before) then we hide the groupBox
+        if len(axes_gen) != 0:
+            self.g_data_extract.show()
+            self.w_data_sel = list()
 
-        for axis in axes_gen:
-            temp = WDataExtractor(self.g_data_extract)
-            temp.setObjectName(axis)
-            for ax in self.axes_list:
-                if ax.name == axis:
-                    temp.update(ax)
-            self.w_data_sel.append(temp)
+            for axis in axes_gen:
+                temp = WDataExtractor(self.g_data_extract)
+                temp.setObjectName(axis)
+                for ax in self.axes_list:
+                    if ax.name == axis:
+                        temp.update(ax)
+                self.w_data_sel.append(temp)
 
-        for wid in self.w_data_sel:
-            self.lay_data_extract.insertWidget(self.lay_data_extract.count() - 1, wid)
-            wid.refreshNeeded.connect(self.update_needed)
+            for wid in self.w_data_sel:
+                self.lay_data_extract.insertWidget(
+                    self.lay_data_extract.count() - 1, wid
+                )
+                wid.refreshNeeded.connect(self.update_needed)
 
+        else:
+            self.w_data_sel = list()
+            self.g_data_extract.hide()
         self.update_needed()
 
     def get_axes_selected(self):

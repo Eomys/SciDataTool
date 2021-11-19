@@ -14,20 +14,19 @@ class Ui_WVectorSelector(object):
     def setupUi(self, WVectorSelector):
         if not WVectorSelector.objectName():
             WVectorSelector.setObjectName(u"WVectorSelector")
-        WVectorSelector.resize(456, 255)
+        WVectorSelector.resize(218, 122)
+        self.verticalLayout_2 = QVBoxLayout(WVectorSelector)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.g_vector_comp = QGroupBox(WVectorSelector)
         self.g_vector_comp.setObjectName(u"g_vector_comp")
-        self.g_vector_comp.setGeometry(QRect(10, 10, 280, 91))
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.g_vector_comp.sizePolicy().hasHeightForWidth())
         self.g_vector_comp.setSizePolicy(sizePolicy)
-        self.g_vector_comp.setMinimumSize(QSize(280, 90))
-        self.g_vector_comp.setMaximumSize(QSize(280, 16777215))
-        self.verticalLayout = QVBoxLayout(self.g_vector_comp)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.gridLayout = QGridLayout()
+        self.g_vector_comp.setMinimumSize(QSize(0, 0))
+        self.g_vector_comp.setMaximumSize(QSize(16777215, 16777215))
+        self.gridLayout = QGridLayout(self.g_vector_comp)
         self.gridLayout.setObjectName(u"gridLayout")
         self.in_component = QLabel(self.g_vector_comp)
         self.in_component.setObjectName(u"in_component")
@@ -59,7 +58,7 @@ class Ui_WVectorSelector(object):
 
         self.in_referential = QLabel(self.g_vector_comp)
         self.in_referential.setObjectName(u"in_referential")
-        self.in_referential.setEnabled(False)
+        self.in_referential.setEnabled(True)
         self.in_referential.setMinimumSize(QSize(0, 21))
 
         self.gridLayout.addWidget(self.in_referential, 1, 0, 1, 1)
@@ -68,7 +67,7 @@ class Ui_WVectorSelector(object):
         self.c_referential.addItem("")
         self.c_referential.addItem("")
         self.c_referential.setObjectName(u"c_referential")
-        self.c_referential.setEnabled(False)
+        self.c_referential.setEnabled(True)
         sizePolicy1.setHeightForWidth(self.c_referential.sizePolicy().hasHeightForWidth())
         self.c_referential.setSizePolicy(sizePolicy1)
         self.c_referential.setMinimumSize(QSize(100, 21))
@@ -76,7 +75,7 @@ class Ui_WVectorSelector(object):
         self.gridLayout.addWidget(self.c_referential, 1, 1, 1, 1)
 
 
-        self.verticalLayout.addLayout(self.gridLayout)
+        self.verticalLayout_2.addWidget(self.g_vector_comp)
 
 
         self.retranslateUi(WVectorSelector)

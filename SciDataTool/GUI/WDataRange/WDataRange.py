@@ -66,8 +66,9 @@ class WDataRange(Ui_WDataRange, QWidget):
         """
 
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
-        operation = ""
-        # Recovering the minimum and the maximum of the field
+        is_fft = False
+
+        # First we need to define if we have to use get_along or get_magnitude_along depending on the axes/slice selected
         if not None in data_selection and not len(data_selection) == 0:
             data_selection_parsed = parser.read_input_strings(
                 data_selection, axis_data=None
@@ -75,29 +76,29 @@ class WDataRange(Ui_WDataRange, QWidget):
 
             for i in range(len(data_selection_parsed)):
                 if data_selection_parsed[i].name in ifft_dict:
-                    operation = "magnitude"
+                    is_fft = True
 
-            input = [*axes_selected, *data_selection]
-
-        else:
-            input = [*axes_selected]
-
-        # Checking if the field is plotted in fft, then we use get_magnitude_along
-        # Otherwise we use get_along
         for i in range(len(axes_selected_parsed)):
             if axes_selected_parsed[i].name in ifft_dict:
-                operation = "magnitude"
+                is_fft = True
 
-        if operation == "magnitude":
-            field_value = field.get_magnitude_along(*input)
+        # If the field is plotted in fft, then we use get_magnitude_along
+        # Otherwise we use get_along
+        if is_fft == True:
+            field_value = field.get_magnitude_along(*[*axes_selected, *data_selection])
         else:
-            field_value = field.get_along(*input)
+            field_value = field.get_along(*[*axes_selected, *data_selection])
 
         field_min = field_value[field.symbol].min()
         field_max = field_value[field.symbol].max()
 
-        self.lf_min.setValue(field_min)
-        self.lf_max.setValue(field_max)
+        # If the value of min and max are the same, then we don't set them up automatically
+        if field_min != field_max:
+            self.lf_min.setValue(field_min)
+            self.lf_max.setValue(field_max)
+        else:
+            self.lf_min.clear()
+            self.lf_max.clear()
 
     def set_name(self, field_name):
         """Method that set the name of the widget which is the name of the field that we are plotting
@@ -183,10 +184,11 @@ class WDataRange(Ui_WDataRange, QWidget):
             a WDataRange object
         """
         # Making sure that we always have min < max
-        if self.lf_min.value() > self.lf_max.value():
+        if self.lf_min.value() != None and self.lf_max.value() != None:
+            if self.lf_min.value() > self.lf_max.value():
 
-            temp = self.lf_max.value()
-            self.lf_max.setValue(self.lf_min.value())
-            self.lf_min.setValue(temp)
+                temp = self.lf_max.value()
+                self.lf_max.setValue(self.lf_min.value())
+                self.lf_min.setValue(temp)
 
         self.refreshNeeded.emit()

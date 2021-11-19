@@ -309,13 +309,15 @@ def plot_3D_Data(
         if isinstance(axes_dict_other[axis_name][0], str):
             axis_str = axes_dict_other[axis_name][0]
         else:
-            axis_str = array2string(
-                axes_dict_other[axis_name][0],
-                formatter={"float_kind": "{:.3g}".format},
-            ).replace(" ", ", ")
-            +" ["
-            +axes_dict_other[axis_name][1]
-            +"], "
+            axis_str = (
+                array2string(
+                    axes_dict_other[axis_name][0],
+                    formatter={"float_kind": "{:.3g}".format},
+                ).replace(" ", ", ")
+                + " ["
+                + axes_dict_other[axis_name][1]
+                + "], "
+            )
 
         title5 += axis_name + "=" + axis_str
 
