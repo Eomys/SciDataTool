@@ -125,13 +125,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                 for ax in self.axes_list:
                     if ax.name == axis:
                         temp.update(ax)
+                temp.refreshNeeded.connect(self.update_needed)
                 self.w_data_sel.append(temp)
-
-            for wid in self.w_data_sel:
-                self.lay_data_extract.insertWidget(
-                    self.lay_data_extract.count() - 1, wid
-                )
-                wid.refreshNeeded.connect(self.update_needed)
+                self.lay_data_extract.addWidget(temp)
 
         else:
             self.w_data_sel = list()
@@ -175,11 +171,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             name of the operation and its axis
         """
 
-        operations_selected = list()
-        for widget in self.w_data_sel:
-            operations_selected.append(widget.get_operation_selected())
-
-        return operations_selected
+        return [wid.get_operation_selected() for wid in self.w_data_sel]
 
     def fft_sync(self):
         """Method that will check the action chosen and that update the other action combobox to have the same action.
@@ -207,17 +199,15 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         """
 
         # Step 1 : If user_input are given (auto-plot), we have to process them
-        axes_list = list()
-        slices_op_list = list()
+        axes_list = [
+            ax for ax in user_input_list if ax.extension in EXTENSION_DICT["axis"]
+        ]
 
-        for axis in user_input_list:
-            if axis.extension in EXTENSION_DICT["axis"]:
-                axes_list.append(axis)
+        slices_op_list = [
+            ax for ax in user_input_list if ax.extension in EXTENSION_DICT["slice"]
+        ]
 
-            elif axis.extension in EXTENSION_DICT["slice"]:
-                slices_op_list.append(axis)
-
-        # Step 2 : Ff we have user input, the we set the UI according to user_input.
+        # Step 2 : If we have user input, the we set the UI according to user_input.
         # Otherwise we use the default info
         self.w_axis_1.blockSignals(True)
         self.w_axis_2.blockSignals(True)

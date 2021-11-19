@@ -25,9 +25,9 @@ if __name__ == "__main__":
     )
 
     # test = "plot"
-    # test = "autoplot"
+    test = "autoplot"
     # test = "oneaxis"
-    test = "vect"
+    # test = "vect"
 
     if test == "plot":
         Field.plot()
