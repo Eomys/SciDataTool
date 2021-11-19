@@ -241,6 +241,7 @@ def plot_2D_Data(
                 "axis_data",
             ]
             and len(axis.values) > 1
+            or (len(axis.values) == 1 and len(axes_list) == 1)
         ):
             title2 = "over " + name.lower()
             if axis.unit == "SI":
@@ -455,11 +456,14 @@ def plot_2D_Data(
                 + abs(np_max(Ydatas[0]))
             ]
         else:
-            indices = [
-                ind
-                for ind, y in enumerate(Ydatas[0])
-                if abs(y) > abs(thresh * np_max(Ydatas[0]))
-            ]
+            if Ydatas[0].size == 1:
+                indices = [0]
+            else:
+                indices = [
+                    ind
+                    for ind, y in enumerate(Ydatas[0])
+                    if abs(y) > abs(thresh * np_max(Ydatas[0]))
+                ]
         xticks = unique(insert(freqs[indices], 0, 0))
 
         if is_auto_range:

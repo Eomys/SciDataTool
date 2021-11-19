@@ -16,7 +16,14 @@ def to_datadual(self, datatime=None):
     DataDual = getattr(module, "DataDual")
 
     # Fill DataDual object with fourier data
-    datadual = DataDual(axes_df=self.axes, values_df=self.values)
+    datadual = DataDual(
+        name=self.name,
+        symbol=self.symbol,
+        unit=self.unit,
+        normalizations=self.normalizations,
+        axes_df=self.axes,
+        values_df=self.values,
+    )
 
     # Add time/space data (from input or using ifft)
     if datatime is None:
