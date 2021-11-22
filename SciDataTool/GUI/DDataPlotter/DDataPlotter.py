@@ -1,5 +1,8 @@
 from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
 from os.path import dirname, basename
+from SciDataTool.Functions import parser
+
+from matplotlib.pyplot import axes
 
 from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
 from matplotlib.backends.backend_qt5agg import (
@@ -12,7 +15,7 @@ from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
 from numpy import array
 
-from ...Functions.Plot import TEXT_BOX
+from ...Functions.Plot import TEXT_BOX, ifft_dict
 
 SYMBOL_DICT = {
     "time": "t",
@@ -437,6 +440,21 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Recovering the axis selected and their units
         axes_selected = self.w_axis_manager.get_axes_selected()
 
+        # Checking if the axes are following the order inside the data object
+        axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
+        axes_name = [ax.name for ax in self.data.get_axes()]
+        not_in_order = False
+        if (
+            len(axes_selected) == 2
+            and axes_selected_parsed[0].name in axes_name
+            and axes_selected_parsed[1].name in axes_name
+        ):
+            if axes_name.index(axes_selected_parsed[0].name) > axes_name.index(
+                axes_selected_parsed[1].name
+            ):
+                not_in_order = True
+                axes_selected = [axes_selected[1], axes_selected[0]]
+
         # Recovering the operation on the other axes
         data_selection = self.w_axis_manager.get_operation_selected()
 
@@ -445,7 +463,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # To improve the code, we use a list with the inputs of the user to pass as parameters thanks to *list
         # We have to take into account the
+
         if len(axes_selected) == 1:
+            if not None in [output_range["min"], output_range["max"]]:
+                delta = output_range["max"] - output_range["min"]
+                output_range["min"] -= delta * 0.2
+                output_range["max"] += delta * 0.2
+
             self.data.plot_2D_Data(
                 *[*axes_selected, *data_selection],
                 unit=output_range["unit"],
@@ -464,6 +488,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 is_2D_view=True,
                 z_min=output_range["min"],
                 z_max=output_range["max"],
+                is_switch_axes=not_in_order,
             )
 
         else:

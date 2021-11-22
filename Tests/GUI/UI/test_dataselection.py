@@ -54,9 +54,13 @@ class TestGUI(object):
         """Testing that the slider is updated correctly according to the slider and vice versa"""
 
         for wid in self.UI.w_axis_manager.w_data_sel:
-            if wid.c_operation.currentText() != "slice":
+            if not wid.c_operation.currentText() in ["slice", "slice (fft)"]:
                 wid.c_operation.setCurrentIndex(0)
 
+            # Making sure that we have the same number of index inside the slider as in axis_value
+            assert (wid.slider.maximum() - wid.slider.minimum() + 1) == len(
+                wid.axis_value
+            )
             # Modifying the value of the slider and checking if the floatEdit change correctly
             wid.slider.setValue(0)
             assert wid.lf_value.value() == wid.axis_value[wid.slider.value()]

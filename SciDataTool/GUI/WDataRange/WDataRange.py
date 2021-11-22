@@ -93,7 +93,8 @@ class WDataRange(Ui_WDataRange, QWidget):
         field_max = field_value[field.symbol].max()
 
         # If the value of min and max are the same, then we don't set them up automatically
-        if field_min != field_max:
+        eps = 1e-7
+        if field_max - field_min > eps:
             self.lf_min.setValue(field_min)
             self.lf_max.setValue(field_max)
         else:

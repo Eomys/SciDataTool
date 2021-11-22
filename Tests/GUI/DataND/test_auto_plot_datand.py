@@ -144,6 +144,18 @@ a_p_list.append(
     }
 )  # Testing the autoplot for 2D plot without giving slice and WdataRange
 
+a_p_list.append(
+    {
+        "axis": ["angle{°}", "time"],
+        "action": ["z[2]"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot for 2D plot where axes are inverted
+
 
 class TestGUI(object):
     @classmethod

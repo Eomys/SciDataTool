@@ -81,6 +81,18 @@ class TestGUI(object):
                     == self.UI.w_axis_manager.w_axis_2.c_action.currentText()
                 )
 
+        for index in range(self.UI.w_axis_manager.w_axis_2.c_action.count()):
+            self.UI.w_axis_manager.w_axis_2.c_action.setCurrentIndex(index)
+
+            if (
+                self.UI.w_axis_manager.w_axis_2.c_action.currentText() == ""
+                or self.UI.w_axis_manager.w_axis_2.c_action.currentText() == "FFT"
+            ):
+                assert (
+                    self.UI.w_axis_manager.w_axis_1.c_action.currentText()
+                    == self.UI.w_axis_manager.w_axis_2.c_action.currentText()
+                )
+
     @pytest.mark.gui
     def check_unit_available(self):
         """Test to make sure that the unit available are adapting correctly depending on the combination of axis and operation"""

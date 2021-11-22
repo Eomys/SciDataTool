@@ -52,7 +52,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_2.axisChanged.connect(self.axis_2_updated)
 
         # The action in axis 2 is by default the one chosen in axis 1
-        self.w_axis_1.actionChanged.connect(self.fft_sync)
+        self.w_axis_1.actionChanged.connect(lambda: self.fft_sync("axis 1"))
+        self.w_axis_2.actionChanged.connect(lambda: self.fft_sync("axis 2"))
 
     def axis_1_updated(self):
         """Method that remove the axis selected in w_axis_1 from w_axis_2 and call the method that generates
@@ -63,7 +64,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
         """
         # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
-        self.fft_sync()
+        self.fft_sync("axis 1")
 
         # Recovering the axis selected by the user removing it from the the second axis combobox
         self.w_axis_2.remove_axis(self.w_axis_1.get_current_axis_selected())
@@ -80,7 +81,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
         """
         # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
-        self.fft_sync()
+        self.fft_sync("axis 2")
 
         # Generating the DataSelection GroupBox
         self.gen_data_selection()
@@ -173,7 +174,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         return [wid.get_operation_selected() for wid in self.w_data_sel]
 
-    def fft_sync(self):
+    def fft_sync(self, axis_changed):
         """Method that will check the action chosen and that update the other action combobox to have the same action.
         So that, by default, we have FFT and FFT or "None" and "None"
         Parameters
@@ -182,9 +183,14 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
 
         """
-        action_selected = self.w_axis_1.get_current_action_name()
-        self.w_axis_2.set_action(action_selected)
-        self.gen_data_selection()
+        if axis_changed == "axis 1":
+            action_selected = self.w_axis_1.get_current_action_name()
+            self.w_axis_2.set_action(action_selected)
+            self.gen_data_selection()
+        elif axis_changed == "axis 2":
+            action_selected = self.w_axis_2.get_current_action_name()
+            self.w_axis_1.set_action(action_selected)
+            self.gen_data_selection()
 
     def set_axis_widgets(self, data, user_input_list):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
