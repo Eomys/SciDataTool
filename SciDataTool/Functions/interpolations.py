@@ -143,13 +143,16 @@ def get_interpolation_step(values, axis_values, new_axis_values, index):
         _, idx_start, count = unique(
             axis_values[indice_take], return_counts=True, return_index=True
         )
-        for i, ii in enumerate(idx_start):
-            values_slices.append(
-                take(values, indice_take[ii : ii + count[i]], axis=index).mean(
-                    axis=index
+        if len(idx_start) > 0:
+            for i, ii in enumerate(idx_start):
+                values_slices.append(
+                    take(values, indice_take[ii : ii + count[i]], axis=index).mean(
+                        axis=index
+                    )
                 )
-            )
-        return stack(values_slices, axis=index)
+            return stack(values_slices, axis=index)
+        else:
+            return take(values, [], axis=index)
 
     else:
         new_shape = list(values.shape)
