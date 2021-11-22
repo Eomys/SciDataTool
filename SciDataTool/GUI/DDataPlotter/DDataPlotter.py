@@ -1,5 +1,5 @@
-from PySide2.QtWidgets import QWidget
-from matplotlib.figure import Figure
+from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
+from os.path import dirname, basename
 
 from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
 from matplotlib.backends.backend_qt5agg import (
@@ -7,7 +7,6 @@ from matplotlib.backends.backend_qt5agg import (
     NavigationToolbar2QT as NavigationToolbar,
 )
 from ...Functions.Plot.init_fig import init_fig
-from matplotlib.widgets import Cursor
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
@@ -56,8 +55,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         ----------
         self : DDataPlotter
             a DDataPlotter object
-        data : DataND
-            A DataND object to plot
+        data : DataND or VectorField object
+            A DataND/VectorField object to plot
         user_input_list:
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         user_input_dict:
@@ -85,9 +84,14 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         if is_VectorField:
             self.data_obj = data  # storing the Vectorfield with all the components while data will only have one component
             self.w_vect_selector.show()
+            # Adding/removing axial and comp_z depending on the VectorField object
             self.w_vect_selector.update(self.data_obj)
             self.w_vect_selector.refreshComponent.connect(self.update_component)
-            self.update_component()
+            if "component" in user_input_dict:
+                self.w_vect_selector.set_component(user_input_dict)
+                self.update_component()
+            else:
+                self.update_component()
         else:
             self.w_vect_selector.hide()
 
@@ -102,6 +106,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Building the interaction with the UI and the UI itself
         self.b_refresh.clicked.connect(self.update_plot)
         self.w_axis_manager.refreshRange.connect(self.update_range)
+        self.b_export.clicked.connect(self.export)
 
         self.w_axis_manager.set_axis_widgets(self.data, user_input_list)
         self.update_range(user_input_dict)
@@ -111,23 +116,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.c_auto_refresh.toggled.connect(self.set_auto_refresh)
         self.w_axis_manager.refreshNeeded.connect(self.auto_update)
         self.w_range.refreshNeeded.connect(self.auto_update)
-
-    def update_component(self):
-        """Method that update data according to the component selected in w_vect_selector.
-        Parameters
-        ----------
-        self : DDataPlotter
-            a DDataPlotter object
-
-        """
-        component_name = self.w_vect_selector.get_component_selected()
-
-        if component_name in ["radial", "tangential", "axial"]:
-            self.data = self.data_obj.to_rphiz().components[component_name]
-        elif component_name in ["comp_x", "comp_y", "comp_z"]:
-            self.data = self.data_obj.to_xyz().components[component_name]
-
-        self.w_axis_manager.set_axis_widgets(self.data, list())
 
     def auto_update(self):
         """Method that checks if the autorefresh is enabled.If true; then it updates the plot.
@@ -144,6 +132,52 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             self.is_plot_updated = True
         else:
             self.is_plot_updated = False
+
+    def export(self, save_file_path=None):
+        """Method that export the data of the plot as a csv file
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+        """
+        # Getting the inputs of the user to export the plot + for the name of the csv file
+        param_list = [
+            *self.w_axis_manager.get_axes_selected(),
+            *self.w_axis_manager.get_operation_selected(),
+        ]
+
+        file_name = "plot_" + self.data.symbol + "_" + "_".join(param_list)
+
+        default_file_path = file_name + ".csv"
+
+        # Opening a dialog window to select the directory where the file will be saved if we are not testing
+        if save_file_path == None:
+            save_file_path = QFileDialog.getSaveFileName(
+                self,
+                self.tr("Export plot data"),
+                default_file_path,
+                filter="csv (*.csv)",
+            )[0]
+        else:
+            save_file_path += "\\" + default_file_path
+
+        # Exporting the file to the right folder
+        if save_file_path not in ["", None]:
+            save_path = dirname(save_file_path)
+            file_name = basename(save_file_path).split(".")[0]
+            try:
+                self.data.export_along(
+                    *param_list, save_path=save_path, file_name=file_name
+                )
+            except Exception as e:
+                # Displaying the error inside  abox instead of the console
+                err_msg = "Error while exporting Data:\n" + str(e)
+
+                QMessageBox().critical(
+                    self,
+                    self.tr("Error"),
+                    err_msg,
+                )
 
     def set_auto_refresh(self):
         """Method that update the refresh policy according to the checkbox inside the UI
@@ -362,6 +396,23 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.ax.format_coord = format_coord
         self.canvas.mpl_connect("pick_event", set_cursor)
         self.canvas.mpl_connect("button_press_event", delete_cursor)
+
+    def update_component(self):
+        """Method that update data according to the component selected in w_vect_selector.
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+
+        """
+        component_name = self.w_vect_selector.get_component_selected()
+
+        if component_name in ["radial", "tangential", "axial"]:
+            self.data = self.data_obj.to_rphiz().components[component_name]
+        elif component_name in ["comp_x", "comp_y", "comp_z"]:
+            self.data = self.data_obj.to_xyz().components[component_name]
+
+        self.w_axis_manager.set_axis_widgets(self.data, list())
 
     def update_plot(self):
         """Method that update the plot according to the info selected in the UI

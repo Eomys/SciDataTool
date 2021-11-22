@@ -1,7 +1,7 @@
 import pytest
 from PySide2.QtWidgets import *
 
-from Tests.GUI import Field
+from Tests.GUI.VectorField import VecField
 from SciDataTool import DataLinspace, DataTime, Norm_ref, VectorField
 import numpy as np
 
@@ -9,52 +9,7 @@ import numpy as np
 class TestGUI(object):
     @classmethod
     def setup_class(self):
-        f = 50
-        Time = DataLinspace(
-            name="time",
-            unit="s",
-            initial=0,
-            final=1 / f,
-            number=10,
-            include_endpoint=False,
-        )
-
-        Angle = DataLinspace(
-            name="angle",
-            unit="rad",
-            initial=0,
-            final=2 * np.pi,
-            number=20,
-            include_endpoint=False,
-        )
-
-        ta, at = np.meshgrid(Time.get_values(), Angle.get_values())
-        field = 5 * np.cos(2 * np.pi * f * ta + 3 * at)
-
-        Field_r = DataTime(
-            name="Radial field",
-            symbol="X_r",
-            unit="m",
-            normalizations={"ref": Norm_ref(ref=2e-5)},
-            axes=[Time, Angle],
-            values=field.T,
-        )
-
-        Field_t = DataTime(
-            name="Tangential field",
-            symbol="X_t",
-            unit="m",
-            normalizations={"ref": Norm_ref(ref=2e-5)},
-            axes=[Time, Angle],
-            values=-field.T,
-        )
-
-        self.VecField = VectorField(
-            name="Example field",
-            symbol="X",
-            components={"radial": Field_r, "tangential": Field_t},
-        )
-
+        self.VecField = VecField
         self.UI = self.VecField.plot(is_test=True)
 
     @pytest.mark.gui

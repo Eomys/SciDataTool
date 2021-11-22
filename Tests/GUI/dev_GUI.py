@@ -25,9 +25,9 @@ if __name__ == "__main__":
     )
 
     # test = "plot"
-    test = "autoplot"
+    # test = "autoplot"
     # test = "oneaxis"
-    # test = "vect"
+    test = "vect"
 
     if test == "plot":
         Field.plot()
@@ -102,3 +102,5 @@ if __name__ == "__main__":
             components={"radial": Field_r, "tangential": Field_t},
         )
         VecField.plot()
+
+        # VecField.plot("time", "angle{°}", component="comp_x")

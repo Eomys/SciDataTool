@@ -58,6 +58,40 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         width_drop_down = max([len(ac) for ac in component_list]) * 6
         self.c_component.view().setMinimumWidth(width_drop_down)
 
+    def get_component_selected(self):
+        """Getting the component selected
+
+        Parameters
+        ----------
+        self : WExport
+            a WVectorSelector object
+
+        """
+        return self.c_component.currentText()
+
+    def set_component(self, user_input_dict):
+        """Method that set the component selected according to the input of the user (auto-plot)
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+        user_input_dict : dict
+            Dictionnary that store the input of the user that are not related to the axis
+        """
+        # Getting the component given by the user
+        component_selected = user_input_dict["component"]
+
+        # Recovering all the components available
+        component_list = list()
+        self.blockSignals(True)
+        for index_comp in range(self.c_component.count()):
+            self.c_component.setCurrentIndex(index_comp)
+            component_list.append(self.c_component.currentText())
+        self.blockSignals(False)
+
+        # Setting the combobox with the right component
+        self.c_component.setCurrentIndex(component_list.index(component_selected))
+
     def update(self, data):
         """Updating the combobox according to the components store in the VectorField
 
@@ -90,14 +124,3 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
             self.c_component.setCurrentIndex(self.c_component.currentIndex() + 1)
 
         self.refreshComponent.emit()
-
-    def get_component_selected(self):
-        """Getting the component selected
-
-        Parameters
-        ----------
-        self : WExport
-            a WVectorSelector object
-
-        """
-        return self.c_component.currentText()

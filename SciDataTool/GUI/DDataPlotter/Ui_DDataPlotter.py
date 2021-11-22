@@ -38,6 +38,7 @@ class Ui_DDataPlotter(object):
         self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 318, 787))
         self.scrollAreaWidgetContents.setMaximumSize(QSize(320, 16777215))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_2.setSpacing(2)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.w_vect_selector = WVectorSelector(self.scrollAreaWidgetContents)
         self.w_vect_selector.setObjectName(u"w_vect_selector")
