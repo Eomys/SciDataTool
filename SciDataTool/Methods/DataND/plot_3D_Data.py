@@ -133,14 +133,12 @@ def plot_3D_Data(
         title1 = "FFT2 of " + self.name.lower() + " "
     else:
         if is_norm:
-            zlabel = (
-                r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\, [" + unit + "]$"
-            )
+            zlabel = r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}$ " + unit_str
         else:
             if self.symbol == "Magnitude":
                 zlabel = "Magnitude " + unit_str
             else:
-                zlabel = r"$" + self.symbol + unit_str
+                zlabel = r"$" + self.symbol + "$ " + unit_str
         title1 = "Surface plot of " + self.name.lower() + " "
 
     # Extract field and axes
