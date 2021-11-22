@@ -113,23 +113,19 @@ def plot_3D_Data(
     # Set unit
     if unit == "SI":
         unit = self.unit
+    if "dB" in unit:
+        if "ref" in self.normalizations:
+            ref = self.normalizations["ref"].ref
+        else:
+            ref = 1
+        unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
+    else:
+        unit_str = r"$[" + unit + "]$"
 
     # Detect fft
     is_fft = False
-    if (
-        any("wavenumber" in s for s in arg_list)
-        or any("freqs" in s for s in arg_list)
-        or any("frequency" in s for s in arg_list)
-    ):
+    if any("wavenumber" in s for s in arg_list) or any("freqs" in s for s in arg_list):
         is_fft = True
-        if "dB" in unit:
-            if "ref" in self.normalizations:
-                ref = self.normalizations["ref"].ref
-            else:
-                ref = 1
-            unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
-        else:
-            unit_str = r"$[" + unit + "]$"
         if self.symbol == "Magnitude":
             zlabel = "Magnitude " + unit_str
         else:
@@ -142,9 +138,9 @@ def plot_3D_Data(
             )
         else:
             if self.symbol == "Magnitude":
-                zlabel = "Magnitude " + r"$[" + unit + "]$"
+                zlabel = "Magnitude " + unit_str
             else:
-                zlabel = r"$" + self.symbol + "\, [" + unit + "]$"
+                zlabel = r"$" + self.symbol + unit_str
         title1 = "Surface plot of " + self.name.lower() + " "
 
     # Extract field and axes
