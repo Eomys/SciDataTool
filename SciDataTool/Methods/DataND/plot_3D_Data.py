@@ -116,7 +116,11 @@ def plot_3D_Data(
 
     # Detect fft
     is_fft = False
-    if any("wavenumber" in s for s in arg_list) or any("freqs" in s for s in arg_list):
+    if (
+        any("wavenumber" in s for s in arg_list)
+        or any("freqs" in s for s in arg_list)
+        or any("frequency" in s for s in arg_list)
+    ):
         is_fft = True
         if "dB" in unit:
             if "ref" in self.normalizations:
