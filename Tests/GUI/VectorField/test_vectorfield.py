@@ -16,20 +16,30 @@ class TestGUI(object):
     def check_component_selected(self):
         """Testing that when the user select a component, then it is used for the rest of the calculation"""
 
-        for index_component in range(self.UI.w_vect_selector.c_component.count()):
-            self.UI.w_vect_selector.c_component.setCurrentIndex(index_component)
-            component_selected = self.UI.w_vect_selector.c_component.currentText()
+        for index_component in range(
+            self.UI.w_plot_manager.w_vect_selector.c_component.count()
+        ):
+            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(
+                index_component
+            )
+            component_selected = (
+                self.UI.w_plot_manager.w_vect_selector.c_component.currentText()
+            )
 
             if component_selected in ["radial", "tangential", "axial"]:
                 assert (
-                    self.UI.data
-                    == self.UI.data_obj.to_rphiz().components[component_selected]
+                    self.UI.w_plot_manager.data
+                    == self.UI.w_plot_manager.data_obj.to_rphiz().components[
+                        component_selected
+                    ]
                 )
 
             elif component_selected in ["comp_x", "comp_y", "comp_z"]:
                 assert (
-                    self.UI.data
-                    == self.UI.data_obj.to_xyz().components[component_selected]
+                    self.UI.w_plot_manager.data
+                    == self.UI.w_plot_manager.data_obj.to_xyz().components[
+                        component_selected
+                    ]
                 )
 
     @pytest.mark.gui
@@ -37,17 +47,17 @@ class TestGUI(object):
         """Testing that the UI is rightly updated as we are plotting a VectorField"""
 
         # Testing that the groupbox is shown
-        assert not self.UI.w_vect_selector.isHidden()
+        assert not self.UI.w_plot_manager.w_vect_selector.isHidden()
         # Testing that the referential is hidden
-        assert self.UI.w_vect_selector.c_referential.isHidden()
-        assert self.UI.w_vect_selector.in_referential.isHidden()
+        assert self.UI.w_plot_manager.w_vect_selector.c_referential.isHidden()
+        assert self.UI.w_plot_manager.w_vect_selector.in_referential.isHidden()
 
         # Testing that axial and comp_z are not available if they are not in VectorField
         if not "axial" in self.VecField.components:
             components_list = list()
-            for i in range(self.UI.w_vect_selector.c_component.count()):
+            for i in range(self.UI.w_plot_manager.w_vect_selector.c_component.count()):
                 components_list.append(
-                    self.UI.w_vect_selector.c_component.currentText()
+                    self.UI.w_plot_manager.w_vect_selector.c_component.currentText()
                 )
 
             assert not "axial" in components_list
@@ -59,19 +69,27 @@ class TestGUI(object):
 
         if not "axial" in self.VecField.components:
             # Case where we only have two axes for each set of coordinates
-            self.UI.w_vect_selector.c_component.setCurrentIndex(0)
-            assert self.UI.w_vect_selector.c_component.currentIndex() == 1
+            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(0)
+            assert (
+                self.UI.w_plot_manager.w_vect_selector.c_component.currentIndex() == 1
+            )
 
-            self.UI.w_vect_selector.c_component.setCurrentIndex(3)
-            assert self.UI.w_vect_selector.c_component.currentIndex() == 4
+            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(3)
+            assert (
+                self.UI.w_plot_manager.w_vect_selector.c_component.currentIndex() == 4
+            )
 
         else:
             # Case where we  have three axes for each set of coordinates
-            self.UI.w_vect_selector.c_component.setCurrentIndex(0)
-            assert self.UI.w_vect_selector.c_component.currentIndex() == 1
+            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(0)
+            assert (
+                self.UI.w_plot_manager.w_vect_selector.c_component.currentIndex() == 1
+            )
 
-            self.UI.w_vect_selector.c_component.setCurrentIndex(4)
-            assert self.UI.w_vect_selector.c_component.currentIndex() == 5
+            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(4)
+            assert (
+                self.UI.w_plot_manager.w_vect_selector.c_component.currentIndex() == 5
+            )
 
 
 if __name__ == "__main__":

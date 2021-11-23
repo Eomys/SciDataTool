@@ -13,7 +13,7 @@ class TestGUI(object):
     def check_layout(self):
         """Test that the layout is set up according to the operation selected"""
 
-        for wid in self.UI.w_axis_manager.w_data_sel:
+        for wid in self.UI.w_plot_manager.w_axis_manager.w_data_sel:
             for ope in range(wid.c_operation.count()):
 
                 wid.blockSignals(True)
@@ -53,7 +53,7 @@ class TestGUI(object):
     def check_slider_floatEdit(self):
         """Testing that the slider is updated correctly according to the slider and vice versa"""
 
-        for wid in self.UI.w_axis_manager.w_data_sel:
+        for wid in self.UI.w_plot_manager.w_axis_manager.w_data_sel:
             if not wid.c_operation.currentText() in ["slice", "slice (fft)"]:
                 wid.c_operation.setCurrentIndex(0)
 

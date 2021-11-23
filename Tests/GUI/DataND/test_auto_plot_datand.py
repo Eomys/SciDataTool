@@ -213,15 +213,11 @@ class TestGUI(object):
             )
 
         # Recovering the string generated
-        axes_sent = parser.read_input_strings(
-            self.UI.w_axis_manager.get_axes_selected(), axis_data=None
-        )
+        [_, axes_sent, actions_sent, drange] = self.UI.w_plot_manager.get_plot_info()
 
-        actions_sent = parser.read_input_strings(
-            self.UI.w_axis_manager.get_operation_selected(), axis_data=None
-        )
+        axes_sent = parser.read_input_strings(axes_sent, axis_data=None)
 
-        drange = self.UI.w_range.get_field_selected()
+        actions_sent = parser.read_input_strings(actions_sent, axis_data=None)
 
         # Step 1 : Checking the axes (1 and 2 if given)
         assert len(axes_sent) == len(test_dict["axis"])
@@ -235,7 +231,7 @@ class TestGUI(object):
         if axes_given[0].unit == "SI":
             # If the unit is not given, then we make sure that the unit by default is selected
             assert (
-                axes_sent[0].unit == self.UI.w_axis_manager.w_axis_1.get_current_unit()
+                axes_sent[0].unit == self.UI.w_plot_manager.w_axis_manager.w_axis_1.unit
             )
         else:
             assert axes_sent[0].unit == axes_given[0].unit
@@ -247,7 +243,7 @@ class TestGUI(object):
                 # If the unit is not given, then we make sure that the unit by default is selected
                 assert (
                     axes_sent[1].unit
-                    == self.UI.w_axis_manager.w_axis_2.get_current_unit()
+                    == self.UI.w_plot_manager.w_axis_manager.w_axis_2.unit
                 )
 
         # Step 2 : Checking the actions
@@ -272,7 +268,9 @@ class TestGUI(object):
                         # if we gave a negative index, we have to update the value nmanally (slider accept/return only positive value)
                         assert (
                             actions_sent[i].indices[0]
-                            == self.UI.w_axis_manager.w_data_sel[i].slider.maximum()
+                            == self.UI.w_plot_manager.w_axis_manager.w_data_sel[
+                                i
+                            ].slider.maximum()
                             + actions_given[i].indices[0]
                         )
                     else:
@@ -283,7 +281,7 @@ class TestGUI(object):
                     assert (
                         # If the unit is not given, then we make sure that the unit by default is selected
                         actions_sent[i].unit
-                        == self.UI.w_axis_manager.w_data_sel[i].unit
+                        == self.UI.w_plot_manager.w_axis_manager.w_data_sel[i].unit
                     )
                 else:
                     assert actions_sent[i].unit == actions_given[i].unit
@@ -292,17 +290,20 @@ class TestGUI(object):
             for i in range(len(actions_sent)):
                 assert (
                     actions_sent[i].name
-                    == self.UI.w_axis_manager.w_data_sel[i].axis.name
+                    == self.UI.w_plot_manager.w_axis_manager.w_data_sel[i].axis.name
                 )
                 assert actions_sent[i].extension == "single"
                 assert actions_sent[i].indices[0] == 0
-                assert actions_sent[i].unit == self.UI.w_axis_manager.w_data_sel[i].unit
+                assert (
+                    actions_sent[i].unit
+                    == self.UI.w_plot_manager.w_axis_manager.w_data_sel[i].unit
+                )
 
         # Comparing the info given to range with those emitted
 
         # Checking the unit of the field
         if test_dict["unit"] == None:
-            assert drange["unit"] == self.UI.w_range.c_unit.currentText()
+            assert drange["unit"] == self.UI.w_plot_manager.w_range.c_unit.currentText()
         else:
             assert drange["unit"] == test_dict["unit"]
 
@@ -311,29 +312,41 @@ class TestGUI(object):
             if len(axes_given) == 1:
                 if axes_given[0].name in ifft_dict:
                     field_value = self.Field.get_magnitude_along(
-                        self.UI.w_axis_manager.get_operation_selected()[0],
-                        self.UI.w_axis_manager.get_operation_selected()[1],
-                        self.UI.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            0
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            1
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[0],
                     )
                 else:
                     field_value = self.Field.get_along(
-                        self.UI.w_axis_manager.get_operation_selected()[0],
-                        self.UI.w_axis_manager.get_operation_selected()[1],
-                        self.UI.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            0
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            1
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[0],
                     )
 
             elif len(axes_given) == 2:
                 if axes_given[0].name in ifft_dict and axes_given[1].name in ifft_dict:
                     field_value = self.Field.get_magnitude_along(
-                        self.UI.w_axis_manager.get_operation_selected()[0],
-                        self.UI.w_axis_manager.get_axes_selected()[0],
-                        self.UI.w_axis_manager.get_axes_selected()[1],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            0
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[1],
                     )
                 else:
                     field_value = self.Field.get_along(
-                        self.UI.w_axis_manager.get_operation_selected()[0],
-                        self.UI.w_axis_manager.get_axes_selected()[0],
-                        self.UI.w_axis_manager.get_axes_selected()[1],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            0
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[1],
                     )
             if test_dict["zmin"] == None:
                 # Making sure that the value are equal with a threshold of 1e-7

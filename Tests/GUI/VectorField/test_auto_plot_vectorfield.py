@@ -94,14 +94,14 @@ class TestGUI(object):
         # Step 1 :  making sure that the right component is selected
         if test_dict["component"] in ["radial", "tangential", "axial"]:
             assert_almost_equal(
-                self.UI.data.values,
+                self.UI.w_plot_manager.data.values,
                 VecField.to_rphiz().components[test_dict["component"]].values,
                 7,
             )
 
         elif test_dict["component"] in ["comp_x", "comp_y", "comp_z"]:
             assert_almost_equal(
-                self.UI.data.values,
+                self.UI.w_plot_manager.data.values,
                 VecField.to_xyz().components[test_dict["component"]].values,
                 7,
             )
@@ -109,11 +109,12 @@ class TestGUI(object):
         # Step 2 : Checking thay the axes and the operations given/sent are correct
         # Recovering the string generated
         axes_sent = parser.read_input_strings(
-            self.UI.w_axis_manager.get_axes_selected(), axis_data=None
+            self.UI.w_plot_manager.w_axis_manager.get_axes_selected(), axis_data=None
         )
 
         actions_sent = parser.read_input_strings(
-            self.UI.w_axis_manager.get_operation_selected(), axis_data=None
+            self.UI.w_plot_manager.w_axis_manager.get_operation_selected(),
+            axis_data=None,
         )
 
         # Step 2-1 : Checking the axes (1 and 2 if given)
@@ -128,7 +129,8 @@ class TestGUI(object):
         if axes_given[0].unit == "SI":
             # If the unit is not given, then we make sure that the unit by default is selected
             assert (
-                axes_sent[0].unit == self.UI.w_axis_manager.w_axis_1.get_current_unit()
+                axes_sent[0].unit
+                == self.UI.w_plot_manager.w_axis_manager.w_axis_1.get_current_unit()
             )
         else:
             assert axes_sent[0].unit == axes_given[0].unit
@@ -140,7 +142,7 @@ class TestGUI(object):
                 # If the unit is not given, then we make sure that the unit by default is selected
                 assert (
                     axes_sent[1].unit
-                    == self.UI.w_axis_manager.w_axis_2.get_current_unit()
+                    == self.UI.w_plot_manager.w_axis_manager.w_axis_2.get_current_unit()
                 )
 
         # Step 2-2 : Checking the actions
@@ -165,7 +167,9 @@ class TestGUI(object):
                         # if we gave a negative index, we have to update the value nmanally (slider accept/return only positive value)
                         assert (
                             actions_sent[i].indices[0]
-                            == self.UI.w_axis_manager.w_data_sel[i].slider.maximum()
+                            == self.UI.w_plot_manager.w_axis_manager.w_data_sel[
+                                i
+                            ].slider.maximum()
                             + actions_given[i].indices[0]
                         )
                     else:
@@ -176,7 +180,7 @@ class TestGUI(object):
                     assert (
                         # If the unit is not given, then we make sure that the unit by default is selected
                         actions_sent[i].unit
-                        == self.UI.w_axis_manager.w_data_sel[i].unit
+                        == self.UI.w_plot_manager.w_axis_manager.w_data_sel[i].unit
                     )
                 else:
                     assert actions_sent[i].unit == actions_given[i].unit
@@ -185,11 +189,14 @@ class TestGUI(object):
             for i in range(len(actions_sent)):
                 assert (
                     actions_sent[i].name
-                    == self.UI.w_axis_manager.w_data_sel[i].axis.name
+                    == self.UI.w_plot_manager.w_axis_manager.w_data_sel[i].axis.name
                 )
                 assert actions_sent[i].extension == "single"
                 assert actions_sent[i].indices[0] == 0
-                assert actions_sent[i].unit == self.UI.w_axis_manager.w_data_sel[i].unit
+                assert (
+                    actions_sent[i].unit
+                    == self.UI.w_plot_manager.w_axis_manager.w_data_sel[i].unit
+                )
 
 
 if __name__ == "__main__":
