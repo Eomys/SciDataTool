@@ -254,7 +254,10 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             self.slider.hide()
             self.b_action.show()
             self.b_action.setText(extraction_selected)
-            self.refreshNeeded.emit()
+        elif extraction_selected == "integrate":
+            self.lf_value.hide()
+            self.slider.hide()
+            self.b_action.hide()
         else:
             self.lf_value.hide()
             self.slider.hide()

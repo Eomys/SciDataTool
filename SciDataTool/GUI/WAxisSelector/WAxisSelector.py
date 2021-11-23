@@ -65,19 +65,19 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         return self.axis_selected + "{" + self.unit + "}"
 
-    def get_current_axis_name(self):
-        """Method that return the axis currently selected
-        Parameters
-        ----------
-        self : WAxisSelector
-            a WAxisSelector object
-        Output
-        ---------
-        string
-            name of the current axis selected
-        """
+    # def get_current_axis_name(self):
+    #     """Method that return the axis currently selected
+    #     Parameters
+    #     ----------
+    #     self : WAxisSelector
+    #         a WAxisSelector object
+    #     Output
+    #     ---------
+    #     string
+    #         name of the current axis selected
+    #     """
 
-        return self.c_axis.currentText()
+    #     return self.c_axis.currentText()
 
     def get_current_action_name(self):
         """Method that return the action currently selected
@@ -92,7 +92,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         return self.c_action.currentText()
 
-    def get_current_axis_selected(self):
+    def get_axis_selected(self):
         """Method that return the name of the axis selected of the WAxisSelector
         Parameters
         ----------
@@ -105,19 +105,19 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         return self.axis_selected
 
-    def get_current_unit(self):
-        """Method that return the unit currently selected
-        Parameters
-        ----------
-        self : WAxisSelector
-            a WAxisSelector object
-        Output
-        ---------
-        string
-            name of the current unit selected
-        """
+    # def get_current_unit(self):
+    #     """Method that return the unit currently selected
+    #     Parameters
+    #     ----------
+    #     self : WAxisSelector
+    #         a WAxisSelector object
+    #     Output
+    #     ---------
+    #     string
+    #         name of the current unit selected
+    #     """
 
-        return self.unit
+    #     return self.unit
 
     def remove_axis(self, axis_to_remove):
         """Method that remove a given axis from the axis ComboBox.

@@ -31,12 +31,12 @@ def latex(string):
 
 
 class WPlotManager(Ui_WPlotManager, QWidget):
-    """Main windows of the SciDataTool UI"""
+    """Main widget of the SciDataTool UI"""
 
     updatePlot = Signal()
 
     def __init__(self, parent=None):
-        """Initialize the GUI according to machine type
+        """Initialize the widget by linking buttons to methods
 
         Parameters
         ----------
@@ -64,7 +64,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.w_range.refreshNeeded.connect(self.auto_update)
 
     def auto_update(self):
-        """Method that checks if the autorefresh is enabled.If true; then it updates the plot.
+        """Method that checks if the autorefresh is enabled. If true, then it updates the plot.
         Parameters
         ----------
         self : WPlotManager
@@ -167,13 +167,25 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         self.is_auto_refresh = self.c_auto_refresh.isChecked()
 
-    def set_info(
-        self, data, user_input_list, user_input_dict, is_auto_refresh, is_VectorField
-    ):
-        """Method that use the info given by DDataPlotter to setup the widget"""
+    def set_info(self, data, user_input_list, user_input_dict, is_VectorField):
+        """Method that use the info given by DDataPlotter to setup the widget
+
+        Parameters
+        ----------
+        self : DDataPlotter
+            a DDataPlotter object
+        data : DataND or VectorField object
+            A DataND/VectorField object to plot
+        user_input_list:
+            list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
+        user_input_dict:
+            dict of info which are given for the auto-plot (setting up WDataRange)
+        """
         # Recovering the object that we want to show
         self.data = data
-        self.is_auto_refresh = is_auto_refresh
+
+        # Setting the auto_refresh functionality to False by default
+        self.is_auto_refresh = False
 
         # Hide or show the comboBox related to the component of a VectorField
         if is_VectorField:
@@ -225,8 +237,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """Method that will update the range widget with either the user input or the default value of the DataND object
         Parameters
         ----------
-        self : DDataPlotter
-            a DDataPlotter object
+        self : WPlotManager
+            a WPlotManager object
         """
         self.w_range.blockSignals(True)
 

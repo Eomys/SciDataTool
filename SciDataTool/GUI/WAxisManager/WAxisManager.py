@@ -63,7 +63,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.fft_sync("axis 1")
 
         # Recovering the axis selected by the user removing it from the the second axis combobox
-        self.w_axis_2.remove_axis(self.w_axis_1.get_current_axis_selected())
+        self.w_axis_2.remove_axis(self.w_axis_1.get_axis_selected())
 
         # Generating the GroupBox
         self.gen_data_selection()
@@ -96,8 +96,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_list_2 = self.w_axis_2.get_axes_name()[:]
 
         # Getting the axes selected and removing them from the right axes_list
-        axis_selected_1 = self.w_axis_1.get_current_axis_selected()
-        axis_selected_2 = self.w_axis_2.get_current_axis_selected()
+        axis_selected_1 = self.w_axis_1.get_axis_selected()
+        axis_selected_2 = self.w_axis_2.get_axis_selected()
 
         axes_list_1.remove(axis_selected_1)
         axes_list_2.remove(axis_selected_2)
@@ -147,11 +147,15 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_selected = list()
 
         # Recovering the first axis
-        axes_selected.append(self.w_axis_1.get_axis_unit_selected())
+        axes_selected.append(
+            self.w_axis_1.get_axis_selected() + "{" + self.w_axis_1.unit + "}"
+        )
 
         # If a second axis is selected, then we add it as well
-        if self.w_axis_2.get_current_axis_selected() != "None":
-            axes_selected.append(self.w_axis_2.get_axis_unit_selected())
+        if self.w_axis_2.get_axis_selected() != "None":
+            axes_selected.append(
+                self.w_axis_2.get_axis_selected() + "{" + self.w_axis_2.unit + "}"
+            )
 
         return axes_selected
 

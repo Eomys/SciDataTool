@@ -42,17 +42,16 @@ def latex(string):
 
 
 class DDataPlotter(Ui_DDataPlotter, QWidget):
-    """Main windows of the SciDataTool UI"""
+    """Main window of the SciDataTool UI"""
 
     def __init__(
         self,
         data,
         user_input_list,
         user_input_dict,
-        is_auto_refresh=False,
         is_VectorField=False,
     ):
-        """Initialize the GUI according to machine type
+        """Initialize the UI according to the input given by the user
 
         Parameters
         ----------
@@ -64,8 +63,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         user_input_dict:
             dict of info which are given for the auto-plot (setting up WDataRange)
-        is_auto_refresh : bool
-            True to remove
+
         """
 
         # Build the interface according to the .ui file
@@ -78,7 +76,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Initializing the WPlotManager
         self.w_plot_manager.set_info(
-            data, user_input_list, user_input_dict, is_auto_refresh, is_VectorField
+            data, user_input_list, user_input_dict, is_VectorField
         )
 
         # Building the interaction with the UI and the UI itself
@@ -114,8 +112,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             [
                 self.data,
                 axes_selected,
-                data_selection,
-                output_range,
+                _,
+                _,
             ] = self.w_plot_manager.get_plot_info()
 
             # Checking if the axes are following the order inside the data object
@@ -333,27 +331,28 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 axes_selected = [axes_selected[1], axes_selected[0]]
 
         # To improve the code, we use a list with the inputs of the user to pass as parameters thanks to *list
-        if len(axes_selected) == 1:
-            self.data.plot_2D_Data(
-                *[*axes_selected, *data_selection],
-                unit=output_range["unit"],
-                fig=self.fig,
-                ax=self.ax,
-                y_min=output_range["min"],
-                y_max=output_range["max"],
-            )
+        if not None in data_selection:
+            if len(axes_selected) == 1:
+                self.data.plot_2D_Data(
+                    *[*axes_selected, *data_selection],
+                    unit=output_range["unit"],
+                    fig=self.fig,
+                    ax=self.ax,
+                    y_min=output_range["min"],
+                    y_max=output_range["max"],
+                )
 
-        elif len(axes_selected) == 2:
-            self.data.plot_3D_Data(
-                *[*axes_selected, *data_selection],
-                unit=output_range["unit"],
-                fig=self.fig,
-                ax=self.ax,
-                is_2D_view=True,
-                z_min=output_range["min"],
-                z_max=output_range["max"],
-                is_switch_axes=not_in_order,
-            )
+            elif len(axes_selected) == 2:
+                self.data.plot_3D_Data(
+                    *[*axes_selected, *data_selection],
+                    unit=output_range["unit"],
+                    fig=self.fig,
+                    ax=self.ax,
+                    is_2D_view=True,
+                    z_min=output_range["min"],
+                    z_max=output_range["max"],
+                    is_switch_axes=not_in_order,
+                )
 
         else:
             print("Operation not implemented yet, plot could not be updated")
