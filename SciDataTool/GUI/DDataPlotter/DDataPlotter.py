@@ -72,127 +72,18 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         QWidget.__init__(self)
         self.setupUi(self)
 
-        # Recovering the object that we want to show
-        self.data = data
-        self.is_auto_refresh = is_auto_refresh
-
-        # Adding an argument for testing autorefresh
-        self.is_plot_updated = False
-
         # Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
         self.set_figure(self.fig)
 
-        # Hide or show the ComboBox related to the component of a VectorField
-        if is_VectorField:
-            self.data_obj = data  # storing the Vectorfield with all the components while data will only have one component
-            self.w_vect_selector.show()
-            # Adding/removing axial and comp_z depending on the VectorField object
-            self.w_vect_selector.update(self.data_obj)
-            self.w_vect_selector.refreshComponent.connect(self.update_component)
-            if "component" in user_input_dict:
-                self.w_vect_selector.set_component(user_input_dict)
-                self.update_component()
-            else:
-                self.update_component()
-        else:
-            self.w_vect_selector.hide()
-
-        # If only one axis is given with the object, then we hide w_axis_2
-        if len(self.data.get_axes()) == 1:
-            self.w_axis_manager.w_axis_2.hide()
-            self.w_axis_manager.g_data_extract.hide()
-        else:
-            self.w_axis_manager.w_axis_2.show()
-            self.w_axis_manager.g_data_extract.show()
+        # Initializing the WPlotManager
+        self.w_plot_manager.set_info(
+            data, user_input_list, user_input_dict, is_auto_refresh, is_VectorField
+        )
 
         # Building the interaction with the UI and the UI itself
-        self.b_refresh.clicked.connect(self.update_plot)
-        self.w_axis_manager.refreshRange.connect(self.update_range)
-        self.b_export.clicked.connect(self.export)
-
-        self.w_axis_manager.set_axis_widgets(self.data, user_input_list)
-        self.update_range(user_input_dict)
+        self.w_plot_manager.updatePlot.connect(self.update_plot)
         self.update_plot()
-
-        # Linking the signals for the autoRefresh
-        self.c_auto_refresh.toggled.connect(self.set_auto_refresh)
-        self.w_axis_manager.refreshNeeded.connect(self.auto_update)
-        self.w_range.refreshNeeded.connect(self.auto_update)
-
-    def auto_update(self):
-        """Method that checks if the autorefresh is enabled.If true; then it updates the plot.
-        Parameters
-        ----------
-        self : DDataPlotter
-            a DDataPlotter object
-
-        """
-
-        if self.is_auto_refresh == True:
-            self.update_range()
-            self.update_plot()
-            self.is_plot_updated = True
-        else:
-            self.is_plot_updated = False
-
-    def export(self, save_file_path=None):
-        """Method that export the data of the plot as a csv file
-        Parameters
-        ----------
-        self : DDataPlotter
-            a DDataPlotter object
-        """
-        # Getting the inputs of the user to export the plot + for the name of the csv file
-        param_list = [
-            *self.w_axis_manager.get_axes_selected(),
-            *self.w_axis_manager.get_operation_selected(),
-        ]
-
-        file_name = "plot_" + self.data.symbol + "_" + "_".join(param_list)
-
-        default_file_path = file_name + ".csv"
-
-        # Opening a dialog window to select the directory where the file will be saved if we are not testing
-        if save_file_path == None:
-            save_file_path = QFileDialog.getSaveFileName(
-                self,
-                self.tr("Export plot data"),
-                default_file_path,
-                filter="csv (*.csv)",
-            )[0]
-        else:
-            save_file_path += "\\" + default_file_path
-
-        # Exporting the file to the right folder
-        if save_file_path not in ["", None]:
-            save_path = dirname(save_file_path)
-            file_name = basename(save_file_path).split(".")[0]
-            try:
-                self.data.export_along(
-                    *param_list, save_path=save_path, file_name=file_name
-                )
-            except Exception as e:
-                # Displaying the error inside  abox instead of the console
-                err_msg = "Error while exporting Data:\n" + str(e)
-
-                QMessageBox().critical(
-                    self,
-                    self.tr("Error"),
-                    err_msg,
-                )
-
-    def set_auto_refresh(self):
-        """Method that update the refresh policy according to the checkbox inside the UI
-
-        Parameters
-        ----------
-        self : DDataPlotter
-            a DDataPlotter object
-
-        """
-
-        self.is_auto_refresh = self.c_auto_refresh.isChecked()
 
     def set_figure(self, fig):
         """Method that set up the figure inside the GUI
@@ -218,34 +109,32 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Set labels for cursor and coordinates
         ######################################
         def format_coord(x, y, z=None, sep=", "):
-            if (
-                self.w_axis_manager.w_axis_1.get_current_axis_name().lower()
-                in SYMBOL_DICT
-            ):
-                xlabel = latex(
-                    SYMBOL_DICT[
-                        self.w_axis_manager.w_axis_1.get_current_axis_name().lower()
-                    ]
-                )
-            else:
-                xlabel = latex(self.w_axis_manager.w_axis_1.get_current_axis_name())
-            xunit = "[" + latex(self.w_axis_manager.w_axis_1.get_current_unit()) + "]"
 
-            if self.w_axis_manager.w_axis_2.get_current_axis_name() != "None":
-                if (
-                    self.w_axis_manager.w_axis_2.get_current_axis_name().lower()
-                    in SYMBOL_DICT
-                ):
-                    ylabel = latex(
-                        SYMBOL_DICT[
-                            self.w_axis_manager.w_axis_2.get_current_axis_name().lower()
-                        ]
-                    )
+            # Recovering the input of the user
+            [
+                self.data,
+                axes_selected,
+                data_selection,
+                output_range,
+            ] = self.w_plot_manager.get_plot_info()
+
+            # Checking if the axes are following the order inside the data object
+            axes_selected_parsed = parser.read_input_strings(
+                axes_selected, axis_data=None
+            )
+
+            if axes_selected_parsed[0].name.lower() in SYMBOL_DICT:
+                xlabel = latex(SYMBOL_DICT[axes_selected_parsed[0].name.lower()])
+            else:
+                xlabel = latex(axes_selected_parsed[0].name)
+            xunit = "[" + latex(axes_selected_parsed[0].unit) + "]"
+
+            if len(axes_selected) == 2:
+                if axes_selected_parsed[1].name.lower():
+                    ylabel = latex(SYMBOL_DICT[axes_selected_parsed[1].name.lower()])
                 else:
-                    ylabel = latex(self.w_axis_manager.w_axis_2.get_current_axis_name())
-                yunit = (
-                    "[" + latex(self.w_axis_manager.w_axis_2.get_current_unit()) + "]"
-                )
+                    ylabel = latex(axes_selected_parsed[1].name)
+                yunit = "[" + latex(axes_selected_parsed[1].unit) + "]"
 
             else:
                 ylabel = self.data.symbol
@@ -400,23 +289,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.canvas.mpl_connect("pick_event", set_cursor)
         self.canvas.mpl_connect("button_press_event", delete_cursor)
 
-    def update_component(self):
-        """Method that update data according to the component selected in w_vect_selector.
-        Parameters
-        ----------
-        self : DDataPlotter
-            a DDataPlotter object
-
-        """
-        component_name = self.w_vect_selector.get_component_selected()
-
-        if component_name in ["radial", "tangential", "axial"]:
-            self.data = self.data_obj.to_rphiz().components[component_name]
-        elif component_name in ["comp_x", "comp_y", "comp_z"]:
-            self.data = self.data_obj.to_xyz().components[component_name]
-
-        self.w_axis_manager.set_axis_widgets(self.data, list())
-
     def update_plot(self):
         """Method that update the plot according to the info selected in the UI
         Parameters
@@ -437,8 +309,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         (self.fig, self.ax, _, _) = init_fig()
         self.set_figure(self.fig)
 
-        # Recovering the axis selected and their units
-        axes_selected = self.w_axis_manager.get_axes_selected()
+        # Recovering the input of the user
+        [
+            self.data,
+            axes_selected,
+            data_selection,
+            output_range,
+        ] = self.w_plot_manager.get_plot_info()
 
         # Checking if the axes are following the order inside the data object
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
@@ -455,15 +332,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 not_in_order = True
                 axes_selected = [axes_selected[1], axes_selected[0]]
 
-        # Recovering the operation on the other axes
-        data_selection = self.w_axis_manager.get_operation_selected()
-
-        # Recovering the operation on the field values
-        output_range = self.w_range.get_field_selected()
-
         # To improve the code, we use a list with the inputs of the user to pass as parameters thanks to *list
-        # We have to take into account the
-
         if len(axes_selected) == 1:
             self.data.plot_2D_Data(
                 *[*axes_selected, *data_selection],
@@ -488,32 +357,3 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         else:
             print("Operation not implemented yet, plot could not be updated")
-
-    def update_range(self, user_input_dict=dict()):
-        """Method that will update the range widget with either the user input or the default value of the DataND object
-        Parameters
-        ----------
-        self : DDataPlotter
-            a DDataPlotter object
-        """
-        self.w_range.blockSignals(True)
-
-        # Recovering the axis selected and their units
-        axes_selected = self.w_axis_manager.get_axes_selected()
-        # Recovering the operation on the other axes
-        data_selection = self.w_axis_manager.get_operation_selected()
-
-        # Updating the name of the groupBox according to the number of axes selected
-        if len(axes_selected) == 1:
-            self.w_range.g_range.setTitle("Y")
-        elif len(axes_selected) == 2:
-            self.w_range.g_range.setTitle("Z")
-
-        # Setting the WDataRange by sending the necessary info to the widget
-        self.w_range.set_range(self.data, axes_selected, data_selection)
-
-        # If user inputs have been sent (auto plot), then we modify the WDataRange according to these info
-        if len(user_input_dict) != 0:
-            self.w_range.set_range_user_input(user_input_dict)
-
-        self.w_range.blockSignals(False)

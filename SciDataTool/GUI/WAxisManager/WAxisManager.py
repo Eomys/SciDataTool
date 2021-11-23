@@ -1,12 +1,8 @@
-from PySide2.QtCore import QSize
-from PySide2.QtWidgets import QSizePolicy, QSpacerItem, QWidget
+from PySide2.QtWidgets import QSpacerItem, QWidget
 from PySide2.QtCore import Signal
 
-from SciDataTool.GUI.WAxisSelector.WAxisSelector import WAxisSelector
-
 from ...GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
-from ...GUI.WDataExtractor.WDataExtractor import WDataExtractor, type_extraction_dict
-from ...Functions.Plot import fft_dict, ifft_dict, axes_dict
+from ...GUI.WDataExtractor.WDataExtractor import WDataExtractor
 
 
 EXTENSION_DICT = {
@@ -203,6 +199,13 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         user_input_list : list
             list of the inputs from the user to set the axes (auto-plot)
         """
+        # If only one axis is given with the object, then we hide w_axis_2 and g_data_extract
+        if len(data.get_axes()) == 1:
+            self.w_axis_2.hide()
+            self.g_data_extract.hide()
+        else:
+            self.w_axis_2.show()
+            self.g_data_extract.show()
 
         # Step 1 : If user_input are given (auto-plot), we have to process them
         axes_list = [
