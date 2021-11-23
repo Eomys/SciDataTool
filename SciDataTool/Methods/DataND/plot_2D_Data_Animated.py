@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import imageio
-from SciDataTool.Methods.DataND.plot_2D_Data import plot_2D_Data
 
 
 def plot_2D_Data_Animated(
@@ -26,17 +25,17 @@ def plot_2D_Data_Animated(
     else:
         result = self.get_along(animated_axis, *param_list)
 
-    value_max = np.max(result[animated_axis])
-    value_min = np.min(result[animated_axis])
+    value_max = np.nanmax(result[animated_axis])
+    value_min = np.nanmin(result[animated_axis])
     variation_step = (value_max - value_min) / nb_frames
 
-    y_max = np.max(result[self.symbol])
-    y_min = np.min(result[self.symbol])
+    y_max = np.nanmax(result[self.symbol])
+    y_min = np.nanmin(result[self.symbol])
     marge = (
         y_max - y_min
     ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
-    param_dict["y_min"] = np.min(result[self.symbol]) - abs(marge)
-    param_dict["y_max"] = np.max(result[self.symbol]) + abs(marge)
+    param_dict["y_min"] = np.nanmin(result[self.symbol]) - abs(marge)
+    param_dict["y_max"] = np.nanmax(result[self.symbol]) + abs(marge)
     param_dict["is_show_fig"] = False
     # Getting the name of the gif
     save_path = param_dict["save_path"].replace(".png", ".gif")

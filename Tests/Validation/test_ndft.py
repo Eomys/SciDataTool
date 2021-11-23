@@ -312,7 +312,7 @@ def test_nudft_2d_wavenumber():
         fig, axs = plt.subplots(2)
         axs[0].imshow(field)
         axs[1].imshow(
-            result_idft["X"].real, vmin=0.9 * np.min(field), vmax=1.1 * np.max(field)
+            result_idft["X"].real, vmin=0.9 * np.min(field), vmax=1.1 * np.nanmax(field)
         )
         plt.show()
 

@@ -6,8 +6,8 @@ from numpy import (
     where,
     meshgrid,
     unique,
-    max as np_max,
-    min as np_min,
+    nanmax as np_max,
+    nanmin as np_min,
     array2string,
     linspace,
     log10,
@@ -265,6 +265,7 @@ def plot_3D_Data(
 
     # Detect discontinuous axis (Norm_indices) to use flat shading
     is_shading_flat = False
+    flat_indices = []
     type_plot = "pcolor"
     for axis in axes_list:
         if axis.unit in self.axes[axis.index].normalizations:
@@ -272,9 +273,19 @@ def plot_3D_Data(
                 self.axes[axis.index].normalizations[axis.unit], Norm_indices
             ):
                 is_shading_flat = True
+                flat_indices.append(axis.index)
 
     if is_shading_flat:
         type_plot = "pcolormesh"
+        # 0.5 offset
+        if 0 in flat_indices:
+            Xdata = Xdata - 0.5
+            x_min -= 0.5
+            x_max -= 0.5
+        if 1 in flat_indices:
+            Ydata = Ydata - 0.5
+            y_min -= 0.5
+            y_max -= 0.5
         Ydata, Xdata = meshgrid(Ydata, Xdata)
 
     title4 = " for "
