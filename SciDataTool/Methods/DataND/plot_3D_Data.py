@@ -6,8 +6,8 @@ from numpy import (
     where,
     meshgrid,
     unique,
-    max as np_max,
-    min as np_min,
+    nanmax as np_max,
+    nanmin as np_min,
     array2string,
     linspace,
     log10,
@@ -113,19 +113,19 @@ def plot_3D_Data(
     # Set unit
     if unit == "SI":
         unit = self.unit
+    if "dB" in unit:
+        if "ref" in self.normalizations:
+            ref = self.normalizations["ref"].ref
+        else:
+            ref = 1
+        unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
+    else:
+        unit_str = r"$[" + unit + "]$"
 
     # Detect fft
     is_fft = False
     if any("wavenumber" in s for s in arg_list) or any("freqs" in s for s in arg_list):
         is_fft = True
-        if "dB" in unit:
-            if "ref" in self.normalizations:
-                ref = self.normalizations["ref"].ref
-            else:
-                ref = 1
-            unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
-        else:
-            unit_str = r"$[" + unit + "]$"
         if self.symbol == "Magnitude":
             zlabel = "Magnitude " + unit_str
         else:
@@ -133,14 +133,12 @@ def plot_3D_Data(
         title1 = "FFT2 of " + self.name.lower() + " "
     else:
         if is_norm:
-            zlabel = (
-                r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\, [" + unit + "]$"
-            )
+            zlabel = r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}$ " + unit_str
         else:
             if self.symbol == "Magnitude":
-                zlabel = "Magnitude " + r"$[" + unit + "]$"
+                zlabel = "Magnitude " + unit_str
             else:
-                zlabel = r"$" + self.symbol + "\, [" + unit + "]$"
+                zlabel = r"$" + self.symbol + "$ " + unit_str
         title1 = "Surface plot of " + self.name.lower() + " "
 
     # Extract field and axes
@@ -265,6 +263,7 @@ def plot_3D_Data(
 
     # Detect discontinuous axis (Norm_indices) to use flat shading
     is_shading_flat = False
+    flat_indices = []
     type_plot = "pcolor"
     for axis in axes_list:
         if axis.unit in self.axes[axis.index].normalizations:
@@ -272,15 +271,25 @@ def plot_3D_Data(
                 self.axes[axis.index].normalizations[axis.unit], Norm_indices
             ):
                 is_shading_flat = True
+                flat_indices.append(axis.index)
 
     if is_shading_flat:
         type_plot = "pcolormesh"
+        # 0.5 offset
+        if 0 in flat_indices:
+            Xdata = Xdata - 0.5
+            x_min -= 0.5
+            x_max -= 0.5
+        if 1 in flat_indices:
+            Ydata = Ydata - 0.5
+            y_min -= 0.5
+            y_max -= 0.5
         Ydata, Xdata = meshgrid(Ydata, Xdata)
 
     title4 = " for "
     for axis in axes_list[2:]:
         if axis.unit == "SI":
-            axis_unit = unit_dict[axis.name]
+            axis_unit = unit_dict[axis.name][0]
         elif axis.unit in norm_dict:
             axis_unit = norm_dict[axis.unit]
         else:

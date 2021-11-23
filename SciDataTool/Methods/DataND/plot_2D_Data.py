@@ -11,10 +11,10 @@ from numpy import (
     array,
     where,
     unique,
-    max as np_max,
+    nanmax as np_max,
     array2string,
     insert,
-    min as np_min,
+    nanmin as np_min,
     linspace,
     log10,
     nan,
@@ -296,7 +296,9 @@ def plot_2D_Data(
                 if len(result_0[axis.name]) == 1:
                     axis_str = axis_str.strip("[]")
 
-                title3 += name + "=" + axis_str.rstrip(", ") + " [" + axis_unit + "], "
+                title3 += (
+                    name + "=" + axis_str.rstrip(", ") + " [" + axis_unit[0] + "], "
+                )
 
     # Title part 4 containing axes that are here but not involved in requested axes
     title4 = ""
@@ -450,9 +452,7 @@ def plot_2D_Data(
             indices = [
                 ind
                 for ind, y in enumerate(Ydatas[0])
-                if abs(y)
-                > 10 * log10(thresh * self.normalizations["ref"].ref)
-                + abs(np_max(Ydatas[0]))
+                if abs(y) > 10 * log10(thresh) + abs(np_max(Ydatas[0]))
             ]
         else:
             indices = [

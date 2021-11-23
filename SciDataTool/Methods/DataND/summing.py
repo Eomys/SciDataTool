@@ -45,7 +45,7 @@ def summing(self, values, axes_list, is_magnitude, unit):
         if axis_requested.name in ["time", "angle", "z"]:
             is_phys = True
             is_freqs = False
-        elif axis_requested.name == "freqs":
+        elif axis_requested.name in ["freqs", "frequency"]:
             is_phys = False
             is_freqs = True
         else:

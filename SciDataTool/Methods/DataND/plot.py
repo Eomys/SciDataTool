@@ -4,6 +4,8 @@ from PySide2.QtWidgets import QApplication
 from PySide2 import QtCore
 from SciDataTool.Functions import parser
 
+QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+
 
 def plot(self, *args, is_create_appli=True, is_test=False, **kwargs):
     """Plot the Data object in the GUI
@@ -18,7 +20,7 @@ def plot(self, *args, is_create_appli=True, is_test=False, **kwargs):
     """
 
     if is_create_appli:
-        QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+
         a = QApplication(argv)
 
     user_input_list = parser.read_input_strings(

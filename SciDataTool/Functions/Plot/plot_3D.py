@@ -1,4 +1,4 @@
-from numpy import min as np_min, max as np_max, abs as np_abs, log10
+from numpy import nanmin as np_min, nanmax as np_max, abs as np_abs, log10
 
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.art3d as art3d

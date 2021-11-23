@@ -2,10 +2,10 @@ from types import FrameType
 import pytest
 from PySide2.QtWidgets import *
 
-from numpy import linspace, pi
+from numpy import pi
 from numpy.random import random
 from SciDataTool import DataLinspace, DataTime
-from SciDataTool.Functions.Plot import ifft_dict, fft_dict, unit_dict
+from SciDataTool.Functions.Plot import ifft_dict
 from SciDataTool.Functions import parser
 
 a_p_list = list()
@@ -144,6 +144,18 @@ a_p_list.append(
     }
 )  # Testing the autoplot for 2D plot without giving slice and WdataRange
 
+a_p_list.append(
+    {
+        "axis": ["angle{°}", "time"],
+        "action": ["z[2]"],
+        "is_create_appli": False,
+        "is_test": True,
+        "unit": "T",
+        "zmin": "0",
+        "zmax": "50",
+    }
+)  # Testing the autoplot for 2D plot where axes are inverted
+
 
 class TestGUI(object):
     @classmethod
@@ -172,8 +184,8 @@ class TestGUI(object):
 
     @pytest.mark.gui
     @pytest.mark.parametrize("test_dict", a_p_list)
-    def check_axis(self, test_dict):
-        """Test to make sure that the auto-plot functions for its axes"""
+    def check_a_p(self, test_dict):
+        """Test to make sure that the auto-plot works as intended"""
 
         # Launching the auto plot with info from the dict
         if len(test_dict["axis"]) == 1:
@@ -342,5 +354,5 @@ if __name__ == "__main__":
     for ii, a_p_test in enumerate(a_p_list):
         a = TestGUI()
         a.setup_class()
-        a.check_axis(a_p_test)
+        a.check_a_p(a_p_test)
         print("Test n°" + str(ii) + " done")

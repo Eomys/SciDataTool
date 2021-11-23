@@ -1,10 +1,8 @@
 import pytest
 from PySide2.QtWidgets import *
 
-from numpy import linspace, pi
-from numpy.random import random
-from SciDataTool import DataLinspace, DataTime
-from SciDataTool.Functions.Plot import ifft_dict, fft_dict, unit_dict, axes_dict
+from Tests.GUI import Field
+from SciDataTool.Functions.Plot import ifft_dict, fft_dict, axes_dict
 from SciDataTool.Functions import parser
 from SciDataTool.GUI.WDataExtractor.WDataExtractor import type_extraction_dict
 
@@ -12,29 +10,7 @@ from SciDataTool.GUI.WDataExtractor.WDataExtractor import type_extraction_dict
 class TestGUI(object):
     @classmethod
     def setup_class(self):
-        f = 50
-        Nt_tot = 16
-        Na_tot = 20
-
-        Time = DataLinspace(
-            name="time", unit="s", initial=0, final=1 / (2 * f), number=Nt_tot
-        )
-        Angle = DataLinspace(
-            name="angle", unit="rad", initial=0, final=2 * pi, number=Na_tot
-        )
-        Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3)
-
-        field = random((Nt_tot, Na_tot, 3))
-
-        self.Field = DataTime(
-            name="Airgap flux density",
-            symbol="B_r",
-            unit="T",
-            axes=[Time, Angle, Z],
-            values=field,
-        )
-
-        self.UI = self.Field.plot(is_test=True)
+        self.UI = Field.plot(is_test=True)
 
     @pytest.mark.gui
     def check_axes_strings(self):
@@ -54,7 +30,7 @@ class TestGUI(object):
                     assert (
                         ifft_dict[axes_selected[0].name]
                         == self.UI.w_axis_manager.w_axis_1.c_axis.currentText()
-                        and self.UI.w_axis_manager.w_axis_1.c_operation.currentText()
+                        and self.UI.w_axis_manager.w_axis_1.c_action.currentText()
                         == "FFT"
                     )
 
@@ -83,7 +59,7 @@ class TestGUI(object):
                         assert (
                             ifft_dict[axes_selected[1].name]
                             == self.UI.w_axis_manager.w_axis_2.c_axis.currentText()
-                            and self.UI.w_axis_manager.w_axis_2.c_operation.currentText()
+                            and self.UI.w_axis_manager.w_axis_2.c_action.currentText()
                             == "FFT"
                         )
 
@@ -130,10 +106,10 @@ class TestGUI(object):
 
             if self.UI.w_axis_manager.w_axis_1.get_current_axis_selected() in fft_dict:
                 # Recovering the string when '' is selected
-                self.UI.w_axis_manager.w_axis_1.c_operation.setCurrentIndex(0)
+                self.UI.w_axis_manager.w_axis_1.c_action.setCurrentIndex(0)
                 axes.append(self.UI.w_axis_manager.w_axis_1.get_axis_unit_selected())
                 # Recovering the string when 'FFT' is selected
-                self.UI.w_axis_manager.w_axis_1.c_operation.setCurrentIndex(1)
+                self.UI.w_axis_manager.w_axis_1.c_action.setCurrentIndex(1)
                 axes.append(self.UI.w_axis_manager.w_axis_1.get_axis_unit_selected())
                 # Processing the string to compare them
                 axes_parsed = parser.read_input_strings(axes, axis_data=None)
@@ -179,23 +155,29 @@ class TestGUI(object):
         # Modifying the operation and making sure that the string is updated
         for wid in self.UI.w_axis_manager.w_data_sel:
             wid.blockSignals(True)
-            for index_ope in range(wid.c_type_extraction.count()):
+            for index_ope in range(wid.c_operation.count()):
 
-                wid.c_type_extraction.setCurrentIndex(index_ope)
+                wid.c_operation.setCurrentIndex(index_ope)
 
-                operation = wid.c_type_extraction.currentText()
+                operation = wid.c_operation.currentText()
                 if operation == "slice":
                     assert (
                         wid.get_operation_selected()
                         == wid.axis.name
-                        + type_extraction_dict[operation]
+                        + "["
                         + str(wid.slider.value())
                         + "]"
                         + "{"
                         + wid.unit
                         + "}"
                     )
+                elif operation == "slice (fft)":
+                    assert (
+                        wid.get_operation_selected()
+                        == fft_dict[wid.axis.name] + "[" + str(wid.slider.value()) + "]"
+                    )
                 elif operation in type_extraction_dict:
+
                     assert (
                         wid.get_operation_selected()
                         == wid.axis.name
@@ -211,11 +193,11 @@ class TestGUI(object):
 
         for wid in self.UI.w_axis_manager.w_data_sel:
             wid.blockSignals(True)
-            for index_ope in range(wid.c_type_extraction.count()):
+            for index_ope in range(wid.c_operation.count()):
 
-                wid.c_type_extraction.setCurrentIndex(index_ope)
+                wid.c_operation.setCurrentIndex(index_ope)
 
-                operation = wid.c_type_extraction.currentText()
+                operation = wid.c_operation.currentText()
                 if operation == "slice":
                     # Modifying the slider (to put it at a different position)
                     index = 5

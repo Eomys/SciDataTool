@@ -136,11 +136,13 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             # Building the new ComboBox
             self.c_axis.blockSignals(True)
             self.c_axis.clear()
-            for i in range(len(axes_list)):
-                if axes_list[i] in axes_dict:
-                    self.c_axis.addItem(axes_dict[axes_list[i]])
+
+            for ax in axes_list:
+                if ax in axes_dict:
+                    self.c_axis.addItem(axes_dict[ax])
                 else:
-                    self.c_axis.addItem(axes_list[i])
+                    self.c_axis.addItem(ax)
+
             self.c_axis.blockSignals(False)
 
             self.update_axis()
@@ -206,8 +208,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         self.c_axis.blockSignals(True)
         # Step 1 : Getting the name of the different axes of the DataND object
-        self.axes_list = list()
-        self.axes_list += [axis.name for axis in data.get_axes()]
+        self.axes_list = [axis.name for axis in data.get_axes()]
 
         # At least one axis must be selected => impossible to have none for X axis
         if self.name.lower() != "x":
@@ -215,11 +216,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         # Step 2 : Replacing the items inside of the ComboBox with the axes recovered
         self.c_axis.clear()
-        for i in range(len(self.axes_list)):
-            if self.axes_list[i] in axes_dict:
-                self.c_axis.addItem(axes_dict[self.axes_list[i]])
+        for ax in self.axes_list:
+            if ax in axes_dict:
+                self.c_axis.addItem(axes_dict[ax])
             else:
-                self.c_axis.addItem(self.axes_list[i])
+                self.c_axis.addItem(ax)
 
         self.c_axis.blockSignals(False)
 

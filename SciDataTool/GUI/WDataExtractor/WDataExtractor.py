@@ -8,8 +8,6 @@ from numpy import where
 from numpy import argmin, abs as np_abs
 
 type_extraction_dict = {
-    "slice": "[",
-    "slice (fft)": "[",
     "rms": "=rms",
     "rss": "=rss",
     "sum": "=sum",
@@ -59,21 +57,21 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         action_type = self.c_operation.currentText()
 
         # Formatting the string to have the right syntax
-        if action_type in type_extraction_dict:
-            if action_type == "slice":
-                slice_index = self.slider.value()
-                action = type_extraction_dict[action_type] + str(slice_index) + "]"
-
-            elif action_type == "slice (fft)":
-                slice_index = self.slider.value()
-                action = type_extraction_dict[action_type] + str(slice_index) + "]"
-
-                return fft_dict[self.axis.name] + action
-
-            else:
-                action = type_extraction_dict[action_type]
-
+        if action_type == "slice":
+            slice_index = self.slider.value()
+            action = "[" + str(slice_index) + "]"
             return self.axis.name + action + "{" + self.unit + "}"
+
+        elif action_type == "slice (fft)":
+            slice_index = self.slider.value()
+            action = "[" + str(slice_index) + "]"
+            return fft_dict[self.axis.name] + action
+
+        elif action_type in type_extraction_dict:
+            action = type_extraction_dict[action_type]
+            return self.axis.name + action + "{" + self.unit + "}"
+        else:
+            return None
 
     def get_name(self):
         """Method that return the name of the axis of the WDataExtractor
@@ -167,11 +165,17 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         """
         # Converting the axis from rad to degree if the axis is angle as we do slice in degrees
         # Recovering the value from the axis as well
-        if self.axis.name == "angle":
-            self.axis_value = self.axis.get_values(unit="°")
-            self.unit = "°"
-        else:
-            self.axis_value = self.axis.get_values()
+        if self.c_operation.currentText() == "slice":
+            if self.axis.name == "angle":
+                self.axis_value = self.axis.get_values(unit="°")
+                self.unit = "°"
+            else:
+                self.axis_value = self.axis.get_values()
+        elif self.c_operation.currentText() == "slice (fft)":
+            if self.axis.name == "angle":
+                self.axis_value = self.axis.get_values(operation="angle_to_wavenumber")
+            elif self.axis.name == "time":
+                self.axis_value = self.axis.get_values(operation="time_to_freqs")
 
         # Setting the initial value of the floatEdit to the minimum inside the axis
         self.lf_value.setValue(min(self.axis_value))
@@ -192,8 +196,8 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self.axis = axis
         self.unit = axis.unit
         self.set_name(axis.name)
-        self.update_layout()
         self.set_slider_floatedit()
+        self.update_layout()
 
         # Depending on the axis we add or remove the slice (fft) operation
         self.c_operation.blockSignals(True)
@@ -219,8 +223,11 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self : WDataExtractor
             a WDataExtractor object
         """
+
         self.lf_value.blockSignals(True)
+
         self.lf_value.setValue(self.axis_value[self.slider.value()])
+
         self.lf_value.blockSignals(False)
         self.refreshNeeded.emit()
 
@@ -236,18 +243,21 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
 
         # If the operation selected is a slice, then we show the slider and the floatEdit
         if extraction_selected == "slice" or extraction_selected == "slice (fft)":
+            self.set_slider_floatedit()
             self.lf_value.show()
             self.slider.show()
+            self.b_action.hide()
+            self.refreshNeeded.emit()
+        # If the operation selected is overlay/filter then we show the related button
+        elif extraction_selected == "overlay/filter":
+            self.lf_value.hide()
+            self.slider.hide()
+            self.b_action.show()
+            self.b_action.setText(extraction_selected)
             self.refreshNeeded.emit()
         else:
             self.lf_value.hide()
             self.slider.hide()
-
-        # If the operation selected is overlay/filter then we show the related button
-        if extraction_selected == "overlay/filter":
-            self.b_action.show()
-            self.b_action.setText(extraction_selected)
-        else:
             self.b_action.hide()
             self.refreshNeeded.emit()
 

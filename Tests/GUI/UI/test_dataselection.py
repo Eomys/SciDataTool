@@ -1,65 +1,39 @@
 import pytest
 from PySide2.QtWidgets import *
 
-from numpy import linspace, pi
-from numpy.random import random
-from SciDataTool import DataLinspace, DataTime
-from SciDataTool.Functions.Plot import ifft_dict, fft_dict, unit_dict
-from SciDataTool.Functions import parser
+from Tests.GUI import Field
 
 
 class TestGUI(object):
     @classmethod
     def setup_class(self):
-        f = 50
-        Nt_tot = 16
-        Na_tot = 20
-
-        Time = DataLinspace(
-            name="time", unit="s", initial=0, final=1 / (2 * f), number=Nt_tot
-        )
-        Angle = DataLinspace(
-            name="angle", unit="rad", initial=0, final=2 * pi, number=Na_tot
-        )
-        Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3)
-
-        field = random((Nt_tot, Na_tot, 3))
-
-        self.Field = DataTime(
-            name="Airgap flux density",
-            symbol="B_r",
-            unit="T",
-            axes=[Time, Angle, Z],
-            values=field,
-        )
-
-        self.UI = self.Field.plot(is_test=True)
+        self.UI = Field.plot(is_test=True)
 
     @pytest.mark.gui
     def check_layout(self):
         """Test that the layout is set up according to the operation selected"""
 
         for wid in self.UI.w_axis_manager.w_data_sel:
-            for ope in range(wid.c_type_extraction.count()):
+            for ope in range(wid.c_operation.count()):
 
                 wid.blockSignals(True)
-                wid.c_type_extraction.setCurrentIndex(ope)
+                wid.c_operation.setCurrentIndex(ope)
 
-                if wid.c_type_extraction.currentText() == "slice":
+                if wid.c_operation.currentText() == "slice":
                     assert (
                         not wid.slider.isHidden()
                         and not wid.lf_value.isHidden()
                         and wid.b_action.isHidden()
                     )
 
-                elif wid.c_type_extraction.currentText() == "slice (fft)":
+                elif wid.c_operation.currentText() == "slice (fft)":
                     assert (
                         not wid.slider.isHidden()
                         and not wid.lf_value.isHidden()
                         and wid.b_action.isHidden()
                     )
 
-                elif wid.c_type_extraction.currentText() == "superimpose/filter":
+                elif wid.c_operation.currentText() == "overlay/filter":
                     assert (
                         wid.slider.isHidden()
                         and wid.lf_value.isHidden()
@@ -80,9 +54,13 @@ class TestGUI(object):
         """Testing that the slider is updated correctly according to the slider and vice versa"""
 
         for wid in self.UI.w_axis_manager.w_data_sel:
-            if wid.c_type_extraction.currentText() != "slice":
-                wid.c_type_extraction.setCurrentIndex(0)
+            if not wid.c_operation.currentText() in ["slice", "slice (fft)"]:
+                wid.c_operation.setCurrentIndex(0)
 
+            # Making sure that we have the same number of index inside the slider as in axis_value
+            assert (wid.slider.maximum() - wid.slider.minimum() + 1) == len(
+                wid.axis_value
+            )
             # Modifying the value of the slider and checking if the floatEdit change correctly
             wid.slider.setValue(0)
             assert wid.lf_value.value() == wid.axis_value[wid.slider.value()]

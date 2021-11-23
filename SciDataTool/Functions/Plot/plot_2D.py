@@ -425,7 +425,7 @@ def plot_2D(
     if not is_show_legend:
         ax.get_legend().remove()
 
-    plt.tight_layout()
+    # plt.tight_layout()
     for item in (
         [ax.xaxis.label, ax.yaxis.label] + ax.get_xticklabels() + ax.get_yticklabels()
     ):

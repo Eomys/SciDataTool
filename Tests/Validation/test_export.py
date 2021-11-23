@@ -2,6 +2,7 @@ import pytest
 from SciDataTool import DataTime, DataLinspace
 from Tests import save_validation_path
 import numpy as np
+from os.path import isfile, join
 
 
 @pytest.mark.validation
@@ -16,12 +17,14 @@ def test_export_2D():
     )
 
     Field.export_along("time", "angle{°}", save_path=save_validation_path)
+    assert isfile(join(save_validation_path, "B_r_Data.csv"))
     Field.export_along(
         "time=1",
         "angle{°}",
         save_path=save_validation_path,
         file_name="B_r_Data_sliced",
     )
+    assert isfile(join(save_validation_path, "B_r_Data_sliced.csv"))
 
 
 def test_export_3D():
@@ -46,18 +49,25 @@ def test_export_3D():
         "time=1",
         "angle{°}",
         save_path=save_validation_path,
-        file_name="B_r_Data_sliced",
+        file_name="B_r_Data3D_sliced",
     )
+    assert isfile(join(save_validation_path, "B_r_Data3D_sliced.csv"))
     Field.export_along(
         "time", "angle{°}", "z", save_path=save_validation_path, is_multiple_files=True
     )
+    assert isfile(join(save_validation_path, "B_r_Data_z0.0.csv"))
+    assert isfile(join(save_validation_path, "B_r_Data_z1.0.csv"))
+    assert isfile(join(save_validation_path, "B_r_Data_z-1.0.csv"))
     Field.export_along(
         save_path=save_validation_path,
         is_multiple_files=True,
         file_name="B_r_withoutargs",
     )
+    assert isfile(join(save_validation_path, "B_r_withoutargs_z0.0.csv"))
+    assert isfile(join(save_validation_path, "B_r_withoutargs_z1.0.csv"))
+    assert isfile(join(save_validation_path, "B_r_withoutargs_z-1.0.csv"))
 
 
 if __name__ == "__main__":
-    # test_export_2D()
+    test_export_2D()
     test_export_3D()
