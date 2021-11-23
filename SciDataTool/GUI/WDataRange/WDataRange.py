@@ -92,6 +92,12 @@ class WDataRange(Ui_WDataRange, QWidget):
         field_min = field_value[field.symbol].min()
         field_max = field_value[field.symbol].max()
 
+        # IF we have a plot in 2D, then we do not want exactly min and max so we zoom out slightly
+        if len(axes_selected) == 1:
+            delta = field_max - field_min
+            field_min -= 0.1 * delta
+            field_max += 0.1 * delta
+
         # If the value of min and max are the same, then we don't set them up automatically
         eps = 1e-7
         if field_max - field_min > eps:

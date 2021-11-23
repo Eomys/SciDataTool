@@ -465,11 +465,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # We have to take into account the
 
         if len(axes_selected) == 1:
-            if not None in [output_range["min"], output_range["max"]]:
-                delta = output_range["max"] - output_range["min"]
-                output_range["min"] -= delta * 0.2
-                output_range["max"] += delta * 0.2
-
             self.data.plot_2D_Data(
                 *[*axes_selected, *data_selection],
                 unit=output_range["unit"],
