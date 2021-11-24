@@ -65,20 +65,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         return self.axis_selected + "{" + self.unit + "}"
 
-    # def get_current_axis_name(self):
-    #     """Method that return the axis currently selected
-    #     Parameters
-    #     ----------
-    #     self : WAxisSelector
-    #         a WAxisSelector object
-    #     Output
-    #     ---------
-    #     string
-    #         name of the current axis selected
-    #     """
-
-    #     return self.c_axis.currentText()
-
     def get_current_action_name(self):
         """Method that return the action currently selected
         Parameters
@@ -104,20 +90,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the axis selected
         """
         return self.axis_selected
-
-    # def get_current_unit(self):
-    #     """Method that return the unit currently selected
-    #     Parameters
-    #     ----------
-    #     self : WAxisSelector
-    #         a WAxisSelector object
-    #     Output
-    #     ---------
-    #     string
-    #         name of the current unit selected
-    #     """
-
-    #     return self.unit
 
     def remove_axis(self, axis_to_remove):
         """Method that remove a given axis from the axis ComboBox.
@@ -284,11 +256,12 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
             # Adding the right unit according to the imported dictionary
             if self.axis_selected in unit_dict:
-                self.c_unit.addItems(unit_dict[self.axis_selected])
+                self.c_unit.addItem(unit_dict[self.axis_selected])
 
-            self.c_unit.view().setMinimumWidth(
-                max([len(un) for un in unit_dict[self.axis_selected]]) * 6
-            )
+            # TODO : modifying the size of the list according to the units available (adapting it when normalization)
+            # self.c_unit.view().setMinimumWidth(
+            #     max([len(un) for un in unit_dict[self.axis_selected]]) * 6
+            # )
         self.c_unit.blockSignals(False)
         self.update_unit()
 

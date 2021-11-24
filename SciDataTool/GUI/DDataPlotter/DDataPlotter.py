@@ -1,8 +1,5 @@
-from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
-from os.path import dirname, basename
+from PySide2.QtWidgets import QWidget
 from SciDataTool.Functions import parser
-
-from matplotlib.pyplot import axes
 
 from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
 from matplotlib.backends.backend_qt5agg import (
@@ -15,7 +12,7 @@ from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
 from numpy import array
 
-from ...Functions.Plot import TEXT_BOX, ifft_dict
+from ...Functions.Plot import TEXT_BOX
 
 SYMBOL_DICT = {
     "time": "t",

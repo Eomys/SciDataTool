@@ -1,10 +1,8 @@
 from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
 from os.path import dirname, basename
-from SciDataTool.Functions import parser
 
 from PySide2.QtCore import Signal
 from ...GUI.WPlotManager.Ui_WPlotManager import Ui_WPlotManager
-from ...Functions.Plot import TEXT_BOX, ifft_dict
 
 SYMBOL_DICT = {
     "time": "t",
