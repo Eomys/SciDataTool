@@ -48,36 +48,26 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
 
-        # Adding an argument for testing autorefresh
-        self.is_plot_updated = False
-
         # Building the interaction with the UI and the UI itself
-        self.b_refresh.clicked.connect(self.update_plot)
         self.w_axis_manager.refreshRange.connect(self.update_range)
         self.b_export.clicked.connect(self.export)
 
         # Linking the signals for the autoRefresh
-        self.c_auto_refresh.toggled.connect(self.set_auto_refresh)
         self.w_axis_manager.refreshNeeded.connect(self.auto_update)
         self.w_range.refreshNeeded.connect(self.auto_update)
 
     def auto_update(self):
-        """Method that checks if the autorefresh is enabled. If true, then it updates the plot.
+        """Method that update range before sending the signal to update the plot. The auto-refresh policy will be handled in the DDataPlotter
         Parameters
         ----------
         self : WPlotManager
             a WPlotManager object
 
         """
+        self.update_range()
+        self.updatePlot.emit()
 
-        if self.is_auto_refresh == True:
-            self.update_range()
-            self.update_plot()
-            self.is_plot_updated = True
-        else:
-            self.is_plot_updated = False
-
-    def export(self, save_file_path=None):
+    def export(self, save_file_path=False):
         """Method that export the plot as a csv file
         Parameters
         ----------
@@ -95,7 +85,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         default_file_path = file_name + ".csv"
 
         # Opening a dialog window to select the directory where the file will be saved if we are not testing
-        if save_file_path == None:
+        if save_file_path == False:
             save_file_path = QFileDialog.getSaveFileName(
                 self,
                 self.tr("Export plot data"),
@@ -106,7 +96,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             save_file_path += "\\" + default_file_path
 
         # Exporting the file to the right folder
-        if save_file_path not in ["", None]:
+        if save_file_path not in ["", False]:
             save_path = dirname(save_file_path)
             file_name = basename(save_file_path).split(".")[0]
             try:

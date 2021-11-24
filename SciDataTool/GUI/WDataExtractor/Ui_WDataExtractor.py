@@ -48,7 +48,6 @@ class Ui_WDataExtractor(object):
 
         self.horizontalLayout.addWidget(self.c_operation)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.horizontalLayout_2 = QHBoxLayout()
@@ -74,7 +73,6 @@ class Ui_WDataExtractor(object):
 
         self.horizontalLayout_2.addWidget(self.slider)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.b_action = QPushButton(WDataExtractor)
@@ -85,25 +83,47 @@ class Ui_WDataExtractor(object):
 
         self.verticalLayout.addWidget(self.b_action)
 
-
         self.retranslateUi(WDataExtractor)
 
         QMetaObject.connectSlotsByName(WDataExtractor)
+
     # setupUi
 
     def retranslateUi(self, WDataExtractor):
         WDataExtractor.setWindowTitle("")
-        self.in_name.setText(QCoreApplication.translate("WDataExtractor", u"angle", None))
-        self.c_operation.setItemText(0, QCoreApplication.translate("WDataExtractor", u"slice", None))
-        self.c_operation.setItemText(1, QCoreApplication.translate("WDataExtractor", u"slice (fft)", None))
-        self.c_operation.setItemText(2, QCoreApplication.translate("WDataExtractor", u"rms", None))
-        self.c_operation.setItemText(3, QCoreApplication.translate("WDataExtractor", u"rss", None))
-        self.c_operation.setItemText(4, QCoreApplication.translate("WDataExtractor", u"sum", None))
-        self.c_operation.setItemText(5, QCoreApplication.translate("WDataExtractor", u"mean", None))
-        self.c_operation.setItemText(6, QCoreApplication.translate("WDataExtractor", u"integrate", None))
-        self.c_operation.setItemText(7, QCoreApplication.translate("WDataExtractor", u"overlay/filter", None))
+        self.in_name.setText(
+            QCoreApplication.translate("WDataExtractor", u"angle", None)
+        )
+        self.c_operation.setItemText(
+            0, QCoreApplication.translate("WDataExtractor", u"slice", None)
+        )
+        self.c_operation.setItemText(
+            1, QCoreApplication.translate("WDataExtractor", u"slice (fft)", None)
+        )
+        self.c_operation.setItemText(
+            2, QCoreApplication.translate("WDataExtractor", u"rms", None)
+        )
+        self.c_operation.setItemText(
+            3, QCoreApplication.translate("WDataExtractor", u"rss", None)
+        )
+        self.c_operation.setItemText(
+            4, QCoreApplication.translate("WDataExtractor", u"sum", None)
+        )
+        self.c_operation.setItemText(
+            5, QCoreApplication.translate("WDataExtractor", u"mean", None)
+        )
+        self.c_operation.setItemText(
+            6, QCoreApplication.translate("WDataExtractor", u"integrate", None)
+        )
+        self.c_operation.setItemText(
+            7, QCoreApplication.translate("WDataExtractor", u"overlay/filter", None)
+        )
 
-        self.lf_value.setText(QCoreApplication.translate("WDataExtractor", u"0.314", None))
-        self.b_action.setText(QCoreApplication.translate("WDataExtractor", u"Superimpose selection", None))
+        self.lf_value.setText(
+            QCoreApplication.translate("WDataExtractor", u"0.314", None)
+        )
+        self.b_action.setText(
+            QCoreApplication.translate("WDataExtractor", u"Superimpose selection", None)
+        )
+
     # retranslateUi
-

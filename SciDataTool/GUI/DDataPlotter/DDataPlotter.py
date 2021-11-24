@@ -46,6 +46,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         data,
         user_input_list,
         user_input_dict,
+        is_auto_refresh=False,
         is_VectorField=False,
     ):
         """Initialize the UI according to the input given by the user
@@ -67,6 +68,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         QWidget.__init__(self)
         self.setupUi(self)
 
+        self.is_auto_refresh = is_auto_refresh
+
         # Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
         self.set_figure(self.fig)
@@ -77,8 +80,38 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         )
 
         # Building the interaction with the UI and the UI itself
-        self.w_plot_manager.updatePlot.connect(self.update_plot)
+        self.b_refresh.clicked.connect(self.update_plot)
+        self.w_plot_manager.updatePlot.connect(self.auto_update)
         self.update_plot()
+
+        # Adding an argument for testing autorefresh
+        self.is_plot_updated = False
+        self.c_auto_refresh.toggled.connect(self.set_auto_refresh)
+
+    def auto_update(self):
+        """Method that checks if the autorefresh is enabled. If true, then it updates the plot.
+        Parameters
+        ----------
+        self : WPlotManager
+            a WPlotManager object
+
+        """
+        if self.is_auto_refresh == True:
+            self.update_plot()
+            self.is_plot_updated = True
+        else:
+            self.is_plot_updated = False
+
+    def set_auto_refresh(self):
+        """Method that update the refresh policy according to the checkbox inside the UI
+
+        Parameters
+        ----------
+        self : WPlotManager
+            a WPlotManager object
+
+        """
+        self.is_auto_refresh = self.c_auto_refresh.isChecked()
 
     def set_figure(self, fig):
         """Method that set up the figure inside the GUI
