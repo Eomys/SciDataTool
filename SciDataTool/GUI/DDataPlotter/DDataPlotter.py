@@ -94,6 +94,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         """
         if self.is_auto_refresh == True:
+            self.w_plot_manager.update_range()
             self.update_plot()
             self.is_plot_updated = True
         else:

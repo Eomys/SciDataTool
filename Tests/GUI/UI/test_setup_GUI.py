@@ -1,6 +1,6 @@
 import pytest
-from PySide2.QtWidgets import *
-
+from PySide2 import QtWidgets
+import sys
 from Tests.GUI import Field
 from SciDataTool.Functions.Plot import ifft_dict
 from SciDataTool.Functions import parser
@@ -8,8 +8,14 @@ from SciDataTool.Functions import parser
 
 class TestGUI(object):
     @classmethod
-    def setup_class(self):
-        self.UI = Field.plot(is_test=True)
+    def setup_class(cls):
+        """Run at the begining of every test to setup the gui"""
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
+
+        cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
     def check_axes(self):
@@ -29,7 +35,7 @@ class TestGUI(object):
             self.UI.w_plot_manager.w_axis_manager.w_axis_2.get_axis_selected(),
         ]
 
-        for wid in self.UI.w_plot_manager.w_axis_manager.w_data_sel:
+        for wid in self.UI.w_plot_manager.w_axis_manager.w_slice_op:
             assert not wid.axis in axes_selected
 
     @pytest.mark.gui

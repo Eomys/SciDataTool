@@ -66,7 +66,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             a WPlotManager object
 
         """
-        self.update_range()
         self.updatePlot.emit()
 
     def export(self, save_file_path=False):
@@ -145,18 +144,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         return self.data, axes_selected, data_selection, output_range
 
-    def set_auto_refresh(self):
-        """Method that update the refresh policy according to the checkbox inside the UI
-
-        Parameters
-        ----------
-        self : WPlotManager
-            a WPlotManager object
-
-        """
-
-        self.is_auto_refresh = self.c_auto_refresh.isChecked()
-
     def set_info(self, data, user_input_list, user_input_dict):
         """Method that use the info given by DDataPlotter to setup the widget
 
@@ -173,9 +160,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """
         # Recovering the object that we want to show
         self.data = data
-
-        # Setting the auto_refresh functionality to False by default
-        self.is_auto_refresh = False
 
         # Dynamic import to avoid import loop
         VectorField = import_class("SciDataTool.Classes", "VectorField")

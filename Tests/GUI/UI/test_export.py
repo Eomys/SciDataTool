@@ -1,6 +1,6 @@
 import pytest
-from PySide2.QtWidgets import *
-
+from PySide2 import QtWidgets
+import sys
 from Tests.GUI import Field
 from Tests import save_gui_path
 from os.path import join, isfile
@@ -8,8 +8,14 @@ from os.path import join, isfile
 
 class TestGUI(object):
     @classmethod
-    def setup_class(self):
-        self.UI = Field.plot(is_test=True)
+    def setup_class(cls):
+        """Run at the begining of every test to setup the gui"""
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
+
+        cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
     def check_export_path(self):

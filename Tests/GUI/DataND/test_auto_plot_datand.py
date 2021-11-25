@@ -1,6 +1,9 @@
 from types import FrameType
 import pytest
-from PySide2.QtWidgets import *
+
+# from PySide2.QtWidgets import *
+from PySide2 import QtWidgets
+import sys
 
 from numpy import pi
 from numpy.random import random
@@ -14,8 +17,8 @@ a_p_list.append(
     {
         "axis": ["time"],
         "action": ["angle[-1]", "z[2]"],
-        "is_create_appli": True,
-        "is_test": True,
+        "is_create_appli": False,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -27,7 +30,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z[2]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -39,7 +42,7 @@ a_p_list.append(
         "axis": ["freqs"],
         "action": ["angle[-1]", "z[1]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -51,7 +54,7 @@ a_p_list.append(
         "axis": ["freqs", "wavenumber"],
         "action": ["z[1]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -63,7 +66,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z=sum"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -75,7 +78,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z=rms"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -87,7 +90,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z=rss"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -100,7 +103,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z=mean"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -112,7 +115,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": [None],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -125,7 +128,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z[2]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": None,
         "zmin": None,
         "zmax": None,
@@ -137,7 +140,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": [None],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": None,
         "zmin": None,
         "zmax": None,
@@ -149,7 +152,7 @@ a_p_list.append(
         "axis": ["angle{°}", "time"],
         "action": ["z[2]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
         "zmin": "0",
         "zmax": "50",
@@ -159,7 +162,13 @@ a_p_list.append(
 
 class TestGUI(object):
     @classmethod
-    def setup_class(self):
+    def setup_class(cls):
+        """Run at the begining of every test to setup the gui"""
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
+
         f = 50
         Nt_tot = 16
         Na_tot = 20
@@ -174,7 +183,7 @@ class TestGUI(object):
 
         field = random((Nt_tot, Na_tot, 3))
 
-        self.Field = DataTime(
+        cls.Field = DataTime(
             name="Airgap flux density",
             symbol="B_r",
             unit="T",
@@ -194,7 +203,7 @@ class TestGUI(object):
                 test_dict["action"][0],
                 test_dict["action"][1],
                 is_create_appli=test_dict["is_create_appli"],
-                is_test=test_dict["is_test"],
+                is_show_fig=test_dict["is_show_fig"],
                 unit=test_dict["unit"],
                 zmin=test_dict["zmin"],
                 zmax=test_dict["zmax"],
@@ -206,7 +215,7 @@ class TestGUI(object):
                 test_dict["axis"][1],
                 test_dict["action"][0],
                 is_create_appli=test_dict["is_create_appli"],
-                is_test=test_dict["is_test"],
+                is_show_fig=test_dict["is_show_fig"],
                 unit=test_dict["unit"],
                 zmin=test_dict["zmin"],
                 zmax=test_dict["zmax"],
@@ -268,7 +277,7 @@ class TestGUI(object):
                         # if we gave a negative index, we have to update the value nmanally (slider accept/return only positive value)
                         assert (
                             actions_sent[i].indices[0]
-                            == self.UI.w_plot_manager.w_axis_manager.w_data_sel[
+                            == self.UI.w_plot_manager.w_axis_manager.w_slice_op[
                                 i
                             ].slider.maximum()
                             + actions_given[i].indices[0]
@@ -281,7 +290,7 @@ class TestGUI(object):
                     assert (
                         # If the unit is not given, then we make sure that the unit by default is selected
                         actions_sent[i].unit
-                        == self.UI.w_plot_manager.w_axis_manager.w_data_sel[i].unit
+                        == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].unit
                     )
                 else:
                     assert actions_sent[i].unit == actions_given[i].unit
@@ -290,13 +299,13 @@ class TestGUI(object):
             for i in range(len(actions_sent)):
                 assert (
                     actions_sent[i].name
-                    == self.UI.w_plot_manager.w_axis_manager.w_data_sel[i].axis.name
+                    == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].axis.name
                 )
                 assert actions_sent[i].extension == "single"
                 assert actions_sent[i].indices[0] == 0
                 assert (
                     actions_sent[i].unit
-                    == self.UI.w_plot_manager.w_axis_manager.w_data_sel[i].unit
+                    == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].unit
                 )
 
         # Comparing the info given to range with those emitted

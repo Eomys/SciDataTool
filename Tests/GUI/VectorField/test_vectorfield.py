@@ -1,30 +1,29 @@
 import pytest
-from PySide2.QtWidgets import *
-
+from PySide2 import QtWidgets
+import sys
 from Tests.GUI.VectorField import VecField
-from SciDataTool import DataLinspace, DataTime, Norm_ref, VectorField
-import numpy as np
 
 
 class TestGUI(object):
     @classmethod
-    def setup_class(self):
-        self.VecField = VecField
-        self.UI = self.VecField.plot(is_test=True)
+    def setup_class(cls):
+        """Run at the begining of every test to setup the gui"""
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
+
+        cls.VecField = VecField
+        cls.UI = cls.VecField.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
     def check_component_selected(self):
         """Testing that when the user select a component, then it is used for the rest of the calculation"""
+        w_selector = self.UI.w_plot_manager.w_vect_selector
 
-        for index_component in range(
-            self.UI.w_plot_manager.w_vect_selector.c_component.count()
-        ):
-            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(
-                index_component
-            )
-            component_selected = (
-                self.UI.w_plot_manager.w_vect_selector.c_component.currentText()
-            )
+        for index_component in range(w_selector.c_component.count()):
+            w_selector.c_component.setCurrentIndex(index_component)
+            component_selected = w_selector.c_component.currentText()
 
             if component_selected in ["radial", "tangential", "axial"]:
                 assert (
@@ -66,30 +65,23 @@ class TestGUI(object):
     @pytest.mark.gui
     def check_update_combobox(self):
         """Method to make sure that we update the combobox if coordinates are selected"""
+        w_selector = self.UI.w_plot_manager.w_vect_selector
 
         if not "axial" in self.VecField.components:
             # Case where we only have two axes for each set of coordinates
-            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(0)
-            assert (
-                self.UI.w_plot_manager.w_vect_selector.c_component.currentIndex() == 1
-            )
+            w_selector.c_component.setCurrentIndex(0)
+            assert w_selector.c_component.currentIndex() == 1
 
-            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(3)
-            assert (
-                self.UI.w_plot_manager.w_vect_selector.c_component.currentIndex() == 4
-            )
+            w_selector.c_component.setCurrentIndex(3)
+            assert w_selector.c_component.currentIndex() == 4
 
         else:
             # Case where we  have three axes for each set of coordinates
-            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(0)
-            assert (
-                self.UI.w_plot_manager.w_vect_selector.c_component.currentIndex() == 1
-            )
+            w_selector.c_component.setCurrentIndex(0)
+            assert w_selector.c_component.currentIndex() == 1
 
-            self.UI.w_plot_manager.w_vect_selector.c_component.setCurrentIndex(4)
-            assert (
-                self.UI.w_plot_manager.w_vect_selector.c_component.currentIndex() == 5
-            )
+            w_selector.c_component.setCurrentIndex(4)
+            assert w_selector.c_component.currentIndex() == 5
 
 
 if __name__ == "__main__":
