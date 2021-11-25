@@ -134,30 +134,37 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.set_unit(data)
         self.set_min_max(data, axes_selected, data_selection)
 
-    def set_range_user_input(self, user_input_dict):
+    def set_range_user_input(
+        self,
+        unit=None,
+        z_min=None,
+        z_max=None,
+    ):
         """Method that modify the unit selected and the floatEdit according to the inputs given by the user (auto-plot)
         Parameters
         ----------
         self : WDataRange
             a WDataRange object
-        user_input_dict : dictionnary
-            dictionnary that stores all the argument given to have an auto-plot
+        unit : str
+            unit in which to plot the field
+        z_min : float
+            Minimum value for Z axis (or Y if only one axe)
+        z_max : float
+            Minimum value for Z axis (or Y if only one axe)
         """
 
-        if "unit" in user_input_dict and user_input_dict["unit"] != None:
+        if unit is not None:
             # Selecting the right unit inside the unit combobox
             for i in range(self.c_unit.count()):
                 self.c_unit.setCurrentIndex(i)
-                if self.c_unit.currentText() == user_input_dict["unit"]:
+                if self.c_unit.currentText() == unit:
                     break
-
-        if "zmax" in user_input_dict and user_input_dict["zmax"] != None:
+        if z_max is not None:
             # Setting max float edit
-            self.lf_max.setValue(float(user_input_dict["zmax"]))
-
-        if "zmin" in user_input_dict and user_input_dict["zmin"] != None:
+            self.lf_max.setValue(z_max)
+        if z_min is not None:
             # Setting min float edit
-            self.lf_min.setValue(float(user_input_dict["zmin"]))
+            self.lf_min.setValue(z_min)
 
     def set_unit(self, field):
         """Method that set the unit combobox according to the unit of the field that we are plotting

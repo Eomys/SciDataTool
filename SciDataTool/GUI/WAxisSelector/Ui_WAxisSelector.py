@@ -31,11 +31,6 @@ class Ui_WAxisSelector(object):
         self.verticalLayout.addWidget(self.in_name)
 
         self.c_axis = QComboBox(WAxisSelector)
-        self.c_axis.addItem("")
-        self.c_axis.addItem("")
-        self.c_axis.addItem("")
-        self.c_axis.addItem("")
-        self.c_axis.addItem("")
         self.c_axis.setObjectName(u"c_axis")
         sizePolicy.setHeightForWidth(self.c_axis.sizePolicy().hasHeightForWidth())
         self.c_axis.setSizePolicy(sizePolicy)
@@ -81,22 +76,6 @@ class Ui_WAxisSelector(object):
     def retranslateUi(self, WAxisSelector):
         WAxisSelector.setWindowTitle("")
         self.in_name.setText(QCoreApplication.translate("WAxisSelector", u"X", None))
-        self.c_axis.setItemText(
-            0, QCoreApplication.translate("WAxisSelector", u"time", None)
-        )
-        self.c_axis.setItemText(
-            1, QCoreApplication.translate("WAxisSelector", u"angle", None)
-        )
-        self.c_axis.setItemText(
-            2, QCoreApplication.translate("WAxisSelector", u"axial direction", None)
-        )
-        self.c_axis.setItemText(
-            3, QCoreApplication.translate("WAxisSelector", u"frequency", None)
-        )
-        self.c_axis.setItemText(
-            4, QCoreApplication.translate("WAxisSelector", u"wavenumber", None)
-        )
-
         self.c_action.setItemText(
             0, QCoreApplication.translate("WAxisSelector", u"None", None)
         )

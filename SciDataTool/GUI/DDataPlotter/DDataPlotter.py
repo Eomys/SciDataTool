@@ -44,8 +44,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
     def __init__(
         self,
         data,
-        user_input_list,
-        user_input_dict,
+        axes_request_list=list(),
+        component=None,
+        unit=None,
+        z_min=None,
+        z_max=None,
         is_auto_refresh=False,
     ):
         """Initialize the UI according to the input given by the user
@@ -56,11 +59,18 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a DDataPlotter object
         data : DataND or VectorField object
             A DataND/VectorField object to plot
-        user_input_list:
+        axes_request_list:
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
-        user_input_dict:
-            dict of info which are given for the auto-plot (setting up WDataRange)
-
+        component : str
+            Name of the component to plot (For VectorField only)
+        unit : str
+            unit in which to plot the field
+        z_min : float
+            Minimum value for Z axis (or Y if only one axe)
+        z_max : float
+            Minimum value for Z axis (or Y if only one axe)
+        is_auto_refresh : bool
+            True to refresh at each widget changed (else wait call to button)
         """
 
         # Build the interface according to the .ui file
@@ -74,7 +84,14 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.set_figure(self.fig)
 
         # Initializing the WPlotManager
-        self.w_plot_manager.set_info(data, user_input_list, user_input_dict)
+        self.w_plot_manager.set_info(
+            data=data,
+            axes_request_list=axes_request_list,
+            component=component,
+            unit=unit,
+            z_min=z_min,
+            z_max=z_max,
+        )
 
         # Building the interaction with the UI and the UI itself
         self.b_refresh.clicked.connect(self.update_plot)

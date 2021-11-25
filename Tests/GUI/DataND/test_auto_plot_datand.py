@@ -20,8 +20,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for XY plot
 
@@ -32,8 +32,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for 2D plot
 
@@ -44,8 +44,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for XY FFT plot
 
@@ -56,8 +56,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for 2D FFT plot
 
@@ -68,8 +68,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot with sum as action on z
 
@@ -80,8 +80,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot with rms as action on z
 
@@ -92,8 +92,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot with rss as action on z
 
@@ -105,8 +105,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot with mean as action on z
 
@@ -117,8 +117,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for 2D plot without giving any action
 
@@ -130,8 +130,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": None,
-        "zmin": None,
-        "zmax": None,
+        "z_min": None,
+        "z_max": None,
     }
 )  # Testing the autoplot without WDataRange given
 
@@ -142,8 +142,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": None,
-        "zmin": None,
-        "zmax": None,
+        "z_min": None,
+        "z_max": None,
     }
 )  # Testing the autoplot for 2D plot without giving slice and WdataRange
 
@@ -154,8 +154,8 @@ a_p_list.append(
         "is_create_appli": False,
         "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for 2D plot where axes are inverted
 
@@ -205,8 +205,8 @@ class TestGUI(object):
                 is_create_appli=test_dict["is_create_appli"],
                 is_show_fig=test_dict["is_show_fig"],
                 unit=test_dict["unit"],
-                zmin=test_dict["zmin"],
-                zmax=test_dict["zmax"],
+                z_min=test_dict["z_min"],
+                z_max=test_dict["z_max"],
             )
 
         elif len(test_dict["axis"]) == 2:
@@ -217,8 +217,8 @@ class TestGUI(object):
                 is_create_appli=test_dict["is_create_appli"],
                 is_show_fig=test_dict["is_show_fig"],
                 unit=test_dict["unit"],
-                zmin=test_dict["zmin"],
-                zmax=test_dict["zmax"],
+                z_min=test_dict["z_min"],
+                z_max=test_dict["z_max"],
             )
 
         # Recovering the string generated
@@ -317,7 +317,7 @@ class TestGUI(object):
             assert drange["unit"] == test_dict["unit"]
 
         # To check the value of min and max when they are not given we have to do a get_along/get_magnitude_along to recover min and max
-        if test_dict["zmin"] == None or test_dict["zmin"] == None:
+        if test_dict["z_min"] == None or test_dict["z_min"] == None:
             if len(axes_given) == 1:
                 if axes_given[0].name in ifft_dict:
                     field_value = self.Field.get_magnitude_along(
@@ -357,18 +357,18 @@ class TestGUI(object):
                         self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[0],
                         self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[1],
                     )
-            if test_dict["zmin"] == None:
+            if test_dict["z_min"] == None:
                 # Making sure that the value are equal with a threshold of 1e-7
                 eps = 1e-7
                 assert drange["min"] - field_value[self.Field.symbol].min() < eps
-            if test_dict["zmax"] == None:
+            if test_dict["z_max"] == None:
                 # Making sure that the value are equal with a threshold of 1e-7
                 eps = 1e-7
                 assert drange["max"] - field_value[self.Field.symbol].max() < eps
         else:
             # If min and max are given, we just have to compare them
-            assert drange["min"] == float(test_dict["zmin"])
-            assert drange["max"] == float(test_dict["zmax"])
+            assert drange["min"] == float(test_dict["z_min"])
+            assert drange["max"] == float(test_dict["z_max"])
 
 
 if __name__ == "__main__":

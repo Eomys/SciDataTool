@@ -144,19 +144,33 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         return self.data, axes_selected, data_selection, output_range
 
-    def set_info(self, data, user_input_list, user_input_dict):
+    def set_info(
+        self,
+        data,
+        axes_request_list=list(),
+        component=None,
+        unit=None,
+        z_min=None,
+        z_max=None,
+    ):
         """Method that use the info given by DDataPlotter to setup the widget
 
         Parameters
         ----------
-        self : DDataPlotter
-            a DDataPlotter object
+        self : WPlotManager
+            a WPlotManager object
         data : DataND or VectorField object
             A DataND/VectorField object to plot
-        user_input_list:
+        axes_request_list:
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
-        user_input_dict:
-            dict of info which are given for the auto-plot (setting up WDataRange)
+        component : str
+            Name of the component to plot (For VectorField only)
+        unit : str
+            unit in which to plot the field
+        z_min : float
+            Minimum value for Z axis (or Y if only one axe)
+        z_max : float
+            Minimum value for Z axis (or Y if only one axe)
         """
         # Recovering the object that we want to show
         self.data = data
@@ -171,16 +185,20 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             # Adding/removing axial and comp_z depending on the VectorField object
             self.w_vect_selector.update(self.data_obj)
             self.w_vect_selector.refreshComponent.connect(self.update_component)
-            if "component" in user_input_dict:
-                self.w_vect_selector.set_component(user_input_dict)
+            if component is not None:
+                self.w_vect_selector.set_component(component)
                 self.update_component()
             else:
                 self.update_component()
         else:
             self.w_vect_selector.hide()
 
-        self.w_axis_manager.set_axis_widgets(self.data, user_input_list)
-        self.update_range(user_input_dict)
+        self.w_axis_manager.set_axis_widgets(self.data, axes_request_list)
+        self.update_range(
+            unit=unit,
+            z_min=z_min,
+            z_max=z_max,
+        )
 
     def update_component(self):
         """Method that update data according to the component selected in w_vect_selector.
@@ -210,12 +228,23 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         # Emitting a signal meaning that the plot must be updated
         self.updatePlot.emit()
 
-    def update_range(self, user_input_dict=dict()):
+    def update_range(
+        self,
+        unit=None,
+        z_min=None,
+        z_max=None,
+    ):
         """Method that will update the range widget with either the user input or the default value of the DataND object
         Parameters
         ----------
         self : WPlotManager
             a WPlotManager object
+        unit : str
+            unit in which to plot the field
+        z_min : float
+            Minimum value for Z axis (or Y if only one axe)
+        z_max : float
+            Minimum value for Z axis (or Y if only one axe)
         """
         self.w_range.blockSignals(True)
 
@@ -234,7 +263,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.w_range.set_range(self.data, axes_selected, data_selection)
 
         # If user inputs have been sent (auto plot), then we modify the WDataRange according to these info
-        if len(user_input_dict) != 0:
-            self.w_range.set_range_user_input(user_input_dict)
+        if unit is not None or z_min is not None or z_max is not None:
+            self.w_range.set_range_user_input(
+                unit=unit,
+                z_min=z_min,
+                z_max=z_max,
+            )
 
         self.w_range.blockSignals(False)

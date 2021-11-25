@@ -192,7 +192,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_axis_1.set_action(action_selected)
             self.gen_data_selection()
 
-    def set_axis_widgets(self, data, user_input_list):
+    def set_axis_widgets(self, data, axes_request_list):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
         ----------
@@ -200,8 +200,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
         data : DataND
             The DataND object that we want to plot
-        user_input_list : list
-            list of the inputs from the user to set the axes (auto-plot)
+        axes_request_list:
+            list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         """
         # If only one axis is given with the object, then we hide w_axis_2 and g_data_extract
         if len(data.get_axes()) == 1:
@@ -213,11 +213,11 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         # Step 1 : If user_input are given (auto-plot), we have to process them
         axes_list = [
-            ax for ax in user_input_list if ax.extension in EXTENSION_DICT["axis"]
+            ax for ax in axes_request_list if ax.extension in EXTENSION_DICT["axis"]
         ]
 
         slices_op_list = [
-            ax for ax in user_input_list if ax.extension in EXTENSION_DICT["slice"]
+            ax for ax in axes_request_list if ax.extension in EXTENSION_DICT["slice"]
         ]
 
         # Step 2 : If we have user input, the we set the UI according to user_input.
@@ -225,7 +225,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_1.blockSignals(True)
         self.w_axis_2.blockSignals(True)
 
-        if len(user_input_list) == 0:
+        if len(axes_request_list) == 0:
             # Case where no user_input was given
             # Sending the info of data to the widget (mainly the axis)
             self.w_axis_1.update(data)

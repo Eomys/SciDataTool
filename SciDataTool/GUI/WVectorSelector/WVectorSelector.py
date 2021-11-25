@@ -69,17 +69,15 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         """
         return self.c_component.currentText()
 
-    def set_component(self, user_input_dict):
+    def set_component(self, component_selected):
         """Method that set the component selected according to the input of the user (auto-plot)
         Parameters
         ----------
         self : DDataPlotter
             a DDataPlotter object
-        user_input_dict : dict
-            Dictionnary that store the input of the user that are not related to the axis
+        component_selected : str
+            Component to select
         """
-        # Getting the component given by the user
-        component_selected = user_input_dict["component"]
 
         # Recovering all the components available
         component_list = list()
