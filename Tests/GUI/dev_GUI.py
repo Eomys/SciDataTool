@@ -24,10 +24,10 @@ if __name__ == "__main__":
         values=field_3d,
     )
 
-    test = "plot"
+    # test = "plot"
     # test = "autoplot"
     # test = "oneaxis"
-    # test = "vect"
+    test = "vect"
 
     if test == "plot":
         Field.plot()
@@ -103,4 +103,4 @@ if __name__ == "__main__":
         )
         VecField.plot()
 
-        # VecField.plot("time", "angle{°}", component="comp_x")
+        # VecField.plot("B[0]0", "time", "angle{°}", component="comp_x")

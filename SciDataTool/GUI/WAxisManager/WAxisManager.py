@@ -2,7 +2,7 @@ from PySide2.QtWidgets import QSpacerItem, QWidget
 from PySide2.QtCore import Signal
 
 from ...GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
-from ...GUI.WDataExtractor.WDataExtractor import WDataExtractor
+from ...GUI.WSliceOperator.WSliceOperator import WSliceOperator
 
 
 EXTENSION_DICT = {
@@ -110,24 +110,24 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             if not isinstance(self.lay_data_extract.itemAt(i), QSpacerItem):
                 self.lay_data_extract.takeAt(i).widget().deleteLater()
 
-        # Step 3 : For each axis available, adding a WDataExtractor widget inside the layout
+        # Step 3 : For each axis available, adding a WSliceOperator widget inside the layout
         # If there are no slice to do (two axis available and selected before) then we hide the groupBox
         if len(axes_gen) != 0:
             self.g_data_extract.show()
-            self.w_data_sel = list()
+            self.w_slice_op = list()
 
             for axis in axes_gen:
-                temp = WDataExtractor(self.g_data_extract)
+                temp = WSliceOperator(self.g_data_extract)
                 temp.setObjectName(axis)
                 for ax in self.axes_list:
                     if ax.name == axis:
                         temp.update(ax)
                 temp.refreshNeeded.connect(self.update_needed)
-                self.w_data_sel.append(temp)
+                self.w_slice_op.append(temp)
                 self.lay_data_extract.addWidget(temp)
 
         else:
-            self.w_data_sel = list()
+            self.w_slice_op = list()
             self.g_data_extract.hide()
         self.update_needed()
 
@@ -172,7 +172,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             name of the operation and its axis
         """
 
-        return [wid.get_operation_selected() for wid in self.w_data_sel]
+        return [wid.get_operation_selected() for wid in self.w_slice_op]
 
     def fft_sync(self, axis_changed):
         """Method that will check the action chosen and that update the other action combobox to have the same action.
@@ -264,7 +264,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_2.blockSignals(False)
 
     def set_data_selec(self, user_input_list):
-        """Method that set the right operation inside each WDataExtractor inside of w_data_sel
+        """Method that set the right operation inside each WSliceOperator inside of w_slice_op
         according to user input (auto plot).
         Parameters
         ----------
@@ -273,12 +273,12 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         user_input_list : list
             list of the inputs from the user to set the DataSelection (auto-plot)
         """
-        for wid in self.w_data_sel:
-            wid.set_operation(user_input_list[self.w_data_sel.index(wid)])
+        for wid in self.w_slice_op:
+            wid.set_operation(user_input_list[self.w_slice_op.index(wid)])
 
     def update_needed(self):
         """Method that emits a signal (refreshNeeded) that will be used to automaticaly update the plot inside the GUI.
-        This signal is triggered by other signals comming from WDataExtractor or WAxisSelector.
+        This signal is triggered by other signals comming from WSliceOperator or WAxisSelector.
         refreshRange is a different signal that we use to update the values of min and max inside w_range
         Parameters
         ----------

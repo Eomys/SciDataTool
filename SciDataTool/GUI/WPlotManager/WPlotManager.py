@@ -1,5 +1,7 @@
 from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
 from os.path import dirname, basename
+from ...Functions.Load.import_class import import_class
+
 
 from PySide2.QtCore import Signal
 from ...GUI.WPlotManager.Ui_WPlotManager import Ui_WPlotManager
@@ -155,7 +157,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         self.is_auto_refresh = self.c_auto_refresh.isChecked()
 
-    def set_info(self, data, user_input_list, user_input_dict, is_VectorField):
+    def set_info(self, data, user_input_list, user_input_dict):
         """Method that use the info given by DDataPlotter to setup the widget
 
         Parameters
@@ -175,8 +177,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         # Setting the auto_refresh functionality to False by default
         self.is_auto_refresh = False
 
+        # Dynamic import to avoid import loop
+        VectorField = import_class("SciDataTool.Classes", "VectorField")
+
         # Hide or show the comboBox related to the component of a VectorField
-        if is_VectorField:
+        if isinstance(data, VectorField):
             self.data_obj = data  # storing the Vectorfield with all the components while data will only have one component
             self.w_vect_selector.show()
             # Adding/removing axial and comp_z depending on the VectorField object

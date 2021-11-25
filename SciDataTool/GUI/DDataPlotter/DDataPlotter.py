@@ -47,7 +47,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         user_input_list,
         user_input_dict,
         is_auto_refresh=False,
-        is_VectorField=False,
     ):
         """Initialize the UI according to the input given by the user
 
@@ -75,9 +74,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.set_figure(self.fig)
 
         # Initializing the WPlotManager
-        self.w_plot_manager.set_info(
-            data, user_input_list, user_input_dict, is_VectorField
-        )
+        self.w_plot_manager.set_info(data, user_input_list, user_input_dict)
 
         # Building the interaction with the UI and the UI itself
         self.b_refresh.clicked.connect(self.update_plot)

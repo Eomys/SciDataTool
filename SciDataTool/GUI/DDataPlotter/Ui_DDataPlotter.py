@@ -31,14 +31,14 @@ class Ui_DDataPlotter(object):
 
         self.horizontalLayout.addLayout(self.plot_layout)
 
-        self.scrollArea = QScrollArea(DDataPlotter)
-        self.scrollArea.setObjectName(u"scrollArea")
+        self.w_scroll = QScrollArea(DDataPlotter)
+        self.w_scroll.setObjectName(u"w_scroll")
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
-        self.scrollArea.setSizePolicy(sizePolicy1)
-        self.scrollArea.setWidgetResizable(True)
+        sizePolicy1.setHeightForWidth(self.w_scroll.sizePolicy().hasHeightForWidth())
+        self.w_scroll.setSizePolicy(sizePolicy1)
+        self.w_scroll.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
         self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 283, 367))
@@ -81,9 +81,9 @@ class Ui_DDataPlotter(object):
 
         self.lay_scroll.addLayout(self.horizontalLayout_2)
 
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.w_scroll.setWidget(self.scrollAreaWidgetContents)
 
-        self.horizontalLayout.addWidget(self.scrollArea)
+        self.horizontalLayout.addWidget(self.w_scroll)
 
         self.retranslateUi(DDataPlotter)
 

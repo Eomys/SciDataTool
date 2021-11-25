@@ -7,7 +7,7 @@ from SciDataTool.Functions import parser
 QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 
-def plot(self, *args, is_create_appli=True, is_test=False, **kwargs):
+def plot(self, *args, is_create_appli=True, is_show_fig=True, **kwargs):
     """Plot the Data object in the GUI
 
     Parameters:
@@ -30,10 +30,10 @@ def plot(self, *args, is_create_appli=True, is_test=False, **kwargs):
 
     wid = DDataPlotter(self, user_input_list, user_input_dict)
 
-    if is_test:
-        return wid
-    else:
+    if is_show_fig:
         wid.show()
 
-        if is_create_appli:
-            exit(a.exec_())
+    if is_create_appli:
+        exit(a.exec_())
+    else:
+        return wid
