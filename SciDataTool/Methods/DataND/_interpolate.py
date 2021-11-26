@@ -4,7 +4,7 @@ from SciDataTool.Functions.interpolations import (
 )
 
 
-def interpolate(self, values, axes_list):
+def _interpolate(self, values, axes_list):
     """Returns the values of the field interpolated over the axes values.
     Parameters
     ----------

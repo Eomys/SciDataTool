@@ -4,6 +4,7 @@ from SciDataTool.Classes.DataFreq import DataFreq
 from SciDataTool.Classes.DataTime import DataTime
 from SciDataTool.Classes.DataLinspace import DataLinspace
 from SciDataTool.Classes.DataND import DataND
+from SciDataTool.Classes.DataDual import DataDual
 from SciDataTool.Classes.RequestedAxis import RequestedAxis
 from SciDataTool.Classes.VectorField import VectorField
 from SciDataTool.Classes.DataPattern import DataPattern

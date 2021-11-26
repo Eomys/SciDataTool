@@ -179,7 +179,7 @@ def get_magnitude_along(
                     to_dBA, index, values, freqs, self.unit, ref_value
                 )
             elif "order" in return_dict:
-                freqs = self.get_freqs()
+                freqs = self._get_freqs()
                 freqs = freqs.ravel("C")
                 shape = values.shape
                 values = values.reshape(freqs.shape + shape[2:])
