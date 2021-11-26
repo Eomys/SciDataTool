@@ -66,6 +66,11 @@ except ImportError as error:
     extract_slices_fft = error
 
 try:
+    from ..Methods.DataND.filter_spectral_leakage import filter_spectral_leakage
+except ImportError as error:
+    filter_spectral_leakage = error
+
+try:
     from ..Methods.DataND.get_along import get_along
 except ImportError as error:
     get_along = error
@@ -116,6 +121,11 @@ except ImportError as error:
     interpolate = error
 
 try:
+    from ..Methods.DataND.orthogonal_mp import orthogonal_mp
+except ImportError as error:
+    orthogonal_mp = error
+
+try:
     from ..Methods.DataND.plot_2D_Data import plot_2D_Data
 except ImportError as error:
     plot_2D_Data = error
@@ -144,11 +154,6 @@ try:
     from ..Methods.DataND.summing import summing
 except ImportError as error:
     summing = error
-
-try:
-    from ..Methods.DataND.orthogonal_mp import orthogonal_mp
-except ImportError as error:
-    orthogonal_mp = error
 
 
 from numpy import array, array_equal
@@ -267,6 +272,18 @@ class DataND(Data):
         )
     else:
         extract_slices_fft = extract_slices_fft
+    # cf Methods.DataND.filter_spectral_leakage
+    if isinstance(filter_spectral_leakage, ImportError):
+        filter_spectral_leakage = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method filter_spectral_leakage: "
+                    + str(filter_spectral_leakage)
+                )
+            )
+        )
+    else:
+        filter_spectral_leakage = filter_spectral_leakage
     # cf Methods.DataND.get_along
     if isinstance(get_along, ImportError):
         get_along = property(
@@ -366,6 +383,17 @@ class DataND(Data):
         )
     else:
         interpolate = interpolate
+    # cf Methods.DataND.orthogonal_mp
+    if isinstance(orthogonal_mp, ImportError):
+        orthogonal_mp = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method orthogonal_mp: " + str(orthogonal_mp)
+                )
+            )
+        )
+    else:
+        orthogonal_mp = orthogonal_mp
     # cf Methods.DataND.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(
@@ -432,17 +460,6 @@ class DataND(Data):
         )
     else:
         summing = summing
-    # cf Methods.DataND.orthogonal_mp
-    if isinstance(orthogonal_mp, ImportError):
-        orthogonal_mp = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataND method orthogonal_mp: " + str(orthogonal_mp)
-                )
-            )
-        )
-    else:
-        orthogonal_mp = orthogonal_mp
     # save and copy methods are available in all object
     save = save
     copy = copy
