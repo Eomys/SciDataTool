@@ -21,6 +21,11 @@ except ImportError as error:
     _set_values = error
 
 try:
+    from ..Methods.DataND.apply_operations import apply_operations
+except ImportError as error:
+    apply_operations = error
+
+try:
     from ..Methods.DataND.comp_axes import comp_axes
 except ImportError as error:
     comp_axes = error
@@ -150,11 +155,6 @@ try:
 except ImportError as error:
     set_Ftparameters = error
 
-try:
-    from ..Methods.DataND.summing import summing
-except ImportError as error:
-    summing = error
-
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -176,6 +176,17 @@ class DataND(Data):
         )
     else:
         _set_values = _set_values
+    # cf Methods.DataND.apply_operations
+    if isinstance(apply_operations, ImportError):
+        apply_operations = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method apply_operations: " + str(apply_operations)
+                )
+            )
+        )
+    else:
+        apply_operations = apply_operations
     # cf Methods.DataND.comp_axes
     if isinstance(comp_axes, ImportError):
         comp_axes = property(
@@ -451,15 +462,6 @@ class DataND(Data):
         )
     else:
         set_Ftparameters = set_Ftparameters
-    # cf Methods.DataND.summing
-    if isinstance(summing, ImportError):
-        summing = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method summing: " + str(summing))
-            )
-        )
-    else:
-        summing = summing
     # save and copy methods are available in all object
     save = save
     copy = copy

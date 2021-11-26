@@ -14,8 +14,9 @@ from SciDataTool.Functions.sum_mean import (
 )
 
 
-def summing(self, values, axes_list, is_magnitude, unit):
-    """Returns the values of the field transformed or converted.
+def apply_operations(self, values, axes_list, is_magnitude, unit):
+    """Returns the values of the field transformed or converted
+
     Parameters
     ----------
     self: Data

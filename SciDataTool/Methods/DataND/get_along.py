@@ -72,8 +72,8 @@ def get_along(
     values = self.rebuild_symmetries(values, axes_list)
     # Interpolate over axis values
     values = self.interpolate(values, axes_list)
-    # Sums
-    values = self.summing(values, axes_list, is_magnitude, unit=self.unit)
+    # Apply operations such as sum, integration, derivations etc.
+    values = self.apply_operations(values, axes_list, is_magnitude, unit=self.unit)
     # Conversions
     values = self.convert(values, unit, is_norm, is_squeeze, axes_list)
     # Return axes and values
