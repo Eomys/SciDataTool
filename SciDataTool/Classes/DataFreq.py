@@ -16,9 +16,19 @@ from .DataND import DataND
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.DataFreq.conv import conv
+except ImportError as error:
+    conv = error
+
+try:
     from ..Methods.DataFreq.freq_to_time import freq_to_time
 except ImportError as error:
     freq_to_time = error
+
+try:
+    from ..Methods.DataFreq.sum import sum
+except ImportError as error:
+    sum = error
 
 try:
     from ..Methods.DataFreq.to_datadual import to_datadual
@@ -37,6 +47,15 @@ class DataFreq(DataND):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.DataFreq.conv
+    if isinstance(conv, ImportError):
+        conv = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataFreq method conv: " + str(conv))
+            )
+        )
+    else:
+        conv = conv
     # cf Methods.DataFreq.freq_to_time
     if isinstance(freq_to_time, ImportError):
         freq_to_time = property(
@@ -48,6 +67,15 @@ class DataFreq(DataND):
         )
     else:
         freq_to_time = freq_to_time
+    # cf Methods.DataFreq.sum
+    if isinstance(sum, ImportError):
+        sum = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataFreq method sum: " + str(sum))
+            )
+        )
+    else:
+        sum = sum
     # cf Methods.DataFreq.to_datadual
     if isinstance(to_datadual, ImportError):
         to_datadual = property(

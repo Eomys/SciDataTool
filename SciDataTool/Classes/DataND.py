@@ -16,6 +16,11 @@ from .Data import Data
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.DataND._apply_operations import _apply_operations
+except ImportError as error:
+    _apply_operations = error
+
+try:
     from ..Methods.DataND._comp_axes import _comp_axes
 except ImportError as error:
     _comp_axes = error
@@ -61,11 +66,6 @@ except ImportError as error:
     _set_values = error
 
 try:
-    from ..Methods.DataND._summing import _summing
-except ImportError as error:
-    _summing = error
-
-try:
     from ..Methods.DataND.compare_along import compare_along
 except ImportError as error:
     compare_along = error
@@ -84,6 +84,11 @@ try:
     from ..Methods.DataND.export_along import export_along
 except ImportError as error:
     export_along = error
+
+try:
+    from ..Methods.DataND.filter_spectral_leakage import filter_spectral_leakage
+except ImportError as error:
+    filter_spectral_leakage = error
 
 try:
     from ..Methods.DataND.get_along import get_along
@@ -152,6 +157,18 @@ class DataND(Data):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.DataND._apply_operations
+    if isinstance(_apply_operations, ImportError):
+        _apply_operations = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method _apply_operations: "
+                    + str(_apply_operations)
+                )
+            )
+        )
+    else:
+        _apply_operations = _apply_operations
     # cf Methods.DataND._comp_axes
     if isinstance(_comp_axes, ImportError):
         _comp_axes = property(
@@ -243,15 +260,6 @@ class DataND(Data):
         )
     else:
         _set_values = _set_values
-    # cf Methods.DataND._summing
-    if isinstance(_summing, ImportError):
-        _summing = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use DataND method _summing: " + str(_summing))
-            )
-        )
-    else:
-        _summing = _summing
     # cf Methods.DataND.compare_along
     if isinstance(compare_along, ImportError):
         compare_along = property(
@@ -298,6 +306,18 @@ class DataND(Data):
         )
     else:
         export_along = export_along
+    # cf Methods.DataND.filter_spectral_leakage
+    if isinstance(filter_spectral_leakage, ImportError):
+        filter_spectral_leakage = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method filter_spectral_leakage: "
+                    + str(filter_spectral_leakage)
+                )
+            )
+        )
+    else:
+        filter_spectral_leakage = filter_spectral_leakage
     # cf Methods.DataND.get_along
     if isinstance(get_along, ImportError):
         get_along = property(

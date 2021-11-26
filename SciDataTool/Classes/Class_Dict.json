@@ -182,7 +182,9 @@
         "desc": "Class for fields defined in Fourier space",
         "is_internal": false,
         "methods": [
+            "conv",
             "freq_to_time",
+            "sum",
             "to_datadual"
         ],
         "mother": "DataND",
@@ -293,6 +295,7 @@
         "desc": "Abstract class for fields (time or frequency domain)",
         "is_internal": false,
         "methods": [
+            "_apply_operations",
             "_comp_axes",
             "_convert",
             "_extract_slices",
@@ -302,11 +305,11 @@
             "_interpolate",
             "_rebuild_symmetries",
             "_set_values",
-            "_summing",
             "compare_along",
             "compare_magnitude_along",
             "compare_phase_along",
             "export_along",
+            "filter_spectral_leakage",
             "get_along",
             "get_axes",
             "get_data_along",
@@ -828,6 +831,7 @@
         "desc": "Class for 2D or 3D vector fields (time or frequency domain)",
         "is_internal": false,
         "methods": [
+            "filter_spectral_leakage",
             "freq_to_time",
             "get_axes",
             "get_harm_rphiz_along",
