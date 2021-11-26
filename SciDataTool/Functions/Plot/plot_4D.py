@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from numpy import log10, abs as np_abs, max as np_max, NaN, zeros_like
+from numpy import log10, abs as np_abs, nanmax as np_max, NaN, zeros_like
 import matplotlib.pyplot as plt
 
 from SciDataTool.Functions.Plot.init_fig import init_fig

@@ -115,6 +115,10 @@ def test_slice():
         "time", "angle", "z=axis_data", axis_data={"z": array([0.0])}
     )
     assert result["AGSF_r"].shape == (10, 2048)
+    result = Field.get_along(
+        "time", "angle", "z=axis_data", axis_data={"z": array([-1.0, 0.0, 1.0])}
+    )
+    assert result["AGSF_r"].shape == (10, 2048, 3)
 
 
 if __name__ == "__main__":

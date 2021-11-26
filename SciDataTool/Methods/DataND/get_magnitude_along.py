@@ -59,13 +59,17 @@ def get_magnitude_along(
             for i, axis in enumerate(self.axes):  # Find frequency axis
                 if axis.name == "speed":
                     is_match += 1
+                    arg_speed = "speed"
                 elif axis.name == "order":
                     is_match += 1
+                elif "speed" in axis.normalizations:
+                    is_match += 1
+                    arg_speed = axis.name + "->speed"
             if is_match == 2:
                 for i, arg in enumerate(args):
                     if "speed" in arg:
-                        if arg != "speed":
-                            new_args[i] = "speed"
+                        if arg != arg_speed:
+                            new_args[i] = arg_speed
                             index_speed = i
                     elif "order" in arg:
                         if arg != "order":
@@ -86,7 +90,7 @@ def get_magnitude_along(
                     *new_args, axis_data=axis_data, unit=unit
                 )  # Extract first along order axis
                 return data.get_magnitude_along(
-                    *["speed", args[index_order]],
+                    *[arg_speed, args[index_order]],
                     unit=unit,
                     is_squeeze=is_squeeze,
                     is_sum=False,
@@ -174,7 +178,7 @@ def get_magnitude_along(
                 values = apply_along_axis(
                     to_dBA, index, values, freqs, self.unit, ref_value
                 )
-            elif "speed" in return_dict and "order" in return_dict:
+            elif "order" in return_dict:
                 freqs = self._get_freqs()
                 freqs = freqs.ravel("C")
                 shape = values.shape

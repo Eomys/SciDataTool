@@ -131,8 +131,8 @@ def plot_2D_Data_Animated(
         # definition of the step along animated axis
         result = self.get_rphiz_along(animated_axis + "[smallestperiod]")
         animated_values = result[animated_axis]
-        value_max = np.max(animated_values)
-        value_min = np.min(animated_values)
+        value_max = np.nanmax(animated_values)
+        value_min = np.nanmin(animated_values)
         variation_step = (value_max - value_min) / nb_frames
 
         # Getting the name of the gif
