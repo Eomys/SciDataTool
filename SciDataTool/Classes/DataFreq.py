@@ -20,6 +20,16 @@ try:
 except ImportError as error:
     freq_to_time = error
 
+try:
+    from ..Methods.DataFreq.conv import conv
+except ImportError as error:
+    conv = error
+
+try:
+    from ..Methods.DataFreq.sum import sum
+except ImportError as error:
+    sum = error
+
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -31,6 +41,7 @@ class DataFreq(DataND):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.DataFreq.freq_to_time
     if isinstance(freq_to_time, ImportError):
         freq_to_time = property(
@@ -42,6 +53,24 @@ class DataFreq(DataND):
         )
     else:
         freq_to_time = freq_to_time
+    # cf Methods.DataFreq.conv
+    if isinstance(conv, ImportError):
+        conv = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataFreq method conv: " + str(conv))
+            )
+        )
+    else:
+        conv = conv
+    # cf Methods.DataFreq.sum
+    if isinstance(sum, ImportError):
+        sum = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataFreq method sum: " + str(sum))
+            )
+        )
+    else:
+        sum = sum
     # save and copy methods are available in all object
     save = save
     copy = copy

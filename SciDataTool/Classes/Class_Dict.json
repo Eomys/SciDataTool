@@ -125,7 +125,9 @@
         "desc": "Class for fields defined in Fourier space",
         "is_internal": false,
         "methods": [
-            "freq_to_time"
+            "freq_to_time",
+            "conv",
+            "sum"
         ],
         "mother": "DataND",
         "name": "DataFreq",
@@ -235,6 +237,7 @@
         "is_internal": false,
         "methods": [
             "_set_values",
+            "apply_operations",
             "comp_axes",
             "compare_along",
             "compare_magnitude_along",
@@ -260,8 +263,7 @@
             "plot_2D_Data_Animated",
             "plot_3D_Data",
             "rebuild_symmetries",
-            "set_Ftparameters",
-            "summing"
+            "set_Ftparameters"
         ],
         "mother": "Data",
         "name": "DataND",
