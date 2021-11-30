@@ -16,6 +16,11 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.VectorField.filter_spectral_leakage import filter_spectral_leakage
+except ImportError as error:
+    filter_spectral_leakage = error
+
+try:
     from ..Methods.VectorField.freq_to_time import freq_to_time
 except ImportError as error:
     freq_to_time = error
@@ -100,6 +105,18 @@ class VectorField(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.VectorField.filter_spectral_leakage
+    if isinstance(filter_spectral_leakage, ImportError):
+        filter_spectral_leakage = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method filter_spectral_leakage: "
+                    + str(filter_spectral_leakage)
+                )
+            )
+        )
+    else:
+        filter_spectral_leakage = filter_spectral_leakage
     # cf Methods.VectorField.freq_to_time
     if isinstance(freq_to_time, ImportError):
         freq_to_time = property(

@@ -3,7 +3,7 @@ from numpy import meshgrid, array
 from SciDataTool.Functions import AxisError
 
 
-def get_freqs(self):
+def _get_freqs(self):
     """Returns the frequency vector or array, if available.
     Parameters
     ----------
