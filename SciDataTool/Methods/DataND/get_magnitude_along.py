@@ -178,6 +178,25 @@ def get_magnitude_along(
                 values = apply_along_axis(
                     to_dBA, index, values, freqs, self.unit, ref_value
                 )
+            elif "frequency" in return_dict.keys():
+                for axis in return_dict["axes_list"]:
+                    if axis.name == "frequency" or axis.corr_name == "frequency":
+                        index = axis.index
+                else:
+                    if return_dict["axes_list"][
+                        index
+                    ].corr_values is not None and return_dict["axes_list"][
+                        index
+                    ].unit not in [
+                        "SI",
+                        return_dict["axes_list"][index].corr_unit,
+                    ]:
+                        freqs = return_dict["axes_list"][index].corr_values
+                    else:
+                        freqs = return_dict["frequency"]
+                values = apply_along_axis(
+                    to_dBA, index, values, freqs, self.unit, ref_value
+                )
             elif "order" in return_dict:
                 freqs = self.get_freqs()
                 freqs = freqs.ravel("C")
