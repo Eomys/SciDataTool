@@ -62,7 +62,7 @@ def sum(
 
     # Fill metadata
     if name is None:
-        name = self.Name
+        name = self.name
     if symbol is None:
         symbol = self.symbol
     if unit is None:
