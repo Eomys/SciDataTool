@@ -1,6 +1,6 @@
 import numpy as np
 
-from SciDataTool.Functions.unique_tol import unique_tol
+from SciDataTool.Functions.set_routines import unique_tol
 
 
 def get_conv_indices(freqs1, freqs2, f_min, f_max, tol_freq):
