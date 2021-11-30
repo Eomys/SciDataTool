@@ -52,36 +52,19 @@ class TestGUI(object):
         assert self.UI.w_plot_manager.w_vect_selector.in_referential.isHidden()
 
         # Testing that axial and comp_z are not available if they are not in VectorField
-        if not "axial" in self.VecField.components:
-            components_list = list()
-            for i in range(self.UI.w_plot_manager.w_vect_selector.c_component.count()):
-                components_list.append(
-                    self.UI.w_plot_manager.w_vect_selector.c_component.currentText()
-                )
 
+        components_list = list()
+        for i in range(self.UI.w_plot_manager.w_vect_selector.c_component.count()):
+            components_list.append(
+                self.UI.w_plot_manager.w_vect_selector.c_component.currentText()
+            )
+
+        if not "axial" in self.VecField.components:
             assert not "axial" in components_list
             assert not "comp_z" in components_list
 
-    @pytest.mark.gui
-    def check_update_combobox(self):
-        """Method to make sure that we update the combobox if coordinates are selected"""
-        w_selector = self.UI.w_plot_manager.w_vect_selector
-
-        if not "axial" in self.VecField.components:
-            # Case where we only have two axes for each set of coordinates
-            w_selector.c_component.setCurrentIndex(0)
-            assert w_selector.c_component.currentIndex() == 1
-
-            w_selector.c_component.setCurrentIndex(3)
-            assert w_selector.c_component.currentIndex() == 4
-
-        else:
-            # Case where we  have three axes for each set of coordinates
-            w_selector.c_component.setCurrentIndex(0)
-            assert w_selector.c_component.currentIndex() == 1
-
-            w_selector.c_component.setCurrentIndex(4)
-            assert w_selector.c_component.currentIndex() == 5
+        elif not "tangential" in self.VecField.components:
+            assert not "tangential" in components_list
 
 
 if __name__ == "__main__":
@@ -92,7 +75,5 @@ if __name__ == "__main__":
     a.check_hide_show()
     # Verifying the handling of the signals
     a.check_component_selected()
-    # Checking that if the coordinates are selected in the combobox then we select the next item in the combobox
-    a.check_update_combobox()
 
     print("Done")

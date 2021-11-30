@@ -56,17 +56,17 @@ class Ui_DDataPlotter(object):
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.c_auto_refresh = QCheckBox(self.scrollAreaWidgetContents)
-        self.c_auto_refresh.setObjectName(u"c_auto_refresh")
+        self.is_auto_refresh = QCheckBox(self.scrollAreaWidgetContents)
+        self.is_auto_refresh.setObjectName(u"is_auto_refresh")
         sizePolicy1.setHeightForWidth(
-            self.c_auto_refresh.sizePolicy().hasHeightForWidth()
+            self.is_auto_refresh.sizePolicy().hasHeightForWidth()
         )
-        self.c_auto_refresh.setSizePolicy(sizePolicy1)
-        self.c_auto_refresh.setMinimumSize(QSize(0, 0))
-        self.c_auto_refresh.setMaximumSize(QSize(16777215, 16777215))
-        self.c_auto_refresh.setChecked(False)
+        self.is_auto_refresh.setSizePolicy(sizePolicy1)
+        self.is_auto_refresh.setMinimumSize(QSize(0, 0))
+        self.is_auto_refresh.setMaximumSize(QSize(16777215, 16777215))
+        self.is_auto_refresh.setChecked(False)
 
-        self.horizontalLayout_2.addWidget(self.c_auto_refresh)
+        self.horizontalLayout_2.addWidget(self.is_auto_refresh)
 
         self.b_refresh = QPushButton(self.scrollAreaWidgetContents)
         self.b_refresh.setObjectName(u"b_refresh")
@@ -95,7 +95,7 @@ class Ui_DDataPlotter(object):
         DDataPlotter.setWindowTitle(
             QCoreApplication.translate("DDataPlotter", u"Data Plot", None)
         )
-        self.c_auto_refresh.setText(
+        self.is_auto_refresh.setText(
             QCoreApplication.translate("DDataPlotter", u"Auto Refresh", None)
         )
         self.b_refresh.setText(

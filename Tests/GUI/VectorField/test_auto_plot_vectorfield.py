@@ -58,6 +58,16 @@ a_p_list.append(
     }
 )  # Testing the autoplot for 2D plot and component 'tangential'
 
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": [],
+        "is_create_appli": False,
+        "is_show_fig": False,
+        "component": "axial",
+    }
+)  # Testing the autoplot with an unavaible component
+
 
 class TestGUI(object):
     @classmethod
@@ -94,22 +104,84 @@ class TestGUI(object):
                 component=test_dict["component"],
             )
 
+        # Step 0 : Making sure that the components in the combobox :
+        if (
+            "axial" not in self.VecField.components
+            or "comp_z" not in self.VecField.components
+        ):
+            assert self.UI.w_plot_manager.w_vect_selector.component_list == [
+                "Polar coordinates",
+                "radial",
+                "tangential",
+                "Cartesian coordinates",
+                "comp_x",
+                "comp_y",
+            ]
+        else:
+            assert self.UI.w_plot_manager.w_vect_selector.component_list == [
+                "Polar coordinates",
+                "radial",
+                "tangential",
+                "axial",
+                "Cartesian coordinates",
+                "comp_x",
+                "comp_y",
+                "comp_z",
+            ]
+
         # Step 1 :  making sure that the right component is selected
-        if test_dict["component"] in ["radial", "tangential", "axial"]:
+        if test_dict["component"] in ["radial"]:
             assert_almost_equal(
                 self.UI.w_plot_manager.data.values,
                 VecField.to_rphiz().components[test_dict["component"]].values,
                 7,
             )
 
-        elif test_dict["component"] in ["comp_x", "comp_y", "comp_z"]:
+        elif test_dict["component"] in ["comp_x", "comp_y"]:
             assert_almost_equal(
                 self.UI.w_plot_manager.data.values,
                 VecField.to_xyz().components[test_dict["component"]].values,
                 7,
             )
 
-        # Step 2 : Checking thay the axes and the operations given/sent are correct
+        elif (
+            test_dict["component"] == "axial"
+            and test_dict["component"] in self.VecField.components
+        ):
+            assert_almost_equal(
+                self.UI.w_plot_manager.data.values,
+                VecField.to_xyz().components[test_dict["component"]].values,
+                7,
+            )
+
+        elif (
+            test_dict["component"] == "comp_z"
+            and test_dict["component"] in self.VecField.components
+        ):
+            assert_almost_equal(
+                self.UI.w_plot_manager.data.values,
+                VecField.to_xyz().components[test_dict["component"]].values,
+                7,
+            )
+
+        elif (
+            test_dict["component"] == "tangential"
+            and test_dict["component"] in self.VecField.components
+        ):
+            assert_almost_equal(
+                self.UI.w_plot_manager.data.values,
+                VecField.to_rphiz().components[test_dict["component"]].values,
+                7,
+            )
+
+        else:
+            assert_almost_equal(
+                self.UI.w_plot_manager.data.values,
+                VecField.to_rphiz().components["radial"].values,
+                7,
+            )
+
+        # Step 2 : Checking that the axes and the operations given/sent are correct
         # Recovering the string generated
         axes_sent = parser.read_input_strings(
             self.UI.w_plot_manager.w_axis_manager.get_axes_selected(), axis_data=None

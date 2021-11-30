@@ -33,6 +33,7 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         # self.c_referential.currentTextChanged.connect(self.update_needed)
 
         self.component_selected = None
+        self.component_list = list()
 
         # Adding items inside the combobox to name the two sets of coordinates
         model = self.c_component.model()
@@ -79,16 +80,18 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
             Component to select
         """
 
-        # Recovering all the components available
-        component_list = list()
-        self.blockSignals(True)
-        for index_comp in range(self.c_component.count()):
-            self.c_component.setCurrentIndex(index_comp)
-            component_list.append(self.c_component.currentText())
-        self.blockSignals(False)
-
         # Setting the combobox with the right component
-        self.c_component.setCurrentIndex(component_list.index(component_selected))
+        if component_selected in self.component_list:
+            self.c_component.setCurrentIndex(
+                self.component_list.index(component_selected)
+            )
+        else:
+            print(
+                "WARNING : Trying to set the vector to "
+                + component_selected
+                + " a component which is not available. Setting to default component"
+            )
+            self.c_component.setCurrentIndex(1)
 
     def update(self, data):
         """Updating the combobox according to the components store in the VectorField
@@ -100,11 +103,29 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         data : VectorField
             the object that we want to plot
         """
-        if not "axial" in data.components:
-            for i in reversed(range(self.c_component.count())):
-                self.c_component.setCurrentIndex(i)
-                if self.c_component.currentText() in ["axial", "comp_z"]:
-                    self.c_component.removeItem(i)
+        c_comp = self.c_component
+        comp_stored = data.components
+
+        self.blockSignals(True)
+        for i in reversed(range(c_comp.count())):
+            c_comp.setCurrentIndex(i)
+            current_comp = c_comp.currentText()
+
+            if current_comp in ["axial", "comp_z"] and current_comp not in comp_stored:
+                c_comp.removeItem(i)
+
+            if current_comp == "tangential" and current_comp not in comp_stored:
+                c_comp.removeItem(i)
+
+        # Recovering all the components available after the update
+        self.component_list = list()
+        for index_comp in range(self.c_component.count()):
+            self.c_component.setCurrentIndex(index_comp)
+            if self.c_component.currentText() not in self.component_list:
+                self.component_list.append(self.c_component.currentText())
+
+        self.c_component.setCurrentIndex(1)
+        self.blockSignals(False)
 
     def update_needed(self):
         """Emit a signal when the component must be changed
@@ -115,10 +136,10 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
             a WVectorSelector object
 
         """
-        if self.c_component.currentText() in [
-            "Polar coordinates",
-            "Cartesian coordinates",
-        ]:
-            self.c_component.setCurrentIndex(self.c_component.currentIndex() + 1)
+        # if self.c_component.currentText() in [
+        #     "Polar coordinates",
+        #     "Cartesian coordinates",
+        # ]:
+        #     self.c_component.setCurrentIndex(self.c_component.currentIndex() + 1)
 
         self.refreshComponent.emit()

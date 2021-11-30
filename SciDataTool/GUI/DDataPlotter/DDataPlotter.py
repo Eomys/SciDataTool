@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QWidget
 from SciDataTool.Functions import parser
-
+from PySide2.QtCore import Qt
 from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
 from matplotlib.backends.backend_qt5agg import (
     FigureCanvas,
@@ -50,6 +50,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         z_min=None,
         z_max=None,
         is_auto_refresh=False,
+        plot_arg_dict=None,
     ):
         """Initialize the UI according to the input given by the user
 
@@ -59,7 +60,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a DDataPlotter object
         data : DataND or VectorField object
             A DataND/VectorField object to plot
-        axes_request_list:
+        axes_request_list: list
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         component : str
             Name of the component to plot (For VectorField only)
@@ -71,13 +72,21 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             Minimum value for Z axis (or Y if only one axe)
         is_auto_refresh : bool
             True to refresh at each widget changed (else wait call to button)
+        plot_arg_dict : dict
+            Dictionnary with arguments that must be given to the plot
         """
 
         # Build the interface according to the .ui file
         QWidget.__init__(self)
         self.setupUi(self)
 
-        self.is_auto_refresh = is_auto_refresh
+        self.auto_refresh = is_auto_refresh
+        if is_auto_refresh:
+            self.is_auto_refresh.setCheckState(Qt.Checked)
+        else:
+            self.is_auto_refresh.setCheckState(Qt.Unchecked)
+
+        self.plot_arg_dict = plot_arg_dict
 
         # Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
@@ -100,7 +109,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Adding an argument for testing autorefresh
         self.is_plot_updated = False
-        self.c_auto_refresh.toggled.connect(self.set_auto_refresh)
+        self.is_auto_refresh.toggled.connect(self.set_auto_refresh)
 
     def auto_update(self):
         """Method that checks if the autorefresh is enabled. If true, then it updates the plot.
@@ -110,7 +119,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a WPlotManager object
 
         """
-        if self.is_auto_refresh == True:
+        if self.auto_refresh == True:
             self.w_plot_manager.update_range()
             self.update_plot()
             self.is_plot_updated = True
@@ -126,7 +135,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a WPlotManager object
 
         """
-        self.is_auto_refresh = self.c_auto_refresh.isChecked()
+        self.auto_refresh = self.is_auto_refresh.isChecked()
 
     def set_figure(self, fig):
         """Method that set up the figure inside the GUI
@@ -142,6 +151,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Set plot layout
         self.canvas = FigureCanvas(fig)
         self.toolbar = NavigationToolbar(self.canvas, self)
+
         self.plot_layout.addWidget(self.toolbar)
         self.plot_layout.addWidget(self.canvas)
 
@@ -375,7 +385,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 not_in_order = True
                 axes_selected = [axes_selected[1], axes_selected[0]]
 
-        # To improve the code, we use a list with the inputs of the user to pass as parameters thanks to *list
+        # TODO take into account self.plot_arg_dict if it is given
         if not None in data_selection:
             if len(axes_selected) == 1:
                 self.data.plot_2D_Data(
@@ -401,3 +411,22 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         else:
             print("Operation not implemented yet, plot could not be updated")
+
+    def set_info(self, data, axes_request_list=None, plot_arg_dict=None):
+        """Method to set the DDataPlotter with information given
+        self : DDataPlotter
+            a DDataPlotter object
+        data : DataND or VectorField object
+            A DataND/VectorField object to plot
+        axes_request_list: list
+            list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
+        plot_arg_dict : dict
+            Dictionnary with arguments that must be given to the plot
+        """
+
+        self.plot_arg_dict = plot_arg_dict
+
+        self.w_plot_manager.set_info(
+            data=data,
+            axes_request_list=axes_request_list,
+        )

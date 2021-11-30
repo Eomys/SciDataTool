@@ -58,6 +58,7 @@ def plot(
         z_min=z_min,
         z_max=z_max,
         is_auto_refresh=is_auto_refresh,
+        plot_arg_dict=None,
     )
 
     if is_show_fig:
