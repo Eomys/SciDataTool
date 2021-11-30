@@ -35,7 +35,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Axes</string>
+      <string>Axes Selection</string>
      </property>
      <layout class="QHBoxLayout" name="lay_axes">
       <property name="topMargin">
@@ -184,7 +184,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Slices/Operations</string>
+      <string>Axes Operations</string>
      </property>
      <layout class="QVBoxLayout" name="lay_data_extract"/>
     </widget>

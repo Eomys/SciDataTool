@@ -3,6 +3,7 @@ from PySide2.QtWidgets import QWidget
 from ...GUI.WAxisSelector.Ui_WAxisSelector import Ui_WAxisSelector
 from PySide2.QtCore import Signal
 from ...Functions.Plot import unit_dict, axes_dict, fft_dict, ifft_dict
+from ...GUI import update_cb_enable
 
 
 class WAxisSelector(Ui_WAxisSelector, QWidget):
@@ -115,6 +116,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 else:
                     self.c_axis.addItem(ax)
 
+            update_cb_enable(self.c_axis)
             self.c_axis.blockSignals(False)
 
             self.update_axis()
@@ -194,6 +196,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             else:
                 self.c_axis.addItem(ax)
 
+        update_cb_enable(self.c_axis)
         self.c_axis.blockSignals(False)
 
         # Step 3 : Modifying axis_selected
@@ -262,6 +265,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             # self.c_unit.view().setMinimumWidth(
             #     max([len(un) for un in unit_dict[self.axis_selected]]) * 6
             # )
+        update_cb_enable(self.c_unit)
         self.c_unit.blockSignals(False)
         self.update_unit()
 

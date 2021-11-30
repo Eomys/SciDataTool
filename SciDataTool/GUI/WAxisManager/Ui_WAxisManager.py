@@ -110,7 +110,9 @@ class Ui_WAxisManager(object):
         WAxisManager.setWindowTitle(
             QCoreApplication.translate("WAxisManager", u"WAxisManager", None)
         )
-        self.g_axes.setTitle(QCoreApplication.translate("WAxisManager", u"Axes", None))
+        self.g_axes.setTitle(
+            QCoreApplication.translate("WAxisManager", u"Axes Selection", None)
+        )
         self.label.setText("")
         self.label_4.setText(QCoreApplication.translate("WAxisManager", u"Axis", None))
         self.label_2.setText(
@@ -119,7 +121,7 @@ class Ui_WAxisManager(object):
         self.label_3.setText(QCoreApplication.translate("WAxisManager", u"Unit", None))
         self.label_5.setText("")
         self.g_data_extract.setTitle(
-            QCoreApplication.translate("WAxisManager", u"Slices/Operations", None)
+            QCoreApplication.translate("WAxisManager", u"Axes Operations", None)
         )
 
     # retranslateUi

@@ -90,9 +90,7 @@ class Ui_WVectorSelector(object):
         WVectorSelector.setWindowTitle(
             QCoreApplication.translate("WVectorSelector", u"WVectorSelector", None)
         )
-        self.g_vector_comp.setTitle(
-            QCoreApplication.translate("WVectorSelector", u"Vector components", None)
-        )
+        self.g_vector_comp.setTitle("")
         self.in_component.setText(
             QCoreApplication.translate("WVectorSelector", u"Component", None)
         )

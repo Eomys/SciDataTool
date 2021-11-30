@@ -17,31 +17,53 @@ class Ui_DDataPlotter(object):
         if not DDataPlotter.objectName():
             DDataPlotter.setObjectName(u"DDataPlotter")
         DDataPlotter.setEnabled(True)
-        DDataPlotter.resize(599, 391)
+        DDataPlotter.resize(1242, 875)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(DDataPlotter.sizePolicy().hasHeightForWidth())
         DDataPlotter.setSizePolicy(sizePolicy)
         DDataPlotter.setCursor(QCursor(Qt.ArrowCursor))
-        self.horizontalLayout = QHBoxLayout(DDataPlotter)
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.plot_layout = QVBoxLayout()
-        self.plot_layout.setObjectName(u"plot_layout")
-
-        self.horizontalLayout.addLayout(self.plot_layout)
-
-        self.w_scroll = QScrollArea(DDataPlotter)
-        self.w_scroll.setObjectName(u"w_scroll")
+        self.gridLayout = QGridLayout(DDataPlotter)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.is_auto_refresh = QCheckBox(DDataPlotter)
+        self.is_auto_refresh.setObjectName(u"is_auto_refresh")
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(
+            self.is_auto_refresh.sizePolicy().hasHeightForWidth()
+        )
+        self.is_auto_refresh.setSizePolicy(sizePolicy1)
+        self.is_auto_refresh.setMinimumSize(QSize(0, 24))
+        self.is_auto_refresh.setMaximumSize(QSize(16777215, 24))
+        self.is_auto_refresh.setChecked(False)
+
+        self.horizontalLayout_2.addWidget(self.is_auto_refresh)
+
+        self.b_refresh = QPushButton(DDataPlotter)
+        self.b_refresh.setObjectName(u"b_refresh")
+        self.b_refresh.setEnabled(True)
+        sizePolicy1.setHeightForWidth(self.b_refresh.sizePolicy().hasHeightForWidth())
+        self.b_refresh.setSizePolicy(sizePolicy1)
+        self.b_refresh.setMinimumSize(QSize(0, 24))
+        self.b_refresh.setMaximumSize(QSize(16777215, 24))
+        self.b_refresh.setLayoutDirection(Qt.LeftToRight)
+
+        self.horizontalLayout_2.addWidget(self.b_refresh)
+
+        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 1, 1, 1)
+
+        self.w_scroll = QScrollArea(DDataPlotter)
+        self.w_scroll.setObjectName(u"w_scroll")
         sizePolicy1.setHeightForWidth(self.w_scroll.sizePolicy().hasHeightForWidth())
         self.w_scroll.setSizePolicy(sizePolicy1)
         self.w_scroll.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 283, 367))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 604, 421))
         self.lay_scroll = QVBoxLayout(self.scrollAreaWidgetContents)
         self.lay_scroll.setObjectName(u"lay_scroll")
         self.w_plot_manager = WPlotManager(self.scrollAreaWidgetContents)
@@ -54,36 +76,14 @@ class Ui_DDataPlotter(object):
 
         self.lay_scroll.addWidget(self.w_plot_manager)
 
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.is_auto_refresh = QCheckBox(self.scrollAreaWidgetContents)
-        self.is_auto_refresh.setObjectName(u"is_auto_refresh")
-        sizePolicy1.setHeightForWidth(
-            self.is_auto_refresh.sizePolicy().hasHeightForWidth()
-        )
-        self.is_auto_refresh.setSizePolicy(sizePolicy1)
-        self.is_auto_refresh.setMinimumSize(QSize(0, 0))
-        self.is_auto_refresh.setMaximumSize(QSize(16777215, 16777215))
-        self.is_auto_refresh.setChecked(False)
-
-        self.horizontalLayout_2.addWidget(self.is_auto_refresh)
-
-        self.b_refresh = QPushButton(self.scrollAreaWidgetContents)
-        self.b_refresh.setObjectName(u"b_refresh")
-        self.b_refresh.setEnabled(True)
-        sizePolicy1.setHeightForWidth(self.b_refresh.sizePolicy().hasHeightForWidth())
-        self.b_refresh.setSizePolicy(sizePolicy1)
-        self.b_refresh.setMinimumSize(QSize(0, 0))
-        self.b_refresh.setMaximumSize(QSize(16777215, 16777215))
-        self.b_refresh.setLayoutDirection(Qt.LeftToRight)
-
-        self.horizontalLayout_2.addWidget(self.b_refresh)
-
-        self.lay_scroll.addLayout(self.horizontalLayout_2)
-
         self.w_scroll.setWidget(self.scrollAreaWidgetContents)
 
-        self.horizontalLayout.addWidget(self.w_scroll)
+        self.gridLayout.addWidget(self.w_scroll, 0, 1, 1, 1)
+
+        self.plot_layout = QVBoxLayout()
+        self.plot_layout.setObjectName(u"plot_layout")
+
+        self.gridLayout.addLayout(self.plot_layout, 0, 0, 2, 1)
 
         self.retranslateUi(DDataPlotter)
 

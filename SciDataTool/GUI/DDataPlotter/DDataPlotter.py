@@ -102,7 +102,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             z_max=z_max,
         )
 
-        # Building the interaction with the UI and the UI itself
+        # Building the interaction with the UI itself
         self.b_refresh.clicked.connect(self.update_plot)
         self.w_plot_manager.updatePlot.connect(self.auto_update)
         self.update_plot()
@@ -119,6 +119,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a WPlotManager object
 
         """
+        self.b_refresh.setDisabled(False)
+
         if self.auto_refresh == True:
             self.w_plot_manager.update_range()
             self.update_plot()
@@ -136,6 +138,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         """
         self.auto_refresh = self.is_auto_refresh.isChecked()
+
+        if self.is_auto_refresh.isChecked():
+            # When auto-refresh is enabled, the refresh button must be disabled
+            self.b_refresh.setDisabled(True)
+        else:
+            # When auto-refresh is disabled, the refresh button must be enabled
+            self.b_refresh.setDisabled(False)
 
     def set_figure(self, fig):
         """Method that set up the figure inside the GUI
@@ -350,6 +359,9 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a DDataPlotter object
 
         """
+        # Disabling refresh button after clicking on it (similar to * for an unsaved file)
+        self.b_refresh.setDisabled(True)
+
         # Clear plots
         for i in reversed(range(self.plot_layout.count())):
             if self.plot_layout.itemAt(i).widget() is not None:
@@ -369,6 +381,9 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             data_selection,
             output_range,
         ] = self.w_plot_manager.get_plot_info()
+
+        print(axes_selected)
+        print(data_selection)
 
         # Checking if the axes are following the order inside the data object
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)

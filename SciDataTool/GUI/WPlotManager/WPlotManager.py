@@ -255,9 +255,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         # Updating the name of the groupBox according to the number of axes selected
         if len(axes_selected) == 1:
-            self.w_range.g_range.setTitle("Y")
+            self.w_range.g_range.setTitle("Y Range")
         elif len(axes_selected) == 2:
-            self.w_range.g_range.setTitle("Z")
+            self.w_range.g_range.setTitle("Z Range")
 
         # Setting the WDataRange by sending the necessary info to the widget
         self.w_range.set_range(self.data, axes_selected, data_selection)
