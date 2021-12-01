@@ -1,14 +1,7 @@
 import numpy as np
 
 
-def union1d_tol(
-    ar1,
-    ar2,
-    tol=1e-6,
-    return_indices=False,
-    return_union=True,
-    is_abs_tol=False,
-):
+def union1d_tol(ar1, ar2, tol=1e-6, is_abs_tol=False, return_indices=False):
     """Return the intersect1d values of the input array a given tolerance tol
 
     Parameters
@@ -19,25 +12,23 @@ def union1d_tol(
         Second array to union values
     tol : Float
         the tolerance value
-    return_indices : bool
-        True to return indices
-    return_union : bool
-        True to return union array
     is_abs_tol : bool
         True to apply absolute tolerance regarding maximum absolute value in (ar1, ar2)
+    return_indices : bool
+        True to return indices
 
     Returns
     -------
-    result_dict : dictionary
-        "union1d" is the array containing unioned values
-        "un1" is the index array such as
-        "un2" is the inverse index array such as
+    b : ndarray
+        array containing unioned values
+    Ia : ndarray
+        index array such as ar1 = b[Ia]
+    Ib : ndarray
+        index array such as ar2 = b[Ib]
     """
 
-    result_dict = dict()
-
     # Get union values as unique values in both arrays
-    result_un = unique_tol(
+    b = unique_tol(
         np.concatenate((ar1, ar2)),
         tol=tol,
         is_abs_tol=is_abs_tol,
@@ -45,34 +36,29 @@ def union1d_tol(
         return_inverse=False,
     )
 
-    if return_union:
-        result_dict["union1d"] = result_un["b"]
-
     if return_indices:
         # Map union values with values in 1st array
-        result_dict["un1"] = np.argmin(
-            np.abs(result_un["b"][:, None] - ar1[None, :]), axis=0
-        )
+        Ia = np.argmin(np.abs(b[:, None] - ar1[None, :]), axis=0)
         # Map union values with values in 2nd array
-        result_dict["un2"] = np.argmin(
-            np.abs(result_un["b"][:, None] - ar2[None, :]), axis=0
-        )
+        Ib = np.argmin(np.abs(b[:, None] - ar2[None, :]), axis=0)
 
-    return result_dict
+        return b, Ia, Ib
+
+    else:
+        return b
 
 
 def unique_tol(
     a,
     tol=1e-6,
+    is_abs_tol=False,
     return_index=False,
     return_inverse=False,
     return_counts=False,
-    is_abs_tol=False,
+    is_stable=False,
     axis=0,
 ):
-
     """Return the unique values of the input array a given tolerance tol
-    Python equivalent for MATLAB uniquetol function: https://fr.mathworks.com/help/matlab/ref/uniquetol.html
 
     Parameters
     ----------
@@ -80,69 +66,76 @@ def unique_tol(
         the array to calculate unique values
     tol : Float
         the tolerance value
+    is_abs_tol : bool
+        True to apply absolute tolerance regarding maximum absolute value in a
     return_index : bool
         to return direct index
     return_inverse : bool
         to return inverse index
     return_counts : bool
         to return occurences count
+    is_stable: bool
+        to return unique array with stable order (not sorted)
     axis : int
         Axis index on which to calculate unique values
 
     Returns
     -------
-    result_dict : dictionary
-        "b" is the array containing unique values
-        "Ia" is the index array such as b=a[Ia]
-        "Ib" is the inverse index array such as a=b[Ib]
-        "count0" is an array counting occurences for each unique value
+    b : ndarray
+        array containing unique values
+    Ia : ndarray
+        direct index array such as b=a[Ia] if is stable, else b=sort(a[Ia])
+    Ib: ndarray
+        inverse index array such as a=b[Ib]
+    count0: ndarray
+        array counting occurences for each unique value
     """
 
     if not is_abs_tol:
-        a_max = np.max(np.abs(a))
-        if a_max > 0:
-            tol = tol * np.max(np.abs(a))
+        tol = get_relative_tolerance(a, tol)
 
-    if tol > 1:
-        # threshold tol to 1
-        tol = 1
-
-    _, Ia, Ib, count0 = np.unique(
+    res_tuple = np.unique(
         np.round(a / tol),
         return_index=True,
-        return_inverse=True,
-        return_counts=True,
+        return_inverse=return_inverse,
+        return_counts=return_counts,
         axis=axis,
     )
 
+    if is_stable:
+        Ia = np.sort(res_tuple[1])
+    else:
+        Ia = res_tuple[1]
+
     b = a[Ia]
 
-    result_dict = dict()
-
-    result_dict["b"] = b
-
     if return_inverse:
-        result_dict["Ia"] = Ia
-
-    if return_index:
-        result_dict["Ib"] = Ib
+        Ib = res_tuple[2]
 
     if return_counts:
-        result_dict["count0"] = count0
+        count0 = res_tuple[3]
 
-    return result_dict
+    if return_index and return_inverse and return_counts:
+        return b, Ia, Ib, count0
+    elif return_index and return_inverse:
+        return b, Ia, Ib
+    elif return_index and return_counts:
+        return b, Ia, count0
+    elif return_inverse and return_counts:
+        return b, Ib, count0
+    elif return_index:
+        return b, Ia
+    elif return_inverse:
+        return b, Ib
+    elif return_counts:
+        return b, count0
+    else:
+        return b
 
 
 def intersect1d_tol(
-    ar1,
-    ar2,
-    tol=1e-6,
-    assume_unique=False,
-    return_indices=True,
-    return_intersect=False,
-    is_abs_tol=False,
+    ar1, ar2, tol=1e-6, is_abs_tol=False, return_indices=False, assume_unique=False
 ):
-
     """Return the intersect1d values of the input array a given tolerance tol
 
     Parameters
@@ -153,25 +146,25 @@ def intersect1d_tol(
         Second array to intersect values
     tol : Float
         the tolerance value
-    assume_unique : bool
-        True to assume values are unique in both input arrays
-    return_indices : bool
-        True to return original indices for both input arrays
-    return_intersect : bool
-        True to return interseced values of both arrays
     is_abs_tol : bool
         True to consider absolute tolerance, False to consider relative tolerance
+    return_indices : bool
+        True to return original indices for both input arrays
+    assume_unique : bool
+        True to assume values are unique in both input arrays
 
     Returns
     -------
-    result_dict : dictionary
-        "intersect1d" is the array containing common values
-        "comm1" is the index array such as
-        "comm2" is the inverse index array such as
+    b : ndarray
+        array containing common values
+    Ia : ndarray
+        array of indices such as b = ar1[Ia]
+    Ib : ndarray
+        array of indices such as b = ar2[Ib]
     """
 
     if not is_abs_tol:
-        tol = tol * np.max(np.abs(ar1))
+        tol = get_relative_tolerance(ar1, tol)
 
     _, Ia, Ib = np.intersect1d(
         np.floor(ar1 / tol),
@@ -180,13 +173,36 @@ def intersect1d_tol(
         return_indices=True,
     )
 
-    result_dict = dict()
-
-    if return_intersect:
-        result_dict["intersect1d"] = ar1[Ia]
+    b = ar1[Ia]
 
     if return_indices:
-        result_dict["comm1"] = Ia
-        result_dict["comm2"] = Ib
+        return b, Ia, Ib
+    else:
+        return b
 
-    return result_dict
+
+def get_relative_tolerance(a, atol):
+    """Calculate relative tolerance given an array a and an absolute tolerance
+
+    Parameters
+    ----------
+    a : ndarray
+        array for which to calculate relative tolerance
+    atol : float
+        absolute tolerance
+
+    Returns
+    -------
+    rtol : float
+        relative tolerance
+    """
+
+    a_max = np.max(np.abs(a))
+    if a_max > 0:
+        rtol = atol * np.max(np.abs(a))
+
+    if rtol > 1:
+        # threshold tol to 1
+        rtol = 1
+
+    return rtol
