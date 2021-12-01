@@ -57,16 +57,15 @@ def get_conv_indices(freqs1, freqs2, f_min, f_max, tol_freq):
     I0 = np.logical_and.reduce((freqs >= f_min, freqs <= f_max))
 
     # Keep only unique rows in order array
-    result = unique_tol(
+
+    freqs_un, I1 = unique_tol(
         freqs[I0],
         return_inverse=True,
-        return_index=True,
+        return_index=False,
         axis=0,
         is_abs_tol=True,
         tol=tol_freq,
     )
-    freqs_un = result["b"]
-    I1 = result["Ib"]
 
     # Find indices of positive frequencies to be kept
     I0a = np.where(I0)[0]
@@ -170,17 +169,14 @@ def get_sum_indices(freqs1, freqs2, tol_freq):
     freqs = np.concatenate((freqs1, freqs2), axis=0)
 
     # Get unique orders
-    res = unique_tol(
+    freqs_un, I0b = unique_tol(
         freqs,
-        return_index=True,
         return_inverse=True,
+        return_index=False,
         axis=0,
         is_abs_tol=True,
         tol=tol_freq,
     )
-
-    freqs_un = res["b"]
-    I0b = res["Ib"]
 
     return freqs_un, I0b
 
