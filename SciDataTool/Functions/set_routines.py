@@ -170,7 +170,7 @@ def intersect1d_tol(
         "comm2" is the inverse index array such as
     """
 
-    if is_abs_tol == False:
+    if not is_abs_tol:
         tol = tol * np.max(np.abs(ar1))
 
     _, Ia, Ib = np.intersect1d(
