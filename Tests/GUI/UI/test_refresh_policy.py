@@ -43,6 +43,7 @@ class TestGUI(object):
         # making sure that the is_plot_updated is set to False as Autorefresh is desactivated
         assert self.UI.is_plot_updated == False
 
+    @pytest.mark.gui
     def check_b_refresh_auto_refresh(self):
         """Testing that the refresh button is enabled and disabled according to the action on the UI"""
 
@@ -54,6 +55,7 @@ class TestGUI(object):
         self.UI.is_auto_refresh.setChecked(False)
         assert self.UI.b_refresh.isEnabled() == True
 
+    @pytest.mark.gui
     def check_b_refresh_auto(self):
         "Testing that when a plot is updated, then the refresh button is disabled and that we enable it once the UI is modified"
 
