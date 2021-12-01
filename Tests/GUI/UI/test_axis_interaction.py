@@ -49,26 +49,26 @@ class TestGUI(object):
 
     @pytest.mark.gui
     def check_ope_available(self):
-        """Test to make sure that the operation available for each axis is correct"""
+        """Test to make sure that the action available for each axis is correct"""
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
 
         for index_axis in range(axis_1.c_axis.count()):
             axis_1.c_axis.setCurrentIndex(index_axis)
 
-            operation_list = list()
+            action_list = list()
             for index_ope in range(axis_1.c_action.count()):
                 axis_1.c_action.setCurrentIndex(index_ope)
-                operation_list.append(axis_1.c_action.currentText())
+                action_list.append(axis_1.c_action.currentText())
 
-            assert "None" in operation_list
-            assert "Filter" in operation_list
+            assert "None" in action_list
+            assert "Filter" in action_list
 
             if axis_1.c_axis.currentText() in fft_dict:
-                assert "FFT" in operation_list
+                assert "FFT" in action_list
 
     @pytest.mark.gui
     def check_ope_sync(self):
-        """Checking that when FFT or '' is selected in axis 1 then the operation of the axis 2 is synchronized to be the same"""
+        """Checking that when FFT or '' is selected in axis 1 then the action of the axis 2 is synchronized to be the same"""
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
         axis_2 = self.UI.w_plot_manager.w_axis_manager.w_axis_2
 
@@ -96,9 +96,21 @@ class TestGUI(object):
             ):
                 assert axis_1.c_action.currentText() == axis_2.c_action.currentText()
 
+        # Checking what happened on axis2 if axis1 already had an action selected
+        # selecting time on axis 1
+        axis_1.c_axis.setCurrentIndex(0)
+        # selecting None on axis 2
+        axis_2.c_axis.setCurrentIndex(0)
+        # selecting fft for axis 1
+        axis_1.c_action.setCurrentIndex(1)
+        # selecting angle on axis 2
+        axis_2.c_axis.setCurrentIndex(1)
+        # Making sure that FFT is selected on second axis
+        assert axis_2.c_action.currentIndex() == axis_1.c_action.currentIndex()
+
     @pytest.mark.gui
     def check_unit_available(self):
-        """Test to make sure that the unit available are adapting correctly depending on the combination of axis and operation"""
+        """Test to make sure that the unit available are adapting correctly depending on the combination of axis and action"""
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
 
         # Gathering all the units available for a specific combination and we compare it with the reference with is unit_dict
@@ -124,11 +136,11 @@ if __name__ == "__main__":
 
     # Testing the removal of axis1 in axis2
     a.check_axis_removal()
-    # Checking the update of the operation according to the choice of the axis selected
+    # Checking the update of the action according to the choice of the axis selected
     a.check_ope_available()
-    # Checking the update of the unit according to the operation and the axis selected
+    # Checking the update of the unit according to the action and the axis selected
     a.check_unit_available()
-    # Checking the update of the FFT operation of axis2 if selected in axis1
+    # Checking the update of the FFT action of axis2 if selected in axis1
     a.check_ope_sync()
     # Checking the interaction with filter button
     a.check_filter()

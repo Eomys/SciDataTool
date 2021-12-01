@@ -370,6 +370,13 @@ class TestGUI(object):
             assert drange["min"] == float(test_dict["z_min"])
             assert drange["max"] == float(test_dict["z_max"])
 
+        # Making sure that we update the name of g_data_extract with the plot selected
+        title = self.UI.w_plot_manager.w_range.g_range.title()
+        if len(test_dict["axis"]) == 1:
+            assert title == "Y Range"
+        elif len(test_dict["axis"]) == 2:
+            assert title == "Z Range"
+
 
 if __name__ == "__main__":
 
