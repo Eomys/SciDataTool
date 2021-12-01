@@ -65,9 +65,6 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         # Recovering the axis selected by the user removing it from the the second axis combobox
         self.w_axis_2.remove_axis(self.w_axis_1.get_axis_selected())
 
-        # Generating the GroupBox
-        self.gen_slice_op()
-
     def axis_2_updated(self):
         """Method that make sure that when axis 2 is selected (None->?) it has the same fft/ifft combobox selected as axis1
          then generates Data Selection
@@ -77,10 +74,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
         """
         # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
-        self.fft_sync("axis 2")
-
-        # Generating the DataSelection GroupBox
-        self.gen_slice_op()
+        self.fft_sync("axis 1")
 
     def gen_slice_op(self):
         """Method that gen the right WDataExtrator widget according to the axis selected by the user in the UI

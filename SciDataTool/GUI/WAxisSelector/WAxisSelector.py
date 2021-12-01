@@ -184,6 +184,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         # Step 1 : Getting the name of the different axes of the DataND object
         self.axes_list = [axis.name for axis in data.get_axes()]
 
+        # Adding a safety, so that we cannot have frequency or wavenumber inside axes_list (we should have time and angle instead)
+        for i in range(len(self.axes_list)):
+            if self.axes_list[i] in ifft_dict:
+                self.axes_list[i] = ifft_dict[self.axes_list[i]]
+
         # At least one axis must be selected => impossible to have none for X axis
         if self.name.lower() != "x":
             self.axes_list.insert(0, "None")
@@ -191,10 +196,13 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         # Step 2 : Replacing the items inside of the ComboBox with the axes recovered
         self.c_axis.clear()
         for ax in self.axes_list:
-            if ax in axes_dict:
-                self.c_axis.addItem(axes_dict[ax])
+            if ax in ifft_dict:
+                self.c_axis.addItem(ifft_dict[ax])
             else:
-                self.c_axis.addItem(ax)
+                if ax in axes_dict:
+                    self.c_axis.addItem(axes_dict[ax])
+                else:
+                    self.c_axis.addItem(ax)
 
         update_cb_enable(self.c_axis)
         self.c_axis.blockSignals(False)
@@ -233,9 +241,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the new action"""
 
         action_list = [self.c_action.itemText(i) for i in range(self.c_action.count())]
-
+        self.blockSignals(True)
         if action in action_list and action != "Filter":
             self.c_action.setCurrentIndex(action_list.index(action))
+        self.blockSignals(False)
 
     def set_unit(self):
         """Method that update the unit comboxbox according to the axis selected in the other combobox.
@@ -283,6 +292,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.set_name(axis_name)
         self.set_axis_options(data)
+        self.c_action.setCurrentIndex(0)
         self.set_unit()
 
     def update_axis(self):
@@ -314,7 +324,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         else:
             self.c_action.setDisabled(False)
 
+        self.c_action.blockSignals(True)
         if self.axis_selected in fft_dict:
+
             action = ["None", "FFT", "Filter"]
             self.c_action.clear()
             self.c_action.addItems(action)
@@ -323,6 +335,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             action = ["None", "Filter"]
             self.c_action.clear()
             self.c_action.addItems(action)
+        self.c_action.blockSignals(False)
 
         self.c_action.view().setMinimumWidth(max([len(ac) for ac in action]) * 6)
 

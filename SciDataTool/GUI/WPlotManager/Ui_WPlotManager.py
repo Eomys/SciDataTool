@@ -21,6 +21,7 @@ class Ui_WPlotManager(object):
         WPlotManager.resize(376, 683)
         self.verticalLayout = QVBoxLayout(WPlotManager)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.w_vect_selector = WVectorSelector(WPlotManager)
         self.w_vect_selector.setObjectName(u"w_vect_selector")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)

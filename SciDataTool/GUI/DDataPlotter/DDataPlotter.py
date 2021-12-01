@@ -119,10 +119,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             a WPlotManager object
 
         """
+
         self.b_refresh.setDisabled(False)
 
         if self.auto_refresh == True:
-            self.w_plot_manager.update_range()
             self.update_plot()
             self.is_plot_updated = True
         else:
@@ -384,6 +384,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         print(axes_selected)
         print(data_selection)
+        print(output_range)
 
         # Checking if the axes are following the order inside the data object
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)

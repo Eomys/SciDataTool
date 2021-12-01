@@ -201,8 +201,10 @@ class WDataRange(Ui_WDataRange, QWidget):
         if self.lf_min.value() != None and self.lf_max.value() != None:
             if self.lf_min.value() > self.lf_max.value():
 
+                self.blockSignals(True)
                 temp = self.lf_max.value()
                 self.lf_max.setValue(self.lf_min.value())
                 self.lf_min.setValue(temp)
+                self.blockSignals(False)
 
         self.refreshNeeded.emit()
