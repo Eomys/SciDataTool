@@ -46,7 +46,7 @@ def filter_spectral_leakage(
     """
 
     # Expand theoretical frequencies to negative values
-    freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))["b"]
+    freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))
     Nfreq = freqs_th.size
 
     if Wmatf.size == 0 or If.size == 0:
