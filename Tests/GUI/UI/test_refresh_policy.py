@@ -43,6 +43,28 @@ class TestGUI(object):
         # making sure that the is_plot_updated is set to False as Autorefresh is desactivated
         assert self.UI.is_plot_updated == False
 
+    def check_b_refresh_auto_refresh(self):
+        """Testing that the refresh button is enabled and disabled according to the action on the UI"""
+
+        # Testing that when auto-refresh is checked, then the refresh button is disabled
+        self.UI.is_auto_refresh.setChecked(True)
+        assert self.UI.b_refresh.isEnabled() == False
+
+        # Testing that when auto-refresh is unchecked, then the refresh button is enabled
+        self.UI.is_auto_refresh.setChecked(False)
+        assert self.UI.b_refresh.isEnabled() == True
+
+    def check_b_refresh_auto(self):
+        "Testing that when a plot is updated, then the refresh button is disabled and that we enable it once the UI is modified"
+
+        # After updating the plot, the button should be disabled
+        self.UI.update_plot()
+        assert self.UI.b_refresh.isEnabled() == False
+
+        # After modifying the UI, the button shoud be enabled
+        self.UI.w_plot_manager.updatePlot.emit()
+        assert self.UI.b_refresh.isEnabled() == True
+
 
 if __name__ == "__main__":
     a = TestGUI()
@@ -52,5 +74,9 @@ if __name__ == "__main__":
     a.check_autorefresh_update()
     # Verifying the handling of the signals
     a.check_signal()
+    # Testing that we disable/enable b_refresh according to is_auto_refresh (checkBox)
+    a.check_b_refresh_auto_refresh()
+    # Testing that the button is disabled after the plot is updated and enabled after changing the UI
+    a.check_b_refresh_auto
 
     print("Done")
