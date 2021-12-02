@@ -22,7 +22,9 @@ class Ui_WVectorSelector(object):
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.g_vector_comp.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.g_vector_comp.sizePolicy().hasHeightForWidth()
+        )
         self.g_vector_comp.setSizePolicy(sizePolicy)
         self.g_vector_comp.setMinimumSize(QSize(0, 0))
         self.g_vector_comp.setMaximumSize(QSize(16777215, 16777215))
@@ -68,35 +70,57 @@ class Ui_WVectorSelector(object):
         self.c_referential.addItem("")
         self.c_referential.setObjectName(u"c_referential")
         self.c_referential.setEnabled(True)
-        sizePolicy1.setHeightForWidth(self.c_referential.sizePolicy().hasHeightForWidth())
+        sizePolicy1.setHeightForWidth(
+            self.c_referential.sizePolicy().hasHeightForWidth()
+        )
         self.c_referential.setSizePolicy(sizePolicy1)
         self.c_referential.setMinimumSize(QSize(100, 21))
 
         self.gridLayout.addWidget(self.c_referential, 1, 1, 1, 1)
 
-
         self.verticalLayout_2.addWidget(self.g_vector_comp)
-
 
         self.retranslateUi(WVectorSelector)
 
         QMetaObject.connectSlotsByName(WVectorSelector)
+
     # setupUi
 
     def retranslateUi(self, WVectorSelector):
-        WVectorSelector.setWindowTitle(QCoreApplication.translate("WVectorSelector", u"WVectorSelector", None))
-        self.g_vector_comp.setTitle(QCoreApplication.translate("WVectorSelector", u"Vector components", None))
-        self.in_component.setText(QCoreApplication.translate("WVectorSelector", u"Component", None))
-        self.c_component.setItemText(0, QCoreApplication.translate("WVectorSelector", u"radial", None))
-        self.c_component.setItemText(1, QCoreApplication.translate("WVectorSelector", u"tangential", None))
-        self.c_component.setItemText(2, QCoreApplication.translate("WVectorSelector", u"axial", None))
-        self.c_component.setItemText(3, QCoreApplication.translate("WVectorSelector", u"comp_x", None))
-        self.c_component.setItemText(4, QCoreApplication.translate("WVectorSelector", u"comp_y", None))
-        self.c_component.setItemText(5, QCoreApplication.translate("WVectorSelector", u"comp_z", None))
+        WVectorSelector.setWindowTitle(
+            QCoreApplication.translate("WVectorSelector", u"WVectorSelector", None)
+        )
+        self.g_vector_comp.setTitle("")
+        self.in_component.setText(
+            QCoreApplication.translate("WVectorSelector", u"Component", None)
+        )
+        self.c_component.setItemText(
+            0, QCoreApplication.translate("WVectorSelector", u"radial", None)
+        )
+        self.c_component.setItemText(
+            1, QCoreApplication.translate("WVectorSelector", u"tangential", None)
+        )
+        self.c_component.setItemText(
+            2, QCoreApplication.translate("WVectorSelector", u"axial", None)
+        )
+        self.c_component.setItemText(
+            3, QCoreApplication.translate("WVectorSelector", u"comp_x", None)
+        )
+        self.c_component.setItemText(
+            4, QCoreApplication.translate("WVectorSelector", u"comp_y", None)
+        )
+        self.c_component.setItemText(
+            5, QCoreApplication.translate("WVectorSelector", u"comp_z", None)
+        )
 
-        self.in_referential.setText(QCoreApplication.translate("WVectorSelector", u"Referential", None))
-        self.c_referential.setItemText(0, QCoreApplication.translate("WVectorSelector", u"xyz", None))
-        self.c_referential.setItemText(1, QCoreApplication.translate("WVectorSelector", u"radphiz", None))
+        self.in_referential.setText(
+            QCoreApplication.translate("WVectorSelector", u"Referential", None)
+        )
+        self.c_referential.setItemText(
+            0, QCoreApplication.translate("WVectorSelector", u"xyz", None)
+        )
+        self.c_referential.setItemText(
+            1, QCoreApplication.translate("WVectorSelector", u"radphiz", None)
+        )
 
     # retranslateUi
-

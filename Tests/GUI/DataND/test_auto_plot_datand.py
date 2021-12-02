@@ -1,6 +1,9 @@
 from types import FrameType
 import pytest
-from PySide2.QtWidgets import *
+
+# from PySide2.QtWidgets import *
+from PySide2 import QtWidgets
+import sys
 
 from numpy import pi
 from numpy.random import random
@@ -14,11 +17,11 @@ a_p_list.append(
     {
         "axis": ["time"],
         "action": ["angle[-1]", "z[2]"],
-        "is_create_appli": True,
-        "is_test": True,
+        "is_create_appli": False,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for XY plot
 
@@ -27,10 +30,10 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z[2]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for 2D plot
 
@@ -39,10 +42,10 @@ a_p_list.append(
         "axis": ["freqs"],
         "action": ["angle[-1]", "z[1]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for XY FFT plot
 
@@ -51,10 +54,10 @@ a_p_list.append(
         "axis": ["freqs", "wavenumber"],
         "action": ["z[1]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for 2D FFT plot
 
@@ -63,10 +66,10 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z=sum"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot with sum as action on z
 
@@ -75,10 +78,10 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z=rms"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot with rms as action on z
 
@@ -87,10 +90,10 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z=rss"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot with rss as action on z
 
@@ -100,10 +103,10 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z=mean"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot with mean as action on z
 
@@ -112,10 +115,10 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": [None],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for 2D plot without giving any action
 
@@ -125,10 +128,10 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": ["z[2]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": None,
-        "zmin": None,
-        "zmax": None,
+        "z_min": None,
+        "z_max": None,
     }
 )  # Testing the autoplot without WDataRange given
 
@@ -137,10 +140,10 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": [None],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": None,
-        "zmin": None,
-        "zmax": None,
+        "z_min": None,
+        "z_max": None,
     }
 )  # Testing the autoplot for 2D plot without giving slice and WdataRange
 
@@ -149,17 +152,23 @@ a_p_list.append(
         "axis": ["angle{°}", "time"],
         "action": ["z[2]"],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "unit": "T",
-        "zmin": "0",
-        "zmax": "50",
+        "z_min": 0,
+        "z_max": 50,
     }
 )  # Testing the autoplot for 2D plot where axes are inverted
 
 
 class TestGUI(object):
     @classmethod
-    def setup_class(self):
+    def setup_class(cls):
+        """Run at the begining of every test to setup the gui"""
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
+
         f = 50
         Nt_tot = 16
         Na_tot = 20
@@ -174,7 +183,7 @@ class TestGUI(object):
 
         field = random((Nt_tot, Na_tot, 3))
 
-        self.Field = DataTime(
+        cls.Field = DataTime(
             name="Airgap flux density",
             symbol="B_r",
             unit="T",
@@ -194,10 +203,10 @@ class TestGUI(object):
                 test_dict["action"][0],
                 test_dict["action"][1],
                 is_create_appli=test_dict["is_create_appli"],
-                is_test=test_dict["is_test"],
+                is_show_fig=test_dict["is_show_fig"],
                 unit=test_dict["unit"],
-                zmin=test_dict["zmin"],
-                zmax=test_dict["zmax"],
+                z_min=test_dict["z_min"],
+                z_max=test_dict["z_max"],
             )
 
         elif len(test_dict["axis"]) == 2:
@@ -206,22 +215,18 @@ class TestGUI(object):
                 test_dict["axis"][1],
                 test_dict["action"][0],
                 is_create_appli=test_dict["is_create_appli"],
-                is_test=test_dict["is_test"],
+                is_show_fig=test_dict["is_show_fig"],
                 unit=test_dict["unit"],
-                zmin=test_dict["zmin"],
-                zmax=test_dict["zmax"],
+                z_min=test_dict["z_min"],
+                z_max=test_dict["z_max"],
             )
 
         # Recovering the string generated
-        axes_sent = parser.read_input_strings(
-            self.UI.w_axis_manager.get_axes_selected(), axis_data=None
-        )
+        [_, axes_sent, actions_sent, drange] = self.UI.w_plot_manager.get_plot_info()
 
-        actions_sent = parser.read_input_strings(
-            self.UI.w_axis_manager.get_operation_selected(), axis_data=None
-        )
+        axes_sent = parser.read_input_strings(axes_sent, axis_data=None)
 
-        drange = self.UI.w_range.get_field_selected()
+        actions_sent = parser.read_input_strings(actions_sent, axis_data=None)
 
         # Step 1 : Checking the axes (1 and 2 if given)
         assert len(axes_sent) == len(test_dict["axis"])
@@ -235,7 +240,7 @@ class TestGUI(object):
         if axes_given[0].unit == "SI":
             # If the unit is not given, then we make sure that the unit by default is selected
             assert (
-                axes_sent[0].unit == self.UI.w_axis_manager.w_axis_1.get_current_unit()
+                axes_sent[0].unit == self.UI.w_plot_manager.w_axis_manager.w_axis_1.unit
             )
         else:
             assert axes_sent[0].unit == axes_given[0].unit
@@ -247,7 +252,7 @@ class TestGUI(object):
                 # If the unit is not given, then we make sure that the unit by default is selected
                 assert (
                     axes_sent[1].unit
-                    == self.UI.w_axis_manager.w_axis_2.get_current_unit()
+                    == self.UI.w_plot_manager.w_axis_manager.w_axis_2.unit
                 )
 
         # Step 2 : Checking the actions
@@ -272,7 +277,9 @@ class TestGUI(object):
                         # if we gave a negative index, we have to update the value nmanally (slider accept/return only positive value)
                         assert (
                             actions_sent[i].indices[0]
-                            == self.UI.w_axis_manager.w_data_sel[i].slider.maximum()
+                            == self.UI.w_plot_manager.w_axis_manager.w_slice_op[
+                                i
+                            ].slider.maximum()
                             + actions_given[i].indices[0]
                         )
                     else:
@@ -283,7 +290,7 @@ class TestGUI(object):
                     assert (
                         # If the unit is not given, then we make sure that the unit by default is selected
                         actions_sent[i].unit
-                        == self.UI.w_axis_manager.w_data_sel[i].unit
+                        == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].unit
                     )
                 else:
                     assert actions_sent[i].unit == actions_given[i].unit
@@ -292,61 +299,83 @@ class TestGUI(object):
             for i in range(len(actions_sent)):
                 assert (
                     actions_sent[i].name
-                    == self.UI.w_axis_manager.w_data_sel[i].axis.name
+                    == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].axis.name
                 )
                 assert actions_sent[i].extension == "single"
                 assert actions_sent[i].indices[0] == 0
-                assert actions_sent[i].unit == self.UI.w_axis_manager.w_data_sel[i].unit
+                assert (
+                    actions_sent[i].unit
+                    == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].unit
+                )
 
         # Comparing the info given to range with those emitted
 
         # Checking the unit of the field
         if test_dict["unit"] == None:
-            assert drange["unit"] == self.UI.w_range.c_unit.currentText()
+            assert drange["unit"] == self.UI.w_plot_manager.w_range.c_unit.currentText()
         else:
             assert drange["unit"] == test_dict["unit"]
 
         # To check the value of min and max when they are not given we have to do a get_along/get_magnitude_along to recover min and max
-        if test_dict["zmin"] == None or test_dict["zmin"] == None:
+        if test_dict["z_min"] == None or test_dict["z_min"] == None:
             if len(axes_given) == 1:
                 if axes_given[0].name in ifft_dict:
                     field_value = self.Field.get_magnitude_along(
-                        self.UI.w_axis_manager.get_operation_selected()[0],
-                        self.UI.w_axis_manager.get_operation_selected()[1],
-                        self.UI.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            0
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            1
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[0],
                     )
                 else:
                     field_value = self.Field.get_along(
-                        self.UI.w_axis_manager.get_operation_selected()[0],
-                        self.UI.w_axis_manager.get_operation_selected()[1],
-                        self.UI.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            0
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            1
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[0],
                     )
 
             elif len(axes_given) == 2:
                 if axes_given[0].name in ifft_dict and axes_given[1].name in ifft_dict:
                     field_value = self.Field.get_magnitude_along(
-                        self.UI.w_axis_manager.get_operation_selected()[0],
-                        self.UI.w_axis_manager.get_axes_selected()[0],
-                        self.UI.w_axis_manager.get_axes_selected()[1],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            0
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[1],
                     )
                 else:
                     field_value = self.Field.get_along(
-                        self.UI.w_axis_manager.get_operation_selected()[0],
-                        self.UI.w_axis_manager.get_axes_selected()[0],
-                        self.UI.w_axis_manager.get_axes_selected()[1],
+                        self.UI.w_plot_manager.w_axis_manager.get_operation_selected()[
+                            0
+                        ],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[0],
+                        self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[1],
                     )
-            if test_dict["zmin"] == None:
+            if test_dict["z_min"] == None:
                 # Making sure that the value are equal with a threshold of 1e-7
                 eps = 1e-7
                 assert drange["min"] - field_value[self.Field.symbol].min() < eps
-            if test_dict["zmax"] == None:
+            if test_dict["z_max"] == None:
                 # Making sure that the value are equal with a threshold of 1e-7
                 eps = 1e-7
                 assert drange["max"] - field_value[self.Field.symbol].max() < eps
         else:
             # If min and max are given, we just have to compare them
-            assert drange["min"] == float(test_dict["zmin"])
-            assert drange["max"] == float(test_dict["zmax"])
+            assert drange["min"] == float(test_dict["z_min"])
+            assert drange["max"] == float(test_dict["z_max"])
+
+        # Making sure that we update the name of g_data_extract with the plot selected
+        title = self.UI.w_plot_manager.w_range.g_range.title()
+        if len(test_dict["axis"]) == 1:
+            assert title == "Y Range"
+        elif len(test_dict["axis"]) == 2:
+            assert title == "Z Range"
 
 
 if __name__ == "__main__":

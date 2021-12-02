@@ -778,6 +778,7 @@
             "get_mag_rphiz_along",
             "get_mag_xyz_along",
             "get_rphiz_along",
+            "get_vectorfield_along",
             "get_xyz_along",
             "plot",
             "plot_2D_Data",

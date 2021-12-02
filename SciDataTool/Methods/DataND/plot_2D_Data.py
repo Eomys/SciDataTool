@@ -296,9 +296,7 @@ def plot_2D_Data(
                 if len(result_0[axis.name]) == 1:
                     axis_str = axis_str.strip("[]")
 
-                title3 += (
-                    name + "=" + axis_str.rstrip(", ") + " [" + axis_unit[0] + "], "
-                )
+                title3 += name + "=" + axis_str.rstrip(", ") + " [" + axis_unit + "], "
 
     # Title part 4 containing axes that are here but not involved in requested axes
     title4 = ""

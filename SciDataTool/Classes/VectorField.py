@@ -51,6 +51,11 @@ except ImportError as error:
     get_rphiz_along = error
 
 try:
+    from ..Methods.VectorField.get_vectorfield_along import get_vectorfield_along
+except ImportError as error:
+    get_vectorfield_along = error
+
+try:
     from ..Methods.VectorField.get_xyz_along import get_xyz_along
 except ImportError as error:
     get_xyz_along = error
@@ -180,6 +185,18 @@ class VectorField(FrozenClass):
         )
     else:
         get_rphiz_along = get_rphiz_along
+    # cf Methods.VectorField.get_vectorfield_along
+    if isinstance(get_vectorfield_along, ImportError):
+        get_vectorfield_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_vectorfield_along: "
+                    + str(get_vectorfield_along)
+                )
+            )
+        )
+    else:
+        get_vectorfield_along = get_vectorfield_along
     # cf Methods.VectorField.get_xyz_along
     if isinstance(get_xyz_along, ImportError):
         get_xyz_along = property(

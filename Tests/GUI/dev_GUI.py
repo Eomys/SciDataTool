@@ -24,19 +24,19 @@ if __name__ == "__main__":
         values=field_3d,
     )
 
-    test = "plot"
+    # test = "plot"
     # test = "autoplot"
-    # test = "oneaxis"
+    test = "oneaxis"
     # test = "vect"
 
     if test == "plot":
         Field.plot()
 
     elif test == "autoplot":
-        Field.plot("angle{°}", "time", "z[2]", unit="T", zmax="50")
-        # Field.plot("time", "angle[0]", "z[2]", unit="T", zmax="10")
-        # Field.plot("wavenumber", "freqs", "z[2]", unit="T", zmax="50")
-        # Field.plot("freqs", "wavenumber", "z=mean", unit="T", zmax="50")
+        Field.plot("angle{°}", "time", "z[2]", unit="T", z_max=50)
+        # Field.plot("time", "angle[0]", "z[2]", unit="T", z_max=10)
+        # Field.plot("wavenumber", "freqs", "z[2]", unit="T", z_max=50)
+        # Field.plot("freqs", "wavenumber", "z=mean", unit="T", z_max=50)
 
     elif test == "oneaxis":
 
@@ -103,4 +103,4 @@ if __name__ == "__main__":
         )
         VecField.plot()
 
-        # VecField.plot("time", "angle{°}", component="comp_x")
+        # VecField.plot("B[0]0", "time", "angle{°}", component="comp_x")

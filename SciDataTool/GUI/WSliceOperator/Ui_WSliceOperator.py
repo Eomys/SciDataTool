@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# File generated according to WDataExtractor.ui
+# File generated according to WSliceOperator.ui
 # WARNING! All changes made in this file will be lost!
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -12,16 +12,16 @@ from PySide2.QtWidgets import *
 from ...GUI.Tools.FloatEdit import FloatEdit
 
 
-class Ui_WDataExtractor(object):
-    def setupUi(self, WDataExtractor):
-        if not WDataExtractor.objectName():
-            WDataExtractor.setObjectName(u"WDataExtractor")
-        WDataExtractor.resize(318, 100)
-        self.verticalLayout = QVBoxLayout(WDataExtractor)
+class Ui_WSliceOperator(object):
+    def setupUi(self, WSliceOperator):
+        if not WSliceOperator.objectName():
+            WSliceOperator.setObjectName(u"WSliceOperator")
+        WSliceOperator.resize(318, 100)
+        self.verticalLayout = QVBoxLayout(WSliceOperator)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.in_name = QLabel(WDataExtractor)
+        self.in_name = QLabel(WSliceOperator)
         self.in_name.setObjectName(u"in_name")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -32,7 +32,7 @@ class Ui_WDataExtractor(object):
 
         self.horizontalLayout.addWidget(self.in_name)
 
-        self.c_operation = QComboBox(WDataExtractor)
+        self.c_operation = QComboBox(WSliceOperator)
         self.c_operation.addItem("")
         self.c_operation.addItem("")
         self.c_operation.addItem("")
@@ -48,12 +48,11 @@ class Ui_WDataExtractor(object):
 
         self.horizontalLayout.addWidget(self.c_operation)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.lf_value = FloatEdit(WDataExtractor)
+        self.lf_value = FloatEdit(WSliceOperator)
         self.lf_value.setObjectName(u"lf_value")
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(70)
@@ -65,7 +64,7 @@ class Ui_WDataExtractor(object):
 
         self.horizontalLayout_2.addWidget(self.lf_value)
 
-        self.slider = QSlider(WDataExtractor)
+        self.slider = QSlider(WSliceOperator)
         self.slider.setObjectName(u"slider")
         sizePolicy.setHeightForWidth(self.slider.sizePolicy().hasHeightForWidth())
         self.slider.setSizePolicy(sizePolicy)
@@ -74,10 +73,9 @@ class Ui_WDataExtractor(object):
 
         self.horizontalLayout_2.addWidget(self.slider)
 
-
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
-        self.b_action = QPushButton(WDataExtractor)
+        self.b_action = QPushButton(WSliceOperator)
         self.b_action.setObjectName(u"b_action")
         sizePolicy.setHeightForWidth(self.b_action.sizePolicy().hasHeightForWidth())
         self.b_action.setSizePolicy(sizePolicy)
@@ -85,25 +83,49 @@ class Ui_WDataExtractor(object):
 
         self.verticalLayout.addWidget(self.b_action)
 
+        self.retranslateUi(WSliceOperator)
 
-        self.retranslateUi(WDataExtractor)
+        QMetaObject.connectSlotsByName(WSliceOperator)
 
-        QMetaObject.connectSlotsByName(WDataExtractor)
     # setupUi
 
-    def retranslateUi(self, WDataExtractor):
-        WDataExtractor.setWindowTitle("")
-        self.in_name.setText(QCoreApplication.translate("WDataExtractor", u"angle", None))
-        self.c_operation.setItemText(0, QCoreApplication.translate("WDataExtractor", u"slice", None))
-        self.c_operation.setItemText(1, QCoreApplication.translate("WDataExtractor", u"slice (fft)", None))
-        self.c_operation.setItemText(2, QCoreApplication.translate("WDataExtractor", u"rms", None))
-        self.c_operation.setItemText(3, QCoreApplication.translate("WDataExtractor", u"rss", None))
-        self.c_operation.setItemText(4, QCoreApplication.translate("WDataExtractor", u"sum", None))
-        self.c_operation.setItemText(5, QCoreApplication.translate("WDataExtractor", u"mean", None))
-        self.c_operation.setItemText(6, QCoreApplication.translate("WDataExtractor", u"integrate", None))
-        self.c_operation.setItemText(7, QCoreApplication.translate("WDataExtractor", u"overlay/filter", None))
+    def retranslateUi(self, WSliceOperator):
+        WSliceOperator.setWindowTitle(
+            QCoreApplication.translate("WSliceOperator", u"WSliceOperator", None)
+        )
+        self.in_name.setText(
+            QCoreApplication.translate("WSliceOperator", u"angle", None)
+        )
+        self.c_operation.setItemText(
+            0, QCoreApplication.translate("WSliceOperator", u"slice", None)
+        )
+        self.c_operation.setItemText(
+            1, QCoreApplication.translate("WSliceOperator", u"slice (fft)", None)
+        )
+        self.c_operation.setItemText(
+            2, QCoreApplication.translate("WSliceOperator", u"rms", None)
+        )
+        self.c_operation.setItemText(
+            3, QCoreApplication.translate("WSliceOperator", u"rss", None)
+        )
+        self.c_operation.setItemText(
+            4, QCoreApplication.translate("WSliceOperator", u"sum", None)
+        )
+        self.c_operation.setItemText(
+            5, QCoreApplication.translate("WSliceOperator", u"mean", None)
+        )
+        self.c_operation.setItemText(
+            6, QCoreApplication.translate("WSliceOperator", u"integrate", None)
+        )
+        self.c_operation.setItemText(
+            7, QCoreApplication.translate("WSliceOperator", u"overlay/filter", None)
+        )
 
-        self.lf_value.setText(QCoreApplication.translate("WDataExtractor", u"0.314", None))
-        self.b_action.setText(QCoreApplication.translate("WDataExtractor", u"Superimpose selection", None))
+        self.lf_value.setText(
+            QCoreApplication.translate("WSliceOperator", u"0.314", None)
+        )
+        self.b_action.setText(
+            QCoreApplication.translate("WSliceOperator", u"Superimpose selection", None)
+        )
+
     # retranslateUi
-

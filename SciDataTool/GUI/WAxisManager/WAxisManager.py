@@ -1,12 +1,8 @@
-from PySide2.QtCore import QSize
-from PySide2.QtWidgets import QSizePolicy, QSpacerItem, QWidget
+from PySide2.QtWidgets import QSpacerItem, QWidget
 from PySide2.QtCore import Signal
 
-from SciDataTool.GUI.WAxisSelector.WAxisSelector import WAxisSelector
-
 from ...GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
-from ...GUI.WDataExtractor.WDataExtractor import WDataExtractor, type_extraction_dict
-from ...Functions.Plot import fft_dict, ifft_dict, axes_dict
+from ...GUI.WSliceOperator.WSliceOperator import WSliceOperator
 
 
 EXTENSION_DICT = {
@@ -67,10 +63,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.fft_sync("axis 1")
 
         # Recovering the axis selected by the user removing it from the the second axis combobox
-        self.w_axis_2.remove_axis(self.w_axis_1.get_current_axis_selected())
-
-        # Generating the GroupBox
-        self.gen_data_selection()
+        self.w_axis_2.remove_axis(self.w_axis_1.get_axis_selected())
 
     def axis_2_updated(self):
         """Method that make sure that when axis 2 is selected (None->?) it has the same fft/ifft combobox selected as axis1
@@ -81,12 +74,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
         """
         # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
-        self.fft_sync("axis 2")
+        self.fft_sync("axis 1")
 
-        # Generating the DataSelection GroupBox
-        self.gen_data_selection()
-
-    def gen_data_selection(self):
+    def gen_slice_op(self):
         """Method that gen the right WDataExtrator widget according to the axis selected by the user in the UI
         Parameters
         ----------
@@ -100,8 +90,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_list_2 = self.w_axis_2.get_axes_name()[:]
 
         # Getting the axes selected and removing them from the right axes_list
-        axis_selected_1 = self.w_axis_1.get_current_axis_selected()
-        axis_selected_2 = self.w_axis_2.get_current_axis_selected()
+        axis_selected_1 = self.w_axis_1.get_axis_selected()
+        axis_selected_2 = self.w_axis_2.get_axis_selected()
 
         axes_list_1.remove(axis_selected_1)
         axes_list_2.remove(axis_selected_2)
@@ -111,27 +101,26 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         # Step 2 : Removing the items that are in the layout currently
         for i in reversed(range(self.lay_data_extract.count())):
-            if not isinstance(self.lay_data_extract.itemAt(i), QSpacerItem):
-                self.lay_data_extract.takeAt(i).widget().deleteLater()
+            self.lay_data_extract.takeAt(i).widget().setParent(None)
 
-        # Step 3 : For each axis available, adding a WDataExtractor widget inside the layout
+        # Step 3 : For each axis available, adding a WSliceOperator widget inside the layout
         # If there are no slice to do (two axis available and selected before) then we hide the groupBox
         if len(axes_gen) != 0:
             self.g_data_extract.show()
-            self.w_data_sel = list()
+            self.w_slice_op = list()
 
             for axis in axes_gen:
-                temp = WDataExtractor(self.g_data_extract)
+                temp = WSliceOperator(self.g_data_extract)
                 temp.setObjectName(axis)
                 for ax in self.axes_list:
                     if ax.name == axis:
                         temp.update(ax)
                 temp.refreshNeeded.connect(self.update_needed)
-                self.w_data_sel.append(temp)
+                self.w_slice_op.append(temp)
                 self.lay_data_extract.addWidget(temp)
 
         else:
-            self.w_data_sel = list()
+            self.w_slice_op = list()
             self.g_data_extract.hide()
         self.update_needed()
 
@@ -151,11 +140,15 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_selected = list()
 
         # Recovering the first axis
-        axes_selected.append(self.w_axis_1.get_axis_unit_selected())
+        axes_selected.append(
+            self.w_axis_1.get_axis_selected() + "{" + self.w_axis_1.unit + "}"
+        )
 
         # If a second axis is selected, then we add it as well
-        if self.w_axis_2.get_current_axis_selected() != "None":
-            axes_selected.append(self.w_axis_2.get_axis_unit_selected())
+        if self.w_axis_2.get_axis_selected() != "None":
+            axes_selected.append(
+                self.w_axis_2.get_axis_selected() + "{" + self.w_axis_2.unit + "}"
+            )
 
         return axes_selected
 
@@ -172,7 +165,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             name of the operation and its axis
         """
 
-        return [wid.get_operation_selected() for wid in self.w_data_sel]
+        return [wid.get_operation_selected() for wid in self.w_slice_op]
 
     def fft_sync(self, axis_changed):
         """Method that will check the action chosen and that update the other action combobox to have the same action.
@@ -186,13 +179,13 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         if axis_changed == "axis 1":
             action_selected = self.w_axis_1.get_current_action_name()
             self.w_axis_2.set_action(action_selected)
-            self.gen_data_selection()
+            self.gen_slice_op()
         elif axis_changed == "axis 2":
             action_selected = self.w_axis_2.get_current_action_name()
             self.w_axis_1.set_action(action_selected)
-            self.gen_data_selection()
+            self.gen_slice_op()
 
-    def set_axis_widgets(self, data, user_input_list):
+    def set_axis_widgets(self, data, axes_request_list):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
         ----------
@@ -200,25 +193,23 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
         data : DataND
             The DataND object that we want to plot
-        user_input_list : list
-            list of the inputs from the user to set the axes (auto-plot)
+        axes_request_list:
+            list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         """
-
-        # Step 1 : If user_input are given (auto-plot), we have to process them
-        axes_list = [
-            ax for ax in user_input_list if ax.extension in EXTENSION_DICT["axis"]
-        ]
-
-        slices_op_list = [
-            ax for ax in user_input_list if ax.extension in EXTENSION_DICT["slice"]
-        ]
+        # Step 1 : If only one axis is given with the object, then we hide w_axis_2 and g_data_extract
+        if len(data.get_axes()) == 1:
+            self.w_axis_2.hide()
+            self.g_data_extract.hide()
+        else:
+            self.w_axis_2.show()
+            self.g_data_extract.show()
 
         # Step 2 : If we have user input, the we set the UI according to user_input.
         # Otherwise we use the default info
         self.w_axis_1.blockSignals(True)
         self.w_axis_2.blockSignals(True)
 
-        if len(user_input_list) == 0:
+        if axes_request_list == []:
             # Case where no user_input was given
             # Sending the info of data to the widget (mainly the axis)
             self.w_axis_1.update(data)
@@ -230,6 +221,18 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         else:
             # Case where a userinput was given (auto plot)
+
+            # If user_input are given (auto-plot), we have to process them
+            axes_list = [
+                ax for ax in axes_request_list if ax.extension in EXTENSION_DICT["axis"]
+            ]
+
+            slices_op_list = [
+                ax
+                for ax in axes_request_list
+                if ax.extension in EXTENSION_DICT["slice"]
+            ]
+
             # Sending the info of data to the widget (mainly the axis)
             self.w_axis_1.update(data)
             self.w_axis_2.update(data, axis_name="Y")
@@ -251,13 +254,13 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             if len(slices_op_list) != 0:
                 self.set_data_selec(slices_op_list)
             else:
-                self.gen_data_selection()
+                self.gen_slice_op()
 
         self.w_axis_1.blockSignals(False)
         self.w_axis_2.blockSignals(False)
 
     def set_data_selec(self, user_input_list):
-        """Method that set the right operation inside each WDataExtractor inside of w_data_sel
+        """Method that set the right operation inside each WSliceOperator inside of w_slice_op
         according to user input (auto plot).
         Parameters
         ----------
@@ -266,12 +269,12 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         user_input_list : list
             list of the inputs from the user to set the DataSelection (auto-plot)
         """
-        for wid in self.w_data_sel:
-            wid.set_operation(user_input_list[self.w_data_sel.index(wid)])
+        for wid in self.w_slice_op:
+            wid.set_operation(user_input_list[self.w_slice_op.index(wid)])
 
     def update_needed(self):
         """Method that emits a signal (refreshNeeded) that will be used to automaticaly update the plot inside the GUI.
-        This signal is triggered by other signals comming from WDataExtractor or WAxisSelector.
+        This signal is triggered by other signals comming from WSliceOperator or WAxisSelector.
         refreshRange is a different signal that we use to update the values of min and max inside w_range
         Parameters
         ----------

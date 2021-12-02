@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QWidget
 
-from ...GUI.WDataExtractor.Ui_WDataExtractor import Ui_WDataExtractor
+from ...GUI.WSliceOperator.Ui_WSliceOperator import Ui_WSliceOperator
 from PySide2.QtCore import Signal
 from ...Functions.Plot import axes_dict, fft_dict
 from ...Classes.Data import Data
@@ -15,7 +15,7 @@ type_extraction_dict = {
 }
 
 
-class WDataExtractor(Ui_WDataExtractor, QWidget):
+class WSliceOperator(Ui_WSliceOperator, QWidget):
     """Widget to define how to handle the 'non-plot' axis"""
 
     refreshNeeded = Signal()
@@ -25,8 +25,8 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
 
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         parent : QWidget
             The parent QWidget
         """
@@ -45,8 +45,8 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         """Method that return a string of the action selected by the user on the axis of the widget.
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
 
         Output
         ---------
@@ -74,20 +74,20 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             return None
 
     def get_name(self):
-        """Method that return the name of the axis of the WDataExtractor
+        """Method that return the name of the axis of the WSliceOperator
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         """
         return self.name
 
     def set_name(self, name):
-        """Method that set the name of the axis of the WDataExtractor
+        """Method that set the name of the axis of the WSliceOperator
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         name : string
             string that hold the name of the axis
         """
@@ -100,11 +100,11 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self.name = name
 
     def set_operation(self, user_input):
-        """Method that set the operation of the combobox of the WDataExtractor
+        """Method that set the operation of the combobox of the WSliceOperator
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         user_input : list
             list of RequestedAxis that we use to set up the UI for the auto-plot
         """
@@ -139,11 +139,11 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             self.set_slider(user_input.indices[0])
 
     def set_slider(self, index):
-        """Method that set the value of the slider of the WDataExtractor and then update floatEdit
+        """Method that set the value of the slider of the WSliceOperator and then update floatEdit
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         index : int
             index at which the slider should be placed
         """
@@ -160,8 +160,8 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         according to the axis sent by WAxisManager.
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         """
         # Converting the axis from rad to degree if the axis is angle as we do slice in degrees
         # Recovering the value from the axis as well
@@ -185,13 +185,13 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self.slider.setMaximum(len(self.axis_value) - 1)
 
     def update(self, axis):
-        """Method that will update the WDataExtractor widget according to the axis given to it
+        """Method that will update the WSliceOperator widget according to the axis given to it
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         axis : string
-            string with the name of the axis that should set the WDataExtractor widget
+            string with the name of the axis that should set the WSliceOperator widget
         """
         self.axis = axis
         self.unit = axis.unit
@@ -220,8 +220,8 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         and the axis sent by WAxisManager.
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         """
 
         self.lf_value.blockSignals(True)
@@ -232,11 +232,11 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         self.refreshNeeded.emit()
 
     def update_layout(self):
-        """Method that update the layout of the WDataExtractor according to the extraction chosen
+        """Method that update the layout of the WSliceOperator according to the extraction chosen
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         """
         # Recovering the operation selected
         extraction_selected = self.c_operation.currentText()
@@ -254,7 +254,10 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
             self.slider.hide()
             self.b_action.show()
             self.b_action.setText(extraction_selected)
-            self.refreshNeeded.emit()
+        elif extraction_selected == "integrate":
+            self.lf_value.hide()
+            self.slider.hide()
+            self.b_action.hide()
         else:
             self.lf_value.hide()
             self.slider.hide()
@@ -266,8 +269,8 @@ class WDataExtractor(Ui_WDataExtractor, QWidget):
         according to the axis sent by WAxisManager.
         Parameters
         ----------
-        self : WDataExtractor
-            a WDataExtractor object
+        self : WSliceOperator
+            a WSliceOperator object
         """
 
         self.slider.blockSignals(True)

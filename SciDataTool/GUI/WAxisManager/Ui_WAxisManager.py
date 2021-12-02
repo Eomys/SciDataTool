@@ -16,7 +16,7 @@ class Ui_WAxisManager(object):
     def setupUi(self, WAxisManager):
         if not WAxisManager.objectName():
             WAxisManager.setObjectName(u"WAxisManager")
-        WAxisManager.resize(371, 305)
+        WAxisManager.resize(405, 308)
         self.verticalLayout_2 = QVBoxLayout(WAxisManager)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.g_axes = QGroupBox(WAxisManager)
@@ -65,7 +65,6 @@ class Ui_WAxisManager(object):
 
         self.verticalLayout.addWidget(self.label_5)
 
-
         self.lay_axes.addLayout(self.verticalLayout)
 
         self.w_axis_1 = WAxisSelector(self.g_axes)
@@ -73,6 +72,7 @@ class Ui_WAxisManager(object):
         sizePolicy.setHeightForWidth(self.w_axis_1.sizePolicy().hasHeightForWidth())
         self.w_axis_1.setSizePolicy(sizePolicy)
         self.w_axis_1.setMinimumSize(QSize(0, 0))
+        self.w_axis_1.setMaximumSize(QSize(16777215, 16777215))
 
         self.lay_axes.addWidget(self.w_axis_1)
 
@@ -81,15 +81,17 @@ class Ui_WAxisManager(object):
         sizePolicy.setHeightForWidth(self.w_axis_2.sizePolicy().hasHeightForWidth())
         self.w_axis_2.setSizePolicy(sizePolicy)
         self.w_axis_2.setMinimumSize(QSize(0, 0))
+        self.w_axis_2.setMaximumSize(QSize(16777215, 16777215))
 
         self.lay_axes.addWidget(self.w_axis_2)
-
 
         self.verticalLayout_2.addWidget(self.g_axes)
 
         self.g_data_extract = QGroupBox(WAxisManager)
         self.g_data_extract.setObjectName(u"g_data_extract")
-        sizePolicy.setHeightForWidth(self.g_data_extract.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.g_data_extract.sizePolicy().hasHeightForWidth()
+        )
         self.g_data_extract.setSizePolicy(sizePolicy)
         self.g_data_extract.setMinimumSize(QSize(0, 0))
         self.g_data_extract.setMaximumSize(QSize(16777215, 16777215))
@@ -98,20 +100,28 @@ class Ui_WAxisManager(object):
 
         self.verticalLayout_2.addWidget(self.g_data_extract)
 
-
         self.retranslateUi(WAxisManager)
 
         QMetaObject.connectSlotsByName(WAxisManager)
+
     # setupUi
 
     def retranslateUi(self, WAxisManager):
-        WAxisManager.setWindowTitle(QCoreApplication.translate("WAxisManager", u"WAxisManager", None))
-        self.g_axes.setTitle(QCoreApplication.translate("WAxisManager", u"Axes", None))
+        WAxisManager.setWindowTitle(
+            QCoreApplication.translate("WAxisManager", u"WAxisManager", None)
+        )
+        self.g_axes.setTitle(
+            QCoreApplication.translate("WAxisManager", u"Axes Selection", None)
+        )
         self.label.setText("")
         self.label_4.setText(QCoreApplication.translate("WAxisManager", u"Axis", None))
-        self.label_2.setText(QCoreApplication.translate("WAxisManager", u"Action", None))
+        self.label_2.setText(
+            QCoreApplication.translate("WAxisManager", u"Action", None)
+        )
         self.label_3.setText(QCoreApplication.translate("WAxisManager", u"Unit", None))
         self.label_5.setText("")
-        self.g_data_extract.setTitle(QCoreApplication.translate("WAxisManager", u"Slices/Operations", None))
-    # retranslateUi
+        self.g_data_extract.setTitle(
+            QCoreApplication.translate("WAxisManager", u"Axes Operations", None)
+        )
 
+    # retranslateUi

@@ -1,12 +1,9 @@
-from types import FrameType
 import pytest
-from PySide2.QtWidgets import *
+import sys
+from PySide2 import QtWidgets
 
 from Tests.GUI.VectorField import VecField
 from numpy.testing import assert_almost_equal
-from numpy.random import random
-from SciDataTool import DataLinspace, DataTime
-from SciDataTool.Functions.Plot import ifft_dict, fft_dict, unit_dict
 from SciDataTool.Functions import parser
 
 a_p_list = list()
@@ -15,8 +12,8 @@ a_p_list.append(
     {
         "axis": ["time"],
         "action": ["angle[-1]"],
-        "is_create_appli": True,
-        "is_test": True,
+        "is_create_appli": False,
+        "is_show_fig": False,
         "component": "comp_x",
     }
 )  # Testing the autoplot for XY plot and component 'comp_x'
@@ -26,7 +23,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": [],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "component": "comp_x",
     }
 )  # Testing the autoplot for 2D plot and component 'comp_x'
@@ -36,7 +33,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": [],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "component": "comp_y",
     }
 )  # Testing the autoplot for 2D plot and component 'comp_y'
@@ -46,7 +43,7 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": [],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "component": "radial",
     }
 )  # Testing the autoplot for 2D plot and component 'radial'
@@ -56,16 +53,32 @@ a_p_list.append(
         "axis": ["time", "angle{°}"],
         "action": [],
         "is_create_appli": False,
-        "is_test": True,
+        "is_show_fig": False,
         "component": "tangential",
     }
 )  # Testing the autoplot for 2D plot and component 'tangential'
 
+a_p_list.append(
+    {
+        "axis": ["time", "angle{°}"],
+        "action": [],
+        "is_create_appli": False,
+        "is_show_fig": False,
+        "component": "axial",
+    }
+)  # Testing the autoplot with an unavaible component
+
 
 class TestGUI(object):
     @classmethod
-    def setup_class(self):
-        self.VecField = VecField
+    def setup_class(cls):
+        """Run at the begining of every test to setup the gui"""
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
+
+        cls.VecField = VecField
 
     @pytest.mark.gui
     @pytest.mark.parametrize("test_dict", a_p_list)
@@ -78,7 +91,7 @@ class TestGUI(object):
                 test_dict["axis"][0],
                 test_dict["action"][0],
                 is_create_appli=test_dict["is_create_appli"],
-                is_test=test_dict["is_test"],
+                is_show_fig=test_dict["is_show_fig"],
                 component=test_dict["component"],
             )
 
@@ -87,33 +100,96 @@ class TestGUI(object):
                 test_dict["axis"][0],
                 test_dict["axis"][1],
                 is_create_appli=test_dict["is_create_appli"],
-                is_test=test_dict["is_test"],
+                is_show_fig=test_dict["is_show_fig"],
                 component=test_dict["component"],
             )
 
+        # Step 0 : Making sure that the components in the combobox :
+        if (
+            "axial" not in self.VecField.components
+            or "comp_z" not in self.VecField.components
+        ):
+            assert self.UI.w_plot_manager.w_vect_selector.component_list == [
+                "Polar coordinates",
+                "radial",
+                "tangential",
+                "Cartesian coordinates",
+                "comp_x",
+                "comp_y",
+            ]
+        else:
+            assert self.UI.w_plot_manager.w_vect_selector.component_list == [
+                "Polar coordinates",
+                "radial",
+                "tangential",
+                "axial",
+                "Cartesian coordinates",
+                "comp_x",
+                "comp_y",
+                "comp_z",
+            ]
+
         # Step 1 :  making sure that the right component is selected
-        if test_dict["component"] in ["radial", "tangential", "axial"]:
+        if test_dict["component"] in ["radial"]:
             assert_almost_equal(
-                self.UI.data.values,
+                self.UI.w_plot_manager.data.values,
                 VecField.to_rphiz().components[test_dict["component"]].values,
                 7,
             )
 
-        elif test_dict["component"] in ["comp_x", "comp_y", "comp_z"]:
+        elif test_dict["component"] in ["comp_x", "comp_y"]:
             assert_almost_equal(
-                self.UI.data.values,
+                self.UI.w_plot_manager.data.values,
                 VecField.to_xyz().components[test_dict["component"]].values,
                 7,
             )
 
-        # Step 2 : Checking thay the axes and the operations given/sent are correct
+        elif (
+            test_dict["component"] == "axial"
+            and test_dict["component"] in self.VecField.components
+        ):
+            assert_almost_equal(
+                self.UI.w_plot_manager.data.values,
+                VecField.to_xyz().components[test_dict["component"]].values,
+                7,
+            )
+
+        elif (
+            test_dict["component"] == "comp_z"
+            and test_dict["component"] in self.VecField.components
+        ):
+            assert_almost_equal(
+                self.UI.w_plot_manager.data.values,
+                VecField.to_xyz().components[test_dict["component"]].values,
+                7,
+            )
+
+        elif (
+            test_dict["component"] == "tangential"
+            and test_dict["component"] in self.VecField.components
+        ):
+            assert_almost_equal(
+                self.UI.w_plot_manager.data.values,
+                VecField.to_rphiz().components[test_dict["component"]].values,
+                7,
+            )
+
+        else:
+            assert_almost_equal(
+                self.UI.w_plot_manager.data.values,
+                VecField.to_rphiz().components["radial"].values,
+                7,
+            )
+
+        # Step 2 : Checking that the axes and the operations given/sent are correct
         # Recovering the string generated
         axes_sent = parser.read_input_strings(
-            self.UI.w_axis_manager.get_axes_selected(), axis_data=None
+            self.UI.w_plot_manager.w_axis_manager.get_axes_selected(), axis_data=None
         )
 
         actions_sent = parser.read_input_strings(
-            self.UI.w_axis_manager.get_operation_selected(), axis_data=None
+            self.UI.w_plot_manager.w_axis_manager.get_operation_selected(),
+            axis_data=None,
         )
 
         # Step 2-1 : Checking the axes (1 and 2 if given)
@@ -128,7 +204,7 @@ class TestGUI(object):
         if axes_given[0].unit == "SI":
             # If the unit is not given, then we make sure that the unit by default is selected
             assert (
-                axes_sent[0].unit == self.UI.w_axis_manager.w_axis_1.get_current_unit()
+                axes_sent[0].unit == self.UI.w_plot_manager.w_axis_manager.w_axis_1.unit
             )
         else:
             assert axes_sent[0].unit == axes_given[0].unit
@@ -140,7 +216,7 @@ class TestGUI(object):
                 # If the unit is not given, then we make sure that the unit by default is selected
                 assert (
                     axes_sent[1].unit
-                    == self.UI.w_axis_manager.w_axis_2.get_current_unit()
+                    == self.UI.w_plot_manager.w_axis_manager.w_axis_2.get_current_unit()
                 )
 
         # Step 2-2 : Checking the actions
@@ -165,7 +241,9 @@ class TestGUI(object):
                         # if we gave a negative index, we have to update the value nmanally (slider accept/return only positive value)
                         assert (
                             actions_sent[i].indices[0]
-                            == self.UI.w_axis_manager.w_data_sel[i].slider.maximum()
+                            == self.UI.w_plot_manager.w_axis_manager.w_slice_op[
+                                i
+                            ].slider.maximum()
                             + actions_given[i].indices[0]
                         )
                     else:
@@ -176,7 +254,7 @@ class TestGUI(object):
                     assert (
                         # If the unit is not given, then we make sure that the unit by default is selected
                         actions_sent[i].unit
-                        == self.UI.w_axis_manager.w_data_sel[i].unit
+                        == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].unit
                     )
                 else:
                     assert actions_sent[i].unit == actions_given[i].unit
@@ -185,11 +263,14 @@ class TestGUI(object):
             for i in range(len(actions_sent)):
                 assert (
                     actions_sent[i].name
-                    == self.UI.w_axis_manager.w_data_sel[i].axis.name
+                    == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].axis.name
                 )
                 assert actions_sent[i].extension == "single"
                 assert actions_sent[i].indices[0] == 0
-                assert actions_sent[i].unit == self.UI.w_axis_manager.w_data_sel[i].unit
+                assert (
+                    actions_sent[i].unit
+                    == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].unit
+                )
 
 
 if __name__ == "__main__":

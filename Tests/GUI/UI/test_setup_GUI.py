@@ -1,6 +1,6 @@
 import pytest
-from PySide2.QtWidgets import *
-
+from PySide2 import QtWidgets
+import sys
 from Tests.GUI import Field
 from SciDataTool.Functions.Plot import ifft_dict
 from SciDataTool.Functions import parser
@@ -8,28 +8,34 @@ from SciDataTool.Functions import parser
 
 class TestGUI(object):
     @classmethod
-    def setup_class(self):
-        self.UI = Field.plot(is_test=True)
+    def setup_class(cls):
+        """Run at the begining of every test to setup the gui"""
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
+
+        cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
     def check_axes(self):
         """Checking that the axes_list inside WAxisSelector corresponds to the axes of Field"""
         axes_expected = [axis.name for axis in Field.get_axes()]
-        assert self.UI.w_axis_manager.w_axis_1.axes_list == axes_expected
+        assert self.UI.w_plot_manager.w_axis_manager.w_axis_1.axes_list == axes_expected
         # On the second axis, we also have None as a possibility
         axes_expected.insert(0, "None")
-        assert self.UI.w_axis_manager.w_axis_2.axes_list == axes_expected
+        assert self.UI.w_plot_manager.w_axis_manager.w_axis_2.axes_list == axes_expected
 
     @pytest.mark.gui
     def check_data_sel(self):
         """Checking the axis/axes of DataSelection have not been selected by the user before"""
 
         axes_selected = [
-            self.UI.w_axis_manager.w_axis_1.get_current_axis_selected(),
-            self.UI.w_axis_manager.w_axis_2.get_current_axis_selected(),
+            self.UI.w_plot_manager.w_axis_manager.w_axis_1.get_axis_selected(),
+            self.UI.w_plot_manager.w_axis_manager.w_axis_2.get_axis_selected(),
         ]
 
-        for wid in self.UI.w_axis_manager.w_data_sel:
+        for wid in self.UI.w_plot_manager.w_axis_manager.w_slice_op:
             assert not wid.axis in axes_selected
 
     @pytest.mark.gui
@@ -37,19 +43,19 @@ class TestGUI(object):
         """Method that check that the units and the values of min and max set by default in the app corresponds to those of the field."""
 
         # Checking the unit of WDataRange
-        assert Field.unit in self.UI.w_range.unit_list
+        assert Field.unit in self.UI.w_plot_manager.w_range.unit_list
 
         # Recovering the axis selected and their units
-        axes_selected = self.UI.w_axis_manager.get_axes_selected()
+        axes_selected = self.UI.w_plot_manager.w_axis_manager.get_axes_selected()
         # Recovering the operation on the other axes
-        data_selection = self.UI.w_axis_manager.get_operation_selected()
+        data_selection = self.UI.w_plot_manager.w_axis_manager.get_operation_selected()
 
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
 
         # Recovering the minimum and the maximum of the field
         if len(axes_selected) == 1:
             # Checking that the right name is given to the groupBow with WDataRange
-            assert self.UI.w_range.g_range.title() == "Y"
+            assert self.UI.w_plot_manager.w_range.g_range.title() == "Y"
 
             # Checking if the field is plotted in fft, then we use get_magnitude_along
             # Otherwise we use get_along
@@ -68,7 +74,7 @@ class TestGUI(object):
 
         elif len(axes_selected) == 2:
             # Checking that the right name is given to the groupBow with WDataRange
-            assert self.UI.w_range.g_range.title() == "Z"
+            assert self.UI.w_plot_manager.w_range.g_range.title() == "Z"
 
             # Checking if the field is plotted in fft, then we use get_magnitude_along
             # Otherwise we use get_along
@@ -87,10 +93,19 @@ class TestGUI(object):
             field_min = field_value[Field.symbol].min()
             field_max = field_value[Field.symbol].max()
 
+        # Taking into account the delta that we add to improve the plot
+        delta = field_max - field_min
+
         # Checking that the values are close enough
         eps = 1e-5
-        assert abs(field_min - self.UI.w_range.lf_min.value()) < eps
-        assert abs(field_max - self.UI.w_range.lf_max.value()) < eps
+        assert (
+            abs(field_min - delta * 0.1 - self.UI.w_plot_manager.w_range.lf_min.value())
+            < eps
+        )
+        assert (
+            abs(field_max + delta * 0.1 - self.UI.w_plot_manager.w_range.lf_max.value())
+            < eps
+        )
 
 
 if __name__ == "__main__":

@@ -1,19 +1,25 @@
 import pytest
-from PySide2.QtWidgets import *
-
+from PySide2 import QtWidgets
+import sys
 from Tests.GUI import Field
 
 
 class TestGUI(object):
     @classmethod
-    def setup_class(self):
-        self.UI = Field.plot(is_test=True)
+    def setup_class(cls):
+        """Run at the begining of every test to setup the gui"""
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
+
+        cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
     def check_layout(self):
         """Test that the layout is set up according to the operation selected"""
 
-        for wid in self.UI.w_axis_manager.w_data_sel:
+        for wid in self.UI.w_plot_manager.w_axis_manager.w_slice_op:
             for ope in range(wid.c_operation.count()):
 
                 wid.blockSignals(True)
@@ -53,7 +59,7 @@ class TestGUI(object):
     def check_slider_floatEdit(self):
         """Testing that the slider is updated correctly according to the slider and vice versa"""
 
-        for wid in self.UI.w_axis_manager.w_data_sel:
+        for wid in self.UI.w_plot_manager.w_axis_manager.w_slice_op:
             if not wid.c_operation.currentText() in ["slice", "slice (fft)"]:
                 wid.c_operation.setCurrentIndex(0)
 

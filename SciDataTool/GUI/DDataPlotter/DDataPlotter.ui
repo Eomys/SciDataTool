@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1102</width>
-    <height>811</height>
+    <width>1242</width>
+    <height>875</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,19 +26,76 @@
    <string>Data Plot</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="is_auto_refresh">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Auto Refresh</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="b_refresh">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>Refresh</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item row="0" column="1">
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="minimumSize">
-      <size>
-       <width>320</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>320</width>
-       <height>16777215</height>
-      </size>
+    <widget class="QScrollArea" name="w_scroll">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="widgetResizable">
       <bool>true</bool>
@@ -48,22 +105,13 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>318</width>
-        <height>787</height>
+        <width>604</width>
+        <height>421</height>
        </rect>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>320</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <property name="spacing">
-        <number>2</number>
-       </property>
+      <layout class="QVBoxLayout" name="lay_scroll">
        <item>
-        <widget class="WVectorSelector" name="w_vect_selector" native="true">
+        <widget class="WPlotManager" name="w_plot_manager" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -76,228 +124,22 @@
            <height>0</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
         </widget>
-       </item>
-       <item>
-        <widget class="WAxisManager" name="w_axis_manager" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="WDataRange" name="w_range" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <property name="leftMargin">
-          <number>11</number>
-         </property>
-         <property name="topMargin">
-          <number>11</number>
-         </property>
-         <property name="rightMargin">
-          <number>10</number>
-         </property>
-         <property name="bottomMargin">
-          <number>11</number>
-         </property>
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="c_auto_refresh">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Auto Refresh</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="b_animate">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>Animate</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QPushButton" name="b_export">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Export</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QPushButton" name="b_refresh">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>Refresh</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
-   <item row="0" column="0">
+   <item row="0" column="0" rowspan="2">
     <layout class="QVBoxLayout" name="plot_layout"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>WDataRange</class>
+   <class>WPlotManager</class>
    <extends>QWidget</extends>
-   <header>...GUI.WDataRange.WDataRange.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>WAxisManager</class>
-   <extends>QWidget</extends>
-   <header>...GUI.WAxisManager.WAxisManager.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>WVectorSelector</class>
-   <extends>QWidget</extends>
-   <header>...GUI.WVectorSelector.WVectorSelector.h</header>
+   <header>...GUI.WPlotManager.WPlotManager.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
