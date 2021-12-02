@@ -401,11 +401,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 not_in_order = True
                 axes_selected = [axes_selected[1], axes_selected[0]]
 
-        # TODO take into account self.plot_arg_dict if it is given
         if not None in data_selection:
             if len(axes_selected) == 1:
                 self.data.plot_2D_Data(
                     *[*axes_selected, *data_selection],
+                    **self.plot_arg_dict,
                     unit=output_range["unit"],
                     fig=self.fig,
                     ax=self.ax,
@@ -414,12 +414,14 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 )
 
             elif len(axes_selected) == 2:
+                if "is_2D_view" not in self.plot_arg_dict:
+                    self.plot_arg_dict["is_2D_view"] = True
                 self.data.plot_3D_Data(
                     *[*axes_selected, *data_selection],
+                    **self.plot_arg_dict,
                     unit=output_range["unit"],
                     fig=self.fig,
                     ax=self.ax,
-                    is_2D_view=True,
                     z_min=output_range["min"],
                     z_max=output_range["max"],
                     is_switch_axes=not_in_order,
