@@ -30,6 +30,14 @@ SYMBOL_DICT = {
     "reference torque": "T_{ref}",
 }
 
+PARAM_3D = [
+    "is_2D_view",
+    "is_contour",
+    "is_same_size",
+    "N_stem",
+    "colormap",
+]
+
 
 def latex(string):
     """format a string for latex"""
@@ -403,9 +411,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         if not None in data_selection:
             if len(axes_selected) == 1:
+                plot_arg_dict_2D = self.plot_arg_dict.copy()
+                for param in PARAM_3D:
+                    if param in plot_arg_dict_2D:
+                        del plot_arg_dict_2D[param]
                 self.data.plot_2D_Data(
                     *[*axes_selected, *data_selection],
-                    **self.plot_arg_dict,
+                    **plot_arg_dict_2D,
                     unit=output_range["unit"],
                     fig=self.fig,
                     ax=self.ax,
