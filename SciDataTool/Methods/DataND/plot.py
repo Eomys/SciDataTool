@@ -16,7 +16,8 @@ def plot(
     z_max=None,
     is_auto_refresh=False,
     is_show_fig=True,
-    is_create_appli=True
+    is_create_appli=True,
+    plot_arg_dict=dict(),
 ):
     """Plot the Data object in the GUI
 
@@ -58,7 +59,7 @@ def plot(
         z_min=z_min,
         z_max=z_max,
         is_auto_refresh=is_auto_refresh,
-        plot_arg_dict=None,
+        plot_arg_dict=plot_arg_dict,
     )
 
     if is_show_fig:

@@ -50,7 +50,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         z_min=None,
         z_max=None,
         is_auto_refresh=False,
-        plot_arg_dict=None,
+        plot_arg_dict=dict(),
     ):
         """Initialize the UI according to the input given by the user
 
