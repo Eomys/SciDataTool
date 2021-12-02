@@ -3,6 +3,7 @@ from PySide2.QtCore import Signal
 
 from ...GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
 from ...GUI.WSliceOperator.WSliceOperator import WSliceOperator
+from SciDataTool.Functions import axes_dict, rev_axes_dict
 
 
 EXTENSION_DICT = {
@@ -113,7 +114,13 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                 temp = WSliceOperator(self.g_data_extract)
                 temp.setObjectName(axis)
                 for ax in self.axes_list:
-                    if ax.name == axis:
+                    if (
+                        ax.name == axis
+                        or axis in axes_dict
+                        and ax.name in axes_dict[axis]
+                        or axis in rev_axes_dict
+                        and ax.name in rev_axes_dict[axis]
+                    ):
                         temp.update(ax)
                 temp.refreshNeeded.connect(self.update_needed)
                 self.w_slice_op.append(temp)
