@@ -207,14 +207,15 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.axis = axis
         self.unit = axis.unit
         self.set_name(axis.name)
-        self.set_slider_floatedit()
-        self.update_layout()
 
         self.c_operation.blockSignals(True)
         operation_list = OPERATION_LIST.copy()
 
         # Remove slice for string axes
-        operation_list.remove("slice")
+        if self.axis.is_components:
+            operation_list.remove("slice")
+        else:
+            self.set_slider_floatedit()
 
         # Remove fft slice for non fft axes
         if not self.axis.name in fft_dict:
@@ -222,6 +223,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
         self.c_operation.clear()
         self.c_operation.addItems(operation_list)
+        self.update_layout()
         self.c_operation.blockSignals(False)
 
     def update_floatEdit(self):
