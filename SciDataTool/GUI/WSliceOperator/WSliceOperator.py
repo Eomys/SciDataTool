@@ -14,6 +14,17 @@ type_extraction_dict = {
     "mean": "=mean",
 }
 
+OPERATION_LIST = [
+    "slice",
+    "slice (fft)",
+    "rms",
+    "rss",
+    "sum",
+    "mean",
+    "integrate",
+    "overlay/filter",
+]
+
 
 class WSliceOperator(Ui_WSliceOperator, QWidget):
     """Widget to define how to handle the 'non-plot' axis"""
@@ -199,17 +210,15 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.set_slider_floatedit()
         self.update_layout()
 
-        # Depending on the axis we add or remove the slice (fft) operation
         self.c_operation.blockSignals(True)
-        operation_list = list()
-        for i in range(self.c_operation.count()):
-            self.c_operation.setCurrentIndex(i)
-            operation_list.append(self.c_operation.currentText())
+        operation_list = OPERATION_LIST.copy()
 
-        if "slice (fft)" in operation_list and not self.axis.name in fft_dict:
+        # Remove slice for string axes
+        operation_list.remove("slice")
+
+        # Remove fft slice for non fft axes
+        if not self.axis.name in fft_dict:
             operation_list.remove("slice (fft)")
-        elif not "slice (fft)" in operation_list and self.axis.name in fft_dict:
-            operation_list.insert(1, "slice (fft)")
 
         self.c_operation.clear()
         self.c_operation.addItems(operation_list)
