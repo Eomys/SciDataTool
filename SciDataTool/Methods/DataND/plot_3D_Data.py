@@ -349,8 +349,8 @@ def plot_3D_Data(
         else:
             indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
 
-        xticks = unique(X_flat[indices])
-        yticks = unique(Y_flat[indices])
+        xticks = X_flat[indices]
+        yticks = Y_flat[indices]
         if is_auto_range:
             if len(xticks) > 0:
                 x_min = -0.1 * xticks[-1]
