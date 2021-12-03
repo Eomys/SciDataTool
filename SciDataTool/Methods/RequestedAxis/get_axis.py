@@ -37,6 +37,11 @@ def get_axis(self, axis, is_real):
         self.rebuild_indices = axis.rebuild_indices
         self.is_step = axis.is_step
     is_components = getattr(axis, "is_components", False)
+    if (
+        is_components and axis.is_overlay and self.extension == "whole"
+    ):  # To overlay curves in plots
+        self.extension = "list"
+        self.indices = [":"]
     if is_components:
         values = axis.get_values(unit=self.unit)
         if self.indices is not None:
