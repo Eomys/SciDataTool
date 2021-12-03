@@ -48,6 +48,11 @@ def plot_3D_Data(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
+    xlabel=None,
+    ylabel=None,
+    zlabel=None,
+    title=None,
+    is_disp_title=True,
 ):
     """Plots a field as a function of two axes
 
@@ -126,19 +131,23 @@ def plot_3D_Data(
     is_fft = False
     if any("wavenumber" in s for s in arg_list) or any("freqs" in s for s in arg_list):
         is_fft = True
-        if self.symbol == "Magnitude":
-            zlabel = "Magnitude " + unit_str
-        else:
-            zlabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
-        title1 = "FFT2 of " + self.name.lower() + " "
-    else:
-        if is_norm:
-            zlabel = r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}$ " + unit_str
-        else:
+        if zlabel is None:
             if self.symbol == "Magnitude":
                 zlabel = "Magnitude " + unit_str
             else:
-                zlabel = r"$" + self.symbol + "$ " + unit_str
+                zlabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
+        title1 = "FFT2 of " + self.name.lower() + " "
+    else:
+        if zlabel is None:
+            if is_norm:
+                zlabel = (
+                    r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}$ " + unit_str
+                )
+            else:
+                if self.symbol == "Magnitude":
+                    zlabel = "Magnitude " + unit_str
+                else:
+                    zlabel = r"$" + self.symbol + "$ " + unit_str
         title1 = "Surface plot of " + self.name.lower() + " "
 
     # Extract field and axes
@@ -213,12 +222,15 @@ def plot_3D_Data(
     title2 = "over " + name.lower()
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
-        xlabel = name.capitalize() + " [" + axis_unit + "]"
+        if xlabel is None:
+            xlabel = name.capitalize() + " [" + axis_unit + "]"
     elif axis.unit in norm_dict:
-        xlabel = norm_dict[axis.unit]
+        if xlabel is None:
+            xlabel = norm_dict[axis.unit]
     else:
         axis_unit = axis.unit
-        xlabel = name.capitalize() + " [" + axis_unit + "]"
+        if xlabel is None:
+            xlabel = name.capitalize() + " [" + axis_unit + "]"
     if (
         axis.name == "angle"
         and axis.unit == "°"
@@ -241,12 +253,15 @@ def plot_3D_Data(
     title3 = " and " + axis.name.lower()
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
-        ylabel = name.capitalize() + " [" + axis_unit + "]"
+        if ylabel is None:
+            ylabel = name.capitalize() + " [" + axis_unit + "]"
     elif axis.unit in norm_dict:
-        ylabel = norm_dict[axis.unit]
+        if ylabel is None:
+            ylabel = norm_dict[axis.unit]
     else:
         axis_unit = axis.unit
-        ylabel = name.capitalize() + " [" + axis_unit + "]"
+        if ylabel is None:
+            ylabel = name.capitalize() + " [" + axis_unit + "]"
     if (
         axis.name == "angle"
         and axis.unit == "°"
@@ -325,8 +340,9 @@ def plot_3D_Data(
     if title4 == " for " and title5 == "":
         title4 = ""
 
-    title = title1 + title2 + title3 + title4 + title5
-    title = title.rstrip(", ")
+    if title is None:
+        title = title1 + title2 + title3 + title4 + title5
+        title = title.rstrip(", ")
 
     if is_fft:
 
@@ -395,6 +411,7 @@ def plot_3D_Data(
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
                 is_grid=True,
+                is_disp_title=is_disp_title,
             )
         else:
             plot_3D(
@@ -430,6 +447,7 @@ def plot_3D_Data(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
+                is_disp_title=is_disp_title,
             )
     else:
         if is_2D_view:
@@ -468,6 +486,7 @@ def plot_3D_Data(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
+                is_disp_title=is_disp_title,
             )
         else:
             plot_3D(
@@ -502,4 +521,5 @@ def plot_3D_Data(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
+                is_disp_title=is_disp_title,
             )

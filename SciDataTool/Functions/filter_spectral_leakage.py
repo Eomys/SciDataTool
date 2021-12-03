@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.linalg as np_lin
 
-from SciDataTool.Functions.unique_tol import unique_tol
+from SciDataTool.Functions.set_routines import unique_tol
 
 
 def filter_spectral_leakage(
@@ -46,7 +46,7 @@ def filter_spectral_leakage(
     """
 
     # Expand theoretical frequencies to negative values
-    freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))["b"]
+    freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))
     Nfreq = freqs_th.size
 
     if Wmatf.size == 0 or If.size == 0:
