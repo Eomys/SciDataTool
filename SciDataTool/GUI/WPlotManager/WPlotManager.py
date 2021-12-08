@@ -152,6 +152,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         unit=None,
         z_min=None,
         z_max=None,
+        frozen_type=0,
     ):
         """Method that use the info given by DDataPlotter to setup the widget
 
@@ -171,6 +172,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             Minimum value for Z axis (or Y if only one axe)
         z_max : float
             Minimum value for Z axis (or Y if only one axe)
+        frozen_type : int
+            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them
         """
         # Recovering the object that we want to show
         self.data = data
@@ -193,7 +196,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         else:
             self.w_vect_selector.hide()
 
-        self.w_axis_manager.set_axis_widgets(self.data, axes_request_list)
+        self.w_axis_manager.set_axis_widgets(self.data, axes_request_list, frozen_type)
         self.update_range(
             unit=unit,
             z_min=z_min,

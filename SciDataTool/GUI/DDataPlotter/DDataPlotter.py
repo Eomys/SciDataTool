@@ -58,6 +58,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         z_min=None,
         z_max=None,
         is_auto_refresh=False,
+        frozen_type=0,
         plot_arg_dict=dict(),
     ):
         """Initialize the UI according to the input given by the user
@@ -82,6 +83,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             True to refresh at each widget changed (else wait call to button)
         plot_arg_dict : dict
             Dictionnary with arguments that must be given to the plot
+        frozen_type : int
+            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them
         """
 
         # Build the interface according to the .ui file
@@ -108,6 +111,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             unit=unit,
             z_min=z_min,
             z_max=z_max,
+            frozen_type=frozen_type,
         )
 
         # Building the interaction with the UI itself

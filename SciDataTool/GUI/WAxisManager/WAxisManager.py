@@ -197,7 +197,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_axis_1.set_action(action_selected)
             self.gen_slice_op()
 
-    def set_axis_widgets(self, data, axes_request_list):
+    def set_axis_widgets(self, data, axes_request_list, frozen_type):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
         ----------
@@ -207,6 +207,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             The DataND object that we want to plot
         axes_request_list:
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
+        frozen_type : int
+            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them
         """
         # Step 1 : If only one axis is given with the object, then we hide w_axis_2 and g_data_extract
         # We also have to hide if we have all the axis but one have is_overlay = True
@@ -230,9 +232,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         if axes_request_list == []:
             # Case where no user_input was given
             # Sending the info of data to the widget (mainly the axis)
-            self.w_axis_1.update(data)
-            self.w_axis_2.update(data, axis_name="Y")
             self.axes_list = data.get_axes()
+            self.w_axis_1.update(self.axes_list)
+            self.w_axis_2.update(self.axes_list, axis_name="Y")
 
             # Updating w_axis_2 according to w_axis_1 then generating DataSelection
             self.axis_1_updated()
@@ -252,11 +254,11 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             ]
 
             # Sending the info of data to the widget (mainly the axis)
-            self.w_axis_1.update(data)
-            self.w_axis_2.update(data, axis_name="Y")
+            self.axes_list = data.get_axes()
+            self.w_axis_1.update(self.axes_list)
+            self.w_axis_2.update(self.axes_list, axis_name="Y")
             # Setting the axis selected in w_axis_1 according to user_input_list
             self.w_axis_1.set_axis(axes_list[0])
-            self.axes_list = data.get_axes()
 
             # Updating w_axis_2 according to w_axis_1 then generating DataSelection
             self.axis_1_updated()
@@ -273,6 +275,25 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                 self.set_data_selec(slices_op_list)
             else:
                 self.gen_slice_op()
+
+        # Depending on the value of frozen type we are going to act on the UI
+        if frozen_type == 1 and len(axes_list) == 2:
+            # Recovering the axis requested by the user as they will be soft frozen (possible to witch but not possible to choose another axis)
+            axes_list_name = [ax.name for ax in axes_list]
+            axes_soft_frozen = [
+                ax for ax in self.axes_list if ax.name in axes_list_name
+            ]
+
+            # We update the WAxisSelector widget with the axes that will be soft frozen
+            self.w_axis_1.update(axes_soft_frozen)
+            self.w_axis_2.update(axes_soft_frozen)
+
+            self.axis_1_updated()
+
+        elif frozen_type == 2:
+            # If we want to hard freeze the axis, we just have to disable the axis comboboxes
+            self.w_axis_1.c_axis.setDisabled(True)
+            self.w_axis_2.c_axis.setDisabled(True)
 
         self.w_axis_1.blockSignals(False)
         self.w_axis_2.blockSignals(False)
