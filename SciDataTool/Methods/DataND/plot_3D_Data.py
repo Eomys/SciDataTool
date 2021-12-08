@@ -4,6 +4,7 @@ from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
 from SciDataTool.Functions.Load.import_class import import_class
 from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
+    any,
     where,
     meshgrid,
     unique,
@@ -243,7 +244,7 @@ def plot_3D_Data(
         xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         xticks = None
-    if axis.is_components:
+    if axis.is_components and axes_list[0].extension != "list":
         xticklabels = result[axes_list[0].name]
         xticks = Xdata
     else:
@@ -276,7 +277,7 @@ def plot_3D_Data(
         yticks = None
     if axis.is_components:
         yticklabels = result[axes_list[1].name]
-        yticks = Xdata
+        yticks = Ydata
     else:
         yticklabels = None
 
@@ -375,12 +376,24 @@ def plot_3D_Data(
                 thresh = 0.02
 
         if "dB" in unit:
-            indices = where(Z_flat > 10 * log10(thresh) + abs(np_max(Zdata)))[0]
+            indices_x = any(
+                where(Zdata > 10 * log10(thresh) + abs(np_max(Zdata)), True, False),
+                axis=1,
+            )
+            indices_y = any(
+                where(Zdata > 10 * log10(thresh) + abs(np_max(Zdata)), True, False),
+                axis=0,
+            )
         else:
-            indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
+            indices_x = any(
+                where(Zdata > abs(thresh * np_max(Zdata)), True, False), axis=1
+            )
+            indices_y = any(
+                where(Zdata > abs(thresh * np_max(Zdata)), True, False), axis=0
+            )
 
-        xticks = X_flat[indices]
-        yticks = Y_flat[indices]
+        xticks = Xdata[indices_x]
+        yticks = Ydata[indices_y]
         if is_auto_range:
             if len(xticks) > 0:
                 x_min = -0.1 * xticks[-1]
