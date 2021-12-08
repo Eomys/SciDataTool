@@ -16,7 +16,8 @@ def plot(
     z_max=None,
     is_auto_refresh=False,
     is_show_fig=True,
-    is_create_appli=True
+    is_create_appli=True,
+    frozen_type=0,
 ):
     """Plot the Data object in the GUI
 
@@ -40,6 +41,8 @@ def plot(
         To show the GUI or return the widget (False for testing)
     is_create_appli : bool
         True to create an QApplication (required if not already created by another GUI)
+    frozen_type : int
+        0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them
     """
 
     if is_create_appli:
@@ -59,6 +62,7 @@ def plot(
         z_max=z_max,
         is_auto_refresh=is_auto_refresh,
         plot_arg_dict=None,
+        frozen_type=frozen_type,
     )
 
     if is_show_fig:
