@@ -481,16 +481,24 @@ def plot_2D_Data(
         xticks = unique(insert(freqs[indices], 0, 0))
 
         if is_auto_range:
-            if len(xticks) > 0:
+            if len(xticks) > 1:
                 if x_min is None:
-                    x_min = -xticks[-1] * 0.1
+                    x_min = xticks[0]
                 if x_max is None:
-                    x_max = xticks[-1] * 1.1
+                    x_max = xticks[-1]
+            else:
+                if x_min is None:
+                    x_min = np_min(freqs)
+                if x_max is None:
+                    x_max = np_max(freqs)
         else:
             if x_min is None:
                 x_min = np_min(freqs)
             if x_max is None:
                 x_max = np_max(freqs)
+
+        x_min = x_min - x_max * 0.05
+        x_max = x_max * 1.05
 
         if not is_auto_ticks:
             xticks = None

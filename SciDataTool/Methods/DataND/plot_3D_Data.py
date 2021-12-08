@@ -4,7 +4,7 @@ from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
 from SciDataTool.Functions.Load.import_class import import_class
 from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
-    any,
+    any as np_any,
     where,
     meshgrid,
     unique,
@@ -197,14 +197,6 @@ def plot_3D_Data(
         X_flat = X_map.flatten()
         Y_flat = Y_map.flatten()
         Z_flat = Zdata.flatten()
-    if x_min is None:
-        x_min = np_min(Xdata)
-    if x_max is None:
-        x_max = np_max(Xdata)
-    if y_min is None:
-        y_min = np_min(Ydata)
-    if y_max is None:
-        y_max = np_max(Ydata)
     if z_range is None:
         if z_min is None:
             z_min = np_min(Zdata)
@@ -244,8 +236,8 @@ def plot_3D_Data(
         xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         xticks = None
-    if axis.is_components and axes_list[0].extension != "list":
-        xticklabels = result[axes_list[0].name]
+    if axis.is_components and axis.extension != "list":
+        xticklabels = result[axis.name]
         xticks = Xdata
     else:
         xticklabels = None
@@ -275,8 +267,8 @@ def plot_3D_Data(
         yticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         yticks = None
-    if axis.is_components:
-        yticklabels = result[axes_list[1].name]
+    if axis.is_components and axis.extension != "list":
+        yticklabels = result[axis.name]
         yticks = Ydata
     else:
         yticklabels = None
@@ -292,19 +284,6 @@ def plot_3D_Data(
             ):
                 is_shading_flat = True
                 flat_indices.append(axis.index)
-
-    if is_shading_flat:
-        type_plot = "pcolormesh"
-        # 0.5 offset
-        if 0 in flat_indices:
-            Xdata = Xdata - 0.5
-            x_min -= 0.5
-            x_max -= 0.5
-        if 1 in flat_indices:
-            Ydata = Ydata - 0.5
-            y_min -= 0.5
-            y_max -= 0.5
-        Ydata, Xdata = meshgrid(Ydata, Xdata)
 
     title4 = "for "
     for axis in axes_list[2:]:
@@ -376,36 +355,60 @@ def plot_3D_Data(
                 thresh = 0.02
 
         if "dB" in unit:
-            indices_x = any(
+            indices_x = np_any(
                 where(Zdata > 10 * log10(thresh) + abs(np_max(Zdata)), True, False),
                 axis=1,
             )
-            indices_y = any(
+            indices_y = np_any(
                 where(Zdata > 10 * log10(thresh) + abs(np_max(Zdata)), True, False),
                 axis=0,
             )
         else:
-            indices_x = any(
+            indices_x = np_any(
                 where(Zdata > abs(thresh * np_max(Zdata)), True, False), axis=1
             )
-            indices_y = any(
+            indices_y = np_any(
                 where(Zdata > abs(thresh * np_max(Zdata)), True, False), axis=0
             )
 
         xticks = Xdata[indices_x]
         yticks = Ydata[indices_y]
         if is_auto_range:
-            if len(xticks) > 0:
-                x_min = -0.1 * xticks[-1]
-                x_max = xticks[-1] * 1.1
-            if len(yticks) > 0:
-                y_min = yticks[0] * 1.1
-                y_max = yticks[-1] * 1.1
+            if len(xticks) > 1:
+                if x_min is None:
+                    x_min = xticks[0]
+                if x_max is None:
+                    x_max = xticks[-1]
+            else:
+                if x_min is None:
+                    x_min = np_min(Xdata)
+                if x_max is None:
+                    x_max = np_max(Xdata)
+            if len(yticks) > 1:
+                if y_min is None:
+                    y_min = yticks[0]
+                if y_max is None:
+                    y_max = yticks[-1]
+            else:
+                if y_min is None:
+                    y_min = np_min(Ydata)
+                if y_max is None:
+                    y_max = np_max(Ydata)
         else:
-            x_min = x_min - x_max * 0.05
-            x_max = x_max * 1.05
-            y_min = y_min - y_max * 0.2
-            y_max = y_max * 1.2
+            if x_min is None:
+                x_min = np_min(Xdata)
+            if x_max is None:
+                x_max = np_max(Xdata)
+            if y_min is None:
+                y_min = np_min(Ydata)
+            if y_max is None:
+                y_max = np_max(Ydata)
+
+        x_min = x_min - x_max * 0.05
+        x_max = x_max * 1.05
+        y_min = y_min - y_max * 0.2
+        y_max = y_max * 1.2
+
         if not is_auto_ticks:
             xticks = None
             yticks = None
@@ -486,6 +489,26 @@ def plot_3D_Data(
             )
     else:
         if is_2D_view:
+            if is_shading_flat:
+                if x_min is None:
+                    x_min = np_min(Xdata)
+                if x_max is None:
+                    x_max = np_max(Xdata)
+                if y_min is None:
+                    y_min = np_min(Ydata)
+                if y_max is None:
+                    y_max = np_max(Ydata)
+                type_plot = "pcolormesh"
+                # 0.5 offset
+                if 0 in flat_indices:
+                    Xdata = Xdata - 0.5
+                    x_min -= 0.5
+                    x_max -= 0.5
+                if 1 in flat_indices:
+                    Ydata = Ydata - 0.5
+                    y_min -= 0.5
+                    y_max -= 0.5
+                Ydata, Xdata = meshgrid(Ydata, Xdata)
             plot_3D(
                 Xdata,
                 Ydata,
