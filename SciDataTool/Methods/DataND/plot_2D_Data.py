@@ -221,7 +221,7 @@ def plot_2D_Data(
 
     # Build xlabel and title parts 2 and 3
     title2 = ""
-    title3 = " for "
+    title3 = "for "
     for axis in axes_list:
         # Title part 2
         if axis.unit in norm_dict:
@@ -243,7 +243,7 @@ def plot_2D_Data(
             and len(axis.values) > 1
             or (len(axis.values) == 1 and len(axes_list) == 1)
         ):
-            title2 = "over " + name.lower()
+            # title2 = "over " + name.lower()
             if axis.unit == "SI":
                 if axis.name in unit_dict:
                     axis_unit = unit_dict[axis.name]
@@ -314,7 +314,7 @@ def plot_2D_Data(
             + "], "
         )
 
-    if title3 == " for " and title4 == "":
+    if title3 == "for " and title4 == "":
         title3 = ""
 
     if title is None:
@@ -330,7 +330,7 @@ def plot_2D_Data(
 
     # Detect how many curves are overlaid, build legend and color lists
     if legend_list == [] and data_list != []:
-        legend_list = ["[" + d.name + "] " for d in data_list2]
+        legend_list = [d.name for d in data_list2]
     elif legend_list == []:
         legend_list = ["" for d in data_list2]
     # else:
