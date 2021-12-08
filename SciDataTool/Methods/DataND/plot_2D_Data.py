@@ -5,6 +5,7 @@ from SciDataTool.Functions.Plot import (
     axes_dict,
     COLORS,
 )
+from SciDataTool.Functions.Load.import_class import import_class
 from numpy import (
     squeeze,
     split,
@@ -125,6 +126,9 @@ def plot_2D_Data(
     is_frame_legend : bool
         True to display legend in a frame
     """
+
+    # Dynamic import to avoid import loop
+    DataPattern = import_class("SciDataTool.Classes", "DataPattern")
 
     # Extract arg_list it the function called from another script with *arg_list
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
@@ -278,41 +282,53 @@ def plot_2D_Data(
             else:
                 xticklabels = None
         else:
-            if axis.unit == "SI":
-                if axis.name in unit_dict:
-                    axis_unit = unit_dict[axis.name]
+            is_display = True
+            if axis.is_pattern and len(axis.values) == 1:
+                is_display = False
+            if is_display:
+                if axis.unit == "SI":
+                    if axis.name in unit_dict:
+                        axis_unit = unit_dict[axis.name]
+                    else:
+                        axis_unit = axis.unit
+                elif axis.unit in norm_dict:
+                    axis_unit = norm_dict[axis.unit]
                 else:
                     axis_unit = axis.unit
-            elif axis.unit in norm_dict:
-                axis_unit = norm_dict[axis.unit]
-            else:
-                axis_unit = axis.unit
 
-            if isinstance(result_0[axis.name], str):
-                title3 += name + "=" + result_0[axis.name]
-            else:
-                axis_str = array2string(
-                    result_0[axis.name], formatter={"float_kind": "{:.3g}".format}
-                ).replace(" ", ", ")
-                if len(result_0[axis.name]) == 1:
-                    axis_str = axis_str.strip("[]")
+                if isinstance(result_0[axis.name], str):
+                    title3 += name + "=" + result_0[axis.name]
+                else:
+                    axis_str = array2string(
+                        result_0[axis.name], formatter={"float_kind": "{:.3g}".format}
+                    ).replace(" ", ", ")
+                    if len(result_0[axis.name]) == 1:
+                        axis_str = axis_str.strip("[]")
 
-                title3 += name + "=" + axis_str.rstrip(", ") + " [" + axis_unit + "], "
+                    title3 += (
+                        name + "=" + axis_str.rstrip(", ") + " [" + axis_unit + "], "
+                    )
 
     # Title part 4 containing axes that are here but not involved in requested axes
     title4 = ""
     for axis_name in axes_dict_other:
-        title4 += (
-            axis_name
-            + "="
-            + array2string(
-                axes_dict_other[axis_name][0],
-                formatter={"float_kind": "{:.3g}".format},
-            ).replace(" ", ", ")
-            + " ["
-            + axes_dict_other[axis_name][1]
-            + "], "
-        )
+        is_display = True
+        for axis in self.axes:
+            if axis.name == axis_name:
+                if isinstance(axis, DataPattern) and len(axis.unique_indices) == 1:
+                    is_display = False
+        if is_display:
+            title4 += (
+                axis_name
+                + "="
+                + array2string(
+                    axes_dict_other[axis_name][0],
+                    formatter={"float_kind": "{:.3g}".format},
+                ).replace(" ", ", ")
+                + " ["
+                + axes_dict_other[axis_name][1]
+                + "], "
+            )
 
     if title3 == "for " and title4 == "":
         title3 = ""
