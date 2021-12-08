@@ -4,6 +4,7 @@ from ...GUI.WAxisSelector.Ui_WAxisSelector import Ui_WAxisSelector
 from PySide2.QtCore import Signal
 from ...Functions.Plot import unit_dict, axes_dict, fft_dict, ifft_dict
 from ...GUI import update_cb_enable
+from ...Functions.Load.import_class import import_class
 
 
 class WAxisSelector(Ui_WAxisSelector, QWidget):
@@ -180,11 +181,17 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             A DataND object that we want to plot
 
         """
+        # Dynamic import to avoid import loop
+        DataPattern = import_class("SciDataTool.Classes", "DataPattern")
+
         self.c_axis.blockSignals(True)
         # Step 1 : Getting the name of the different axes of the DataND object
         self.axes_list = [
-            axis.name for axis in data.get_axes() if axis.is_overlay == False
-        ]
+            axis.name
+            for axis in data.get_axes()
+            if axis.is_overlay == False
+            and not (isinstance(axis, DataPattern) and len(axis.unique_indices) == 1)
+        ]  # Remove overlay axes + slice axes with single slice
 
         # Adding a safety, so that we cannot have frequency or wavenumber inside axes_list (we should have time and angle instead)
         for i in range(len(self.axes_list)):
