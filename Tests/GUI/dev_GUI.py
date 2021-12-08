@@ -9,7 +9,7 @@ import numpy as np
 if __name__ == "__main__":
     X = DataLinspace(name="time", unit="s", initial=0, final=10, number=11)
     Y = DataLinspace(name="angle", unit="rad", initial=0, final=2 * np.pi, number=21)
-    Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3)
+    Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3, is_overlay=True)
     y, x = np.meshgrid(Y.get_values(), X.get_values())
     field = x + y
     field_3d = np.zeros((11, 21, 3))
@@ -24,10 +24,11 @@ if __name__ == "__main__":
         values=field_3d,
     )
 
-    # test = "plot"
+    test = "plot"
     # test = "autoplot"
-    test = "oneaxis"
+    # test = "oneaxis"
     # test = "vect"
+    # test = "is_overlay"
 
     if test == "plot":
         Field.plot()
@@ -37,6 +38,20 @@ if __name__ == "__main__":
         # Field.plot("time", "angle[0]", "z[2]", unit="T", z_max=10)
         # Field.plot("wavenumber", "freqs", "z[2]", unit="T", z_max=50)
         # Field.plot("freqs", "wavenumber", "z=mean", unit="T", z_max=50)
+
+    elif test == "is_overlay":
+
+        field_2d = np.ones((11, 3))
+
+        Field = DataTime(
+            name="Airgap flux density",
+            symbol="B_r",
+            unit="T",
+            axes=[X, Z],
+            values=field_2d,
+        )
+
+        Field.plot()
 
     elif test == "oneaxis":
 

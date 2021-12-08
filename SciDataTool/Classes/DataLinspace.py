@@ -121,7 +121,7 @@ class DataLinspace(Data):
         include_endpoint=True,
         is_components=False,
         symmetries=-1,
-        is_overlay=True,
+        is_overlay=False,
         symbol="",
         name="",
         unit="",

@@ -88,7 +88,7 @@ class DataPattern(Data):
         is_components=False,
         symmetries=-1,
         values_whole=None,
-        is_overlay=True,
+        is_overlay=False,
         symbol="",
         name="",
         unit="",
