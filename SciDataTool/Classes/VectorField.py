@@ -16,6 +16,11 @@ from ._frozen import FrozenClass
 # Import all class method
 # Try/catch to remove unnecessary dependencies in unused method
 try:
+    from ..Methods.VectorField.filter_spectral_leakage import filter_spectral_leakage
+except ImportError as error:
+    filter_spectral_leakage = error
+
+try:
     from ..Methods.VectorField.freq_to_time import freq_to_time
 except ImportError as error:
     freq_to_time = error
@@ -51,14 +56,14 @@ except ImportError as error:
     get_rphiz_along = error
 
 try:
-    from ..Methods.VectorField.get_vectorfield_along import get_vectorfield_along
-except ImportError as error:
-    get_vectorfield_along = error
-
-try:
     from ..Methods.VectorField.get_xyz_along import get_xyz_along
 except ImportError as error:
     get_xyz_along = error
+
+try:
+    from ..Methods.VectorField.get_vectorfield_along import get_vectorfield_along
+except ImportError as error:
+    get_vectorfield_along = error
 
 try:
     from ..Methods.VectorField.plot import plot
@@ -86,14 +91,14 @@ except ImportError as error:
     time_to_freq = error
 
 try:
-    from ..Methods.VectorField.to_rphiz import to_rphiz
-except ImportError as error:
-    to_rphiz = error
-
-try:
     from ..Methods.VectorField.to_xyz import to_xyz
 except ImportError as error:
     to_xyz = error
+
+try:
+    from ..Methods.VectorField.to_rphiz import to_rphiz
+except ImportError as error:
+    to_rphiz = error
 
 
 from ._check import InitUnKnowClassError
@@ -105,6 +110,18 @@ class VectorField(FrozenClass):
     VERSION = 1
 
     # Check ImportError to remove unnecessary dependencies in unused method
+    # cf Methods.VectorField.filter_spectral_leakage
+    if isinstance(filter_spectral_leakage, ImportError):
+        filter_spectral_leakage = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method filter_spectral_leakage: "
+                    + str(filter_spectral_leakage)
+                )
+            )
+        )
+    else:
+        filter_spectral_leakage = filter_spectral_leakage
     # cf Methods.VectorField.freq_to_time
     if isinstance(freq_to_time, ImportError):
         freq_to_time = property(
@@ -185,6 +202,17 @@ class VectorField(FrozenClass):
         )
     else:
         get_rphiz_along = get_rphiz_along
+    # cf Methods.VectorField.get_xyz_along
+    if isinstance(get_xyz_along, ImportError):
+        get_xyz_along = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use VectorField method get_xyz_along: " + str(get_xyz_along)
+                )
+            )
+        )
+    else:
+        get_xyz_along = get_xyz_along
     # cf Methods.VectorField.get_vectorfield_along
     if isinstance(get_vectorfield_along, ImportError):
         get_vectorfield_along = property(
@@ -197,17 +225,6 @@ class VectorField(FrozenClass):
         )
     else:
         get_vectorfield_along = get_vectorfield_along
-    # cf Methods.VectorField.get_xyz_along
-    if isinstance(get_xyz_along, ImportError):
-        get_xyz_along = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use VectorField method get_xyz_along: " + str(get_xyz_along)
-                )
-            )
-        )
-    else:
-        get_xyz_along = get_xyz_along
     # cf Methods.VectorField.plot
     if isinstance(plot, ImportError):
         plot = property(
@@ -262,15 +279,6 @@ class VectorField(FrozenClass):
         )
     else:
         time_to_freq = time_to_freq
-    # cf Methods.VectorField.to_rphiz
-    if isinstance(to_rphiz, ImportError):
-        to_rphiz = property(
-            fget=lambda x: raise_(
-                ImportError("Can't use VectorField method to_rphiz: " + str(to_rphiz))
-            )
-        )
-    else:
-        to_rphiz = to_rphiz
     # cf Methods.VectorField.to_xyz
     if isinstance(to_xyz, ImportError):
         to_xyz = property(
@@ -280,6 +288,15 @@ class VectorField(FrozenClass):
         )
     else:
         to_xyz = to_xyz
+    # cf Methods.VectorField.to_rphiz
+    if isinstance(to_rphiz, ImportError):
+        to_rphiz = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use VectorField method to_rphiz: " + str(to_rphiz))
+            )
+        )
+    else:
+        to_rphiz = to_rphiz
     # save and copy methods are available in all object
     save = save
     copy = copy

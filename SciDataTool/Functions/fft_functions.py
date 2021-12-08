@@ -1,12 +1,3 @@
-from numpy import linspace, where, isclose, around
-from numpy.fft import (
-    fftshift,
-    ifftshift,
-    rfftn,
-    irfftn,
-    fftn,
-    ifftn,
-)
 from numpy import (
     array,
     pi,
@@ -18,7 +9,20 @@ from numpy import (
     delete,
     allclose,
     real,
+    linspace,
+    where,
+    isclose,
+    around,
 )
+from numpy.fft import (
+    fftshift,
+    ifftshift,
+    rfftn,
+    irfftn,
+    fftn,
+    ifftn,
+)
+
 
 from SciDataTool.Functions.nudft_functions import is_uniform, nudftn, inudftn
 

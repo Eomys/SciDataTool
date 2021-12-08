@@ -1,7 +1,7 @@
 from SciDataTool.Functions import axes_dict, rev_axes_dict
 
 
-def comp_axes(self, axes_list):
+def _comp_axes(self, axes_list):
     """Completes the RequestedAxis objects in axes_list.
     Parameters
     ----------

@@ -5,7 +5,7 @@ from SciDataTool.Functions.symmetries import (
 from numpy import take
 
 
-def rebuild_symmetries(
+def _rebuild_symmetries(
     self,
     values,
     axes_list,

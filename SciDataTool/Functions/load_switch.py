@@ -8,6 +8,7 @@ from ..Classes.import_all import *
 load_switch = {
     "Data": Data,
     "Data1D": Data1D,
+    "DataDual": DataDual,
     "DataFreq": DataFreq,
     "DataLinspace": DataLinspace,
     "DataND": DataND,
