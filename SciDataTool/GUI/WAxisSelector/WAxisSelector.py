@@ -182,7 +182,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         self.c_axis.blockSignals(True)
         # Step 1 : Getting the name of the different axes of the DataND object
-        self.axes_list = [axis.name for axis in data.get_axes()]
+        self.axes_list = [
+            axis.name for axis in data.get_axes() if axis.is_overlay == False
+        ]
 
         # Adding a safety, so that we cannot have frequency or wavenumber inside axes_list (we should have time and angle instead)
         for i in range(len(self.axes_list)):

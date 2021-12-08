@@ -125,7 +125,7 @@ class Data1D(Data):
         values=None,
         is_components=False,
         symmetries=-1,
-        is_overlay=True,
+        is_overlay=False,
         symbol="",
         name="",
         unit="",

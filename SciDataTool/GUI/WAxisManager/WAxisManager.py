@@ -98,7 +98,12 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_list_2.remove(axis_selected_2)
 
         # Selecting the axes that are in common between the two axes lists
+        axes_gen = list()
         axes_gen = [ax for ax in axes_list_1 if ax in axes_list_2]
+
+        for ax in self.axes_list:
+            if ax.is_overlay:
+                axes_gen.append(ax.name)
 
         # Step 2 : Removing the items that are in the layout currently
         for i in reversed(range(self.lay_data_extract.count())):
@@ -204,9 +209,15 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         """
         # Step 1 : If only one axis is given with the object, then we hide w_axis_2 and g_data_extract
-        if len(data.get_axes()) == 1:
+        # We also have to hide if we have all the axis but one have is_overlay = True
+        if len(data.get_axes()) == 1 or (
+            len(data.get_axes())
+            - len([ax for ax in data.get_axes() if ax.is_overlay == True])
+            == 1
+        ):
             self.w_axis_2.hide()
             self.g_data_extract.hide()
+
         else:
             self.w_axis_2.show()
             self.g_data_extract.show()

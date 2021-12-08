@@ -119,7 +119,7 @@
                 "name": "is_overlay",
                 "type": "bool",
                 "unit": "",
-                "value": true
+                "value": false
             }
         ]
     },
@@ -234,7 +234,7 @@
                 "name": "is_overlay",
                 "type": "bool",
                 "unit": "",
-                "value": true
+                "value": false
             }
         ]
     },
@@ -414,7 +414,7 @@
                 "name": "is_overlay",
                 "type": "bool",
                 "unit": "",
-                "value": true
+                "value": false
             }
         ]
     },
