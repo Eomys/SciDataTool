@@ -1,6 +1,7 @@
 from SciDataTool.Functions.Plot.plot_4D import plot_4D
 from SciDataTool.Functions.Plot.plot_3D import plot_3D
 from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
+from SciDataTool.Functions.Load.import_class import import_class
 from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
     where,
@@ -112,6 +113,9 @@ def plot_3D_Data(
         to switch x and y axes
     """
 
+    # Dynamic import to avoid import loop
+    DataPattern = import_class("SciDataTool.Classes", "DataPattern")
+
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]  # if called from another script with *arg_list
 
@@ -219,7 +223,7 @@ def plot_3D_Data(
         name = axes_dict[axis.name]
     else:
         name = axis.name
-    title2 = "over " + name.lower()
+    # title2 = "over " + name.lower()
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
         if xlabel is None:
@@ -250,7 +254,7 @@ def plot_3D_Data(
         name = axes_dict[axis.name]
     else:
         name = axis.name
-    title3 = " and " + axis.name.lower()
+    # title3 = " and " + axis.name.lower()
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
         if ylabel is None:
@@ -301,47 +305,65 @@ def plot_3D_Data(
             y_max -= 0.5
         Ydata, Xdata = meshgrid(Ydata, Xdata)
 
-    title4 = " for "
+    title4 = "for "
     for axis in axes_list[2:]:
-        if axis.unit == "SI":
-            axis_unit = unit_dict[axis.name]
-        elif axis.unit in norm_dict:
-            axis_unit = norm_dict[axis.unit]
-        else:
-            axis_unit = axis.unit
-        title4 += (
-            axis.name
-            + "="
-            + array2string(
-                result[axis.name],
-                formatter={"float_kind": "{:.3g}".format},
-            )
-            .replace(" ", ", ")
-            .replace("[", "")
-            .replace("]", "")
-            + " ["
-            + axis_unit
-            + "], "
-        )
+        is_display = True
+        if axis.is_pattern and len(axis.values) == 1:
+            is_display = False
+        if is_display:
+            if axis.unit == "SI":
+                axis_unit = unit_dict[axis.name]
+            elif axis.unit in norm_dict:
+                axis_unit = norm_dict[axis.unit]
+            else:
+                axis_unit = axis.unit
+
+            if isinstance(result[axis.name], str):
+                axis_str = result[axis.name]
+            else:
+                axis_str = (
+                    array2string(
+                        result[axis.name],
+                        formatter={"float_kind": "{:.3g}".format},
+                    )
+                    .replace(" ", ", ")
+                    .replace("[", "")
+                    .replace("]", "")
+                    + " ["
+                    + axis_unit
+                    + "], "
+                )
+
+            title4 += axis.name + "=" + axis_str
+
     title5 = ""
     for axis_name in axes_dict_other:
-        title5 += (
-            axis_name
-            + "="
-            + array2string(
-                axes_dict_other[axis_name][0],
-                formatter={"float_kind": "{:.3g}".format},
-            ).replace(" ", ", ")
-            + " ["
-            + axes_dict_other[axis_name][1]
-            + "], "
-        )
+        is_display = True
+        for axis in self.axes:
+            if axis.name == axis_name:
+                if isinstance(axis, DataPattern) and len(axis.unique_indices) == 1:
+                    is_display = False
+        if is_display:
+            if isinstance(axes_dict_other[axis_name][0], str):
+                axis_str = axes_dict_other[axis_name][0]
+            else:
+                axis_str = (
+                    array2string(
+                        axes_dict_other[axis_name][0],
+                        formatter={"float_kind": "{:.3g}".format},
+                    ).replace(" ", ", ")
+                    + " ["
+                    + axes_dict_other[axis_name][1]
+                    + "], "
+                )
 
-    if title4 == " for " and title5 == "":
+            title5 += axis_name + "=" + axis_str
+
+    if title4 == "for " and title5 == "":
         title4 = ""
 
     if title is None:
-        title = title1 + title2 + title3 + title4 + title5
+        title = title1 + title4 + title5
         title = title.rstrip(", ")
 
     if is_fft:
@@ -357,8 +379,8 @@ def plot_3D_Data(
         else:
             indices = where(Z_flat > abs(thresh * np_max(Zdata)))[0]
 
-        xticks = unique(X_flat[indices])
-        yticks = unique(Y_flat[indices])
+        xticks = X_flat[indices]
+        yticks = Y_flat[indices]
         if is_auto_range:
             if len(xticks) > 0:
                 x_min = -0.1 * xticks[-1]
