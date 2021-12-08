@@ -171,14 +171,14 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.c_unit.blockSignals(False)
         self.update_unit()
 
-    def set_axis_options(self, data):
+    def set_axis_options(self, axes_list):
         """Method that will put the axes of data in the combobox of the widget
         Parameters
         ----------
         self : WAxisSelector
             a WAxisSelector object
-        data : DataND
-            A DataND object that we want to plot
+        axes_list : list
+            A list of axis object from the Data object that we want to plot
 
         """
         # Dynamic import to avoid import loop
@@ -188,7 +188,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         # Step 1 : Getting the name of the different axes of the DataND object
         self.axes_list = [
             axis.name
-            for axis in data.get_axes()
+            for axis in axes_list
             if axis.is_overlay == False
             and not (isinstance(axis, DataPattern) and len(axis.unique_indices) == 1)
         ]  # Remove overlay axes + slice axes with single slice
@@ -287,20 +287,20 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.c_unit.blockSignals(False)
         self.update_unit()
 
-    def update(self, data, axis_name="X"):
+    def update(self, axes_list, axis_name="X"):
         """Method used to update the widget by calling the other method for the label, the axes and the units
         Parameters
         ----------
         self : WAxisSelector
             a WAxisSelector object
-        data : DataND
-            A DataND object to plot
+        axes_list : list
+            A list of axis object from the Data object that we want to plot
         axis_name : string
             string that will set the text of in_name (=name of the axis)
         """
 
         self.set_name(axis_name)
-        self.set_axis_options(data)
+        self.set_axis_options(axes_list)
         self.c_action.setCurrentIndex(0)
         self.set_unit()
 
