@@ -24,8 +24,8 @@ if __name__ == "__main__":
         values=field_3d,
     )
 
-    test = "plot"
-    # test = "autoplot"
+    # test = "plot"
+    test = "autoplot"
     # test = "oneaxis"
     # test = "vect"
     # test = "is_overlay"
@@ -34,13 +34,16 @@ if __name__ == "__main__":
         Field.plot()
 
     elif test == "autoplot":
-        Field.plot("angle{°}", "time", "z[2]", unit="T", z_max=50)
+        # Field.plot("angle{°}", "time", "z[2]", unit="T", z_max=50)
+        Field.plot("angle{°}", "z")
         # Field.plot("time", "angle[0]", "z[2]", unit="T", z_max=10)
         # Field.plot("wavenumber", "freqs", "z[2]", unit="T", z_max=50)
         # Field.plot("freqs", "wavenumber", "z=mean", unit="T", z_max=50)
 
     elif test == "is_overlay":
-
+        Z = DataLinspace(
+            name="z", unit="m", initial=-1, final=1, number=3, is_overlay=True
+        )
         field_2d = np.ones((11, 3))
 
         Field = DataTime(
