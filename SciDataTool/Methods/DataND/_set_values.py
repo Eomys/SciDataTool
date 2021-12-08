@@ -14,6 +14,7 @@ def _set_values(self, value):
     check_var("values", value, "ndarray")
 
     # Check dimensions
-    value = squeeze(value)
+    if value is not None:
+        value = squeeze(value)
     value = check_dimensions(value, self.axes)
     self._values = value

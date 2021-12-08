@@ -2,7 +2,7 @@ from numpy import take
 from SciDataTool.Functions.symmetries import rebuild_symmetries
 
 
-def get_field(self, axes_list):
+def _get_field(self, axes_list):
     """Returns the values of the field (with symmetries and sums).
     Parameters
     ----------

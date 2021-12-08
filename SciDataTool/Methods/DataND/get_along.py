@@ -33,9 +33,9 @@ def get_along(
         args = args[0]  # if called from another script with *args
     axes_list = read_input_strings(args, axis_data)
     # Extract the requested axes (symmetries + unit)
-    axes_list, transforms = self.comp_axes(axes_list)
+    axes_list, transforms = self._comp_axes(axes_list)
     # Get the field
-    values = self.get_field(axes_list)
+    values = self._get_field(axes_list)
     # If DataFreq + 1 ifft axis + 1 fft axis: perform ifft on all axes then fft
     save_transforms = None
     save_names = None
@@ -62,20 +62,20 @@ def get_along(
             else:
                 axes_list[i].transform = transform
     # Slices along time/space axes
-    values, axes_dict_other = self.extract_slices(values, axes_list)
+    values, axes_dict_other = self._extract_slices(values, axes_list)
     # fft
     if "fft" in transforms:
         values = comp_fftn(values, axes_list, is_real=self.is_real)
     # Slices along fft axes
-    values = self.extract_slices_fft(values, axes_list)
+    values = self._extract_slices_fft(values, axes_list)
     # Rebuild symmetries
-    values = self.rebuild_symmetries(values, axes_list)
+    values = self._rebuild_symmetries(values, axes_list)
     # Interpolate over axis values
-    values = self.interpolate(values, axes_list)
-    # Sums
-    values = self.summing(values, axes_list, is_magnitude, unit=self.unit)
+    values = self._interpolate(values, axes_list)
+    # Apply operations such as sum, integration, derivations etc.
+    values = self._apply_operations(values, axes_list, is_magnitude, unit=self.unit)
     # Conversions
-    values = self.convert(values, unit, is_norm, is_squeeze, axes_list)
+    values = self._convert(values, unit, is_norm, is_squeeze, axes_list)
     # Return axes and values
     return_dict = {}
     for axis_requested in axes_list:

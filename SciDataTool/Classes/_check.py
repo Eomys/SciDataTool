@@ -341,34 +341,35 @@ def check_dimensions(values, axes):
     CheckDimError
         Dimensions of field and axes do not match
     """
-    if isinstance(values, list):
-        values = array(values)
+    if values is None and axes is None:
+        return values
     else:
-        values = values
-    values_shape = values.shape
-    axes_shape = []
-    for axis in axes:
-        if hasattr(axis, "values"):
-            axes_shape.append(axis.values.size)
-        else:
-            try:
-                axes_shape.append(int(axis.number))
-            except:
-                axes_shape.append(round((axis.final - axis.initial) / axis.step))
+        if isinstance(values, list):
+            values = array(values)
+        values_shape = values.shape
+        axes_shape = []
+        for axis in axes:
+            if hasattr(axis, "values"):
+                axes_shape.append(axis.values.size)
+            else:
+                try:
+                    axes_shape.append(int(axis.number))
+                except:
+                    axes_shape.append(round((axis.final - axis.initial) / axis.step))
 
-    if values_shape != tuple(axes_shape):
-        for i, s in enumerate(axes_shape):
-            if s == 1:
-                values = expand_dims(values, axis=i)
-        if values.shape != tuple(axes_shape):
-            raise CheckDimError(
-                "Dimensions of field ("
-                + str(values_shape)
-                + ") and axes ("
-                + str(tuple(axes_shape))
-                + ") do not match"
-            )
-    return values
+        if values_shape != tuple(axes_shape):
+            for i, s in enumerate(axes_shape):
+                if s == 1:
+                    values = expand_dims(values, axis=i)
+            if values.shape != tuple(axes_shape):
+                raise CheckDimError(
+                    "Dimensions of field ("
+                    + str(values_shape)
+                    + ") and axes ("
+                    + str(tuple(axes_shape))
+                    + ") do not match"
+                )
+        return values
 
 
 class CheckDimError(Exception):

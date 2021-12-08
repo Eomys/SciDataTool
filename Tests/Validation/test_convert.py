@@ -291,7 +291,51 @@ def test_dba_speed_order():
     assert result["X"].shape == (11, 20, 6)
 
 
+@pytest.mark.validation
+def test_dba_speed_order_norm():
+    Revolution = DataLinspace(
+        name="revolution",
+        unit="m/s",
+        initial=0,
+        final=10000,
+        number=11,
+        include_endpoint=True,
+        normalizations={
+            "time": Norm_ref(ref=2),
+            "speed": Norm_vector(vector=np.linspace(0, 1000, 11)),
+        },
+    )
+    Order = Data1D(
+        name="order",
+        unit="",
+        values=["H" + str(i) for i in range(20)],
+    )
+    Loadcase = DataLinspace(
+        name="loadcases",
+        unit="",
+        initial=0,
+        final=5,
+        number=6,
+        include_endpoint=True,
+    )
+    field = 600000 * np.ones((11, 20, 6))
+    Field = DataFreq(
+        name="noise",
+        symbol="X",
+        unit="Pa",
+        values=field,
+        axes=[Revolution, Order, Loadcase],
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+    )
+    result = Field.get_magnitude_along("revolution->speed", "order", unit="dBA")
+    assert result["X"].shape == (11, 20)
+    result = Field.get_magnitude_along(
+        "revolution->speed", "order", "loadcases", unit="dBA"
+    )
+    assert result["X"].shape == (11, 20, 6)
+
+
 if __name__ == "__main__":
-    test_dba_speed_order()
+    test_dba_speed_order_norm()
     # test_norm()
     print("Done")
