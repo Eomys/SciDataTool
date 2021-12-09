@@ -34,8 +34,8 @@ if __name__ == "__main__":
         Field.plot()
 
     elif test == "autoplot":
-        # Field.plot("angle{°}", "time", "z[2]", unit="T", z_max=50)
-        Field.plot("time", "angle", "z[2]", frozen_type=1)
+        Field.plot("angle{°}", "time", "z[2]", unit="T", z_max=50)
+        # Field.plot("time", "angle", "z[2]", frozen_type=1)
         # Field.plot("angle{°}", "z")
         # Field.plot("time", "angle[0]", "z[2]", unit="T", z_max=10)
         # Field.plot("wavenumber", "freqs", "z[2]", unit="T", z_max=50)

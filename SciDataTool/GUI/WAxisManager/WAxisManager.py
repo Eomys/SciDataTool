@@ -197,7 +197,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_axis_1.set_action(action_selected)
             self.gen_slice_op()
 
-    def set_axis_widgets(self, data, axes_request_list, frozen_type):
+    def set_axis_widgets(self, data, axes_request_list, frozen_type=0):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
         ----------
