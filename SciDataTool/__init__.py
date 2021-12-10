@@ -14,4 +14,4 @@ from SciDataTool.Classes.Norm_vector import Norm_vector
 from SciDataTool.Classes.Norm_indices import Norm_indices
 from SciDataTool.Classes.Norm_ref import Norm_ref
 
-__version__ = "1.4.24"
+__version__ = "1.4.25"
