@@ -96,9 +96,6 @@ class WDataRange(Ui_WDataRange, QWidget):
                 *[*axes_selected, *data_selection], unit=self.c_unit.currentText()
             )
         else:
-            print(axes_selected)
-            print(data_selection)
-            print(self.c_unit.currentText())
             field_value = field.get_along(
                 *[*axes_selected, *data_selection], unit=self.c_unit.currentText()
             )
