@@ -439,3 +439,4 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 is_match = True
         if not is_match:
             self.norm = None
+        self.refreshNeeded.emit()
