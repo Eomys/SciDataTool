@@ -187,6 +187,10 @@ def plot_3D_Data(
     else:
         Ydata = result[axes_list[1].name]
     Zdata = result[self.symbol]
+    if Xdata.size == 1:
+        Zdata = Zdata[None, ...]
+    if Ydata.size == 1:
+        Zdata = Zdata[..., None]
     if is_fft and not is_2D_view:
         X_flat = Xdata
         Y_flat = Ydata
