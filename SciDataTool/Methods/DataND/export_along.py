@@ -124,9 +124,10 @@ def export_along(
                 if unit == "SI":
                     unit = self.unit
                 if "dB" in unit:
-                    unit += " re. " + str(
-                        self.normalizations["ref"].ref + " " + self.unit
+                    unit += (
+                        " re. " + str(self.normalizations["ref"].ref) + " " + self.unit
                     )
+
                 meta_data = [self.symbol, self.name, "[" + unit + "]", slices_i]
                 csvWriter.writerow(meta_data)
 
