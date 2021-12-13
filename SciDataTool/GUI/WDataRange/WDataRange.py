@@ -6,6 +6,13 @@ from ...Functions.Plot import unit_dict, ifft_dict
 from PySide2.QtCore import Signal
 from SciDataTool.Functions import parser
 
+UNIT_DICT = {
+    "W": ["dBA", "dB", "W"],
+    "m": ["dB", "m"],
+    "m/s": ["dB", "m/s"],
+    "m/s2": ["dB", "m/s2"],
+}
+
 
 class WDataRange(Ui_WDataRange, QWidget):
     """Widget to select the Data/output range"""
@@ -85,9 +92,13 @@ class WDataRange(Ui_WDataRange, QWidget):
         # If the field is plotted in fft, then we use get_magnitude_along
         # Otherwise we use get_along
         if is_fft == True:
-            field_value = field.get_magnitude_along(*[*axes_selected, *data_selection])
+            field_value = field.get_magnitude_along(
+                *[*axes_selected, *data_selection], unit=self.c_unit.currentText()
+            )
         else:
-            field_value = field.get_along(*[*axes_selected, *data_selection])
+            field_value = field.get_along(
+                *[*axes_selected, *data_selection], unit=self.c_unit.currentText()
+            )
 
         field_min = field_value[field.symbol].min()
         field_max = field_value[field.symbol].max()
@@ -180,11 +191,10 @@ class WDataRange(Ui_WDataRange, QWidget):
         # Checking if the data that we want to plot is known.
         # If so, we will use the unit stored in the dictionary to offer more specific units
         # If that is not the case, we only use the unit stored inside the DataND object
-        if self.name in unit_dict:
-            self.unit_list = unit_dict[self.name]
+        if field.unit in UNIT_DICT:
+            self.unit_list = UNIT_DICT[field.unit]
         else:
-            self.unit_list = list()
-            self.unit_list.append(field.unit)
+            self.unit_list = [field.unit]
 
         # Updating the unit combobox
         self.c_unit.clear()
