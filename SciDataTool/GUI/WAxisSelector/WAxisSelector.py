@@ -2,7 +2,14 @@ from PySide2.QtWidgets import QWidget
 
 from ...GUI.WAxisSelector.Ui_WAxisSelector import Ui_WAxisSelector
 from PySide2.QtCore import Signal
-from ...Functions.Plot import unit_dict, axes_dict, fft_dict, ifft_dict
+from ...Functions.Plot import (
+    unit_dict,
+    norm_name_dict,
+    axis_norm_dict,
+    axes_dict,
+    fft_dict,
+    ifft_dict,
+)
 from ...GUI import update_cb_enable
 from ...Functions.Load.import_class import import_class
 
@@ -31,9 +38,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.name = "X"  # Name of the axis
         self.axes_list = list()  # List of the different axes of the DataND object
+        self.norm_list = None  # List of available normalizations for each axis
 
         self.axis_selected = "None"  # Name of the axis selected (time, angle...)
-        self.unit = "None"  # Name of the unit of the axis (s,m...)
+        self.norm = None  # Name of the unit of the axis (s,m...)
         self.b_filter.setDisabled(True)
 
         self.c_axis.currentTextChanged.connect(self.update_axis)
@@ -65,7 +73,12 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the current axis and unit selected in the right format
         """
 
-        return self.axis_selected + "{" + self.unit + "}"
+        axis_unit_selected = self.axis_selected
+
+        if self.norm is not None:  # Add normalization
+            axis_unit_selected += "->" + self.norm
+
+        return axis_unit_selected
 
     def get_current_action_name(self):
         """Method that return the action currently selected
@@ -192,6 +205,12 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             if axis.is_overlay == False
             and not (isinstance(axis, DataPattern) and len(axis.unique_indices) == 1)
         ]  # Remove overlay axes + slice axes with single slice
+        self.norm_list = [
+            list(axis.normalizations.keys())
+            for axis in axes_list
+            if axis.is_overlay == False
+            and not (isinstance(axis, DataPattern) and len(axis.unique_indices) == 1)
+        ]
 
         # Adding a safety, so that we cannot have frequency or wavenumber inside axes_list (we should have time and angle instead)
         for i in range(len(self.axes_list)):
@@ -201,6 +220,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         # At least one axis must be selected => impossible to have none for X axis
         if self.name.lower() != "x":
             self.axes_list.insert(0, "None")
+            self.norm_list.insert(0, None)
 
         # Step 2 : Replacing the items inside of the ComboBox with the axes recovered
         self.c_axis.clear()
@@ -262,8 +282,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         ----------
         self : WAxisSelector
             a WAxisSelector object
-        axis : string
-            name of the axis that is selected
         """
         self.c_unit.blockSignals(True)
         # Adding the right units according to a dictionnary
@@ -275,9 +293,14 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.c_unit.setDisabled(False)
             self.c_unit.clear()
 
-            # Adding the right unit according to the imported dictionary
+            # Adding the axis unit + available normalizations
             if self.axis_selected in unit_dict:
                 self.c_unit.addItem(unit_dict[self.axis_selected])
+            norms = self.norm_list[self.axes_list.index(self.axis_selected)]
+            if norms is not None:
+                for norm in norms:
+                    if norm in axis_norm_dict[self.axis_selected]:
+                        self.c_unit.addItem(norm_name_dict[norm])  # Add longer names
 
             # TODO : modifying the size of the list according to the units available (adapting it when normalization)
             # self.c_unit.view().setMinimumWidth(
@@ -400,11 +423,19 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.actionChanged.emit()
 
     def update_unit(self):
-        """Method called when a new unit is selected so that we can update self.unit
+        """Method called when a new unit is selected so that we can update self.norm
         Parameters
         ----------
         self : WAxisSelector
             a WAxisSelector object
 
         """
-        self.unit = self.c_unit.currentText()
+        normalization = self.c_unit.currentText()
+        is_match = False
+        # Replace normalization title with normalization name
+        for norm in norm_name_dict:
+            if normalization == norm_name_dict[norm]:
+                self.norm = norm
+                is_match = True
+        if not is_match:
+            self.norm = None

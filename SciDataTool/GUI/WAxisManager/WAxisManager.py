@@ -152,15 +152,11 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_selected = list()
 
         # Recovering the first axis
-        axes_selected.append(
-            self.w_axis_1.get_axis_selected() + "{" + self.w_axis_1.unit + "}"
-        )
+        axes_selected.append(self.w_axis_1.get_axis_unit_selected())
 
         # If a second axis is selected, then we add it as well
-        if self.w_axis_2.get_axis_selected() != "None":
-            axes_selected.append(
-                self.w_axis_2.get_axis_selected() + "{" + self.w_axis_2.unit + "}"
-            )
+        if self.w_axis_2.get_axis_unit_selected() != "None":
+            axes_selected.append(self.w_axis_2.get_axis_unit_selected())
 
         return axes_selected
 
