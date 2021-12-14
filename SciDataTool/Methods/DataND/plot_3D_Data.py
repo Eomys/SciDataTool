@@ -492,16 +492,16 @@ def plot_3D_Data(
                 is_disp_title=is_disp_title,
             )
     else:
+        if x_min is None:
+            x_min = np_min(Xdata)
+        if x_max is None:
+            x_max = np_max(Xdata)
+        if y_min is None:
+            y_min = np_min(Ydata)
+        if y_max is None:
+            y_max = np_max(Ydata)
         if is_2D_view:
             if is_shading_flat:
-                if x_min is None:
-                    x_min = np_min(Xdata)
-                if x_max is None:
-                    x_max = np_max(Xdata)
-                if y_min is None:
-                    y_min = np_min(Ydata)
-                if y_max is None:
-                    y_max = np_max(Ydata)
                 type_plot = "pcolormesh"
                 # 0.5 offset
                 if 0 in flat_indices:
