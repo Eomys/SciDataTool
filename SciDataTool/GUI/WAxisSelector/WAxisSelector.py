@@ -78,6 +78,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         if self.norm is not None:  # Add normalization
             axis_unit_selected += "->" + self.norm
 
+        elif self.axis_selected != "None":  # adding unit
+            axis_unit_selected += "{" + self.c_unit.currentText() + "}"
+
         return axis_unit_selected
 
     def get_current_action_name(self):
@@ -439,4 +442,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 is_match = True
         if not is_match:
             self.norm = None
+
         self.refreshNeeded.emit()
+        self.axisChanged.emit()
