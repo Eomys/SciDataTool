@@ -78,6 +78,23 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             action = "[" + str(slice_index) + "]"
             return fft_dict[self.axis.name] + action
 
+        elif action_type == "overlay/filter":
+            indices = self.axis.get_values()
+
+            action = "["
+            for idx in range(len(indices) - 1):
+                if isinstance(indices[idx], str):
+                    action += str(indices[idx]) + ","
+                else:
+                    action += str(int(indices[idx])) + ","
+
+            if isinstance(indices[-1], str):
+                action += str(indices[-1]) + "]"
+            else:
+                action += str(int(indices[-1])) + "]"
+
+            return self.axis.name
+
         elif action_type in type_extraction_dict:
             action = type_extraction_dict[action_type]
             return self.axis.name + action + "{" + self.unit + "}"
@@ -203,7 +220,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         operation_list = OPERATION_LIST.copy()
 
         # Remove slice for string axes
-        if self.axis.is_components:
+        if self.axis.is_components or self.axis.is_overlay:
             operation_list.remove("slice")
         else:
             self.set_slider_floatedit()
@@ -254,8 +271,10 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         elif extraction_selected == "overlay/filter":
             self.lf_value.hide()
             self.slider.hide()
-            self.b_action.show()
-            self.b_action.setText(extraction_selected)
+            # self.b_action.show()
+            # self.b_action.setText(extraction_selected)
+            self.refreshNeeded.emit()
+
         elif extraction_selected == "integrate":
             self.lf_value.hide()
             self.slider.hide()

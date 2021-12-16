@@ -98,7 +98,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axis_selected_2 = self.w_axis_2.get_axis_selected()
 
         axes_list_1.remove(axis_selected_1)
-        axes_list_2.remove(axis_selected_2)
+        if axis_selected_2 in axes_list_2:
+            axes_list_2.remove(axis_selected_2)
 
         # Selecting the axes that are in common between the two axes lists
         axes_gen = list()
@@ -137,7 +138,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         else:
             self.w_slice_op = list()
             self.g_data_extract.hide()
-        self.update_needed()
+        # self.update_needed()
 
     def get_axes_selected(self):
         """Method that return the axes chosen by the user and their unit as a string

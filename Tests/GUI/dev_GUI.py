@@ -25,10 +25,10 @@ if __name__ == "__main__":
     )
 
     # test = "plot"
-    test = "autoplot"
+    # test = "autoplot"
     # test = "oneaxis"
     # test = "vect"
-    # test = "is_overlay"
+    test = "is_overlay"
 
     if test == "plot":
         Field.plot()
@@ -45,7 +45,10 @@ if __name__ == "__main__":
         Z = DataLinspace(
             name="z", unit="m", initial=-1, final=1, number=3, is_overlay=True
         )
+
         field_2d = np.ones((11, 3))
+        for i in range(3):
+            field_2d[:, i] *= i + 1
 
         Field = DataTime(
             name="Airgap flux density",
@@ -55,7 +58,7 @@ if __name__ == "__main__":
             values=field_2d,
         )
 
-        Field.plot()
+        Field.plot("time", "z[-1,0,1]")
 
     elif test == "oneaxis":
 

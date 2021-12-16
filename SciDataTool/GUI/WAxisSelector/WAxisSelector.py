@@ -136,7 +136,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             update_cb_enable(self.c_axis)
             self.c_axis.blockSignals(False)
 
-            self.update_axis()
+            # self.update_axis()
 
     def set_axis(self, axis):
         """Method that will set the comboboxes to have the axis given as an input when calling the plot method (auto-plot).
@@ -147,6 +147,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         axis : RequestedAxis
             axis that we want to have in the WAxisSelector
         """
+        self.blockSignals(True)
         # Step 1 : Getting the name of the axis and selecting the right combobox (axis and action)
         axis_name = axis.name
 
@@ -164,6 +165,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         unit_name = axis.unit
         if unit_name in unit_dict:
             self.c_unit.setCurrentIndex(self.c_unit.findText(unit_name))
+
+        self.blockSignals(False)
 
     def set_axis_options(self, axes_list):
         """Method that will put the axes of data in the combobox of the widget
