@@ -11,7 +11,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
 from numpy import array
-
+from ...Functions.Plot import ifft_dict
 from ...Functions.Plot import TEXT_BOX
 
 SYMBOL_DICT = {
@@ -402,16 +402,28 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
         axes_name = [ax.name for ax in self.data.get_axes()]
         not_in_order = False
-        if (
-            len(axes_selected) == 2
-            and axes_selected_parsed[0].name in axes_name
-            and axes_selected_parsed[1].name in axes_name
-        ):
-            if axes_name.index(axes_selected_parsed[0].name) > axes_name.index(
-                axes_selected_parsed[1].name
+
+        if len(axes_selected) == 2:
+            if (
+                axes_selected_parsed[0].name in axes_name
+                and axes_selected_parsed[1].name in axes_name
             ):
-                not_in_order = True
-                axes_selected = [axes_selected[1], axes_selected[0]]
+                if axes_name.index(axes_selected_parsed[0].name) > axes_name.index(
+                    axes_selected_parsed[1].name
+                ):
+                    not_in_order = True
+                    axes_selected = [axes_selected[1], axes_selected[0]]
+
+            elif (
+                axes_selected_parsed[0].name in ifft_dict
+                and axes_selected_parsed[1].name in ifft_dict
+            ):
+                if axes_name.index(
+                    ifft_dict[axes_selected_parsed[0].name]
+                ) > axes_name.index(ifft_dict[axes_selected_parsed[1].name]):
+
+                    not_in_order = True
+                    axes_selected = [axes_selected[1], axes_selected[0]]
 
         if not None in data_selection:
             if len(axes_selected) == 1:

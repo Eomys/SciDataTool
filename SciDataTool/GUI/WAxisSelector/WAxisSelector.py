@@ -230,6 +230,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.c_axis.view().setMinimumWidth(max([len(ax) for ax in self.axes_list]) * 6)
 
+        if self.c_axis.currentText() == "None":
+            self.c_action.setDisabled(True)
+        else:
+            self.c_action.setDisabled(False)
+
     def set_name(self, axis_name):
         """Method to change of the label of the widget
         Parameters
@@ -327,6 +332,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
 
         self.c_action.setCurrentIndex(0)
+
+        if self.c_axis.currentText() == "None":
+            self.c_action.setDisabled(True)
+        else:
+            self.c_action.setDisabled(False)
 
         # Updating the units and the axis selected
         # Making sure that self.axis_selected is a "tag" and not a "label". Example : z instead of axial direction

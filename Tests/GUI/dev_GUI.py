@@ -24,11 +24,11 @@ if __name__ == "__main__":
         values=field_3d,
     )
 
-    # test = "plot"
+    test = "plot"
     # test = "autoplot"
     # test = "oneaxis"
     # test = "vect"
-    test = "is_overlay"
+    # test = "is_overlay"
 
     if test == "plot":
         Field.plot()

@@ -138,7 +138,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         else:
             self.w_slice_op = list()
             self.g_data_extract.hide()
-        # self.update_needed()
+        self.update_needed()
 
     def get_axes_selected(self):
         """Method that return the axes chosen by the user and their unit as a string
