@@ -36,6 +36,15 @@ PARAM_3D = [
     "is_same_size",
     "N_stem",
     "colormap",
+    "y_min",
+    "y_max",
+]
+
+PARAM_2D = [
+    "color_list",
+    "data_list",
+    "legend_list",
+    "fund_harm_dict",
 ]
 
 
@@ -430,11 +439,15 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 )
 
             elif len(axes_selected) == 2:
+                plot_arg_dict_3D = self.plot_arg_dict.copy()
+                for param in PARAM_2D:
+                    if param in plot_arg_dict_3D:
+                        del plot_arg_dict_3D[param]
                 if "is_2D_view" not in self.plot_arg_dict:
                     self.plot_arg_dict["is_2D_view"] = True
                 self.data.plot_3D_Data(
                     *[*axes_selected, *data_selection],
-                    **self.plot_arg_dict,
+                    **plot_arg_dict_3D,
                     unit=output_range["unit"],
                     fig=self.fig,
                     ax=self.ax,
