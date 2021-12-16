@@ -6,13 +6,6 @@ from ...Functions.Plot import unit_dict, ifft_dict
 from PySide2.QtCore import Signal
 from SciDataTool.Functions import parser
 
-UNIT_DICT = {
-    "W": ["dBA", "dB", "W"],
-    "m": ["dB", "m"],
-    "m/s": ["dB", "m/s"],
-    "m/s2": ["dB", "m/s2"],
-}
-
 
 class WDataRange(Ui_WDataRange, QWidget):
     """Widget to select the Data/output range"""
@@ -164,12 +157,13 @@ class WDataRange(Ui_WDataRange, QWidget):
             Minimum value for Z axis (or Y if only one axe)
         """
 
-        if unit is not None:
-            # Selecting the right unit inside the unit combobox
-            for i in range(self.c_unit.count()):
-                self.c_unit.setCurrentIndex(i)
-                if self.c_unit.currentText() == unit:
-                    break
+        if unit is not None and unit != "SI":  # Adding unit to unit combobox
+            if self.c_unit.currentText() != unit:
+                self.c_unit.insertItem(0, unit)
+        if unit == "dBA":  # Also adding dB
+            self.c_unit.insertItem(1, "dB")
+        self.c_unit.setCurrentIndex(0)
+
         if z_max is not None:
             # Setting max float edit
             self.lf_max.setValue(z_max)
@@ -188,17 +182,9 @@ class WDataRange(Ui_WDataRange, QWidget):
             the data object that hold the field that we want to plot
         """
 
-        # Checking if the data that we want to plot is known.
-        # If so, we will use the unit stored in the dictionary to offer more specific units
-        # If that is not the case, we only use the unit stored inside the DataND object
-        if field.unit in UNIT_DICT:
-            self.unit_list = UNIT_DICT[field.unit]
-        else:
-            self.unit_list = [field.unit]
-
-        # Updating the unit combobox
+        # # Updating the unit combobox
         self.c_unit.clear()
-        self.c_unit.addItems(self.unit_list)
+        self.c_unit.addItem(field.unit)
 
     def update_needed(self):
         """Method that emit a signal to automatically refresh the plot inside the GUI
