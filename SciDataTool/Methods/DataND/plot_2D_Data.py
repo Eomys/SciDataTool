@@ -484,13 +484,22 @@ def plot_2D_Data(
             if len(xticks) > 1:
                 if x_min is None:
                     x_min = xticks[0]
+                else:
+                    x_min = max(x_min, xticks[0])
                 if x_max is None:
                     x_max = xticks[-1]
+                else:
+                    x_max = min(x_max, xticks[-1])
             else:
                 if x_min is None:
                     x_min = np_min(freqs)
+                else:
+                    x_min = max(x_min, np_min(freqs))
                 if x_max is None:
                     x_max = np_max(freqs)
+                else:
+                    x_max = min(x_max, np_max(freqs))
+
         else:
             if x_min is None:
                 x_min = np_min(freqs)
