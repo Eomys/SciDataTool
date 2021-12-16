@@ -16,7 +16,7 @@ class Ui_WAxisManager(object):
     def setupUi(self, WAxisManager):
         if not WAxisManager.objectName():
             WAxisManager.setObjectName(u"WAxisManager")
-        WAxisManager.resize(405, 308)
+        WAxisManager.resize(445, 236)
         self.verticalLayout_2 = QVBoxLayout(WAxisManager)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.g_axes = QGroupBox(WAxisManager)

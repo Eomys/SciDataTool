@@ -14,17 +14,17 @@ class Ui_WAxisSelector(object):
     def setupUi(self, WAxisSelector):
         if not WAxisSelector.objectName():
             WAxisSelector.setObjectName(u"WAxisSelector")
-        WAxisSelector.resize(131, 160)
+        WAxisSelector.resize(152, 160)
         self.verticalLayout = QVBoxLayout(WAxisSelector)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.in_name = QLabel(WAxisSelector)
         self.in_name.setObjectName(u"in_name")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.in_name.sizePolicy().hasHeightForWidth())
         self.in_name.setSizePolicy(sizePolicy)
-        self.in_name.setMinimumSize(QSize(0, 0))
+        self.in_name.setMinimumSize(QSize(120, 0))
         self.in_name.setMaximumSize(QSize(16777215, 16777215))
         self.in_name.setAlignment(Qt.AlignCenter)
 
@@ -34,7 +34,7 @@ class Ui_WAxisSelector(object):
         self.c_axis.setObjectName(u"c_axis")
         sizePolicy.setHeightForWidth(self.c_axis.sizePolicy().hasHeightForWidth())
         self.c_axis.setSizePolicy(sizePolicy)
-        self.c_axis.setMinimumSize(QSize(0, 0))
+        self.c_axis.setMinimumSize(QSize(120, 0))
         self.c_axis.setMaximumSize(QSize(16777215, 16777215))
 
         self.verticalLayout.addWidget(self.c_axis)
@@ -46,7 +46,7 @@ class Ui_WAxisSelector(object):
         self.c_action.setObjectName(u"c_action")
         sizePolicy.setHeightForWidth(self.c_action.sizePolicy().hasHeightForWidth())
         self.c_action.setSizePolicy(sizePolicy)
-        self.c_action.setMinimumSize(QSize(0, 0))
+        self.c_action.setMinimumSize(QSize(120, 0))
 
         self.verticalLayout.addWidget(self.c_action)
 
@@ -54,7 +54,7 @@ class Ui_WAxisSelector(object):
         self.c_unit.setObjectName(u"c_unit")
         sizePolicy.setHeightForWidth(self.c_unit.sizePolicy().hasHeightForWidth())
         self.c_unit.setSizePolicy(sizePolicy)
-        self.c_unit.setMinimumSize(QSize(0, 0))
+        self.c_unit.setMinimumSize(QSize(120, 0))
         self.c_unit.setMaximumSize(QSize(16777215, 16777215))
 
         self.verticalLayout.addWidget(self.c_unit)
@@ -63,7 +63,7 @@ class Ui_WAxisSelector(object):
         self.b_filter.setObjectName(u"b_filter")
         sizePolicy.setHeightForWidth(self.b_filter.sizePolicy().hasHeightForWidth())
         self.b_filter.setSizePolicy(sizePolicy)
-        self.b_filter.setMinimumSize(QSize(0, 0))
+        self.b_filter.setMinimumSize(QSize(120, 0))
 
         self.verticalLayout.addWidget(self.b_filter)
 

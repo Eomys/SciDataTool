@@ -134,16 +134,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             operation_type = "overlay/filter"
 
         # Setting operation combobox to the right operation
-        self.c_operation.blockSignals(True)
-
-        for i in range(self.c_operation.count()):
-            self.c_operation.setCurrentIndex(i)
-
-            if self.c_operation.currentText() == operation_type:
-                break
-
-        self.c_operation.blockSignals(False)
-        self.update_layout()
+        self.c_operation.setCurrentIndex(self.c_operation.findText(operation_type))
 
         # Setting the slider to the right value if the operation is slice
         if operation_type == "slice":

@@ -78,7 +78,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         if self.norm is not None:  # Add normalization
             axis_unit_selected += "->" + self.norm
 
-        elif self.axis_selected != "None":  # adding unit
+        elif axis_unit_selected != "None":  # adding unit
             axis_unit_selected += "{" + self.c_unit.currentText() + "}"
 
         return axis_unit_selected
@@ -152,40 +152,18 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         # If the axis is freqs or wavenumber, then we have to select time/angle and fft
         if axis_name in ifft_dict:
-
             # Selecting the right axis
-            for i in range(self.c_axis.count()):
-                self.c_axis.setCurrentIndex(i)
-                if self.c_axis.currentText() == ifft_dict[axis_name]:
-                    break
-
-            self.update_axis()
+            self.c_axis.setCurrentIndex(self.c_axis.findText(ifft_dict[axis_name]))
             # Making sure that we select FFT
             self.c_action.setCurrentIndex(1)
-
         else:
             # Selecting the right axis
-            for i in range(self.c_axis.count()):
-                self.c_axis.setCurrentIndex(i)
-                if self.c_axis.currentText() == axis_name:
-                    break
-
-            self.update_axis()
-
-        self.update_action()
+            self.c_axis.setCurrentIndex(self.c_axis.findText(axis_name))
 
         # Step 2 : Recovering the unit and setting the combobox according to it
-        self.c_unit.blockSignals(True)
         unit_name = axis.unit
-
         if unit_name in unit_dict:
-            for i in range(self.c_unit.count()):
-                self.c_unit.setCurrentIndex(i)
-                if self.c_unit.currentText() == unit_name:
-                    break
-
-        self.c_unit.blockSignals(False)
-        self.update_unit()
+            self.c_unit.setCurrentIndex(self.c_unit.findText(unit_name))
 
     def set_axis_options(self, axes_list):
         """Method that will put the axes of data in the combobox of the widget
@@ -305,10 +283,16 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                     if norm in axis_norm_dict[self.axis_selected]:
                         self.c_unit.addItem(norm_name_dict[norm])  # Add longer names
 
-            # TODO : modifying the size of the list according to the units available (adapting it when normalization)
-            # self.c_unit.view().setMinimumWidth(
-            #     max([len(un) for un in unit_dict[self.axis_selected]]) * 6
-            # )
+            # Modifying the size of the list according to the units available (adapting it when normalization)
+            cb_width = 0
+            for idx_unit in range(self.c_unit.count()):
+                self.c_unit.setCurrentIndex(idx_unit)
+                if len(self.c_unit.currentText()) > cb_width:
+                    cb_width = len(self.c_unit.currentText())
+            self.c_unit.setCurrentIndex(0)
+
+            self.c_unit.view().setMinimumWidth(cb_width * 8)
+
         update_cb_enable(self.c_unit)
         self.c_unit.blockSignals(False)
         self.update_unit()
@@ -444,4 +428,3 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.norm = None
 
         self.refreshNeeded.emit()
-        self.axisChanged.emit()

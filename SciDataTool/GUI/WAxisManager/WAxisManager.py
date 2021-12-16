@@ -52,6 +52,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_1.actionChanged.connect(lambda: self.fft_sync("axis 1"))
         self.w_axis_2.actionChanged.connect(lambda: self.fft_sync("axis 2"))
 
+        self.w_axis_1.refreshNeeded.connect(self.update_needed)
+        self.w_axis_2.refreshNeeded.connect(self.update_needed)
+
     def axis_1_updated(self):
         """Method that remove the axis selected in w_axis_1 from w_axis_2 and call the method that generates
         the layout with the WDataExtractor.
@@ -268,7 +271,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
             # Generating DataSelection with the input of user if they are given or by default (like in a manual plot)
             if len(slices_op_list) != 0:
-                self.set_data_selec(slices_op_list)
+                self.set_slice_op(slices_op_list)
             else:
                 self.gen_slice_op()
 
@@ -294,7 +297,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.w_axis_1.blockSignals(False)
         self.w_axis_2.blockSignals(False)
 
-    def set_data_selec(self, user_input_list):
+    def set_slice_op(self, user_input_list):
         """Method that set the right operation inside each WSliceOperator inside of w_slice_op
         according to user input (auto plot).
         Parameters
