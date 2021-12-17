@@ -433,6 +433,11 @@ def plot_3D_Data(
         y_min = y_min - y_max * 0.2
         y_max = y_max * 1.2
 
+        if len(xticks) == 0:
+            xticks = None
+        if len(yticks) == 0:
+            yticks = None
+
         if not is_auto_ticks:
             xticks = None
             yticks = None

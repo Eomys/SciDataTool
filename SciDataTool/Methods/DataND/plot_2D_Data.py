@@ -523,6 +523,9 @@ def plot_2D_Data(
         x_min = x_min - x_max * 0.05
         x_max = x_max * 1.05
 
+        if len(xticks) == 0:
+            xticks = None
+
         if not is_auto_ticks:
             xticks = None
 
