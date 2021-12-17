@@ -16,7 +16,7 @@ class Ui_WAxisManager(object):
     def setupUi(self, WAxisManager):
         if not WAxisManager.objectName():
             WAxisManager.setObjectName(u"WAxisManager")
-        WAxisManager.resize(445, 236)
+        WAxisManager.resize(345, 220)
         self.verticalLayout_2 = QVBoxLayout(WAxisManager)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.g_axes = QGroupBox(WAxisManager)
@@ -29,8 +29,9 @@ class Ui_WAxisManager(object):
         self.g_axes.setMinimumSize(QSize(0, 0))
         self.g_axes.setMaximumSize(QSize(16777215, 16777215))
         self.lay_axes = QHBoxLayout(self.g_axes)
+        self.lay_axes.setSpacing(4)
         self.lay_axes.setObjectName(u"lay_axes")
-        self.lay_axes.setContentsMargins(-1, 0, -1, -1)
+        self.lay_axes.setContentsMargins(5, 0, 5, 0)
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.label = QLabel(self.g_axes)
@@ -61,7 +62,7 @@ class Ui_WAxisManager(object):
 
         self.label_5 = QLabel(self.g_axes)
         self.label_5.setObjectName(u"label_5")
-        self.label_5.setMinimumSize(QSize(0, 28))
+        self.label_5.setMinimumSize(QSize(0, 23))
 
         self.verticalLayout.addWidget(self.label_5)
 
