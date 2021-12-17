@@ -152,7 +152,9 @@ def plot_2D_Data(
 
     # Detect if is fft, build first title part and ylabel
     is_fft = False
-    if any("wavenumber" in s for s in arg_list) or any("freqs" in s for s in arg_list):
+    if (
+        any("wavenumber" in s for s in arg_list) or any("freqs" in s for s in arg_list)
+    ) and type_plot != "curve":
         is_fft = True
         if "dB" in unit:
             unit_str = (
