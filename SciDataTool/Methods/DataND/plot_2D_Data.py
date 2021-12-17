@@ -481,7 +481,7 @@ def plot_2D_Data(
             indices = [
                 ind
                 for ind, y in enumerate(Ydatas[0])
-                if abs(y) > 10 * log10(thresh) + abs(np_max(Ydatas[0]))
+                if abs(y) > max(10 * log10(thresh) + abs(np_max(Ydatas[0])), 0)
             ]
         else:
             if Ydatas[0].size == 1:

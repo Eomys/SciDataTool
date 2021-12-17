@@ -360,11 +360,15 @@ def plot_3D_Data(
 
         if "dB" in unit:
             indices_x = np_any(
-                where(Zdata > 10 * log10(thresh) + abs(np_max(Zdata)), True, False),
+                where(
+                    Zdata > max(10 * log10(thresh) + abs(np_max(Zdata)), 0), True, False
+                ),
                 axis=1,
             )
             indices_y = np_any(
-                where(Zdata > 10 * log10(thresh) + abs(np_max(Zdata)), True, False),
+                where(
+                    Zdata > max(10 * log10(thresh) + abs(np_max(Zdata)), 0), True, False
+                ),
                 axis=0,
             )
         else:
