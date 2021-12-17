@@ -57,7 +57,7 @@ class FloatEdit(QLineEdit):
         if value is None:
             self.clear()
         else:
-            self.setText(format(value, ".8g"))
+            self.setText(format(value, ".5g"))
 
     def value(self):
         """Return the content of the Widget as a float

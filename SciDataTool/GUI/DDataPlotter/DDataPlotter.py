@@ -473,6 +473,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         else:
             print("Operation not implemented yet, plot could not be updated")
 
+        self.w_plot_manager.w_range.set_min_max()
+
     def set_info(self, data, axes_request_list=None, plot_arg_dict=None):
         """Method to set the DDataPlotter with information given
         self : DDataPlotter

@@ -1,5 +1,6 @@
 from PySide2.QtWidgets import QWidget
 from matplotlib.pyplot import axes
+import matplotlib.pyplot as plt
 
 from ...GUI.WDataRange.Ui_WDataRange import Ui_WDataRange
 from ...Functions.Plot import unit_dict, ifft_dict
@@ -51,60 +52,28 @@ class WDataRange(Ui_WDataRange, QWidget):
             "max": self.lf_max.value(),
         }
 
-    def set_min_max(self, field, axes_selected, data_selection):
+    def set_min_max(self):
         """Method that will set the FloatEdit of the widget that are responsible for the min value and for the max value.
         Parameters
         ----------
         self : WDataRange
             a WDataRange object
-        field : DataND
-            the data object that hold the field that we want to plot
-        axes_selected : list
-            list that holds the name of the axes selected, so that we can use the method get_along/get_magnitude_along
-        data_selection : list
-            list that holds the name of the slices/operation selected, so that we can use the method get_along/get_magnitude_along
         """
 
-        axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
-        is_fft = False
+        field_min = None
+        field_max = None
 
-        # First we need to define if we have to use get_along or get_magnitude_along depending on the axes/slice selected
-        if not None in data_selection and not len(data_selection) == 0:
-            data_selection_parsed = parser.read_input_strings(
-                data_selection, axis_data=None
-            )
+        # Get limits from figure
+        fig = plt.gcf()
+        if fig is not None:
+            if len(fig.axes) == 1:
+                field_min = fig.axes[0].get_ylim()[0]
+                field_max = fig.axes[0].get_ylim()[1]
+            else:
+                field_min = fig.axes[1].dataLim.extents[0]
+                field_max = fig.axes[1].dataLim.extents[-1]
 
-            for i in range(len(data_selection_parsed)):
-                if data_selection_parsed[i].name in ifft_dict:
-                    is_fft = True
-
-        for i in range(len(axes_selected_parsed)):
-            if axes_selected_parsed[i].name in ifft_dict:
-                is_fft = True
-
-        # If the field is plotted in fft, then we use get_magnitude_along
-        # Otherwise we use get_along
-        if is_fft == True:
-            field_value = field.get_magnitude_along(
-                *[*axes_selected, *data_selection], unit=self.c_unit.currentText()
-            )
-        else:
-            field_value = field.get_along(
-                *[*axes_selected, *data_selection], unit=self.c_unit.currentText()
-            )
-
-        field_min = field_value[field.symbol].min()
-        field_max = field_value[field.symbol].max()
-
-        # IF we have a plot in 2D, then we do not want exactly min and max so we zoom out slightly
-        if len(axes_selected) == 1:
-            delta = field_max - field_min
-            field_min -= 0.1 * delta
-            field_max += 0.1 * delta
-
-        # If the value of min and max are the same, then we don't set them up automatically
-        eps = 1e-7
-        if field_max - field_min > eps:
+        if field_min is not None:
             self.lf_min.setValue(field_min)
             self.lf_max.setValue(field_max)
         else:
@@ -136,7 +105,8 @@ class WDataRange(Ui_WDataRange, QWidget):
 
         self.set_name(data.name)
         self.set_unit(data)
-        self.set_min_max(data, axes_selected, data_selection)
+        self.lf_min.clear()
+        self.lf_max.clear()
 
     def set_range_user_input(
         self,
