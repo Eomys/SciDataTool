@@ -134,8 +134,17 @@ def plot_2D_Data(
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]
 
+    # In case of 1D fft, keep only positive wavenumbers
+    for i, arg in enumerate(arg_list):
+        if "wavenumber" in arg and "=" not in arg and "[" not in arg:
+            liste = list(arg_list)
+            liste[i] = arg.replace("wavenumber", "wavenumber>0")
+            arg_list = tuple(liste)
+
     if color_list == []:
         color_list = COLORS
+
+    new_color_list = color_list.copy()
 
     # Set unit
     if unit == "SI":
@@ -393,6 +402,11 @@ def plot_2D_Data(
 
         if not is_overlay:
             legends += [legend_list[i]]
+            # Adjust colors in non overlay case with overlay axis
+            if len(data_list2) > 1:
+                for axis in self.get_axes():
+                    if axis.is_overlay and len(color_list) > len(axis.values):
+                        new_color_list[1:] = color_list[len(axis.values) :]
 
     # Split Ydatas if the plot overlays several curves
     if is_overlay:
@@ -531,7 +545,7 @@ def plot_2D_Data(
             Xdatas,
             Ydatas,
             legend_list=legends,
-            color_list=color_list,
+            color_list=new_color_list,
             linestyle_list=linestyle_list,
             linewidth_list=linewidth_list,
             fig=fig,
@@ -573,7 +587,7 @@ def plot_2D_Data(
             Xdatas,
             Ydatas,
             legend_list=legends,
-            color_list=color_list,
+            color_list=new_color_list,
             fig=fig,
             ax=ax,
             title=title,
