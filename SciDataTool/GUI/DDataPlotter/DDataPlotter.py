@@ -167,7 +167,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             # When auto-refresh is disabled, the refresh button must be enabled
             self.b_refresh.setDisabled(False)
 
-    def set_figure(self, fig):
+    def set_figure(self, fig, text_box=None):
         """Method that set up the figure inside the GUI
 
         Parameters
@@ -178,6 +178,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             A Figure object to put inside the UI
 
         """
+        if text_box is None:
+            text_box = TEXT_BOX
         # Set plot layout
         self.canvas = FigureCanvas(fig)
         self.toolbar = NavigationToolbar(self.canvas, self)
@@ -323,7 +325,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         label,
                         ha="left",
                         va="center",
-                        bbox=TEXT_BOX,
+                        bbox=text_box,
                     )
                     # Draw line
                     self.line = self.ax.plot(
