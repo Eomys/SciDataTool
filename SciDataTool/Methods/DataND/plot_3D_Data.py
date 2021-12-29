@@ -1,3 +1,4 @@
+from numpy.core.numeric import zeros_like
 from SciDataTool.Functions.Plot.plot_4D import plot_4D
 from SciDataTool.Functions.Plot.plot_3D import plot_3D
 from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
@@ -13,6 +14,7 @@ from numpy import (
     array2string,
     linspace,
     log10,
+    array,
 )
 
 
@@ -55,6 +57,8 @@ def plot_3D_Data(
     zlabel=None,
     title=None,
     is_disp_title=True,
+    type_plot=None,
+    annotation_delim=None,
 ):
     """Plots a field as a function of two axes
 
@@ -172,6 +176,9 @@ def plot_3D_Data(
             )
     else:
         result = self.get_along(arg_list, unit=unit, is_norm=is_norm)
+
+    if type_plot == "scatter":
+        is_fft = True
     axes_list = result["axes_list"]
     axes_dict_other = result["axes_dict_other"]
     if axes_list[0].is_components:
@@ -243,8 +250,16 @@ def plot_3D_Data(
     if axis.is_components and axis.extension != "list":
         xticklabels = result[axis.name]
         xticks = Xdata
+        if annotation_delim is not None and annotation_delim in xticklabels[0]:
+            annotations_x = array(
+                [label.split(annotation_delim)[1] for label in xticklabels]
+            )
+            xticklabels = array(
+                [label.split(annotation_delim)[0] for label in xticklabels]
+            )
     else:
         xticklabels = None
+        annotations_x = zeros_like(Xdata)
 
     axis = axes_list[1]
     if axis.name in axes_dict:
@@ -274,13 +289,30 @@ def plot_3D_Data(
     if axis.is_components and axis.extension != "list":
         yticklabels = result[axis.name]
         yticks = Ydata
+        if annotation_delim is not None and annotation_delim in yticklabels[0]:
+            annotations_y = array(
+                [label.split(annotation_delim)[1] for label in yticklabels]
+            )
+            yticklabels = array(
+                [label.split(annotation_delim)[0] for label in yticklabels]
+            )
+        else:
+            annotations_y = zeros_like(Ydata)
     else:
         yticklabels = None
+        annotations_y = zeros_like(Ydata)
+
+    if is_fft and is_2D_view and annotation_delim is not None:
+        _, annotations = meshgrid(annotations_y, annotations_x)
+        annotations = annotations.flatten()
+    else:
+        annotations = None
 
     # Detect discontinuous axis (Norm_indices) to use flat shading
     is_shading_flat = False
     flat_indices = []
-    type_plot = "pcolor"
+    if type_plot is None:
+        type_plot = "pcolor"
     for axis in axes_list:
         if axis.unit in self.axes[axis.index].normalizations:
             if isinstance(
@@ -359,28 +391,21 @@ def plot_3D_Data(
                 thresh = 0.02
 
         if "dB" in unit:
-            indices_x = np_any(
-                where(
-                    Zdata > max(10 * log10(thresh) + abs(np_max(Zdata)), 0), True, False
-                ),
-                axis=1,
-            )
-            indices_y = np_any(
-                where(
-                    Zdata > max(10 * log10(thresh) + abs(np_max(Zdata)), 0), True, False
-                ),
-                axis=0,
-            )
+            threshold = max(10 * log10(thresh) + abs(np_max(Zdata)), 0)
         else:
-            indices_x = np_any(
-                where(Zdata > abs(thresh * np_max(Zdata)), True, False), axis=1
-            )
-            indices_y = np_any(
-                where(Zdata > abs(thresh * np_max(Zdata)), True, False), axis=0
-            )
+            threshold = abs(thresh * np_max(Zdata))
+        indices_x = np_any(where(Zdata > threshold, True, False), axis=1)
+        indices_y = np_any(where(Zdata > threshold, True, False), axis=0)
 
         xticks = Xdata[indices_x]
+        annotation_threshold = None
+        if xticklabels is not None:
+            xticklabels = xticklabels[indices_x]
         yticks = Ydata[indices_y]
+        if yticklabels is not None:
+            yticklabels = yticklabels[indices_y]
+        if annotations is not None:
+            annotation_threshold = threshold
         if is_auto_range:
             if len(xticks) > 1:
                 if x_min is None:
@@ -479,6 +504,8 @@ def plot_3D_Data(
                 font_size_legend=font_size_legend,
                 is_grid=True,
                 is_disp_title=is_disp_title,
+                annotations=annotations,
+                annotation_threshold=annotation_threshold,
             )
         else:
             plot_3D(

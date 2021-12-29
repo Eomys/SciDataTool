@@ -208,9 +208,9 @@ def plot_4D(
             ax.set_yticklabels(yticklabels)
         if annotations is not None:
             for i, txt in enumerate(annotations):
-                if Zdata[i] > z_max * annotation_threshold and txt is not None:
+                if Zdata[i] > annotation_threshold and txt is not None:
                     ax.annotate(
-                        str(txt) + " [Hz]",
+                        txt,
                         (Xdata[i], Ydata[i]),
                         rotation=45,
                         family=font_name,

@@ -195,6 +195,25 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         ######################################
         def format_coord(x, y, z=None, sep=", "):
 
+            # Use ticklabels
+            try:
+                x_float = float(self.ax.get_xticklabels()[-1]._text)
+                X_str = format(x, ".4g")
+                Y_str = format(y, ".4g")
+            except:
+                X_str = None
+                Y_str = None
+                for ticklabel in self.ax.get_xticklabels():
+                    if ticklabel._x == x:
+                        X_str = ticklabel._text
+                        break
+                for ticklabel in self.ax.get_yticklabels():
+                    if ticklabel._y == y:
+                        Y_str = ticklabel._text
+                        break
+                if X_str is None or Y_str is None:
+                    return ""
+
             # Recovering the input of the user
             [
                 self.data,
@@ -215,7 +234,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             xunit = "[" + latex(axes_selected_parsed[0].unit) + "]"
 
             if len(axes_selected) == 2:
-                if axes_selected_parsed[1].name.lower():
+                if axes_selected_parsed[1].name.lower() in SYMBOL_DICT:
                     ylabel = latex(SYMBOL_DICT[axes_selected_parsed[1].name.lower()])
                 else:
                     ylabel = latex(axes_selected_parsed[1].name)
@@ -237,13 +256,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             label = (
                 xlabel
                 + " = "
-                + format(x, ".4g")
+                + X_str
                 + " "
                 + xunit
                 + sep
                 + ylabel
                 + " = "
-                + format(y, ".4g")
+                + Y_str
                 + " "
                 + yunit
             )
