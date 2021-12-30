@@ -2,7 +2,7 @@ from PySide2.QtWidgets import QWidget
 
 from ...GUI.WSliceOperator.Ui_WSliceOperator import Ui_WSliceOperator
 from PySide2.QtCore import Signal
-from ...Functions.Plot import axes_dict, fft_dict
+from ...Functions.Plot import axes_dict, fft_dict, ifft_dict, unit_dict
 from ...Classes.Data import Data
 from numpy import where
 from numpy import argmin, abs as np_abs
@@ -69,14 +69,17 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
         # Formatting the string to have the right syntax
         if action_type == "slice":
-            slice_index = self.slider.value()
-            action = "[" + str(slice_index) + "]"
-            return self.axis.name + action + "{" + self.unit + "}"
+            # slice_index = self.slider.value()
+            # action = "[" + str(slice_index) + "]"
+            action = "=" + str(self.lf_value.value())
+            return self.axis_name + action + "{" + self.unit + "}"
 
         elif action_type == "slice (fft)":
-            slice_index = self.slider.value()
-            action = "[" + str(slice_index) + "]"
-            return fft_dict[self.axis.name] + action
+            # slice_index = self.slider.value()
+            # action = "[" + str(slice_index) + "]"
+            action = "=" + str(self.lf_value.value())
+            if self.axis_name in fft_dict:
+                return fft_dict[self.axis_name] + action
 
         elif action_type == "overlay/filter":
             indices = self.axis.get_values()
@@ -93,11 +96,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             else:
                 action += str(int(indices[-1])) + "]"
 
-            return self.axis.name
+            return self.axis_name
 
         elif action_type in type_extraction_dict:
             action = type_extraction_dict[action_type]
-            return self.axis.name + action + "{" + self.unit + "}"
+            return self.axis_name + action + "{" + self.unit + "}"
         else:
             return None
 
@@ -185,16 +188,26 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         # Converting the axis from rad to degree if the axis is angle as we do slice in degrees
         # Recovering the value from the axis as well
         if self.c_operation.currentText() == "slice":
-            if self.axis.name == "angle":
-                self.axis_value = self.axis.get_values(unit="°")
+            if self.axis.name in ifft_dict:
+                operation = self.axis.name + "_to_" + self.axis_name
+            else:
+                operation = None
+            if self.axis_name == "angle":
+                self.axis_value = self.axis.get_values(
+                    unit="°", operation=operation, corr_unit="rad", is_full=True
+                )
                 self.unit = "°"
             else:
-                self.axis_value = self.axis.get_values()
+                self.axis_value = self.axis.get_values(
+                    operation=operation, is_full=True
+                )
         elif self.c_operation.currentText() == "slice (fft)":
             if self.axis.name == "angle":
                 self.axis_value = self.axis.get_values(operation="angle_to_wavenumber")
             elif self.axis.name == "time":
                 self.axis_value = self.axis.get_values(operation="time_to_freqs")
+            else:  # already wavenumber of freqs case
+                self.axis_value = self.axis.get_values()
 
         # Setting the initial value of the floatEdit to the minimum inside the axis
         self.lf_value.setValue(min(self.axis_value))
@@ -202,6 +215,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         # Setting the slider by giving the number of index according to the size of the axis
         self.slider.setMinimum(0)
         self.slider.setMaximum(len(self.axis_value) - 1)
+        self.slider.setValue(0)
 
     def update(self, axis):
         """Method that will update the WSliceOperator widget according to the axis given to it
@@ -214,7 +228,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         """
         self.axis = axis
         self.unit = axis.unit
-        self.set_name(axis.name)
+        if axis.name in ifft_dict:  # DataFreq case
+            self.axis_name = ifft_dict[axis.name]
+        else:
+            self.axis_name = axis.name
+        self.set_name(self.axis_name)
 
         self.c_operation.blockSignals(True)
         operation_list = OPERATION_LIST.copy()
@@ -226,7 +244,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.set_slider_floatedit()
 
         # Remove fft slice for non fft axes
-        if not self.axis.name in fft_dict:
+        if not self.axis_name in fft_dict:
             operation_list.remove("slice (fft)")
 
         self.c_operation.clear()

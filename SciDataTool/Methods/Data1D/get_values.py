@@ -16,6 +16,7 @@ def get_values(
     operation=None,
     is_real=True,
     corr_unit=None,
+    is_full=False,
 ):
     """Returns the vector 'axis' taking symmetries into account.
     Parameters
@@ -52,8 +53,14 @@ def get_values(
     norm_vector = None
 
     # Ignore symmetries if fft axis
-    if self.name == "freqs" or self.name == "wavenumber":
+    if (self.name == "freqs" or self.name == "wavenumber") and not is_full:
         is_smallestperiod = True
+
+    # fft/ifft
+    if operation is not None:
+        module = import_module("SciDataTool.Functions.conversions")
+        func = getattr(module, operation)  # Conversion function
+        values = array(func(values, is_real=is_real))
 
     # Rebuild symmetries
     if is_smallestperiod:
@@ -85,12 +92,6 @@ def get_values(
             self.normalizations[normalization].vector = rebuild_symmetries_axis(
                 norm_vector, self.symmetries
             )
-
-    # fft/ifft
-    if operation is not None:
-        module = import_module("SciDataTool.Functions.conversions")
-        func = getattr(module, operation)  # Conversion function
-        values = array(func(values, is_real=is_real))
 
     # Normalization
     if normalization is not None:
