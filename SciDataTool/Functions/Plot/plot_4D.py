@@ -48,6 +48,7 @@ def plot_4D(
     is_grid=False,
     grid_xlw=None,
     grid_ylw=None,
+    marker_color="k",
 ):
     """Plots a 4D graph
 
@@ -130,7 +131,7 @@ def plot_4D(
         is_show_fig = True if fig is None else False
 
     # Set if figure is 3D
-    if type_plot != "scatter":
+    if "scatter" not in type_plot:
         is_3d = True
     else:
         is_3d = False
@@ -215,6 +216,25 @@ def plot_4D(
                         rotation=45,
                         family=font_name,
                     )
+
+    elif type_plot == "scatterX":
+        c = ax.scatter(
+            Xdata,
+            Ydata,
+            s=50 * Zdata,
+            color=marker_color,
+            marker="x",
+            picker=True,
+            pickradius=5,
+        )
+        if xticks is not None:
+            ax.xaxis.set_ticks(xticks)
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
+        if yticks is not None:
+            ax.yaxis.set_ticks(yticks)
+        if yticklabels is not None:
+            ax.set_yticklabels(yticklabels)
 
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)

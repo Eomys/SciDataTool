@@ -59,6 +59,7 @@ def plot_3D_Data(
     is_disp_title=True,
     type_plot=None,
     annotation_delim=None,
+    marker_color="k",
 ):
     """Plots a field as a function of two axes
 
@@ -308,8 +309,6 @@ def plot_3D_Data(
     # Detect discontinuous axis (Norm_indices) to use flat shading
     is_shading_flat = False
     flat_indices = []
-    if type_plot is None:
-        type_plot = "pcolor"
     for axis in axes_list:
         if axis.unit in self.axes[axis.index].normalizations:
             if isinstance(
@@ -464,6 +463,8 @@ def plot_3D_Data(
             xticks = None
             yticks = None
         if is_2D_view:
+            if type_plot is None:
+                type_plot = "scatter"
             plot_4D(
                 X_flat,
                 Y_flat,
@@ -486,7 +487,7 @@ def plot_3D_Data(
                 zlabel=zlabel,
                 fig=fig,
                 ax=ax,
-                type_plot="scatter",
+                type_plot=type_plot,
                 save_path=save_path,
                 is_show_fig=is_show_fig,
                 is_logscale_x=is_logscale_x,
@@ -503,6 +504,7 @@ def plot_3D_Data(
                 is_disp_title=is_disp_title,
                 annotations=annotations,
                 annotation_threshold=annotation_threshold,
+                marker_color=marker_color,
             )
         else:
             plot_3D(
@@ -550,6 +552,8 @@ def plot_3D_Data(
         if y_max is None:
             y_max = np_max(Ydata)
         if is_2D_view:
+            if type_plot is None:
+                type_plot = "pcolor"
             if is_shading_flat:
                 type_plot = "pcolormesh"
                 # 0.5 offset
