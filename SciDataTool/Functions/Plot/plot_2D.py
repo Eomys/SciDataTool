@@ -423,7 +423,8 @@ def plot_2D(
             )
 
     if not is_show_legend:
-        ax.get_legend().remove()
+        if ax.get_legend() is not None:
+            ax.get_legend().remove()
 
     # plt.tight_layout()
     for item in (

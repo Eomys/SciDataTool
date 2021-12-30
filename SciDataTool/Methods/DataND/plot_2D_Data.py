@@ -62,6 +62,7 @@ def plot_2D_Data(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
+    is_show_legend=True,
     is_outside_legend=False,
     is_frame_legend=True,
 ):
@@ -344,17 +345,6 @@ def plot_2D_Data(
     if title3 == "for " and title4 == "":
         title3 = ""
 
-    if title is None:
-        # Concatenate all title parts
-        title = title1 + title2 + title3 + title4
-
-        # Remove last coma due to title3 or title4
-        title = title.rstrip(", ")
-
-        # Remove dimless and quotes
-        title = title.replace("[]", "")
-        title = title.replace("'", "")
-
     # Detect how many curves are overlaid, build legend and color lists
     if legend_list == [] and data_list != []:
         legend_list = [d.name for d in data_list2]
@@ -426,6 +416,21 @@ def plot_2D_Data(
         for i in range(len(data_list2)):
             Xdata += [Xdatas[i] for x in range(n_curves)]
         Xdatas = Xdata
+
+    # Prepare title
+    if title is None:
+        # Concatenate all title parts
+        if is_overlay:
+            title = title1 + title2 + title4
+        else:
+            title = title1 + title2 + title3 + title4
+
+        # Remove last coma due to title3 or title4
+        title = title.rstrip(", ")
+
+        # Remove dimless and quotes
+        title = title.replace("[]", "")
+        title = title.replace("'", "")
 
     # Overall computation
     if overall_axes != []:
@@ -578,6 +583,7 @@ def plot_2D_Data(
             font_size_title=font_size_title,
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
+            is_show_legend=is_show_legend,
             is_outside_legend=is_outside_legend,
             is_frame_legend=is_frame_legend,
         )
@@ -619,7 +625,7 @@ def plot_2D_Data(
             font_size_title=font_size_title,
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
-            is_show_legend=True,
+            is_show_legend=is_show_legend,
             is_outside_legend=is_outside_legend,
             is_frame_legend=is_frame_legend,
         )

@@ -38,6 +38,7 @@ PARAM_3D = [
     "colormap",
     "y_min",
     "y_max",
+    "annotation_delim",
 ]
 
 PARAM_2D = [
@@ -45,6 +46,7 @@ PARAM_2D = [
     "data_list",
     "legend_list",
     "fund_harm_dict",
+    "is_show_legend",
 ]
 
 
