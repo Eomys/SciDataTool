@@ -132,7 +132,7 @@ def plot_3D_Data(
             ref = self.normalizations["ref"].ref
         else:
             ref = 1
-        unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
+        unit_str = r"[" + unit + " re. " + str(ref) + " $" + self.unit + "$]"
     else:
         unit_str = r"$[" + unit + "]$"
 
@@ -145,7 +145,6 @@ def plot_3D_Data(
                 zlabel = "Magnitude " + unit_str
             else:
                 zlabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
-        title1 = "FFT2 of " + self.name.lower() + " "
     else:
         if zlabel is None:
             if is_norm:
@@ -157,7 +156,6 @@ def plot_3D_Data(
                     zlabel = "Magnitude " + unit_str
                 else:
                     zlabel = r"$" + self.symbol + "$ " + unit_str
-        title1 = "Surface plot of " + self.name.lower() + " "
 
     # Extract field and axes
     if is_fft:
@@ -222,12 +220,12 @@ def plot_3D_Data(
             z_min = z_max - z_range
 
     # Build labels and titles
+    title1 = self.name.capitalize() + " "
     axis = axes_list[0]
     if axis.name in axes_dict:
         name = axes_dict[axis.name]
     else:
         name = axis.name
-    # title2 = "over " + name.lower()
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
         if xlabel is None:
@@ -266,7 +264,6 @@ def plot_3D_Data(
         name = axes_dict[axis.name]
     else:
         name = axis.name
-    # title3 = " and " + axis.name.lower()
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
         if ylabel is None:
@@ -321,7 +318,7 @@ def plot_3D_Data(
                 is_shading_flat = True
                 flat_indices.append(axis.index)
 
-    title4 = "for "
+    title2 = "for "
     for axis in axes_list[2:]:
         is_display = True
         if axis.is_pattern and len(axis.values) == 1:
@@ -350,9 +347,9 @@ def plot_3D_Data(
                     + "], "
                 )
 
-            title4 += axis.name + "=" + axis_str
+            title2 += axis.name + "=" + axis_str
 
-    title5 = ""
+    title3 = ""
     for axis_name in axes_dict_other:
         is_display = True
         for axis in self.axes:
@@ -373,13 +370,13 @@ def plot_3D_Data(
                     + "], "
                 )
 
-            title5 += axis_name + "=" + axis_str
+            title3 += axis_name + "=" + axis_str
 
-    if title4 == "for " and title5 == "":
-        title4 = ""
+    if title2 == "for " and title3 == "":
+        title2 = ""
 
     if title is None:
-        title = title1 + title4 + title5
+        title = title1 + title2 + title3
         title = title.rstrip(", ")
 
     if is_fft:
