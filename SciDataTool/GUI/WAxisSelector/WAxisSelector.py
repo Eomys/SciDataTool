@@ -319,6 +319,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.set_name(axis_name)
         self.set_axis_options(axes_list)
+        self.update_axis()
         self.c_action.setCurrentIndex(0)
         self.set_unit()
 

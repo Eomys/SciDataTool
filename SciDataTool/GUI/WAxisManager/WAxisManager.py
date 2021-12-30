@@ -188,11 +188,17 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
 
         """
-        if axis_changed == "axis 1":
+        if axis_changed == "axis 1" and "FFT" in [
+            self.w_axis_1.c_action.itemText(i)
+            for i in range(self.w_axis_1.c_action.count())
+        ]:
             action_selected = self.w_axis_1.get_current_action_name()
             self.w_axis_2.set_action(action_selected)
             self.gen_slice_op()
-        elif axis_changed == "axis 2":
+        elif axis_changed == "axis 2" and "FFT" in [
+            self.w_axis_2.c_action.itemText(i)
+            for i in range(self.w_axis_2.c_action.count())
+        ]:
             action_selected = self.w_axis_2.get_current_action_name()
             self.w_axis_1.set_action(action_selected)
             self.gen_slice_op()
