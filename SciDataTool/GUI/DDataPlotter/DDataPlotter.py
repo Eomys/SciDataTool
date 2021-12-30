@@ -39,6 +39,7 @@ PARAM_3D = [
     "y_min",
     "y_max",
     "annotation_delim",
+    "marker_color",
 ]
 
 PARAM_2D = [
@@ -307,7 +308,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 ind = event.ind
                 X = plot_obj.get_offsets().data[ind][0][0]
                 Y = plot_obj.get_offsets().data[ind][0][1]
-                Z = plot_obj.get_array().data[ind][0]
+                if plot_obj.get_array() is not None:
+                    Z = plot_obj.get_array().data[ind][0]
             elif isinstance(plot_obj, Rectangle):
                 X = plot_obj.get_x() + plot_obj.get_width() / 2
                 Y = plot_obj.get_height()
