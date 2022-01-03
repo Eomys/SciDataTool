@@ -142,7 +142,7 @@ def plot_2D_Data(
             liste[i] = arg.replace("wavenumber", "wavenumber>0")
             arg_list = tuple(liste)
 
-    if color_list == []:
+    if color_list == [] or color_list is None:
         color_list = COLORS
 
     new_color_list = color_list.copy()
