@@ -201,6 +201,7 @@ def plot_4D(
             l.set_family(font_name)
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
         if xticklabels is not None:
             ax.set_xticklabels(xticklabels, rotation=90)
         if yticks is not None:
@@ -229,6 +230,7 @@ def plot_4D(
         )
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
         if xticklabels is not None:
             ax.set_xticklabels(xticklabels, rotation=90)
         if yticks is not None:
