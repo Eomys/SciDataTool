@@ -36,7 +36,7 @@ def plot_3D_Data(
     is_auto_range=True,
     is_2D_view=True,
     is_contour=False,
-    is_same_size=False,
+    is_same_size=True,
     N_stem=100,
     fig=None,
     ax=None,
@@ -176,8 +176,9 @@ def plot_3D_Data(
     else:
         result = self.get_along(arg_list, unit=unit, is_norm=is_norm)
 
-    if type_plot == "scatter":
+    if type_plot == "scatter" and not is_fft:
         is_fft = True
+        is_same_size = False
     axes_list = result["axes_list"]
     axes_dict_other = result["axes_dict_other"]
     if axes_list[0].is_components:
