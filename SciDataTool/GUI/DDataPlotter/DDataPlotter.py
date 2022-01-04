@@ -428,10 +428,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             output_range,
         ] = self.w_plot_manager.get_plot_info()
 
-        print(axes_selected)
-        print(data_selection)
-        print(output_range)
-
         # Checking if the axes are following the order inside the data object
         axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
         axes_name = [ax.name for ax in self.data.get_axes()]
