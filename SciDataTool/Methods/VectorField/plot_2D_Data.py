@@ -49,6 +49,7 @@ def plot_2D_Data(
     scale=None,
     width=0.005,
     phase=0,
+    is_show_legend=True,
     is_outside_legend=False,
     is_frame_legend=True,
 ):
@@ -204,7 +205,7 @@ def plot_2D_Data(
             font_size_title=font_size_title,
             font_size_label=font_size_label,
             font_size_legend=font_size_legend,
-            is_show_legend=True,
+            is_show_legend=is_show_legend,
             is_grid=False,
             scale_units=scale_units,
             scale=scale,
@@ -259,6 +260,7 @@ def plot_2D_Data(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
+                is_show_legend=is_show_legend,
                 is_outside_legend=is_outside_legend,
                 is_frame_legend=is_frame_legend,
             )

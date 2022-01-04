@@ -9,6 +9,7 @@ components,,Dict of the components,,{SciDataTool.Classes.DataND},-1,,,,,,get_axe
 ,,,,,,,,,,,get_rphiz_along,,,,
 ,,,,,,,,,,,get_xyz_along,,,,
 ,,,,,,,,,,,get_vectorfield_along,,,,
+,,,,,,,,,,,plot,,,,
 ,,,,,,,,,,,plot_2D_Data,,,,
 ,,,,,,,,,,,plot_2D_Data_Animated,,,,
 ,,,,,,,,,,,plot_3D_Data,,,,

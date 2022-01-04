@@ -219,7 +219,7 @@ def comp_fftn(values, axes_list, is_real=True):
     is_non_uniform = False
     for axis in axes_list:
         if axis.transform == "fft":
-            if axis.corr_values is not None:  # Timesteps
+            if axis.corr_values is not None and len(axis.corr_values) > 1:  # Timesteps
                 if not is_uniform(axis.corr_values):
                     is_non_uniform = True
                     axes_dict_non_uniform[axis.index] = [
@@ -350,7 +350,7 @@ def comp_ifftn(values, axes_list, is_real=True):
 
     for axis in axes_list:
         if axis.transform == "ifft":
-            if axis.input_data is not None:
+            if axis.input_data is not None and len(axis.input_data) > 1:
                 if not is_uniform(axis.input_data):
                     # Data is at least non uniform in "space"
                     axes_dict_non_uniform[axis.index] = [
@@ -365,35 +365,36 @@ def comp_ifftn(values, axes_list, is_real=True):
                     freqs = comp_fft_freqs(
                         axis.input_data, axis.name == "time", is_real
                     )
-                    if (
-                        not is_uniform(axis.corr_values)
-                        or (
-                            len(freqs) != len(axis.corr_values)
-                            and not isin(freqs, axis.corr_values).all()
-                        )
-                        or len(freqs) == len(axis.corr_values)
-                        and not allclose(
-                            freqs,
-                            axis.corr_values,
-                            rtol=1e-5,
-                            atol=1e-8,
-                            equal_nan=False,
-                        )
-                    ):
-                        # Data is at least non uniform in "frequency"
-                        # Convert wavenumbers to frequencies if needed
-                        frequencies = (
-                            axis.corr_values
-                            if axis.name == "time"
-                            else axis.corr_values / (2 * pi)
-                        )
-                        axes_dict_non_uniform[axis.index] = [
-                            axis.input_data,
-                            frequencies,
-                        ]
-                        # Keep only interpolation data
-                        axis.values = axis.input_data
-                        axis.input_data = None
+                    if len(axis.corr_values) > 1:
+                        if (
+                            not is_uniform(axis.corr_values)
+                            or (
+                                len(freqs) != len(axis.corr_values)
+                                and not isin(freqs, axis.corr_values).all()
+                            )
+                            or len(freqs) == len(axis.corr_values)
+                            and not allclose(
+                                freqs,
+                                axis.corr_values,
+                                rtol=1e-5,
+                                atol=1e-8,
+                                equal_nan=False,
+                            )
+                        ):
+                            # Data is at least non uniform in "frequency"
+                            # Convert wavenumbers to frequencies if needed
+                            frequencies = (
+                                axis.corr_values
+                                if axis.name == "time"
+                                else axis.corr_values / (2 * pi)
+                            )
+                            axes_dict_non_uniform[axis.index] = [
+                                axis.input_data,
+                                frequencies,
+                            ]
+                            # Keep only interpolation data
+                            axis.values = axis.input_data
+                            axis.input_data = None
 
     # Compute non uniform inverse Fourier Transform for axes
     if axes_dict_non_uniform:

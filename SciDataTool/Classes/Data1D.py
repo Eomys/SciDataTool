@@ -125,6 +125,7 @@ class Data1D(Data):
         values=None,
         is_components=False,
         symmetries=-1,
+        is_overlay=False,
         symbol="",
         name="",
         unit="",
@@ -153,6 +154,8 @@ class Data1D(Data):
                 is_components = init_dict["is_components"]
             if "symmetries" in list(init_dict.keys()):
                 symmetries = init_dict["symmetries"]
+            if "is_overlay" in list(init_dict.keys()):
+                is_overlay = init_dict["is_overlay"]
             if "symbol" in list(init_dict.keys()):
                 symbol = init_dict["symbol"]
             if "name" in list(init_dict.keys()):
@@ -165,6 +168,7 @@ class Data1D(Data):
         self.values = values
         self.is_components = is_components
         self.symmetries = symmetries
+        self.is_overlay = is_overlay
         # Call Data init
         super(Data1D, self).__init__(
             symbol=symbol, name=name, unit=unit, normalizations=normalizations
@@ -187,6 +191,7 @@ class Data1D(Data):
         )
         Data1D_str += "is_components = " + str(self.is_components) + linesep
         Data1D_str += "symmetries = " + str(self.symmetries) + linesep
+        Data1D_str += "is_overlay = " + str(self.is_overlay) + linesep
         return Data1D_str
 
     def __eq__(self, other):
@@ -203,6 +208,8 @@ class Data1D(Data):
         if other.is_components != self.is_components:
             return False
         if other.symmetries != self.symmetries:
+            return False
+        if other.is_overlay != self.is_overlay:
             return False
         return True
 
@@ -223,6 +230,8 @@ class Data1D(Data):
             diff_list.append(name + ".is_components")
         if other._symmetries != self._symmetries:
             diff_list.append(name + ".symmetries")
+        if other._is_overlay != self._is_overlay:
+            diff_list.append(name + ".is_overlay")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -239,6 +248,7 @@ class Data1D(Data):
         if self.symmetries is not None:
             for key, value in self.symmetries.items():
                 S += getsizeof(value) + getsizeof(key)
+        S += getsizeof(self.is_overlay)
         return S
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
@@ -275,6 +285,7 @@ class Data1D(Data):
         Data1D_dict["symmetries"] = (
             self.symmetries.copy() if self.symmetries is not None else None
         )
+        Data1D_dict["is_overlay"] = self.is_overlay
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         Data1D_dict["__class__"] = "Data1D"
@@ -286,6 +297,7 @@ class Data1D(Data):
         self.values = None
         self.is_components = None
         self.symmetries = None
+        self.is_overlay = None
         # Set to None the properties inherited from Data
         super(Data1D, self)._set_None()
 
@@ -326,7 +338,7 @@ class Data1D(Data):
     is_components = property(
         fget=_get_is_components,
         fset=_set_is_components,
-        doc=u"""Boolean indicating if the axis values are strings: True if strings
+        doc=u"""True if the axis values are strings
 
         :Type: bool
         """,
@@ -349,5 +361,23 @@ class Data1D(Data):
         doc=u"""Dictionary of the symmetries along each axis, used to reduce storage
 
         :Type: dict
+        """,
+    )
+
+    def _get_is_overlay(self):
+        """getter of is_overlay"""
+        return self._is_overlay
+
+    def _set_is_overlay(self, value):
+        """setter of is_overlay"""
+        check_var("is_overlay", value, "bool")
+        self._is_overlay = value
+
+    is_overlay = property(
+        fget=_get_is_overlay,
+        fset=_set_is_overlay,
+        doc=u"""True if axis must be used to overlay curves in plots
+
+        :Type: bool
         """,
     )

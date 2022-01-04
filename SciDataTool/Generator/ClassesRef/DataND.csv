@@ -22,6 +22,7 @@ is_real,,To indicate if the signal is real (use only positive frequencies),,bool
 ,,,,,,,,,,,get_phase_along,,,,
 ,,,,,,,,,,,has_period,,,,
 ,,,,,,,,,,,orthogonal_mp,,,,
+,,,,,,,,,,,plot,,,,
 ,,,,,,,,,,,plot_2D_Data,,,,
 ,,,,,,,,,,,plot_2D_Data_Animated,,,,
 ,,,,,,,,,,,plot_3D_Data,,,,

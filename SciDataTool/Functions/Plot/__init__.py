@@ -1,6 +1,6 @@
 unit_dict = {
     "time": "s",
-    "angle": "rad",
+    "angle": "°",
     "freqs": "Hz",
     "wavenumber": "",
     "phase": "",
@@ -15,6 +15,22 @@ unit_dict = {
     "cr_band": "Bark",
     "speed": "rpm",
     "modes": "",
+}
+
+axis_norm_dict = {
+    "time": ["angle_rotor"],
+    "angle": ["tooth_id", "distance"],
+    "freqs": ["elec_order", "mech_order"],
+    "wavenumber": ["space_order"],
+}
+
+norm_name_dict = {
+    "elec_order": "Electrical order",
+    "mech_order": "Mechanical order",
+    "space_order": "Space order",
+    "distance": "Distance",
+    "angle_rotor": "Rotor mechanical angle",
+    "tooth_id": "Stator tooth number",
 }
 
 norm_dict = {

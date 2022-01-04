@@ -16,6 +16,7 @@ def get_values(
     operation=None,
     is_real=True,
     corr_unit=None,
+    is_full=False,
 ):
     """Returns the vector 'axis' taking symmetries into account.
     Parameters
@@ -91,6 +92,13 @@ def get_values(
         module = import_module("SciDataTool.Functions.conversions")
         func = getattr(module, operation)  # Conversion function
         values = array(func(values, is_real=is_real))
+        if is_full and (self.name == "freqs" or self.name == "wavenumber"):
+            if "period" in self.symmetries:
+                if self.name != "time":
+                    values = values * self.symmetries["period"]
+            elif "antiperiod" in self.symmetries:
+                if self.name != "time":
+                    values = values * self.symmetries["antiperiod"] / 2
 
     # Normalization
     if normalization is not None:

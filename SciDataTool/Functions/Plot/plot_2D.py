@@ -193,6 +193,7 @@ def plot_2D(
             )
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
         if xticklabels is not None:
             ax.set_xticklabels(xticklabels, rotation=90)
     elif type_plot == "bargraph":
@@ -423,7 +424,8 @@ def plot_2D(
             )
 
     if not is_show_legend:
-        ax.get_legend().remove()
+        if ax.get_legend() is not None:
+            ax.get_legend().remove()
 
     # plt.tight_layout()
     for item in (

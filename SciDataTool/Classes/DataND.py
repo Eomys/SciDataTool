@@ -131,6 +131,11 @@ except ImportError as error:
     orthogonal_mp = error
 
 try:
+    from ..Methods.DataND.plot import plot
+except ImportError as error:
+    plot = error
+
+try:
     from ..Methods.DataND.plot_2D_Data import plot_2D_Data
 except ImportError as error:
     plot_2D_Data = error
@@ -401,6 +406,15 @@ class DataND(Data):
         )
     else:
         orthogonal_mp = orthogonal_mp
+    # cf Methods.DataND.plot
+    if isinstance(plot, ImportError):
+        plot = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataND method plot: " + str(plot))
+            )
+        )
+    else:
+        plot = plot
     # cf Methods.DataND.plot_2D_Data
     if isinstance(plot_2D_Data, ImportError):
         plot_2D_Data = property(

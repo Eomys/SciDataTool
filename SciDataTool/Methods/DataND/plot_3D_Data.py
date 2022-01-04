@@ -1,3 +1,4 @@
+from numpy.core.numeric import zeros_like
 from SciDataTool.Functions.Plot.plot_4D import plot_4D
 from SciDataTool.Functions.Plot.plot_3D import plot_3D
 from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
@@ -13,6 +14,7 @@ from numpy import (
     array2string,
     linspace,
     log10,
+    array,
 )
 
 
@@ -34,7 +36,7 @@ def plot_3D_Data(
     is_auto_range=True,
     is_2D_view=True,
     is_contour=False,
-    is_same_size=False,
+    is_same_size=True,
     N_stem=100,
     fig=None,
     ax=None,
@@ -55,6 +57,9 @@ def plot_3D_Data(
     zlabel=None,
     title=None,
     is_disp_title=True,
+    type_plot=None,
+    annotation_delim=None,
+    marker_color="k",
 ):
     """Plots a field as a function of two axes
 
@@ -128,7 +133,7 @@ def plot_3D_Data(
             ref = self.normalizations["ref"].ref
         else:
             ref = 1
-        unit_str = r"[" + unit + " re. " + str(ref) + "$" + self.unit + "$]"
+        unit_str = r"[" + unit + " re. " + str(ref) + " $" + self.unit + "$]"
     else:
         unit_str = r"$[" + unit + "]$"
 
@@ -141,7 +146,6 @@ def plot_3D_Data(
                 zlabel = "Magnitude " + unit_str
             else:
                 zlabel = r"$|\widehat{" + self.symbol + "}|$ " + unit_str
-        title1 = "FFT2 of " + self.name.lower() + " "
     else:
         if zlabel is None:
             if is_norm:
@@ -153,7 +157,6 @@ def plot_3D_Data(
                     zlabel = "Magnitude " + unit_str
                 else:
                     zlabel = r"$" + self.symbol + "$ " + unit_str
-        title1 = "Surface plot of " + self.name.lower() + " "
 
     # Extract field and axes
     if is_fft:
@@ -172,6 +175,10 @@ def plot_3D_Data(
             )
     else:
         result = self.get_along(arg_list, unit=unit, is_norm=is_norm)
+
+    if type_plot == "scatter" and not is_fft:
+        is_fft = True
+        is_same_size = False
     axes_list = result["axes_list"]
     axes_dict_other = result["axes_dict_other"]
     if axes_list[0].is_components:
@@ -203,7 +210,10 @@ def plot_3D_Data(
         Z_flat = Zdata.flatten()
     if z_range is None:
         if z_min is None:
-            z_min = np_min(Zdata)
+            if is_fft:
+                z_min = 0
+            else:
+                z_min = np_min(Zdata)
         if z_max is None:
             z_max = np_max(Zdata)
     else:
@@ -215,12 +225,12 @@ def plot_3D_Data(
             z_min = z_max - z_range
 
     # Build labels and titles
+    title1 = self.name.capitalize() + " "
     axis = axes_list[0]
     if axis.name in axes_dict:
         name = axes_dict[axis.name]
     else:
         name = axis.name
-    # title2 = "over " + name.lower()
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
         if xlabel is None:
@@ -243,15 +253,22 @@ def plot_3D_Data(
     if axis.is_components and axis.extension != "list":
         xticklabels = result[axis.name]
         xticks = Xdata
+        if annotation_delim is not None and annotation_delim in xticklabels[0]:
+            annotations_x = array(
+                [label.split(annotation_delim)[1] for label in xticklabels]
+            )
+            xticklabels = array(
+                [label.split(annotation_delim)[0] for label in xticklabels]
+            )
     else:
         xticklabels = None
+        annotations_x = zeros_like(Xdata)
 
     axis = axes_list[1]
     if axis.name in axes_dict:
         name = axes_dict[axis.name]
     else:
         name = axis.name
-    # title3 = " and " + axis.name.lower()
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
         if ylabel is None:
@@ -274,13 +291,28 @@ def plot_3D_Data(
     if axis.is_components and axis.extension != "list":
         yticklabels = result[axis.name]
         yticks = Ydata
+        if annotation_delim is not None and annotation_delim in yticklabels[0]:
+            annotations_y = array(
+                [label.split(annotation_delim)[1] for label in yticklabels]
+            )
+            yticklabels = array(
+                [label.split(annotation_delim)[0] for label in yticklabels]
+            )
+        else:
+            annotations_y = zeros_like(Ydata)
     else:
         yticklabels = None
+        annotations_y = zeros_like(Ydata)
+
+    if is_fft and is_2D_view and annotation_delim is not None:
+        _, annotations = meshgrid(annotations_y, annotations_x)
+        annotations = annotations.flatten()
+    else:
+        annotations = None
 
     # Detect discontinuous axis (Norm_indices) to use flat shading
     is_shading_flat = False
     flat_indices = []
-    type_plot = "pcolor"
     for axis in axes_list:
         if axis.unit in self.axes[axis.index].normalizations:
             if isinstance(
@@ -289,7 +321,7 @@ def plot_3D_Data(
                 is_shading_flat = True
                 flat_indices.append(axis.index)
 
-    title4 = "for "
+    title2 = "for "
     for axis in axes_list[2:]:
         is_display = True
         if axis.is_pattern and len(axis.values) == 1:
@@ -318,9 +350,9 @@ def plot_3D_Data(
                     + "], "
                 )
 
-            title4 += axis.name + "=" + axis_str
+            title2 += axis.name + "=" + axis_str
 
-    title5 = ""
+    title3 = ""
     for axis_name in axes_dict_other:
         is_display = True
         for axis in self.axes:
@@ -341,13 +373,13 @@ def plot_3D_Data(
                     + "], "
                 )
 
-            title5 += axis_name + "=" + axis_str
+            title3 += axis_name + "=" + axis_str
 
-    if title4 == "for " and title5 == "":
-        title4 = ""
+    if title2 == "for " and title3 == "":
+        title2 = ""
 
     if title is None:
-        title = title1 + title4 + title5
+        title = title1 + title2 + title3
         title = title.rstrip(", ")
 
     if is_fft:
@@ -359,45 +391,58 @@ def plot_3D_Data(
                 thresh = 0.02
 
         if "dB" in unit:
-            indices_x = np_any(
-                where(Zdata > 10 * log10(thresh) + abs(np_max(Zdata)), True, False),
-                axis=1,
-            )
-            indices_y = np_any(
-                where(Zdata > 10 * log10(thresh) + abs(np_max(Zdata)), True, False),
-                axis=0,
-            )
+            threshold = max(10 * log10(thresh) + abs(np_max(Zdata)), 0)
         else:
-            indices_x = np_any(
-                where(Zdata > abs(thresh * np_max(Zdata)), True, False), axis=1
-            )
-            indices_y = np_any(
-                where(Zdata > abs(thresh * np_max(Zdata)), True, False), axis=0
-            )
+            threshold = abs(thresh * np_max(Zdata))
+        indices_x = np_any(where(Zdata > threshold, True, False), axis=1)
+        indices_y = np_any(where(Zdata > threshold, True, False), axis=0)
 
         xticks = Xdata[indices_x]
+        annotation_threshold = None
+        if xticklabels is not None:
+            xticklabels = xticklabels[indices_x]
         yticks = Ydata[indices_y]
+        if yticklabels is not None:
+            yticklabels = yticklabels[indices_y]
+        if annotations is not None:
+            annotation_threshold = threshold
         if is_auto_range:
             if len(xticks) > 1:
                 if x_min is None:
                     x_min = xticks[0]
+                else:
+                    x_min = max(x_min, xticks[0])
                 if x_max is None:
                     x_max = xticks[-1]
+                else:
+                    x_max = min(x_max, xticks[-1])
             else:
                 if x_min is None:
                     x_min = np_min(Xdata)
+                else:
+                    x_min = max(x_min, np_min(Xdata))
                 if x_max is None:
                     x_max = np_max(Xdata)
+                else:
+                    x_max = min(x_max, np_max(Xdata))
             if len(yticks) > 1:
                 if y_min is None:
-                    y_min = yticks[0]
+                    y_min = max(yticks[0], -100)
+                else:
+                    y_min = max(y_min, yticks[0])
                 if y_max is None:
-                    y_max = yticks[-1]
+                    y_max = min(yticks[-1], 100)
+                else:
+                    y_max = min(y_max, yticks[-1])
             else:
                 if y_min is None:
-                    y_min = np_min(Ydata)
+                    y_min = max(np_min(Ydata), -100)
+                else:
+                    y_min = max(y_min, np_min(Ydata))
                 if y_max is None:
-                    y_max = np_max(Ydata)
+                    y_max = min(np_max(Ydata), 100)
+                else:
+                    y_max = min(y_max, np_max(Ydata))
         else:
             if x_min is None:
                 x_min = np_min(Xdata)
@@ -413,10 +458,17 @@ def plot_3D_Data(
         y_min = y_min - y_max * 0.2
         y_max = y_max * 1.2
 
+        if len(xticks) == 0 or (len(xticks) > 20 and not axes_list[0].is_components):
+            xticks = None
+        if len(yticks) == 0 or (len(yticks) > 20 and not axes_list[1].is_components):
+            yticks = None
+
         if not is_auto_ticks:
             xticks = None
             yticks = None
         if is_2D_view:
+            if type_plot is None:
+                type_plot = "scatter"
             plot_4D(
                 X_flat,
                 Y_flat,
@@ -439,7 +491,7 @@ def plot_3D_Data(
                 zlabel=zlabel,
                 fig=fig,
                 ax=ax,
-                type_plot="scatter",
+                type_plot=type_plot,
                 save_path=save_path,
                 is_show_fig=is_show_fig,
                 is_logscale_x=is_logscale_x,
@@ -454,6 +506,9 @@ def plot_3D_Data(
                 font_size_legend=font_size_legend,
                 is_grid=True,
                 is_disp_title=is_disp_title,
+                annotations=annotations,
+                annotation_threshold=annotation_threshold,
+                marker_color=marker_color,
             )
         else:
             plot_3D(
@@ -501,6 +556,8 @@ def plot_3D_Data(
         if y_max is None:
             y_max = np_max(Ydata)
         if is_2D_view:
+            if type_plot is None:
+                type_plot = "pcolor"
             if is_shading_flat:
                 type_plot = "pcolormesh"
                 # 0.5 offset

@@ -88,6 +88,7 @@ class DataPattern(Data):
         is_components=False,
         symmetries=-1,
         values_whole=None,
+        is_overlay=False,
         symbol="",
         name="",
         unit="",
@@ -124,6 +125,8 @@ class DataPattern(Data):
                 symmetries = init_dict["symmetries"]
             if "values_whole" in list(init_dict.keys()):
                 values_whole = init_dict["values_whole"]
+            if "is_overlay" in list(init_dict.keys()):
+                is_overlay = init_dict["is_overlay"]
             if "symbol" in list(init_dict.keys()):
                 symbol = init_dict["symbol"]
             if "name" in list(init_dict.keys()):
@@ -140,6 +143,7 @@ class DataPattern(Data):
         self.is_components = is_components
         self.symmetries = symmetries
         self.values_whole = values_whole
+        self.is_overlay = is_overlay
         # Call Data init
         super(DataPattern, self).__init__(
             symbol=symbol, name=name, unit=unit, normalizations=normalizations
@@ -182,6 +186,7 @@ class DataPattern(Data):
             + linesep
             + linesep
         )
+        DataPattern_str += "is_overlay = " + str(self.is_overlay) + linesep
         return DataPattern_str
 
     def __eq__(self, other):
@@ -206,6 +211,8 @@ class DataPattern(Data):
         if other.symmetries != self.symmetries:
             return False
         if not array_equal(other.values_whole, self.values_whole):
+            return False
+        if other.is_overlay != self.is_overlay:
             return False
         return True
 
@@ -234,6 +241,8 @@ class DataPattern(Data):
             diff_list.append(name + ".symmetries")
         if not array_equal(other.values_whole, self.values_whole):
             diff_list.append(name + ".values_whole")
+        if other._is_overlay != self._is_overlay:
+            diff_list.append(name + ".is_overlay")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -258,6 +267,7 @@ class DataPattern(Data):
             for key, value in self.symmetries.items():
                 S += getsizeof(value) + getsizeof(key)
         S += getsizeof(self.values_whole)
+        S += getsizeof(self.is_overlay)
         return S
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
@@ -314,6 +324,7 @@ class DataPattern(Data):
                 raise Exception(
                     "Unknown type_handle_ndarray: " + str(type_handle_ndarray)
                 )
+        DataPattern_dict["is_overlay"] = self.is_overlay
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         DataPattern_dict["__class__"] = "DataPattern"
@@ -329,6 +340,7 @@ class DataPattern(Data):
         self.is_components = None
         self.symmetries = None
         self.values_whole = None
+        self.is_overlay = None
         # Set to None the properties inherited from Data
         super(DataPattern, self)._set_None()
 
@@ -384,7 +396,7 @@ class DataPattern(Data):
     is_step = property(
         fget=_get_is_step,
         fset=_set_is_step,
-        doc=u"""To indicate if the axis is defined by step or continuously
+        doc=u"""True if the axis is defined by step
 
         :Type: bool
         """,
@@ -427,7 +439,7 @@ class DataPattern(Data):
     is_components = property(
         fget=_get_is_components,
         fset=_set_is_components,
-        doc=u"""Boolean indicating if the axis values are strings: True if strings
+        doc=u"""True if the axis values are strings
 
         :Type: bool
         """,
@@ -475,5 +487,23 @@ class DataPattern(Data):
         doc=u"""Complete axis
 
         :Type: ndarray
+        """,
+    )
+
+    def _get_is_overlay(self):
+        """getter of is_overlay"""
+        return self._is_overlay
+
+    def _set_is_overlay(self, value):
+        """setter of is_overlay"""
+        check_var("is_overlay", value, "bool")
+        self._is_overlay = value
+
+    is_overlay = property(
+        fget=_get_is_overlay,
+        fset=_set_is_overlay,
+        doc=u"""True if axis must be used to overlay curves in plots
+
+        :Type: bool
         """,
     )

@@ -1,8 +1,9 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
 rebuild_indices,,Indices to rebuild complete axis,,list,None,,,,,Data,get_length,VERSION,1,Class for axes defined as vectors,
 unique_indices,,Indices which were taken from complete axis,,list,None,,,,,,get_values,,,,
-is_step,,To indicate if the axis is defined by step or continuously,,bool,True,,,,,,has_period,,,,
+is_step,,True if the axis is defined by step,,bool,True,,,,,,has_period,,,,
 values,,List or ndarray of the axis values,,ndarray,None,,,,,,,,,,
-is_components,,Boolean indicating if the axis values are strings: True if strings,,bool,False,,,,,,,,,,
+is_components,,True if the axis values are strings,,bool,False,,,,,,,,,,
 symmetries,,"Dictionary of the symmetries along each axis, used to reduce storage",,dict,{},,,,,,,,,,
 values_whole,,Complete axis,,ndarray,None,,,,,,,,,,
+is_overlay,,True if axis must be used to overlay curves in plots,,bool,False,,,,,,,,,,

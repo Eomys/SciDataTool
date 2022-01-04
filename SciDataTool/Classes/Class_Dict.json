@@ -96,7 +96,7 @@
                 "value": null
             },
             {
-                "desc": "Boolean indicating if the axis values are strings: True if strings",
+                "desc": "True if the axis values are strings",
                 "max": "",
                 "min": "",
                 "name": "is_components",
@@ -112,6 +112,15 @@
                 "type": "dict",
                 "unit": "",
                 "value": {}
+            },
+            {
+                "desc": "True if axis must be used to overlay curves in plots",
+                "max": "",
+                "min": "",
+                "name": "is_overlay",
+                "type": "bool",
+                "unit": "",
+                "value": false
             }
         ]
     },
@@ -252,7 +261,7 @@
                 "value": null
             },
             {
-                "desc": "Boolean indicating if the endpoint must be included",
+                "desc": "True if the endpoint must be included",
                 "max": "",
                 "min": "",
                 "name": "include_endpoint",
@@ -261,7 +270,7 @@
                 "value": true
             },
             {
-                "desc": "Boolean indicating if the axis values are strings: True if strings",
+                "desc": "True if the axis values are strings",
                 "max": "",
                 "min": "",
                 "name": "is_components",
@@ -277,6 +286,15 @@
                 "type": "dict",
                 "unit": "",
                 "value": {}
+            },
+            {
+                "desc": "True if axis must be used to overlay curves in plots",
+                "max": "",
+                "min": "",
+                "name": "is_overlay",
+                "type": "bool",
+                "unit": "",
+                "value": false
             }
         ]
     },
@@ -318,6 +336,7 @@
             "get_phase_along",
             "has_period",
             "orthogonal_mp",
+            "plot",
             "plot_2D_Data",
             "plot_2D_Data_Animated",
             "plot_3D_Data"
@@ -404,7 +423,7 @@
                 "value": null
             },
             {
-                "desc": "To indicate if the axis is defined by step or continuously",
+                "desc": "True if the axis is defined by step",
                 "max": "",
                 "min": "",
                 "name": "is_step",
@@ -422,7 +441,7 @@
                 "value": null
             },
             {
-                "desc": "Boolean indicating if the axis values are strings: True if strings",
+                "desc": "True if the axis values are strings",
                 "max": "",
                 "min": "",
                 "name": "is_components",
@@ -447,6 +466,15 @@
                 "type": "ndarray",
                 "unit": "",
                 "value": null
+            },
+            {
+                "desc": "True if axis must be used to overlay curves in plots",
+                "max": "",
+                "min": "",
+                "name": "is_overlay",
+                "type": "bool",
+                "unit": "",
+                "value": false
             }
         ]
     },
@@ -841,6 +869,7 @@
             "get_rphiz_along",
             "get_xyz_along",
             "get_vectorfield_along",
+            "plot",
             "plot_2D_Data",
             "plot_2D_Data_Animated",
             "plot_3D_Data",
