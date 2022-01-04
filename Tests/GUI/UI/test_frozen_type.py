@@ -7,14 +7,14 @@ from numpy.random import random
 
 f_t_test_list = list()
 
-# f_t_test_list.append(
-#     {
-#         "axis": ["time", "angle"],
-#         "is_create_appli": False,
-#         "is_show_fig": False,
-#         "frozen_type": 1,
-#     }
-# )  # Testing plot which is soft frozen
+f_t_test_list.append(
+    {
+        "axis": ["time", "angle"],
+        "is_create_appli": False,
+        "is_show_fig": False,
+        "frozen_type": 1,
+    }
+)  # Testing plot which is soft frozen
 
 f_t_test_list.append(
     {
