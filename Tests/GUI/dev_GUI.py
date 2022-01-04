@@ -24,8 +24,9 @@ if __name__ == "__main__":
         values=field_3d,
     )
 
-    test = "plot"
-    # test = "autoplot"
+    # test = "plot"
+    test = "autoplot"
+    test = "plot_2axis"
     # test = "oneaxis"
     # test = "vect"
     # test = "is_overlay"
@@ -33,13 +34,34 @@ if __name__ == "__main__":
     if test == "plot":
         Field.plot()
 
+    elif test == "plot_2axis":
+        X = DataLinspace(name="time", unit="s", initial=0, final=10, number=11)
+        Y = DataLinspace(
+            name="angle", unit="rad", initial=0, final=2 * np.pi, number=21
+        )
+        y, x = np.meshgrid(Y.get_values(), X.get_values())
+        field = x + y
+        field_2d = np.zeros((11, 21))
+        for i in range(21):
+            field_2d[:, i] *= i + 1
+
+        Field = DataTime(
+            name="Airgap flux density",
+            symbol="B_r",
+            unit="T",
+            axes=[X, Y],
+            values=field_2d,
+        )
+
+        Field.plot("freqs", "angle[2]", unit="T", z_max=50)
+
     elif test == "autoplot":
-        Field.plot("angle{°}", "time", "z[2]", unit="T", z_max=50)
+        # Field.plot("angle{°}", "time", "z[2]", unit="T", z_max=50)
         # Field.plot("time", "angle", "z[2]", frozen_type=1)
         # Field.plot("angle{°}", "z")
         # Field.plot("time", "angle[0]", "z[2]", unit="T", z_max=10)
         # Field.plot("wavenumber", "freqs", "z[2]", unit="T", z_max=50)
-        # Field.plot("freqs", "wavenumber", "z=mean", unit="T", z_max=50)
+        Field.plot("freqs", "wavenumber", "z=mean", unit="T", z_max=50)
 
     elif test == "is_overlay":
         Z = DataLinspace(

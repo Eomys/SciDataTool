@@ -175,7 +175,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         z_max : float
             Minimum value for Z axis (or Y if only one axe)
         frozen_type : int
-            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them
+            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations
         """
         # Recovering the object that we want to show
         self.data = data

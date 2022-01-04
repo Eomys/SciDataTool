@@ -216,7 +216,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_request_list:
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         frozen_type : int
-            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them
+            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations
         """
         if is_keep_config:  # Only update slider
             for wid in self.w_slice_op:
@@ -225,7 +225,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         else:
             # Step 1 : If only one axis is given with the object, then we hide w_axis_2 and g_data_extract
-            # We also have to hide if we have all the axis but one have is_overlay = True
+            # We also have to hide if we have more than one axis but one have is_overlay = True
             if len(data.get_axes()) == 1 or (
                 len(data.get_axes())
                 - len([ax for ax in data.get_axes() if ax.is_overlay == True])
@@ -310,6 +310,23 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             # If we want to hard freeze the axis, we just have to disable the axis comboboxes
             self.w_axis_1.c_axis.setDisabled(True)
             self.w_axis_2.c_axis.setDisabled(True)
+
+        elif frozen_type == 3:
+            # Freezing the axes
+            self.w_axis_1.c_axis.setDisabled(True)
+            self.w_axis_1.c_action.setDisabled(True)
+            self.w_axis_2.c_axis.setDisabled(True)
+            self.w_axis_2.c_action.setDisabled(True)
+
+            # Freezing the operations
+            for w_slice in self.w_slice_op:
+                w_slice.b_action.setDisabled(True)
+                w_slice.c_operation.setDisabled(True)
+                w_slice.lf_value.setDisabled(True)
+                w_slice.slider.setDisabled(True)
+
+            if len(axes_list) == 1:
+                self.w_axis_2.hide()
 
         self.w_axis_1.blockSignals(False)
         self.w_axis_2.blockSignals(False)

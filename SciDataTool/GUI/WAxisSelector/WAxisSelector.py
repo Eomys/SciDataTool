@@ -119,6 +119,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the axis to remove from c_axis
 
         """
+        # if the axis to remove is wavenumber of freqs then we have to remove angle or time
+        if axis_to_remove in ifft_dict:
+            axis_to_remove = ifft_dict[axis_to_remove]
+
         if axis_to_remove in self.axes_list:
             axes_list = self.axes_list[:]  # Getting the axes available
             axes_list.remove(axis_to_remove)  # Removing the axis selected
@@ -135,8 +139,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
             update_cb_enable(self.c_axis)
             self.c_axis.blockSignals(False)
-
-            # self.update_axis()
 
     def set_axis(self, axis):
         """Method that will set the comboboxes to have the axis given as an input when calling the plot method (auto-plot).
