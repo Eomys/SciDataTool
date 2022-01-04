@@ -288,10 +288,18 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             if self.axis_selected in unit_dict:
                 self.c_unit.addItem(unit_dict[self.axis_selected])
             norms = self.norm_list[self.axes_list.index(self.axis_selected)]
+            norm_id = None
             if norms is not None:
                 for norm in norms:
                     if norm in axis_norm_dict[self.axis_selected]:
                         self.c_unit.addItem(norm_name_dict[norm])  # Add longer names
+                        if "_id" in norm:
+                            norm_id = norm_name_dict[norm]
+
+            # Use tooth index as only normalization
+            if norm_id is not None:
+                self.c_unit.clear()
+                self.c_unit.addItem(norm_id)
 
             # Modifying the size of the list according to the units available (adapting it when normalization)
             cb_width = 0

@@ -36,8 +36,6 @@ PARAM_3D = [
     "is_same_size",
     "N_stem",
     "colormap",
-    "y_min",
-    "y_max",
     "annotation_delim",
     "marker_color",
 ]
