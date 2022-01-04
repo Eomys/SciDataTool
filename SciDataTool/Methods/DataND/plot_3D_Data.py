@@ -210,7 +210,10 @@ def plot_3D_Data(
         Z_flat = Zdata.flatten()
     if z_range is None:
         if z_min is None:
-            z_min = np_min(Zdata)
+            if is_fft:
+                z_min = 0
+            else:
+                z_min = np_min(Zdata)
         if z_max is None:
             z_max = np_max(Zdata)
     else:
