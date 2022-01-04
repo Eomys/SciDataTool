@@ -177,6 +177,7 @@ def plot_3D(
         ax.zaxis.labelpad = 5
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
         if xticklabels is not None:
@@ -204,6 +205,7 @@ def plot_3D(
         ax.zaxis.labelpad = 5
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
         if xticklabels is not None:
@@ -248,6 +250,7 @@ def plot_3D(
             l.set_family(font_name)
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
         if xticklabels is not None:
@@ -279,6 +282,7 @@ def plot_3D(
             l.set_family(font_name)
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
         if xticklabels is not None:
@@ -307,6 +311,7 @@ def plot_3D(
             l.set_family(font_name)
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
         if yticks is not None:
             ax.yaxis.set_ticks(yticks)
         if xticklabels is not None:

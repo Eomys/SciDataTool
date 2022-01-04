@@ -519,7 +519,7 @@ def plot_2D_Data(
 
         if (
             len(xticks) == 0
-            or (len(xticks) > 10 and not axes_list[0].is_components)
+            or (len(xticks) > 20 and not axes_list[0].is_components)
             or not is_auto_range
         ):
             xticks = None
