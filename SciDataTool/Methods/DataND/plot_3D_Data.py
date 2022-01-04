@@ -427,20 +427,20 @@ def plot_3D_Data(
                     x_max = min(x_max, np_max(Xdata))
             if len(yticks) > 1:
                 if y_min is None:
-                    y_min = yticks[0]
+                    y_min = max(yticks[0], -100)
                 else:
                     y_min = max(y_min, yticks[0])
                 if y_max is None:
-                    y_max = yticks[-1]
+                    y_max = min(yticks[-1], 100)
                 else:
                     y_max = min(y_max, yticks[-1])
             else:
                 if y_min is None:
-                    y_min = np_min(Ydata)
+                    y_min = max(np_min(Ydata), -100)
                 else:
                     y_min = max(y_min, np_min(Ydata))
                 if y_max is None:
-                    y_max = np_max(Ydata)
+                    y_max = min(np_max(Ydata), 100)
                 else:
                     y_max = min(y_max, np_max(Ydata))
         else:
