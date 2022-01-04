@@ -458,9 +458,9 @@ def plot_3D_Data(
         y_min = y_min - y_max * 0.2
         y_max = y_max * 1.2
 
-        if len(xticks) == 0:
+        if len(xticks) == 0 or len(xticks) > 10:
             xticks = None
-        if len(yticks) == 0:
+        if len(yticks) == 0 or len(yticks) > 10:
             yticks = None
 
         if not is_auto_ticks:

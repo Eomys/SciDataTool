@@ -517,10 +517,7 @@ def plot_2D_Data(
         x_min = x_min - x_max * 0.05
         x_max = x_max * 1.05
 
-        if len(xticks) == 0:
-            xticks = None
-
-        if not is_auto_ticks:
+        if len(xticks) == 0 or len(xticks) > 10 or not is_auto_range:
             xticks = None
 
         # Force bargraph for fft if type_graph not specified
