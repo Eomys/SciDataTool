@@ -498,7 +498,14 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         self.w_plot_manager.w_range.set_min_max()
 
-    def set_info(self, data, unit=None, axes_request_list=None, plot_arg_dict=None):
+    def set_info(
+        self,
+        data,
+        unit=None,
+        axes_request_list=None,
+        plot_arg_dict=None,
+        is_keep_config=False,
+    ):
         """Method to set the DDataPlotter with information given
         self : DDataPlotter
             a DDataPlotter object
@@ -516,4 +523,5 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             data=data,
             unit=unit,
             axes_request_list=axes_request_list,
+            is_keep_config=is_keep_config,
         )

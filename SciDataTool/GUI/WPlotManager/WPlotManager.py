@@ -153,6 +153,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         z_min=None,
         z_max=None,
         frozen_type=0,
+        is_keep_config=False,
     ):
         """Method that use the info given by DDataPlotter to setup the widget
 
@@ -190,20 +191,25 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.w_vect_selector.refreshComponent.connect(self.update_component)
             if component is not None:
                 self.w_vect_selector.set_component(component)
-                self.update_component()
+                self.update_component(is_keep_config=True)
             else:
-                self.update_component()
+                self.update_component(is_keep_config=True)
         else:
             self.w_vect_selector.hide()
 
-        self.w_axis_manager.set_axis_widgets(self.data, axes_request_list, frozen_type)
+        self.w_axis_manager.set_axis_widgets(
+            self.data, axes_request_list, frozen_type, is_keep_config=is_keep_config
+        )
         self.update_range(
             unit=unit,
             z_min=z_min,
             z_max=z_max,
         )
 
-    def update_component(self):
+        if is_keep_config:
+            self.update_plot()
+
+    def update_component(self, is_keep_config=False):
         """Method that update data according to the component selected in w_vect_selector.
         Parameters
         ----------
@@ -218,7 +224,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         elif component_name in ["comp_x", "comp_y", "comp_z"]:
             self.data = self.data_obj.to_xyz().components[component_name]
 
-        self.w_axis_manager.set_axis_widgets(self.data, list())
+        if not is_keep_config:
+            self.w_axis_manager.set_axis_widgets(self.data, list())
 
     def update_plot(self):
         """Method that update the plot according to the info selected in the UI
@@ -266,7 +273,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.w_range.set_range(self.data, axes_selected, data_selection)
 
         # If user inputs have been sent (auto plot), then we modify the WDataRange according to these info
-        if unit is not None or z_min is not None or z_max is not None:
+        if unit not in [None, "SI"] or z_min is not None or z_max is not None:
             self.w_range.set_range_user_input(
                 unit=unit,
                 z_min=z_min,

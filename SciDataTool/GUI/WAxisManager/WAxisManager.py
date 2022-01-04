@@ -203,7 +203,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_axis_1.set_action(action_selected)
             self.gen_slice_op()
 
-    def set_axis_widgets(self, data, axes_request_list, frozen_type=0):
+    def set_axis_widgets(
+        self, data, axes_request_list, frozen_type=0, is_keep_config=False
+    ):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
         ----------
@@ -216,75 +218,83 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them
         """
-        # Step 1 : If only one axis is given with the object, then we hide w_axis_2 and g_data_extract
-        # We also have to hide if we have all the axis but one have is_overlay = True
-        if len(data.get_axes()) == 1 or (
-            len(data.get_axes())
-            - len([ax for ax in data.get_axes() if ax.is_overlay == True])
-            == 1
-        ):
-            self.w_axis_2.hide()
-            self.g_data_extract.hide()
+        if is_keep_config:  # Only update slider
+            for wid in self.w_slice_op:
+                if hasattr(wid, "axis_value"):
+                    wid.update_floatEdit(is_refresh=False)
 
         else:
-            self.w_axis_2.show()
-            self.g_data_extract.show()
+            # Step 1 : If only one axis is given with the object, then we hide w_axis_2 and g_data_extract
+            # We also have to hide if we have all the axis but one have is_overlay = True
+            if len(data.get_axes()) == 1 or (
+                len(data.get_axes())
+                - len([ax for ax in data.get_axes() if ax.is_overlay == True])
+                == 1
+            ):
+                self.w_axis_2.hide()
+                self.g_data_extract.hide()
 
-        # Step 2 : If we have user input, the we set the UI according to user_input.
-        # Otherwise we use the default info
-        self.w_axis_1.blockSignals(True)
-        self.w_axis_2.blockSignals(True)
-
-        if axes_request_list == []:
-            # Case where no user_input was given
-            # Sending the info of data to the widget (mainly the axis)
-            self.axes_list = data.get_axes()
-            self.w_axis_1.update(self.axes_list)
-            self.w_axis_2.update(self.axes_list, axis_name="Y")
-
-            # Updating w_axis_2 according to w_axis_1 then generating DataSelection
-            self.axis_1_updated()
-
-        else:
-            # Case where a userinput was given (auto plot)
-
-            # If user_input are given (auto-plot), we have to process them
-            axes_list = [
-                ax for ax in axes_request_list if ax.extension in EXTENSION_DICT["axis"]
-            ]
-
-            slices_op_list = [
-                ax
-                for ax in axes_request_list
-                if ax.extension in EXTENSION_DICT["slice"]
-            ]
-
-            # Sending the info of data to the widget (mainly the axis)
-            self.axes_list = data.get_axes()
-            self.w_axis_1.update(self.axes_list)
-            self.w_axis_2.update(self.axes_list, axis_name="Y")
-            # Setting the axis selected in w_axis_1 according to user_input_list
-            self.w_axis_1.set_axis(axes_list[0])
-
-            # Updating w_axis_2 according to w_axis_1 then generating DataSelection
-            self.axis_1_updated()
-
-            # Setting the axis selected in w_axis_1 according to user_input_list if we have a second axis
-            if len(axes_list) == 2:
-                self.w_axis_2.set_axis(axes_list[1])
-
-            # Making sure that we have the same fft/ifft selected for both axis
-            self.axis_2_updated()
-
-            # Generating DataSelection with the input of user if they are given or by default (like in a manual plot)
-            if len(slices_op_list) != 0:
-                self.set_slice_op(slices_op_list)
             else:
-                self.gen_slice_op()
+                self.w_axis_2.show()
+                self.g_data_extract.show()
+
+            # Step 2 : If we have user input, the we set the UI according to user_input.
+            # Otherwise we use the default info
+            self.w_axis_1.blockSignals(True)
+            self.w_axis_2.blockSignals(True)
+
+            if axes_request_list == []:
+                # Case where no user_input was given
+                # Sending the info of data to the widget (mainly the axis)
+                self.axes_list = data.get_axes()
+                self.w_axis_1.update(self.axes_list)
+                self.w_axis_2.update(self.axes_list, axis_name="Y")
+
+                # Updating w_axis_2 according to w_axis_1 then generating DataSelection
+                self.axis_1_updated()
+
+            else:
+                # Case where a userinput was given (auto plot)
+
+                # If user_input are given (auto-plot), we have to process them
+                axes_list = [
+                    ax
+                    for ax in axes_request_list
+                    if ax.extension in EXTENSION_DICT["axis"]
+                ]
+
+                slices_op_list = [
+                    ax
+                    for ax in axes_request_list
+                    if ax.extension in EXTENSION_DICT["slice"]
+                ]
+
+                # Sending the info of data to the widget (mainly the axis)
+                self.axes_list = data.get_axes()
+                self.w_axis_1.update(self.axes_list)
+                self.w_axis_2.update(self.axes_list, axis_name="Y")
+                # Setting the axis selected in w_axis_1 according to user_input_list
+                self.w_axis_1.set_axis(axes_list[0])
+
+                # Updating w_axis_2 according to w_axis_1 then generating DataSelection
+                self.axis_1_updated()
+
+                # Setting the axis selected in w_axis_1 according to user_input_list if we have a second axis
+                if len(axes_list) == 2:
+                    self.w_axis_2.set_axis(axes_list[1])
+
+                # Making sure that we have the same fft/ifft selected for both axis
+                self.axis_2_updated()
+
+                # Generating DataSelection with the input of user if they are given or by default (like in a manual plot)
+                if len(slices_op_list) != 0:
+                    self.set_slice_op(slices_op_list)
+                else:
+                    self.gen_slice_op()
 
         # Depending on the value of frozen type we are going to act on the UI
         if frozen_type == 1 and len(axes_list) == 2:
-            # Recovering the axis requested by the user as they will be soft frozen (possible to witch but not possible to choose another axis)
+            # Recovering the axis requested by the user as they will be soft frozen (possible to switch but not possible to choose another axis)
             axes_list_name = [ax.name for ax in axes_list]
             axes_soft_frozen = [
                 ax for ax in self.axes_list if ax.name in axes_list_name

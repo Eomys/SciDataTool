@@ -252,7 +252,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.update_layout()
         self.c_operation.blockSignals(False)
 
-    def update_floatEdit(self):
+    def update_floatEdit(self, is_refresh=True):
         """Method that set the value of the floatEdit according to the value returned by the slider
         and the axis sent by WAxisManager.
         Parameters
@@ -266,7 +266,8 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.lf_value.setValue(self.axis_value[self.slider.value()])
 
         self.lf_value.blockSignals(False)
-        self.refreshNeeded.emit()
+        if is_refresh:
+            self.refreshNeeded.emit()
 
     def update_layout(self):
         """Method that update the layout of the WSliceOperator according to the extraction chosen
