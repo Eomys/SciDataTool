@@ -34,6 +34,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
     """Main widget of the SciDataTool UI"""
 
     updatePlot = Signal()
+    updatePlotForced = Signal()
 
     def __init__(self, parent=None):
         """Initialize the widget by linking buttons to methods
@@ -191,9 +192,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.w_vect_selector.refreshComponent.connect(self.update_component)
             if component is not None:
                 self.w_vect_selector.set_component(component)
-                self.update_component(is_keep_config=True)
+                self.update_component()
             else:
-                self.update_component(is_keep_config=True)
+                self.update_component()
         else:
             self.w_vect_selector.hide()
 
@@ -209,7 +210,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         if is_keep_config:
             self.update_plot()
 
-    def update_component(self, is_keep_config=False):
+    def update_component(self):
         """Method that update data according to the component selected in w_vect_selector.
         Parameters
         ----------
@@ -224,8 +225,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         elif component_name in ["comp_x", "comp_y", "comp_z"]:
             self.data = self.data_obj.to_xyz().components[component_name]
 
-        if not is_keep_config:
-            self.w_axis_manager.set_axis_widgets(self.data, list())
+        # Force plot refresh
+        self.update_plot_forced()
 
     def update_plot(self):
         """Method that update the plot according to the info selected in the UI
@@ -237,6 +238,17 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """
         # Emitting a signal meaning that the plot must be updated
         self.updatePlot.emit()
+
+    def update_plot_forced(self):
+        """Method that update the plot according to the info selected in the UI
+        Parameters
+        ----------
+        self : WPlotManager
+            a WPlotManager object
+
+        """
+        # Emitting a signal meaning that the plot must be updated
+        self.updatePlotForced.emit()
 
     def update_range(
         self,

@@ -103,28 +103,32 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         data : VectorField
             the object that we want to plot
         """
-        c_comp = self.c_component
         comp_stored = data.components
 
         self.blockSignals(True)
-        for i in reversed(range(c_comp.count())):
-            c_comp.setCurrentIndex(i)
-            current_comp = c_comp.currentText()
-
-            if current_comp in ["axial", "comp_z"] and current_comp not in comp_stored:
-                c_comp.removeItem(i)
-
-            if current_comp == "tangential" and current_comp not in comp_stored:
-                c_comp.removeItem(i)
+        self.c_component.clear()
+        self.c_component.addItems(comp_stored)
+        if "radial" in comp_stored or "tangential" in comp_stored:
+            try:
+                data.to_xyz()
+                self.c_component.addItem("comp_x")
+                self.c_component.addItem("comp_y")
+            except:
+                pass
+        elif "comp_x" in comp_stored or "comp_y" in comp_stored:
+            try:
+                data.to_rphiz()
+                self.c_component.addItem("radial")
+                self.c_component.addItem("tangential")
+            except:
+                pass
 
         # Recovering all the components available after the update
-        self.component_list = list()
-        for index_comp in range(self.c_component.count()):
-            self.c_component.setCurrentIndex(index_comp)
-            if self.c_component.currentText() not in self.component_list:
-                self.component_list.append(self.c_component.currentText())
+        self.component_list = [
+            self.c_component.itemText(i) for i in range(self.c_component.count())
+        ]
 
-        self.c_component.setCurrentIndex(1)
+        self.c_component.setCurrentIndex(0)
         self.blockSignals(False)
 
     def update_needed(self):
