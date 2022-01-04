@@ -6,6 +6,7 @@ from SciDataTool.Functions.Plot import (
     COLORS,
 )
 from SciDataTool.Functions.Load.import_class import import_class
+from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
     squeeze,
     split,
@@ -333,6 +334,14 @@ def plot_2D_Data(
 
     if title2 == "for " and title3 == "":
         title2 = ""
+
+    # Detect discontinuous axis (Norm_indices) to use bargraph
+    for axis in axes_list:
+        if axis.unit in self.axes[axis.index].normalizations:
+            if isinstance(
+                self.axes[axis.index].normalizations[axis.unit], Norm_indices
+            ):
+                type_plot = "bargraph"
 
     # Detect how many curves are overlaid, build legend and color lists
     if legend_list == [] and data_list != []:

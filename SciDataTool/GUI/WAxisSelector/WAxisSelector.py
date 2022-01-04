@@ -73,7 +73,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the current axis and unit selected in the right format
         """
 
-        axis_unit_selected = self.axis_selected
+        axis_unit_selected = self.get_axis_selected()
 
         if self.norm is not None:  # Add normalization
             axis_unit_selected += "->" + self.norm
@@ -107,7 +107,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         string
             name of the axis selected
         """
-        return self.axis_selected
+        if self.c_axis.currentText() == "None":
+            return "None"
+        else:
+            return self.axis_selected
 
     def remove_axis(self, axis_to_remove):
         """Method that remove a given axis from the axis ComboBox.
@@ -139,6 +142,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
             update_cb_enable(self.c_axis)
             self.c_axis.blockSignals(False)
+
+            self.update_axis(is_refresh=False)
 
     def set_axis(self, axis):
         """Method that will set the comboboxes to have the axis given as an input when calling the plot method (auto-plot).
@@ -333,7 +338,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.c_action.setCurrentIndex(0)
         self.set_unit()
 
-    def update_axis(self):
+    def update_axis(self, is_refresh=True):
         """Method called when an axis is changed that change axis_selected, the units available and the action combobox.
         It will also emit a signal used in WAxisManager.
         Parameters
@@ -383,8 +388,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.c_action.view().setMinimumWidth(max([len(ac) for ac in action]) * 6)
 
         # Emitting the signals
-        self.refreshNeeded.emit()
-        self.axisChanged.emit()
+        if is_refresh:
+            self.refreshNeeded.emit()
+            self.axisChanged.emit()
 
     def update_action(self):
         """Method called when an action is changed that will change axis_selected,
