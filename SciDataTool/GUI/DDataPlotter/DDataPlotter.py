@@ -129,6 +129,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         # Building the interaction with the UI itself
         self.b_refresh.clicked.connect(self.update_plot)
         self.w_plot_manager.updatePlot.connect(self.auto_update)
+        self.w_plot_manager.updatePlotForced.connect(self.update_plot)
         self.update_plot()
 
         # Adding an argument for testing autorefresh
