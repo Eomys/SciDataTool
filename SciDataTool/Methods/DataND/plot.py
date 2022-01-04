@@ -43,7 +43,7 @@ def plot(
     is_create_appli : bool
         True to create an QApplication (required if not already created by another GUI)
     frozen_type : int
-        0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them
+        0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations
     """
 
     if is_create_appli:
