@@ -192,9 +192,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.w_vect_selector.refreshComponent.connect(self.update_component)
             if component is not None:
                 self.w_vect_selector.set_component(component)
-                self.update_component()
+                self.update_component(is_update_plot=False)
             else:
-                self.update_component()
+                self.update_component(is_update_plot=False)
         else:
             self.w_vect_selector.hide()
 
@@ -210,7 +210,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         if is_keep_config:
             self.update_plot()
 
-    def update_component(self):
+    def update_component(self, is_update_plot=True):
         """Method that update data according to the component selected in w_vect_selector.
         Parameters
         ----------
@@ -226,7 +226,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.data = self.data_obj.to_xyz().components[component_name]
 
         # Force plot refresh
-        self.update_plot_forced()
+        if is_update_plot:
+            self.update_plot_forced()
 
     def update_plot(self):
         """Method that update the plot according to the info selected in the UI
