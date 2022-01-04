@@ -64,7 +64,7 @@ class Ui_DDataPlotter(object):
         sizePolicy2.setHeightForWidth(self.w_scroll.sizePolicy().hasHeightForWidth())
         self.w_scroll.setSizePolicy(sizePolicy2)
         self.w_scroll.setMinimumSize(QSize(350, 0))
-        self.w_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.w_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.w_scroll.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
