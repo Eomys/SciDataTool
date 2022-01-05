@@ -1,9 +1,9 @@
 from PySide2.QtWidgets import QWidget
 
-from ...GUI.WSliceOperator.Ui_WSliceOperator import Ui_WSliceOperator
+from SciDataTool.GUI.WSliceOperator.Ui_WSliceOperator import Ui_WSliceOperator
 from PySide2.QtCore import Signal
-from ...Functions.Plot import axes_dict, fft_dict, ifft_dict, unit_dict
-from ...Classes.Data import Data
+from SciDataTool.Functions.Plot import axes_dict, fft_dict, ifft_dict, unit_dict
+from SciDataTool.Classes.Data import Data
 from numpy import where
 from numpy import argmin, abs as np_abs
 

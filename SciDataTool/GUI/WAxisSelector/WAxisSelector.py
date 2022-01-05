@@ -1,8 +1,8 @@
 from PySide2.QtWidgets import QWidget
 
-from ...GUI.WAxisSelector.Ui_WAxisSelector import Ui_WAxisSelector
+from SciDataTool.GUI.WAxisSelector.Ui_WAxisSelector import Ui_WAxisSelector
 from PySide2.QtCore import Signal
-from ...Functions.Plot import (
+from SciDataTool.Functions.Plot import (
     unit_dict,
     norm_name_dict,
     axis_norm_dict,
@@ -10,8 +10,8 @@ from ...Functions.Plot import (
     fft_dict,
     ifft_dict,
 )
-from ...GUI import update_cb_enable
-from ...Functions.Load.import_class import import_class
+from SciDataTool.GUI import update_cb_enable
+from SciDataTool.Functions.Load.import_class import import_class
 
 
 class WAxisSelector(Ui_WAxisSelector, QWidget):

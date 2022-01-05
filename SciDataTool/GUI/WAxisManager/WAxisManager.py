@@ -1,8 +1,8 @@
 from PySide2.QtWidgets import QSpacerItem, QWidget
 from PySide2.QtCore import Signal
 
-from ...GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
-from ...GUI.WSliceOperator.WSliceOperator import WSliceOperator
+from SciDataTool.GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
+from SciDataTool.GUI.WSliceOperator.WSliceOperator import WSliceOperator
 from SciDataTool.Functions import axes_dict, rev_axes_dict
 
 

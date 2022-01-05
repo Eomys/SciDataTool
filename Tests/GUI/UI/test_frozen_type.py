@@ -25,6 +25,15 @@ f_t_test_list.append(
     }
 )  # Testing plot which is hard frozen
 
+f_t_test_list.append(
+    {
+        "axis": ["time", "angle"],
+        "is_create_appli": False,
+        "is_show_fig": False,
+        "frozen_type": 3,
+    }
+)  # Testing plot which is very hard frozen
+
 
 class TestGUI(object):
     @classmethod
@@ -86,6 +95,17 @@ class TestGUI(object):
         elif test_dict["frozen_type"] == 2:
             assert not self.UI.w_plot_manager.w_axis_manager.w_axis_1.c_axis.isEnabled()
             assert not self.UI.w_plot_manager.w_axis_manager.w_axis_2.c_axis.isEnabled()
+
+        # Checking that we disable the axes and the operations if the frozen type chosen is "very hard" (3)
+        elif test_dict["frozen_type"] == 3:
+            assert not self.UI.w_plot_manager.w_axis_manager.w_axis_1.c_axis.isEnabled()
+            assert not self.UI.w_plot_manager.w_axis_manager.w_axis_2.c_axis.isEnabled()
+
+            for w_op in self.UI.w_plot_manager.w_axis_manager.w_slice_op:
+                assert not w_op.b_action.isEnabled()
+                assert not w_op.c_operation.isEnabled()
+                assert not w_op.lf_value.isEnabled()
+                assert not w_op.slider.isEnabled()
 
 
 if __name__ == "__main__":

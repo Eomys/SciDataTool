@@ -1,10 +1,10 @@
 from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
 from os.path import dirname, basename
-from ...Functions.Load.import_class import import_class
+from SciDataTool.Functions.Load.import_class import import_class
 
 
 from PySide2.QtCore import Signal
-from ...GUI.WPlotManager.Ui_WPlotManager import Ui_WPlotManager
+from SciDataTool.GUI.WPlotManager.Ui_WPlotManager import Ui_WPlotManager
 
 SYMBOL_DICT = {
     "time": "t",

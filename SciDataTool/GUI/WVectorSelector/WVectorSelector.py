@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QWidget
 
-from ...GUI.WVectorSelector.Ui_WVectorSelector import Ui_WVectorSelector
+from SciDataTool.GUI.WVectorSelector.Ui_WVectorSelector import Ui_WVectorSelector
 from PySide2.QtCore import Signal
 from PySide2.QtGui import QStandardItem
 
