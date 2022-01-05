@@ -9,9 +9,9 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from ...GUI.WDataRange.WDataRange import WDataRange
-from ...GUI.WAxisManager.WAxisManager import WAxisManager
-from ...GUI.WVectorSelector.WVectorSelector import WVectorSelector
+from SciDataTool.GUI.WDataRange.WDataRange import WDataRange
+from SciDataTool.GUI.WAxisManager.WAxisManager import WAxisManager
+from SciDataTool.GUI.WVectorSelector.WVectorSelector import WVectorSelector
 
 
 class Ui_WPlotManager(object):

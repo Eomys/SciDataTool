@@ -196,19 +196,19 @@
   <customwidget>
    <class>WDataRange</class>
    <extends>QWidget</extends>
-   <header>...GUI.WDataRange.WDataRange.h</header>
+   <header>SciDataTool.GUI.WDataRange.WDataRange.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>WAxisManager</class>
    <extends>QWidget</extends>
-   <header>...GUI.WAxisManager.WAxisManager.h</header>
+   <header>SciDataTool.GUI.WAxisManager.WAxisManager.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>WVectorSelector</class>
    <extends>QWidget</extends>
-   <header>...GUI.WVectorSelector.WVectorSelector.h</header>
+   <header>SciDataTool.GUI.WVectorSelector.WVectorSelector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -5,8 +5,6 @@ from PySide2 import QtGui
 from PySide2.QtGui import QDoubleValidator
 from PySide2.QtWidgets import QLineEdit
 
-# from ...GUI import gui_option
-
 _float_re = compile(r"(([+-]?\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)")
 
 

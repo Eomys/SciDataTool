@@ -9,7 +9,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from ...GUI.WAxisSelector.WAxisSelector import WAxisSelector
+from SciDataTool.GUI.WAxisSelector.WAxisSelector import WAxisSelector
 
 
 class Ui_WAxisManager(object):

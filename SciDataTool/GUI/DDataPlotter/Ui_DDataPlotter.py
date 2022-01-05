@@ -9,7 +9,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from ...GUI.WPlotManager.WPlotManager import WPlotManager
+from SciDataTool.GUI.WPlotManager.WPlotManager import WPlotManager
 
 
 class Ui_DDataPlotter(object):

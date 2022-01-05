@@ -1,5 +1,5 @@
-from ...Functions.Load.import_class import import_class
-from ...Classes._check import check_var
+from SciDataTool.Functions.Load.import_class import import_class
+from SciDataTool.Classes._check import check_var
 from numpy import ndarray, int32, int64, float32, float64
 
 

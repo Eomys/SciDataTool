@@ -9,7 +9,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from ...GUI.Tools.FloatEdit import FloatEdit
+from SciDataTool.GUI.Tools.FloatEdit import FloatEdit
 
 
 class Ui_WDataRange(object):

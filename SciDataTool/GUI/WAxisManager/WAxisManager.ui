@@ -207,7 +207,7 @@
   <customwidget>
    <class>WAxisSelector</class>
    <extends>QWidget</extends>
-   <header>...GUI.WAxisSelector.WAxisSelector.h</header>
+   <header>SciDataTool.GUI.WAxisSelector.WAxisSelector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
