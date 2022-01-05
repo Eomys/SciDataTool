@@ -1,9 +1,7 @@
 from PySide2.QtWidgets import QWidget
-from matplotlib.pyplot import axes
 import matplotlib.pyplot as plt
 
 from SciDataTool.GUI.WDataRange.Ui_WDataRange import Ui_WDataRange
-from SciDataTool.Functions.Plot import unit_dict, ifft_dict
 from PySide2.QtCore import Signal
 from SciDataTool.Functions import parser
 
