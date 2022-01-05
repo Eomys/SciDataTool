@@ -1,18 +1,18 @@
 from PySide2.QtWidgets import QWidget
 from SciDataTool.Functions import parser
 from PySide2.QtCore import Qt
-from ...GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
+from SciDataTool.GUI.DDataPlotter.Ui_DDataPlotter import Ui_DDataPlotter
 from matplotlib.backends.backend_qt5agg import (
     FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar,
 )
-from ...Functions.Plot.init_fig import init_fig
+from SciDataTool.Functions.Plot.init_fig import init_fig
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
 from numpy import array
-from ...Functions.Plot import ifft_dict
-from ...Functions.Plot import TEXT_BOX
+from SciDataTool.Functions.Plot import ifft_dict
+from SciDataTool.Functions.Plot import TEXT_BOX
 
 SYMBOL_DICT = {
     "time": "t",

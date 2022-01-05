@@ -1,4 +1,4 @@
-from ...GUI.DDataPlotter.DDataPlotter import DDataPlotter
+from SciDataTool.GUI.DDataPlotter.DDataPlotter import DDataPlotter
 from sys import argv, exit
 from PySide2.QtWidgets import QApplication
 from PySide2 import QtCore
