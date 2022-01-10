@@ -1,5 +1,5 @@
 import pytest
-from SciDataTool import DataTime, DataLinspace
+from SciDataTool import DataTime, DataLinspace, Data1D
 from Tests import save_validation_path
 import numpy as np
 from os.path import isfile, join
@@ -68,6 +68,32 @@ def test_export_3D():
     assert isfile(join(save_validation_path, "B_r_withoutargs_z-1.0.csv"))
 
 
+def test_export_latex():
+    """Test export"""
+    X = DataLinspace(name="time", unit="s", initial=0, final=10, number=11)
+    Y = Data1D(
+        name="order",
+        unit="",
+        values=["H24 ($3f_{e}$)", "H48 ($6f_{e}$)"],
+        is_components=True,
+    )
+    field = np.zeros((11, 2))
+    Field = DataTime(
+        name="Airgap flux density",
+        symbol="B_r",
+        unit="T",
+        axes=[X, Y],
+        values=field,
+    )
+    Field.export_along(
+        "time",
+        "order",
+        save_path=save_validation_path,
+        file_name="B_r_Data3D_latex",
+    )
+
+
 if __name__ == "__main__":
     test_export_2D()
     test_export_3D()
+    test_export_latex()

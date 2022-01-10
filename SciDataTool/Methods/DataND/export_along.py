@@ -4,6 +4,8 @@ import csv
 import numpy as np
 from os.path import join
 
+CHAR_LIST = ["$", "{", "}"]
+
 
 def export_along(
     self,
@@ -147,8 +149,13 @@ def export_along(
                         + axes_list_new[1].unit
                         + "]"
                     )
-                    second_line = np.insert(
-                        results[axes_list_new[1].name].astype("object"), 0, A2_cell
+                    second_line = format_matrix(
+                        np.insert(
+                            results[axes_list_new[1].name].astype("str"),
+                            0,
+                            A2_cell,
+                        ),
+                        CHAR_LIST,
                     )
                 csvWriter.writerow(second_line)
 
@@ -161,8 +168,19 @@ def export_along(
                     field = np.take(results[self.symbol], i, axis=2)
                 else:
                     field = results[self.symbol]
-                matrix = np.column_stack((results[axes_list_new[0].name].T, field))
+                matrix = format_matrix(
+                    np.column_stack((results[axes_list_new[0].name].T, field)).astype(
+                        "str"
+                    ),
+                    CHAR_LIST,
+                )
                 csvWriter.writerows(matrix)
 
     else:
         raise Exception("export format not supported")
+
+
+def format_matrix(a, char_list):
+    for char in char_list:
+        a = np.char.replace(a, char, "")
+    return a
