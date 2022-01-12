@@ -16,6 +16,7 @@ def get_values(
     operation=None,
     is_real=True,
     corr_unit=None,
+    is_full=False,
 ):
     """Returns the vector 'axis' taking symmetries into account.
     Parameters

@@ -27,7 +27,7 @@ def get_magnitude_along(
         args = args[0]  # if called from another script with *args
 
     # For dB/dBA conversions, first extraction with freqs axis
-    if "dB" in unit and is_sum:
+    if "dB" in unit and unit != self.unit and is_sum:
         new_args = list(args).copy()
         freq_name = None
         index_freq = None

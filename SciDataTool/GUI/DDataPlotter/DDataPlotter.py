@@ -201,20 +201,23 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             try:
                 x_float = float(self.ax.get_xticklabels()[-1]._text)
                 X_str = format(x, ".4g")
-                Y_str = format(y, ".4g")
             except:
                 X_str = None
-                Y_str = None
                 for ticklabel in self.ax.get_xticklabels():
                     if ticklabel._x == x:
                         X_str = ticklabel._text
                         break
+            try:
+                y_float = float(self.ax.get_yticklabels()[-1]._text)
+                Y_str = format(y, ".4g")
+            except:
+                Y_str = None
                 for ticklabel in self.ax.get_yticklabels():
                     if ticklabel._y == y:
                         Y_str = ticklabel._text
                         break
-                if X_str is None or Y_str is None:
-                    return ""
+            if X_str is None or Y_str is None:
+                return ""
 
             # Recovering the input of the user
             [
@@ -243,10 +246,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 yunit = "[" + latex(axes_selected_parsed[1].unit) + "]"
 
             else:
-                ylabel = self.data.symbol
-
-                if self.data._name.lower() in SYMBOL_DICT:
-                    ylabel = latex(SYMBOL_DICT[self.data._name.lower()])
+                if self.data.name.lower() in SYMBOL_DICT:
+                    ylabel = latex(SYMBOL_DICT[self.data.name.lower()])
+                else:
+                    ylabel = latex(self.data.symbol)
 
                 yunit = "[" + latex(self.data.unit) + "]"
 
@@ -339,48 +342,49 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             dx = (x_max - x_min) / 50
             if X is not None and Y is not None:
                 label = format_coord(X, Y, Z, sep="\n")
-                if self.text is None:
-                    # Create label in box and black cross
-                    self.text = self.ax.text(
-                        X + dx,
-                        Y,
-                        label,
-                        ha="left",
-                        va="center",
-                        bbox=text_box,
-                    )
-                    # Draw line
-                    self.line = self.ax.plot(
-                        [X, X + dx],
-                        [Y, Y],
-                        color="k",
-                        linestyle="-",
-                        linewidth=0.5,
-                    )
-                    # Draw circle
-                    self.circle = self.ax.plot(
-                        X,
-                        Y,
-                        ".",
-                        markerfacecolor="w",
-                        markeredgecolor="k",
-                        markeredgewidth=0.5,
-                        markersize=12,
-                    )
-                else:
-                    # Update label, line and circle
-                    self.text._x = X + dx
-                    self.text._y = Y
-                    self.text._text = label
-                    self.circle[0].set_xdata(array(X))
-                    self.circle[0].set_ydata(array(Y))
-                    self.line[0].set_xdata(array([X, X + dx]))
-                    self.line[0].set_ydata(array([Y, Y]))
+                if label != "":
+                    if self.text is None:
+                        # Create label in box and black cross
+                        self.text = self.ax.text(
+                            X + dx,
+                            Y,
+                            label,
+                            ha="left",
+                            va="center",
+                            bbox=text_box,
+                        )
+                        # Draw line
+                        self.line = self.ax.plot(
+                            [X, X + dx],
+                            [Y, Y],
+                            color="k",
+                            linestyle="-",
+                            linewidth=0.5,
+                        )
+                        # Draw circle
+                        self.circle = self.ax.plot(
+                            X,
+                            Y,
+                            ".",
+                            markerfacecolor="w",
+                            markeredgecolor="k",
+                            markeredgewidth=0.5,
+                            markersize=12,
+                        )
+                    else:
+                        # Update label, line and circle
+                        self.text._x = X + dx
+                        self.text._y = Y
+                        self.text._text = label
+                        self.circle[0].set_xdata(array(X))
+                        self.circle[0].set_ydata(array(Y))
+                        self.line[0].set_xdata(array([X, X + dx]))
+                        self.line[0].set_ydata(array([Y, Y]))
 
-            self.ax.texts[-1].set_visible(True)
-            self.ax.lines[-1].set_visible(True)
-            self.ax.lines[-2].set_visible(True)
-            self.canvas.draw()
+                    self.ax.texts[-1].set_visible(True)
+                    self.ax.lines[-1].set_visible(True)
+                    self.ax.lines[-2].set_visible(True)
+                    self.canvas.draw()
 
         def delete_cursor(event):
             if event.button.name == "RIGHT":

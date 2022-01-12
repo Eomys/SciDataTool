@@ -278,7 +278,7 @@ def plot_2D_Data(
                 xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
             else:
                 xticks = None
-            if axis.is_components and axes_list[0].extension != "list":
+            if axes_list[0].is_components and axes_list[0].extension != "list":
                 xticklabels = result[list(result)[0]]
                 xticks = Xdatas[0]
             else:

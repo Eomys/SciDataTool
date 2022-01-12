@@ -427,11 +427,23 @@ def plot_3D_Data(
                     x_max = min(x_max, np_max(Xdata))
             if len(yticks) > 1:
                 if y_min is None:
-                    y_min = max(yticks[0], -100)
+                    if (
+                        axes_list[1].name == "wavenumber"
+                        or axes_list[1].corr_name == "wavenumber"
+                    ):
+                        y_min = max(yticks[0], -100)
+                    else:
+                        y_min = 0
                 else:
                     y_min = max(y_min, yticks[0])
                 if y_max is None:
-                    y_max = min(yticks[-1], 100)
+                    if (
+                        axes_list[1].name == "wavenumber"
+                        or axes_list[1].corr_name == "wavenumber"
+                    ):
+                        y_max = min(yticks[-1], 100)
+                    else:
+                        y_max = yticks[-1]
                 else:
                     y_max = min(y_max, yticks[-1])
             else:
