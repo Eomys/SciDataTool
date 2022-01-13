@@ -207,15 +207,18 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     if ticklabel._x == x:
                         X_str = ticklabel._text
                         break
-            try:
-                y_float = float(self.ax.get_yticklabels()[-1]._text)
+            if "mathdefault" in self.ax.get_yticklabels()[-1]._text:
                 Y_str = format(y, ".4g")
-            except:
-                Y_str = None
-                for ticklabel in self.ax.get_yticklabels():
-                    if ticklabel._y == y:
-                        Y_str = ticklabel._text
-                        break
+            else:
+                try:
+                    y_float = float(self.ax.get_yticklabels()[-1]._text)
+                    Y_str = format(y, ".4g")
+                except:
+                    Y_str = None
+                    for ticklabel in self.ax.get_yticklabels():
+                        if ticklabel._y == y:
+                            Y_str = ticklabel._text
+                            break
             if X_str is None or Y_str is None:
                 return ""
 
@@ -300,12 +303,17 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         def set_cursor(event):
             plot_obj = event.artist
             Z = None
+            legend = None
             if isinstance(plot_obj, Line2D):
                 ind = event.ind
                 xdata = plot_obj.get_xdata()
                 ydata = plot_obj.get_ydata()
                 X = xdata[ind][0]  # X position of the click
                 Y = ydata[ind][0]  # Y position of the click
+                if self.fig.legend() not in [None, []]:
+                    legend = (
+                        self.fig.legend().texts[self.ax.lines.index(plot_obj)]._text
+                    )
             elif isinstance(plot_obj, PathCollection):
                 ind = event.ind
                 X = plot_obj.get_offsets().data[ind][0][0]
@@ -342,6 +350,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             dx = (x_max - x_min) / 50
             if X is not None and Y is not None:
                 label = format_coord(X, Y, Z, sep="\n")
+                if legend is not None:
+                    label = legend + "\n" + label
                 if label != "":
                     if self.text is None:
                         # Create label in box and black cross

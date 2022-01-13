@@ -53,6 +53,7 @@ axes_dict = {
     "freqs": "frequency",
     "cr_band": "critical band rate",
     "z": "axial direction",
+    "loadcases": "load cases",
 }
 
 fft_dict = {
