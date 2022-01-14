@@ -3,5 +3,5 @@ values,,List or ndarray of the axis values,,ndarray,None,,,,,Data,get_values,VER
 is_components,,True if the axis values are strings,,bool,False,,,,,,get_length,,,,
 symmetries,,"Dictionary of the symmetries along each axis, used to reduce storage",,dict,{},,,,,,get_axis_periodic,,,,
 is_overlay,,True if axis must be used to overlay curves in plots,,bool,False,,,,,,has_period,,,,
-,,,,,,,,,,,get_periodicity,,,,
-,,,,,,,,,,,to_linspace,,,,
+delimiter,,"Character used to separate attributes in string case (e.g. ""r=0, stator, radial"")",,str,None,,,,,,get_periodicity,,,,
+sort_indices,,List of indices to use to sort axis,,list,None,,,,,,to_linspace,,,,
