@@ -38,6 +38,23 @@ class FloatEdit(QLineEdit):
         Validator.Notation = QDoubleValidator.ScientificNotation
         self.setValidator(Validator)
 
+    def focusOutEvent(self, e):
+        if self.isModified():
+            self.editingFinished.emit()
+        self.blockSignals(True)
+        super(FloatEdit, self).focusOutEvent(e)
+        self.blockSignals(False)
+
+    def keyPressEvent(self, event):
+        """To send editingFinished when pressing Enter and Return keys"""
+        if event.text() == "\r":
+            if self.isModified():
+                self.editingFinished.emit()
+            self.clearFocus()
+        else:
+            # call base class keyPressEvent
+            QLineEdit.keyPressEvent(self, event)
+
     def setValue(self, value):
         """Allow to set the containt of the Widget with a float
 
