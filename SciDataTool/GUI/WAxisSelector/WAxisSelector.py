@@ -166,7 +166,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.c_action.setCurrentIndex(1)
         else:
             # Selecting the right axis
-            self.c_axis.setCurrentIndex(self.c_axis.findText(axis_name))
+            if axis_name in axes_dict:
+                self.c_axis.setCurrentIndex(self.c_axis.findText(axes_dict[axis_name]))
+            else:
+                self.c_axis.setCurrentIndex(self.c_axis.findText(axis_name))
 
         # Step 2 : Recovering the unit and setting the combobox according to it
         unit_name = axis.unit
