@@ -11,7 +11,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
 from numpy import array
-from SciDataTool.Functions.Plot import ifft_dict
+from SciDataTool.Functions.Plot import ifft_dict, fft_dict
 from SciDataTool.Functions.Plot import TEXT_BOX
 
 SYMBOL_DICT = {
@@ -464,6 +464,17 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 if axes_name.index(
                     ifft_dict[axes_selected_parsed[0].name]
                 ) > axes_name.index(ifft_dict[axes_selected_parsed[1].name]):
+
+                    not_in_order = True
+                    axes_selected = [axes_selected[1], axes_selected[0]]
+
+            elif (
+                axes_selected_parsed[0].name in fft_dict
+                and axes_selected_parsed[1].name in fft_dict
+            ):
+                if axes_name.index(
+                    fft_dict[axes_selected_parsed[0].name]
+                ) > axes_name.index(fft_dict[axes_selected_parsed[1].name]):
 
                     not_in_order = True
                     axes_selected = [axes_selected[1], axes_selected[0]]
