@@ -545,3 +545,9 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             axes_request_list=axes_request_list,
             is_keep_config=is_keep_config,
         )
+
+    def showEvent(self, ev):
+        super(DDataPlotter, self).showEvent(ev)
+        self.w_scroll.setFixedWidth(
+            500 + self.w_scroll.verticalScrollBar().sizeHint().width()
+        )
