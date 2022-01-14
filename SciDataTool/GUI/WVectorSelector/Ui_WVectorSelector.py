@@ -50,7 +50,7 @@ class Ui_WVectorSelector(object):
         sizePolicy1.setHeightForWidth(self.c_component.sizePolicy().hasHeightForWidth())
         self.c_component.setSizePolicy(sizePolicy1)
         self.c_component.setMinimumSize(QSize(0, 21))
-        self.c_component.setMaximumSize(QSize(100, 16777215))
+        self.c_component.setMaximumSize(QSize(16777215, 16777215))
         font = QFont()
         font.setBold(False)
         font.setWeight(50)
