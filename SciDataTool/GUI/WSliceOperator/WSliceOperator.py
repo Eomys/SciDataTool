@@ -21,7 +21,6 @@ OPERATION_LIST = [
     "rss",
     "sum",
     "mean",
-    "integrate",
     "overlay/filter",
 ]
 
@@ -293,11 +292,6 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             # self.b_action.show()
             # self.b_action.setText(extraction_selected)
             self.refreshNeeded.emit()
-
-        elif extraction_selected == "integrate":
-            self.lf_value.hide()
-            self.slider.hide()
-            self.b_action.hide()
         else:
             self.lf_value.hide()
             self.slider.hide()

@@ -28,7 +28,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.name = ""
         self.unit_list = list()
 
-        self.c_unit.currentTextChanged.connect(self.update_needed)
+        self.c_unit.currentTextChanged.connect(self.update_unit)
         self.lf_min.editingFinished.connect(self.update_needed)
         self.lf_max.editingFinished.connect(self.update_needed)
 
@@ -147,6 +147,17 @@ class WDataRange(Ui_WDataRange, QWidget):
         # # Updating the unit combobox
         self.c_unit.clear()
         self.c_unit.addItem(field.unit)
+
+    def update_unit(self):
+        """Method that clears min/max then calls update_needed
+        Parameters
+        ----------
+        self : WDataRange
+            a WDataRange object
+        """
+        self.lf_max.clear()
+        self.lf_min.clear()
+        self.update_needed()
 
     def update_needed(self):
         """Method that emit a signal to automatically refresh the plot inside the GUI

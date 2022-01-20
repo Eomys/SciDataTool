@@ -7,7 +7,7 @@ from SciDataTool.Functions import axes_dict, rev_axes_dict
 
 
 EXTENSION_DICT = {
-    "slice": ["rss", "sum", "rms", "mean", "integrate", "list", "single"],
+    "slice": ["rss", "sum", "rms", "mean", "list", "single"],
     "axis": [
         "derivate",
         "oneperiod",
