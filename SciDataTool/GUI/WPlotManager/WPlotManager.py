@@ -51,6 +51,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
 
+        self.default_file_path = None
+
         # Building the interaction with the UI and the UI itself
         self.w_axis_manager.refreshRange.connect(self.update_range)
         self.b_export.clicked.connect(self.export)
@@ -69,6 +71,16 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """
         self.updatePlot.emit()
 
+    def get_file_name(self):
+        param_list = [
+            *self.w_axis_manager.get_axes_selected(),
+            *self.w_axis_manager.get_operation_selected(),
+        ]
+
+        file_name = self.data.symbol + "_" + "_".join(param_list)
+        file_name.replace("{", "").replace("}", "")
+        return file_name
+
     def export(self, save_file_path=False):
         """Method that export the plot as a csv file
         Parameters
@@ -82,9 +94,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             *self.w_axis_manager.get_operation_selected(),
         ]
 
-        file_name = "plot_" + self.data.symbol + "_" + "_".join(param_list)
-
-        default_file_path = file_name + ".csv"
+        if self.default_file_path is None:
+            file_name = self.get_file_name()
+            default_file_path = file_name + ".csv"
+        else:
+            default_file_path = self.default_file_path
 
         # Opening a dialog window to select the directory where the file will be saved if we are not testing
         if save_file_path == False:

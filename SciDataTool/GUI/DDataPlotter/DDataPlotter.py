@@ -108,10 +108,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             self.is_auto_refresh.setCheckState(Qt.Unchecked)
 
         self.plot_arg_dict = plot_arg_dict
+        self.data = data
 
         # Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
-        self.set_figure(self.fig)
+        # self.set_figure(self.fig)
 
         # Initializing the WPlotManager
         self.w_plot_manager.set_info(
