@@ -3,6 +3,7 @@ from SciDataTool.Functions.Plot import (
     unit_dict,
     norm_dict,
     axes_dict,
+    fft_dict,
     COLORS,
 )
 from SciDataTool.Functions.Load.import_class import import_class
@@ -231,7 +232,7 @@ def plot_2D_Data(
     title1 = self.name.capitalize() + " "
     title2 = "for "
     for axis in axes_list:
-        if axis.unit in norm_dict:
+        if axis.unit in norm_dict and axis.unit != "Hz":
             name = norm_dict[axis.unit].split(" [")[0]
         elif axis.name in axes_dict:
             name = axes_dict[axis.name]
@@ -288,15 +289,15 @@ def plot_2D_Data(
             if axis.is_pattern and len(axis.values) == 1:
                 is_display = False
             if is_display:
-                if axis.unit == "SI":
+                if axis.corr_unit == "SI":
                     if axis.name in unit_dict:
                         axis_unit = unit_dict[axis.name]
                     else:
                         axis_unit = axis.unit
-                elif axis.unit in norm_dict:
-                    axis_unit = norm_dict[axis.unit]
+                elif axis.corr_unit in norm_dict and axis.corr_unit != "Hz":
+                    axis_unit = norm_dict[axis.corr_unit]
                 else:
-                    axis_unit = axis.unit
+                    axis_unit = axis.corr_unit
 
                 if isinstance(result_0[axis.name], str):
                     title2 += name + "=" + result_0[axis.name]
