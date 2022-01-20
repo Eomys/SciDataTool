@@ -251,12 +251,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         # Emitting a signal meaning that the plot must be updated
         self.updatePlotForced.emit()
 
-    def update_range(
-        self,
-        unit=None,
-        z_min=None,
-        z_max=None,
-    ):
+    def update_range(self, unit=None, z_min=None, z_max=None):
         """Method that will update the range widget with either the user input or the default value of the DataND object
         Parameters
         ----------
@@ -283,14 +278,10 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.w_range.g_range.setTitle("Z Range")
 
         # Setting the WDataRange by sending the necessary info to the widget
-        self.w_range.set_range(self.data, axes_selected, data_selection)
+        self.w_range.set_range(self.data, unit=unit)
 
         # If user inputs have been sent (auto plot), then we modify the WDataRange according to these info
-        if unit not in [None, "SI"] or z_min is not None or z_max is not None:
-            self.w_range.set_range_user_input(
-                unit=unit,
-                z_min=z_min,
-                z_max=z_max,
-            )
+        if z_min is not None or z_max is not None:
+            self.w_range.set_range_user_input(z_min=z_min, z_max=z_max)
 
         self.w_range.blockSignals(False)

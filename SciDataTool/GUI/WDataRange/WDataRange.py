@@ -90,7 +90,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         """
         self.name = field_name
 
-    def set_range(self, data, axes_selected, data_selection):
+    def set_range(self, data, unit=None):
         """Method that set the data range widget with the value from the DataND object
 
         Parameters
@@ -100,15 +100,19 @@ class WDataRange(Ui_WDataRange, QWidget):
         data : DataND
             the data object that hold the field that will set the widget
         """
-
-        self.set_name(data.name)
-        self.set_unit(data)
+        if unit is not None:
+            self.set_unit(data)
+            if unit is not None and unit != "SI":  # Adding unit to unit combobox
+                if self.c_unit.currentText() != unit:
+                    self.c_unit.insertItem(0, unit)
+            if unit == "dBA":  # Also adding dB
+                self.c_unit.insertItem(1, "dB")
+            self.c_unit.setCurrentIndex(0)
         self.lf_min.clear()
         self.lf_max.clear()
 
     def set_range_user_input(
         self,
-        unit=None,
         z_min=None,
         z_max=None,
     ):
@@ -117,21 +121,11 @@ class WDataRange(Ui_WDataRange, QWidget):
         ----------
         self : WDataRange
             a WDataRange object
-        unit : str
-            unit in which to plot the field
         z_min : float
             Minimum value for Z axis (or Y if only one axe)
         z_max : float
             Minimum value for Z axis (or Y if only one axe)
         """
-
-        if unit is not None and unit != "SI":  # Adding unit to unit combobox
-            if self.c_unit.currentText() != unit:
-                self.c_unit.insertItem(0, unit)
-        if unit == "dBA":  # Also adding dB
-            self.c_unit.insertItem(1, "dB")
-        self.c_unit.setCurrentIndex(0)
-
         if z_max is not None:
             # Setting max float edit
             self.lf_max.setValue(z_max)
