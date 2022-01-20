@@ -239,6 +239,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         elif component_name in ["comp_x", "comp_y", "comp_z"]:
             self.data = self.data_obj.to_xyz().components[component_name]
 
+        self.w_range.set_range(self.data)
+
         # Force plot refresh
         if is_update_plot:
             self.update_plot_forced()
