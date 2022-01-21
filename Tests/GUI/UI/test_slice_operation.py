@@ -39,7 +39,7 @@ class TestGUI(object):
                         and wid.b_action.isHidden()
                     )
 
-                elif wid.c_operation.currentText() == "overlay/filter":
+                elif wid.c_operation.currentText() == "overlay":
                     assert (
                         wid.slider.isHidden()
                         and wid.lf_value.isHidden()
