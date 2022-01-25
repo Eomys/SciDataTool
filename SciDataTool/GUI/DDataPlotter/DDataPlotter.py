@@ -550,5 +550,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
     def showEvent(self, ev):
         super(DDataPlotter, self).showEvent(ev)
         self.w_scroll.setFixedWidth(
-            500 + self.w_scroll.verticalScrollBar().sizeHint().width()
+            498 + self.w_scroll.verticalScrollBar().sizeHint().width()
         )
+        self.w_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
