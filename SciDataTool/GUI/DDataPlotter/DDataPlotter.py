@@ -311,7 +311,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 ydata = plot_obj.get_ydata()
                 X = xdata[ind][0]  # X position of the click
                 Y = ydata[ind][0]  # Y position of the click
-                if self.fig.legend() not in [None, []]:
+                if (
+                    self.fig.legend() not in [None, []]
+                    and self.fig.legend().texts != []
+                ):
                     legend = (
                         self.fig.legend().texts[self.ax.lines.index(plot_obj)]._text
                     )
