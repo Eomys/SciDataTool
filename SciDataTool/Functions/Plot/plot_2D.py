@@ -318,6 +318,11 @@ def plot_2D(
                 markeredgecolor=color_list[i],
                 markersize=10,
             )
+        if xticks is not None:
+            ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
     elif type_plot == "point":
         for i in range(ndatas):
             ax.plot(
@@ -332,6 +337,11 @@ def plot_2D(
                 picker=True,
                 pickradius=5,
             )
+        if xticks is not None:
+            ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
+        if xticklabels is not None:
+            ax.set_xticklabels(xticklabels, rotation=90)
     elif type_plot == "barStackResultant":
         data = Ydatas[0:-1]
 
