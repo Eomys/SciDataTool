@@ -416,6 +416,13 @@ def plot_2D_Data(
 
     # Finish title
     if title is None:
+
+        # Reformat in case of operation
+        for ope in ["max", "min", "mean", "rms", "sum", "rss"]:
+            if "=" + ope in title2:
+                title2 = ""
+                title1 = ope.capitalize() + " " + title1.lower()
+
         # Concatenate all title parts
         if is_overlay:
             title = title1 + title3
