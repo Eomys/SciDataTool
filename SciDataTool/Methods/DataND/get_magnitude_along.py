@@ -75,6 +75,10 @@ def get_magnitude_along(
                         if arg != "order":
                             new_args[i] = "order"
                             index_order = i
+            elif unit == "dB" or "A-weight" in self.normalizations:
+                self.get_magnitude_along(
+                    args, unit=unit, is_squeeze=is_squeeze, is_sum=False
+                )
             else:
                 raise AxisError(
                     "Cannot convert to " + unit + " without a frequency axis"
