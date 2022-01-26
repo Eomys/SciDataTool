@@ -76,6 +76,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             *self.w_axis_manager.get_axes_selected(),
             *self.w_axis_manager.get_operation_selected(),
         ]
+        if None in param_list:
+            param_list.remove(None)
 
         file_name = self.data.symbol + "_" + "_".join(param_list)
         file_name.replace("{", "").replace("}", "")

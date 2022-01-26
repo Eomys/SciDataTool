@@ -31,6 +31,8 @@ def _rebuild_symmetries(
             and (
                 axis.extension
                 not in [
+                    "max",
+                    "min",
                     "sum",
                     "rss",
                     "mean",

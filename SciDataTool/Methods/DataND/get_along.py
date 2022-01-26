@@ -80,6 +80,8 @@ def get_along(
     return_dict = {}
     for axis_requested in axes_list:
         if axis_requested.extension in [
+            "max",
+            "min",
             "sum",
             "rss",
             "mean",

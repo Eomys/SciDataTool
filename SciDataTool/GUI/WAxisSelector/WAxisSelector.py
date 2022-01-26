@@ -177,6 +177,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.c_unit.setCurrentIndex(self.c_unit.findText(unit_dict[unit_name]))
         elif unit_name in norm_name_dict:
             self.c_unit.setCurrentIndex(self.c_unit.findText(norm_name_dict[unit_name]))
+        elif unit_name == "SI":
+            self.c_unit.setCurrentIndex(0)
         else:
             self.c_unit.setCurrentIndex(self.c_unit.findText(unit_name))
 

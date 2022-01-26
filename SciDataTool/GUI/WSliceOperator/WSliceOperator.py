@@ -8,6 +8,8 @@ from numpy import where
 from numpy import argmin, abs as np_abs
 
 type_extraction_dict = {
+    "max": "=max",
+    "min": "=min",
     "rms": "=rms",
     "rss": "=rss",
     "sum": "=sum",
@@ -17,6 +19,8 @@ type_extraction_dict = {
 OPERATION_LIST = [
     "slice",
     "slice (fft)",
+    "max",
+    "min",
     "rms",
     "rss",
     "sum",
@@ -81,21 +85,21 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
                 return fft_dict[self.axis_name] + action
 
         elif action_type == "overlay":
-            indices = self.axis.get_values()
+            # indices = self.axis.get_values()
 
-            action = "["
-            for idx in range(len(indices) - 1):
-                if isinstance(indices[idx], str):
-                    action += str(indices[idx]) + ","
-                else:
-                    action += str(int(indices[idx])) + ","
+            # action = "["
+            # for idx in range(len(indices) - 1):
+            #     if isinstance(indices[idx], str):
+            #         action += str(indices[idx]) + ","
+            #     else:
+            #         action += str(int(indices[idx])) + ","
 
-            if isinstance(indices[-1], str):
-                action += str(indices[-1]) + "]"
-            else:
-                action += str(int(indices[-1])) + "]"
+            # if isinstance(indices[-1], str):
+            #     action += str(indices[-1]) + "]"
+            # else:
+            #     action += str(int(indices[-1])) + "]"
 
-            return self.axis_name
+            return self.axis_name + "[]"
 
         elif action_type in type_extraction_dict:
             action = type_extraction_dict[action_type]

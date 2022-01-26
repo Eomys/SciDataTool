@@ -41,8 +41,18 @@ def read_input_strings(args, axis_data):
                 unit = elems[1]
             name = elems[0]
             axis_str = axis_str.replace("->" + unit, "")
+        # Detect max
+        if "max" in axis_str:
+            elems = axis_str.split("=max")
+            name = elems[0]
+            extension = "max"
+        # Detect min
+        elif "min" in axis_str:
+            elems = axis_str.split("=min")
+            name = elems[0]
+            extension = "min"
         # Detect rms sum
-        if "rss" in axis_str:
+        elif "rss" in axis_str:
             elems = axis_str.split("=rss")
             name = elems[0]
             extension = "rss"
