@@ -1,5 +1,6 @@
 from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Functions.fft_functions import comp_fftn, comp_ifftn
+from SciDataTool.Functions.fix_axes_order import fix_axes_order
 
 
 def get_along(
@@ -31,6 +32,10 @@ def get_along(
     # Read the axes input in args
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
+
+    # Fix axes order
+    args = fix_axes_order([axis.name for axis in self.get_axes()], args)
+
     axes_list = read_input_strings(args, axis_data)
     # Extract the requested axes (symmetries + unit)
     axes_list, transforms = self._comp_axes(axes_list)

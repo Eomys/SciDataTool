@@ -7,6 +7,7 @@ from SciDataTool.Functions.Plot import (
     COLORS,
 )
 from SciDataTool.Functions.Load.import_class import import_class
+from SciDataTool.Functions.fix_axes_order import fix_axes_order
 from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
     squeeze,
@@ -137,12 +138,15 @@ def plot_2D_Data(
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]
 
+    # Fix axes order
+    arg_list_along = fix_axes_order([axis.name for axis in self.get_axes()], arg_list)
+
     # In case of 1D fft, keep only positive wavenumbers
-    for i, arg in enumerate(arg_list):
+    for i, arg in enumerate(arg_list_along):
         if "wavenumber" in arg and "=" not in arg and "[" not in arg:
-            liste = list(arg_list)
+            liste = list(arg_list_along)
             liste[i] = arg.replace("wavenumber", "wavenumber>0")
-            arg_list = tuple(liste)
+            arg_list_along = tuple(liste)
 
     if color_list == [] or color_list is None:
         color_list = COLORS
@@ -204,7 +208,7 @@ def plot_2D_Data(
     for i, d in enumerate(data_list2):
         if is_fft or "dB" in unit:
             result = d.get_magnitude_along(
-                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+                *arg_list_along, axis_data=axis_data, unit=unit, is_norm=is_norm
             )
             if i == 0:
                 axes_list = result.pop("axes_list")
@@ -212,7 +216,7 @@ def plot_2D_Data(
                 result_0 = result
         else:
             result = d.get_along(
-                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+                *arg_list_along, axis_data=axis_data, unit=unit, is_norm=is_norm
             )
             if i == 0:
                 axes_list = result.pop("axes_list")
@@ -220,12 +224,13 @@ def plot_2D_Data(
                 result_0 = result
         Ydatas.append(result.pop(d.symbol))
         # in string case not overlay, Xdatas is a linspace
-        if axes_list[0].is_components and axes_list[0].extension != "list":
-            xdata = linspace(
-                0, len(result[list(result)[0]]) - 1, len(result[list(result)[0]])
-            )
+        if (
+            axes_list[list(result.keys()).index(arg_list[0])].is_components
+            and axes_list[list(result.keys()).index(arg_list[0])].extension != "list"
+        ):
+            xdata = linspace(0, len(result[arg_list[0]]) - 1, len(result[arg_list[0]]))
         else:
-            xdata = result[list(result)[0]]
+            xdata = result[arg_list[0]]
         Xdatas.append(xdata)
 
     # Build xlabel and title
@@ -279,8 +284,12 @@ def plot_2D_Data(
                 xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
             else:
                 xticks = None
-            if axes_list[0].is_components and axes_list[0].extension != "list":
-                xticklabels = result[list(result)[0]]
+            if (
+                axes_list[list(result.keys()).index(arg_list[0])].is_components
+                and axes_list[list(result.keys()).index(arg_list[0])].extension
+                != "list"
+            ):
+                xticklabels = result[arg_list[0]]
                 xticks = Xdatas[0]
             else:
                 xticklabels = None
@@ -462,10 +471,11 @@ def plot_2D_Data(
             result = self.get_along(*arg_list_ovl, unit=unit)
         Y_overall = result[self.symbol]
         # in string case not overlay, Xdatas is a linspace
-        if axes_list[0].is_components and axes_list[0].extension != "list":
-            xdata = linspace(
-                0, len(result[list(result)[0]]) - 1, len(result[list(result)[0]])
-            )
+        if (
+            axes_list[list(result.keys()).index(arg_list[0])].is_components
+            and axes_list[list(result.keys()).index(arg_list[0])].extension != "list"
+        ):
+            xdata = linspace(0, len(result[arg_list[0]]) - 1, len(result[arg_list[0]]))
         else:
             xdata = result[list(result)[0]]
         Ydatas.insert(0, Y_overall)
@@ -536,7 +546,10 @@ def plot_2D_Data(
 
         if (
             len(xticks) == 0
-            or (len(xticks) > 20 and not axes_list[0].is_components)
+            or (
+                len(xticks) > 20
+                and not axes_list[list(result.keys()).index(arg_list[0])].is_components
+            )
             or not is_auto_range
         ):
             xticks = None

@@ -1,5 +1,6 @@
 from SciDataTool.Functions import AxisError, NormError, UnitError
 from SciDataTool.Functions.conversions import convert, to_dB, to_dBA, to_noct
+from SciDataTool.Functions.fix_axes_order import fix_axes_order
 from numpy import apply_along_axis, add
 
 
@@ -26,6 +27,9 @@ def get_magnitude_along(
     if len(args) == 1 and type(args[0]) == tuple:
         args = args[0]  # if called from another script with *args
 
+    # Fix axes order
+    args = fix_axes_order([axis.name for axis in self.get_axes()], args)
+
     # For dB/dBA conversions, first extraction with freqs axis
     if "dB" in unit and unit != self.unit and is_sum:
         new_args = list(args).copy()
@@ -45,7 +49,7 @@ def get_magnitude_along(
                         index_freq = i
             if index_freq is None:  # No sum on freqs axis -> can extract directly
                 return self.get_magnitude_along(
-                    args, unit=unit, is_squeeze=is_squeeze, is_sum=False
+                    *args, unit=unit, is_squeeze=is_squeeze, is_sum=False
                 )
             else:
                 data = self.get_data_along(
@@ -75,9 +79,15 @@ def get_magnitude_along(
                         if arg != "order":
                             new_args[i] = "order"
                             index_order = i
+            elif is_match == 1:
+                for i, arg in enumerate(args):
+                    if "speed" in arg:
+                        if arg != arg_speed:
+                            new_args[i] = arg_speed
+                            index_speed = i
             elif unit == "dB" or "A-weight" in self.normalizations:
                 self.get_magnitude_along(
-                    args, unit=unit, is_squeeze=is_squeeze, is_sum=False
+                    *args, unit=unit, is_squeeze=is_squeeze, is_sum=False
                 )
             else:
                 raise AxisError(
@@ -87,7 +97,7 @@ def get_magnitude_along(
                 index_speed is None and index_order is None
             ):  # No sum on freqs axis -> can extract directly
                 return self.get_magnitude_along(
-                    args, unit=unit, is_squeeze=is_squeeze, is_sum=False
+                    *args, unit=unit, is_squeeze=is_squeeze, is_sum=False
                 )
             elif index_speed is None:  # Sum on order axis
                 data = self.get_data_along(
@@ -104,7 +114,7 @@ def get_magnitude_along(
                     *new_args, axis_data=axis_data, unit=unit
                 )  # Extract first along speed axis
                 return data.get_magnitude_along(
-                    *[args[index_speed], "order"],
+                    *args,
                     unit=unit,
                     is_squeeze=is_squeeze,
                     is_sum=False,
@@ -123,7 +133,7 @@ def get_magnitude_along(
     else:
 
         return_dict = self.get_along(
-            args, axis_data=axis_data, is_squeeze=is_squeeze, is_magnitude=True
+            *args, axis_data=axis_data, is_squeeze=is_squeeze, is_magnitude=True
         )
         values = return_dict[self.symbol]
 
