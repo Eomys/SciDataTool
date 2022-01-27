@@ -139,7 +139,9 @@ def plot_2D_Data(
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]
 
-    axes_names = [axis.name for axis in read_input_strings(arg_list, axis_data=None)]
+    axes_names = [
+        axis.name for axis in read_input_strings(arg_list, axis_data=axis_data)
+    ]
 
     # Fix axes order
     arg_list_along = fix_axes_order([axis.name for axis in self.get_axes()], arg_list)
