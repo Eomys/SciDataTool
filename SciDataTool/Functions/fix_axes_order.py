@@ -5,7 +5,6 @@ from SciDataTool.Functions.Plot import fft_dict, ifft_dict
 def fix_axes_order(axes_list, args):
     """Put args in same order as axes_list"""
     indices = []
-    no_match = []
     for j, arg in enumerate(args):
         for i, axis in enumerate(axes_list):
             if (
@@ -17,9 +16,7 @@ def fix_axes_order(axes_list, args):
             ):
                 indices.append(i)
                 break
-            else:
-                no_match.append(j)
-    if len(no_match) > 0:
+    if len(indices) < len(args):
         # axis was not in data -> keep same order
         return args
     else:
