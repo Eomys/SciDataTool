@@ -8,6 +8,7 @@ from SciDataTool.Functions.Plot import (
 )
 from SciDataTool.Functions.Load.import_class import import_class
 from SciDataTool.Functions.fix_axes_order import fix_axes_order
+from SciDataTool.Functions.parser import read_input_strings
 from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
     squeeze,
@@ -138,6 +139,8 @@ def plot_2D_Data(
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]
 
+    axes_names = [axis.name for axis in read_input_strings(arg_list, axis_data=None)]
+
     # Fix axes order
     arg_list_along = fix_axes_order([axis.name for axis in self.get_axes()], arg_list)
 
@@ -225,12 +228,14 @@ def plot_2D_Data(
         Ydatas.append(result.pop(d.symbol))
         # in string case not overlay, Xdatas is a linspace
         if (
-            axes_list[list(result.keys()).index(arg_list[0])].is_components
-            and axes_list[list(result.keys()).index(arg_list[0])].extension != "list"
+            axes_list[list(result.keys()).index(axes_names[0])].is_components
+            and axes_list[list(result.keys()).index(axes_names[0])].extension != "list"
         ):
-            xdata = linspace(0, len(result[arg_list[0]]) - 1, len(result[arg_list[0]]))
+            xdata = linspace(
+                0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]])
+            )
         else:
-            xdata = result[arg_list[0]]
+            xdata = result[axes_names[0]]
         Xdatas.append(xdata)
 
     # Build xlabel and title
@@ -285,11 +290,11 @@ def plot_2D_Data(
             else:
                 xticks = None
             if (
-                axes_list[list(result.keys()).index(arg_list[0])].is_components
-                and axes_list[list(result.keys()).index(arg_list[0])].extension
+                axes_list[list(result.keys()).index(axes_names[0])].is_components
+                and axes_list[list(result.keys()).index(axes_names[0])].extension
                 != "list"
             ):
-                xticklabels = result[arg_list[0]]
+                xticklabels = result[axes_names[0]]
                 xticks = Xdatas[0]
             else:
                 xticklabels = None
@@ -472,10 +477,12 @@ def plot_2D_Data(
         Y_overall = result[self.symbol]
         # in string case not overlay, Xdatas is a linspace
         if (
-            axes_list[list(result.keys()).index(arg_list[0])].is_components
-            and axes_list[list(result.keys()).index(arg_list[0])].extension != "list"
+            axes_list[list(result.keys()).index(axes_names[0])].is_components
+            and axes_list[list(result.keys()).index(axes_names[0])].extension != "list"
         ):
-            xdata = linspace(0, len(result[arg_list[0]]) - 1, len(result[arg_list[0]]))
+            xdata = linspace(
+                0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]])
+            )
         else:
             xdata = result[list(result)[0]]
         Ydatas.insert(0, Y_overall)
@@ -548,7 +555,9 @@ def plot_2D_Data(
             len(xticks) == 0
             or (
                 len(xticks) > 20
-                and not axes_list[list(result.keys()).index(arg_list[0])].is_components
+                and not axes_list[
+                    list(result.keys()).index(axes_names[0])
+                ].is_components
             )
             or not is_auto_range
         ):
