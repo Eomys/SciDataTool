@@ -1,3 +1,4 @@
+from operator import is_
 from SciDataTool.Functions.Plot.plot_2D import plot_2D
 from SciDataTool.Functions.Plot import (
     unit_dict,
@@ -36,8 +37,6 @@ def plot_2D_Data(
     data_list=[],
     legend_list=[],
     color_list=None,
-    curve_colors=None,
-    phase_colors=None,
     linestyles=None,
     linewidth_list=[2],
     save_path=None,
@@ -69,6 +68,7 @@ def plot_2D_Data(
     is_show_legend=True,
     is_outside_legend=False,
     is_frame_legend=True,
+    is_indlabels=False,
 ):
     """Plots a field as a function of time
 
@@ -241,7 +241,7 @@ def plot_2D_Data(
         Xdatas.append(xdata)
 
     # Build xlabel and title
-    title1 = self.name.capitalize() + " "
+    title1 = self.name[0].capitalize() + self.name[1:] + " "
     title2 = "for "
     for axis in axes_list:
         if axis.unit in norm_dict and axis.unit != "Hz":
@@ -269,7 +269,7 @@ def plot_2D_Data(
                 else:
                     axis_unit = axis.unit
                 if xlabel is None:
-                    xlabel = name.capitalize() + " [" + axis_unit + "]"
+                    xlabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
                 main_axis_name = name
             elif axis.unit in norm_dict:
                 if xlabel is None:
@@ -281,7 +281,7 @@ def plot_2D_Data(
             else:
                 axis_unit = axis.unit
                 if xlabel is None:
-                    xlabel = name.capitalize() + " [" + axis_unit + "]"
+                    xlabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
                 main_axis_name = name
             if (
                 axis.name == "angle"
@@ -437,7 +437,9 @@ def plot_2D_Data(
         for ope in ["max", "min", "mean", "rms", "sum", "rss"]:
             if "=" + ope in title2:
                 title2 = ""
-                title1 = ope.capitalize() + " " + title1.lower()
+                title1 = (
+                    ope[0].capitalize() + ope[1:] + " " + title1[0].lower() + title1[1:]
+                )
 
         # Concatenate all title parts
         if is_overlay:
@@ -561,7 +563,7 @@ def plot_2D_Data(
                     list(result.keys()).index(axes_names[0])
                 ].is_components
             )
-            or not is_auto_range
+            or not is_auto_ticks
         ):
             xticks = None
 
@@ -615,6 +617,7 @@ def plot_2D_Data(
             is_show_legend=is_show_legend,
             is_outside_legend=is_outside_legend,
             is_frame_legend=is_frame_legend,
+            is_indlabels=is_indlabels,
         )
 
     else:
@@ -657,4 +660,5 @@ def plot_2D_Data(
             is_show_legend=is_show_legend,
             is_outside_legend=is_outside_legend,
             is_frame_legend=is_frame_legend,
+            is_indlabels=is_indlabels,
         )

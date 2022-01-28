@@ -230,7 +230,7 @@ def plot_3D_Data(
             z_min = z_max - z_range
 
     # Build labels and titles
-    title1 = self.name.capitalize() + " "
+    title1 = self.name[0].capitalize() + self.name[1:] + " "
     axis = axes_list[list(result.keys()).index(axes_names[0])]
     if axis.name in axes_dict:
         name = axes_dict[axis.name]
@@ -239,14 +239,14 @@ def plot_3D_Data(
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
         if xlabel is None:
-            xlabel = name.capitalize() + " [" + axis_unit + "]"
+            xlabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
     elif axis.unit in norm_dict:
         if xlabel is None:
             xlabel = norm_dict[axis.unit]
     else:
         axis_unit = axis.unit
         if xlabel is None:
-            xlabel = name.capitalize() + " [" + axis_unit + "]"
+            xlabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
     if (
         axis.name == "angle"
         and axis.unit == "°"
@@ -277,14 +277,14 @@ def plot_3D_Data(
     if axis.unit == "SI":
         axis_unit = unit_dict[axis.name]
         if ylabel is None:
-            ylabel = name.capitalize() + " [" + axis_unit + "]"
+            ylabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
     elif axis.unit in norm_dict:
         if ylabel is None:
             ylabel = norm_dict[axis.unit]
     else:
         axis_unit = axis.unit
         if ylabel is None:
-            ylabel = name.capitalize() + " [" + axis_unit + "]"
+            ylabel = name[0].capitalize() + name[1:] + " [" + axis_unit + "]"
     if (
         axis.name == "angle"
         and axis.unit == "°"
