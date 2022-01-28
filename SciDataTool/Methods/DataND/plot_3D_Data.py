@@ -3,6 +3,8 @@ from SciDataTool.Functions.Plot.plot_4D import plot_4D
 from SciDataTool.Functions.Plot.plot_3D import plot_3D
 from SciDataTool.Functions.Plot import unit_dict, norm_dict, axes_dict
 from SciDataTool.Functions.Load.import_class import import_class
+from SciDataTool.Functions.parser import read_input_strings
+from SciDataTool.Functions.fix_axes_order import fix_axes_order
 from SciDataTool.Classes.Norm_indices import Norm_indices
 from numpy import (
     any as np_any,
@@ -125,6 +127,13 @@ def plot_3D_Data(
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]  # if called from another script with *arg_list
 
+    axes_names = [
+        axis.name for axis in read_input_strings(arg_list, axis_data=axis_data)
+    ]
+
+    # Fix axes order
+    arg_list_along = fix_axes_order([axis.name for axis in self.get_axes()], arg_list)
+
     # Set unit
     if unit == "SI":
         unit = self.unit
@@ -162,37 +171,33 @@ def plot_3D_Data(
     if is_fft:
         if is_2D_view:
             result = self.get_magnitude_along(
-                arg_list, axis_data=axis_data, unit=unit, is_norm=is_norm
+                *arg_list_along, axis_data=axis_data, unit=unit, is_norm=is_norm
             )
         else:
             result = self.get_harmonics(
                 N_stem,
-                arg_list,
+                *arg_list_along,
                 axis_data=axis_data,
                 unit=unit,
                 is_norm=is_norm,
                 is_flat=True,
             )
     else:
-        result = self.get_along(arg_list, unit=unit, is_norm=is_norm)
+        result = self.get_along(*arg_list_along, unit=unit, is_norm=is_norm)
 
     if type_plot == "scatter" and not is_fft:
         is_fft = True
         is_same_size = False
     axes_list = result["axes_list"]
     axes_dict_other = result["axes_dict_other"]
-    if axes_list[0].is_components:
-        Xdata = linspace(
-            0, len(result[axes_list[0].name]) - 1, len(result[axes_list[0].name])
-        )
+    if axes_list[list(result.keys()).index(axes_names[0])].is_components:
+        Xdata = linspace(0, len(result[axes_names[0]]) - 1, len(result[axes_names[0]]))
     else:
-        Xdata = result[axes_list[0].name]
-    if axes_list[1].is_components:
-        Ydata = linspace(
-            0, len(result[axes_list[1].name]) - 1, len(result[axes_list[1].name])
-        )
+        Xdata = result[axes_names[0]]
+    if axes_list[list(result.keys()).index(axes_names[1])].is_components:
+        Ydata = linspace(0, len(result[axes_names[1]]) - 1, len(result[axes_names[1]]))
     else:
-        Ydata = result[axes_list[1].name]
+        Ydata = result[axes_names[1]]
     Zdata = result[self.symbol]
     if Xdata.size == 1:
         Zdata = Zdata[None, ...]
@@ -226,7 +231,7 @@ def plot_3D_Data(
 
     # Build labels and titles
     title1 = self.name.capitalize() + " "
-    axis = axes_list[0]
+    axis = axes_list[list(result.keys()).index(axes_names[0])]
     if axis.name in axes_dict:
         name = axes_dict[axis.name]
     else:
@@ -264,7 +269,7 @@ def plot_3D_Data(
         xticklabels = None
         annotations_x = zeros_like(Xdata)
 
-    axis = axes_list[1]
+    axis = axes_list[list(result.keys()).index(axes_names[1])]
     if axis.name in axes_dict:
         name = axes_dict[axis.name]
     else:
@@ -319,7 +324,7 @@ def plot_3D_Data(
                 self.axes[axis.index].normalizations[axis.unit], Norm_indices
             ):
                 is_shading_flat = True
-                flat_indices.append(axis.index)
+                flat_indices.append(axes_names.index(axis.name))
 
     title2 = "for "
     for axis in axes_list[2:]:
@@ -470,9 +475,15 @@ def plot_3D_Data(
         y_min = y_min - y_max * 0.2
         y_max = y_max * 1.2
 
-        if len(xticks) == 0 or (len(xticks) > 20 and not axes_list[0].is_components):
+        if len(xticks) == 0 or (
+            len(xticks) > 20
+            and not axes_list[list(result.keys()).index(axes_names[0])].is_components
+        ):
             xticks = None
-        if len(yticks) == 0 or (len(yticks) > 20 and not axes_list[1].is_components):
+        if len(yticks) == 0 or (
+            len(yticks) > 20
+            and not axes_list[list(result.keys()).index(axes_names[1])].is_components
+        ):
             yticks = None
 
         if not is_auto_ticks:
