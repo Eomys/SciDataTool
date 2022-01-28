@@ -18,8 +18,6 @@ def plot_2D_Data(
     data_list=[],
     legend_list=[],
     color_list=None,
-    curve_colors=None,
-    phase_colors=None,
     linestyles=None,
     linewidth_list=[2],
     save_path=None,
