@@ -51,6 +51,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
 
+        self.default_file_path = None
+
         # Building the interaction with the UI and the UI itself
         self.w_axis_manager.refreshRange.connect(self.update_range)
         self.b_export.clicked.connect(self.export)
@@ -69,6 +71,18 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """
         self.updatePlot.emit()
 
+    def get_file_name(self):
+        param_list = [
+            *self.w_axis_manager.get_axes_selected(),
+            *self.w_axis_manager.get_operation_selected(),
+        ]
+        if None in param_list:
+            param_list.remove(None)
+
+        file_name = self.data.symbol + "_" + "_".join(param_list)
+        file_name.replace("{", "").replace("}", "")
+        return file_name
+
     def export(self, save_file_path=False):
         """Method that export the plot as a csv file
         Parameters
@@ -82,9 +96,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             *self.w_axis_manager.get_operation_selected(),
         ]
 
-        file_name = "plot_" + self.data.symbol + "_" + "_".join(param_list)
-
-        default_file_path = file_name + ".csv"
+        if self.default_file_path is None:
+            file_name = self.get_file_name()
+            default_file_path = file_name + ".csv"
+        else:
+            default_file_path = self.default_file_path
 
         # Opening a dialog window to select the directory where the file will be saved if we are not testing
         if save_file_path == False:
@@ -225,6 +241,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         elif component_name in ["comp_x", "comp_y", "comp_z"]:
             self.data = self.data_obj.to_xyz().components[component_name]
 
+        self.w_range.set_range(self.data)
+
         # Force plot refresh
         if is_update_plot:
             self.update_plot_forced()
@@ -251,12 +269,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         # Emitting a signal meaning that the plot must be updated
         self.updatePlotForced.emit()
 
-    def update_range(
-        self,
-        unit=None,
-        z_min=None,
-        z_max=None,
-    ):
+    def update_range(self, unit=None, z_min=None, z_max=None):
         """Method that will update the range widget with either the user input or the default value of the DataND object
         Parameters
         ----------
@@ -283,14 +296,10 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.w_range.g_range.setTitle("Z Range")
 
         # Setting the WDataRange by sending the necessary info to the widget
-        self.w_range.set_range(self.data, axes_selected, data_selection)
+        self.w_range.set_range(self.data, unit=unit)
 
         # If user inputs have been sent (auto plot), then we modify the WDataRange according to these info
-        if unit not in [None, "SI"] or z_min is not None or z_max is not None:
-            self.w_range.set_range_user_input(
-                unit=unit,
-                z_min=z_min,
-                z_max=z_max,
-            )
+        if z_min is not None or z_max is not None:
+            self.w_range.set_range_user_input(z_min=z_min, z_max=z_max)
 
         self.w_range.blockSignals(False)

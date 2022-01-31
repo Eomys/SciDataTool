@@ -8,6 +8,8 @@ from SciDataTool.Functions.symmetries import rebuild_symmetries_axis
 from SciDataTool.Functions import AxisError
 
 operation_list = [
+    "max",
+    "min",
     "sum",
     "rss",
     "mean",
@@ -181,6 +183,8 @@ def get_axis(self, axis, is_real):
                 "smallestperiod",
                 "oneperiod",
                 "antiperiod",
+                "max",
+                "min",
                 "sum",
                 "mean",
                 "rms",

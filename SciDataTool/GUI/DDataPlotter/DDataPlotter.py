@@ -10,6 +10,7 @@ from SciDataTool.Functions.Plot.init_fig import init_fig
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
+from matplotlib.text import Annotation
 from numpy import array
 from SciDataTool.Functions.Plot import ifft_dict, fft_dict
 from SciDataTool.Functions.Plot import TEXT_BOX
@@ -108,10 +109,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             self.is_auto_refresh.setCheckState(Qt.Unchecked)
 
         self.plot_arg_dict = plot_arg_dict
+        self.data = data
 
         # Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
-        self.set_figure(self.fig)
+        # self.set_figure(self.fig)
 
         # Initializing the WPlotManager
         self.w_plot_manager.set_info(
@@ -195,18 +197,32 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         # Set labels for cursor and coordinates
         ######################################
-        def format_coord(x, y, z=None, sep=", "):
-
-            # Use ticklabels
-            try:
-                x_float = float(self.ax.get_xticklabels()[-1]._text)
-                X_str = format(x, ".4g")
-            except:
-                X_str = None
-                for ticklabel in self.ax.get_xticklabels():
-                    if ticklabel._x == x:
-                        X_str = ticklabel._text
-                        break
+        def format_coord(x, y, z=None, sep=", ", ind=None):
+            # Use hidden annotations
+            annotations = [
+                child
+                for child in self.ax.get_children()
+                if isinstance(child, Annotation)
+            ]
+            X_str = None
+            if (
+                ind is not None
+                and annotations != []
+                and ind[0] in range(len(annotations))
+                and not annotations[ind[0]]._visible
+            ):
+                if annotations[ind[0]]._x == x:
+                    X_str = annotations[ind[0]]._text
+            else:
+                # Use ticklabels
+                try:
+                    x_float = float(self.ax.get_xticklabels()[-1]._text)
+                    X_str = format(x, ".4g")
+                except:
+                    for ticklabel in self.ax.get_xticklabels():
+                        if ticklabel._x == x:
+                            X_str = ticklabel._text
+                            break
             if "mathdefault" in self.ax.get_yticklabels()[-1]._text:
                 Y_str = format(y, ".4g")
             else:
@@ -227,7 +243,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 self.data,
                 axes_selected,
                 _,
-                _,
+                output_range,
             ] = self.w_plot_manager.get_plot_info()
 
             # Checking if the axes are following the order inside the data object
@@ -239,7 +255,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 xlabel = latex(SYMBOL_DICT[axes_selected_parsed[0].name.lower()])
             else:
                 xlabel = latex(axes_selected_parsed[0].name)
-            xunit = "[" + latex(axes_selected_parsed[0].unit) + "]"
+            xunit = "[" + axes_selected_parsed[0].unit + "]"
 
             if len(axes_selected) == 2:
                 if axes_selected_parsed[1].name.lower() in SYMBOL_DICT:
@@ -254,7 +270,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 else:
                     ylabel = latex(self.data.symbol)
 
-                yunit = "[" + latex(self.data.unit) + "]"
+                yunit = "[" + latex(output_range["unit"]) + "]"
 
                 if ylabel == "W" and "dBA" in yunit:
                     ylabel = "ASWL"
@@ -310,10 +326,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 ydata = plot_obj.get_ydata()
                 X = xdata[ind][0]  # X position of the click
                 Y = ydata[ind][0]  # Y position of the click
-                if self.fig.legend() not in [None, []]:
-                    legend = (
-                        self.fig.legend().texts[self.ax.lines.index(plot_obj)]._text
-                    )
+                if self.ax.get_legend_handles_labels()[1] != []:
+                    legend = self.ax.get_legend_handles_labels()[1][
+                        self.ax.lines.index(plot_obj)
+                    ]
             elif isinstance(plot_obj, PathCollection):
                 ind = event.ind
                 X = plot_obj.get_offsets().data[ind][0][0]
@@ -349,7 +365,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             x_min, x_max = self.ax.get_xlim()
             dx = (x_max - x_min) / 50
             if X is not None and Y is not None:
-                label = format_coord(X, Y, Z, sep="\n")
+                label = format_coord(X, Y, Z, sep="\n", ind=ind)
                 if legend is not None:
                     label = legend + "\n" + label
                 if label != "":
@@ -549,5 +565,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
     def showEvent(self, ev):
         super(DDataPlotter, self).showEvent(ev)
         self.w_scroll.setFixedWidth(
-            500 + self.w_scroll.verticalScrollBar().sizeHint().width()
+            498 + self.w_scroll.verticalScrollBar().sizeHint().width()
         )
+        self.w_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

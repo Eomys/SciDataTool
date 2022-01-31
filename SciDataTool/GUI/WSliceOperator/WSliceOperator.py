@@ -8,6 +8,8 @@ from numpy import where
 from numpy import argmin, abs as np_abs
 
 type_extraction_dict = {
+    "max": "=max",
+    "min": "=min",
     "rms": "=rms",
     "rss": "=rss",
     "sum": "=sum",
@@ -17,12 +19,13 @@ type_extraction_dict = {
 OPERATION_LIST = [
     "slice",
     "slice (fft)",
+    "max",
+    "min",
     "rms",
     "rss",
     "sum",
     "mean",
-    "integrate",
-    "overlay/filter",
+    "overlay",
 ]
 
 
@@ -81,22 +84,22 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             if self.axis_name in fft_dict:
                 return fft_dict[self.axis_name] + action
 
-        elif action_type == "overlay/filter":
-            indices = self.axis.get_values()
+        elif action_type == "overlay":
+            # indices = self.axis.get_values()
 
-            action = "["
-            for idx in range(len(indices) - 1):
-                if isinstance(indices[idx], str):
-                    action += str(indices[idx]) + ","
-                else:
-                    action += str(int(indices[idx])) + ","
+            # action = "["
+            # for idx in range(len(indices) - 1):
+            #     if isinstance(indices[idx], str):
+            #         action += str(indices[idx]) + ","
+            #     else:
+            #         action += str(int(indices[idx])) + ","
 
-            if isinstance(indices[-1], str):
-                action += str(indices[-1]) + "]"
-            else:
-                action += str(int(indices[-1])) + "]"
+            # if isinstance(indices[-1], str):
+            #     action += str(indices[-1]) + "]"
+            # else:
+            #     action += str(int(indices[-1])) + "]"
 
-            return self.axis_name
+            return self.axis_name + "[]"
 
         elif action_type in type_extraction_dict:
             action = type_extraction_dict[action_type]
@@ -146,12 +149,12 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         # Setting the label of the widget with the right name
         self.set_name(operation_name)
 
-        # Converting type of the operation if we have a slice or a overlay/filter
+        # Converting type of the operation if we have a slice or an overlay
         if operation_type == "single":
             operation_type = "slice"
 
         elif operation_type == "list":
-            operation_type = "overlay/filter"
+            operation_type = "overlay"
 
         # Setting operation combobox to the right operation
         self.c_operation.setCurrentIndex(self.c_operation.findText(operation_type))
@@ -241,6 +244,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         if self.axis.is_components or self.axis.is_overlay:
             operation_list.remove("slice")
         else:
+            operation_list.remove("overlay")
             self.set_slider_floatedit()
 
         # Remove fft slice for non fft axes
@@ -286,18 +290,13 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.slider.show()
             self.b_action.hide()
             self.refreshNeeded.emit()
-        # If the operation selected is overlay/filter then we show the related button
-        elif extraction_selected == "overlay/filter":
+        # If the operation selected is overlay then we show the related button
+        elif extraction_selected == "overlay":
             self.lf_value.hide()
             self.slider.hide()
             # self.b_action.show()
             # self.b_action.setText(extraction_selected)
             self.refreshNeeded.emit()
-
-        elif extraction_selected == "integrate":
-            self.lf_value.hide()
-            self.slider.hide()
-            self.b_action.hide()
         else:
             self.lf_value.hide()
             self.slider.hide()

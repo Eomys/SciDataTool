@@ -174,6 +174,12 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         # Step 2 : Recovering the unit and setting the combobox according to it
         unit_name = axis.unit
         if unit_name in unit_dict:
+            self.c_unit.setCurrentIndex(self.c_unit.findText(unit_dict[unit_name]))
+        elif unit_name in norm_name_dict:
+            self.c_unit.setCurrentIndex(self.c_unit.findText(norm_name_dict[unit_name]))
+        elif unit_name == "SI":
+            self.c_unit.setCurrentIndex(0)
+        else:
             self.c_unit.setCurrentIndex(self.c_unit.findText(unit_name))
 
         self.blockSignals(False)

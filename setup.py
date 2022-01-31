@@ -11,14 +11,14 @@ with open("requirements.txt", "r") as file:
 
 setuptools.setup(
     name="SciDataTool",
-    version="2.0.4",
+    version="2.1.3",
     author="Helene Toubin",
     author_email="helene.toubin@eomys.com",
     description="Scientific Data Tool",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Eomys/SciDataTool",
-    download_url="https://github.com/Eomys/SciDataTool/archive/2.0.4.tar.gz",
+    download_url="https://github.com/Eomys/SciDataTool/archive/2.1.3.tar.gz",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

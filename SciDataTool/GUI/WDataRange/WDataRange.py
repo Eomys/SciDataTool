@@ -28,7 +28,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.name = ""
         self.unit_list = list()
 
-        self.c_unit.currentTextChanged.connect(self.update_needed)
+        self.c_unit.currentTextChanged.connect(self.update_unit)
         self.lf_min.editingFinished.connect(self.update_needed)
         self.lf_max.editingFinished.connect(self.update_needed)
 
@@ -90,7 +90,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         """
         self.name = field_name
 
-    def set_range(self, data, axes_selected, data_selection):
+    def set_range(self, data, unit=None):
         """Method that set the data range widget with the value from the DataND object
 
         Parameters
@@ -100,15 +100,19 @@ class WDataRange(Ui_WDataRange, QWidget):
         data : DataND
             the data object that hold the field that will set the widget
         """
-
-        self.set_name(data.name)
-        self.set_unit(data)
+        if unit is not None:
+            self.set_unit(data)
+            if unit is not None and unit != "SI":  # Adding unit to unit combobox
+                if self.c_unit.currentText() != unit:
+                    self.c_unit.insertItem(0, unit)
+            if unit == "dBA" and self.c_unit.count() > 1:  # Also adding dB
+                self.c_unit.insertItem(1, "dB")
+            self.c_unit.setCurrentIndex(0)
         self.lf_min.clear()
         self.lf_max.clear()
 
     def set_range_user_input(
         self,
-        unit=None,
         z_min=None,
         z_max=None,
     ):
@@ -117,21 +121,11 @@ class WDataRange(Ui_WDataRange, QWidget):
         ----------
         self : WDataRange
             a WDataRange object
-        unit : str
-            unit in which to plot the field
         z_min : float
             Minimum value for Z axis (or Y if only one axe)
         z_max : float
             Minimum value for Z axis (or Y if only one axe)
         """
-
-        if unit is not None and unit != "SI":  # Adding unit to unit combobox
-            if self.c_unit.currentText() != unit:
-                self.c_unit.insertItem(0, unit)
-        if unit == "dBA":  # Also adding dB
-            self.c_unit.insertItem(1, "dB")
-        self.c_unit.setCurrentIndex(0)
-
         if z_max is not None:
             # Setting max float edit
             self.lf_max.setValue(z_max)
@@ -153,6 +147,17 @@ class WDataRange(Ui_WDataRange, QWidget):
         # # Updating the unit combobox
         self.c_unit.clear()
         self.c_unit.addItem(field.unit)
+
+    def update_unit(self):
+        """Method that clears min/max then calls update_needed
+        Parameters
+        ----------
+        self : WDataRange
+            a WDataRange object
+        """
+        self.lf_max.clear()
+        self.lf_min.clear()
+        self.update_needed()
 
     def update_needed(self):
         """Method that emit a signal to automatically refresh the plot inside the GUI

@@ -24,6 +24,8 @@ def _get_field(self, axes_list):
             axis_requested.transform == "fft"
             or axis_requested.extension
             in [
+                "max",
+                "min",
                 "sum",
                 "rss",
                 "mean",

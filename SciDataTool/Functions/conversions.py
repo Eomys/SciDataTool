@@ -226,6 +226,10 @@ def convert(values, unit1, unit2):
         return 1960 * (values + 0.53) / (26.28 - values)
     elif unit1 == "Hz" and unit2 == "Bark":
         return (26.81 * values / (1960 + values)) - 0.53
+    elif unit1 == "dimless" and unit2 == "":
+        return values
+    elif unit1 == "" and unit2 == "dimless":
+        return values
     # Generic conversion
     else:
         unit1_save = unit1

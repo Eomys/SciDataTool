@@ -7,7 +7,7 @@ from SciDataTool.Functions import axes_dict, rev_axes_dict
 
 
 EXTENSION_DICT = {
-    "slice": ["rss", "sum", "rms", "mean", "integrate", "list", "single"],
+    "slice": ["max", "min", "rss", "sum", "rms", "mean", "list", "single"],
     "axis": [
         "derivate",
         "oneperiod",
@@ -288,6 +288,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
                 # Generating DataSelection with the input of user if they are given or by default (like in a manual plot)
                 if len(slices_op_list) != 0:
+                    self.gen_slice_op()
                     self.set_slice_op(slices_op_list)
                 else:
                     self.gen_slice_op()

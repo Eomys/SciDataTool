@@ -1,4 +1,4 @@
-from numpy import abs as np_abs
+from numpy import abs as np_abs, max as np_max, min as np_min
 
 from SciDataTool.Functions.derivation_integration import (
     derivate,
@@ -51,8 +51,14 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit):
         else:
             is_phys = False
             is_freqs = False
+        # max over max axes
+        if extension in "max":
+            values = np_max(values, axis=index)
+        # min over max axes
+        elif extension in "min":
+            values = np_min(values, axis=index)
         # sum over sum axes
-        if extension in "sum":
+        elif extension in "sum":
             values = my_sum(values, index, Nper, is_aper, unit)
         # root sum square over rss axes
         elif extension == "rss":
