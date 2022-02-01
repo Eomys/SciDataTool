@@ -20,7 +20,7 @@ def to_datadual(self, datatime=None):
         name=self.name,
         symbol=self.symbol,
         unit=self.unit,
-        normalizations=self.normalizations,
+        normalizations=self.normalizations.copy(),
         axes_df=self.axes,
         values_df=self.values,
     )
