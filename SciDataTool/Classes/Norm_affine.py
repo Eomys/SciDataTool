@@ -21,6 +21,7 @@ except ImportError as error:
     normalize = error
 
 
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -108,9 +109,23 @@ class Norm_affine(Normalization):
 
         # Check the properties inherited from Normalization
         diff_list.extend(super(Norm_affine, self).compare(other, name=name))
-        if other._slope != self._slope:
+        if (
+            other._slope is not None
+            and self._slope is not None
+            and isnan(other._slope)
+            and isnan(self._slope)
+        ):
+            pass
+        elif other._slope != self._slope:
             diff_list.append(name + ".slope")
-        if other._offset != self._offset:
+        if (
+            other._offset is not None
+            and self._offset is not None
+            and isnan(other._offset)
+            and isnan(self._offset)
+        ):
+            pass
+        elif other._offset != self._offset:
             diff_list.append(name + ".offset")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))

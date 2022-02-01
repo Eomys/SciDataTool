@@ -22,6 +22,7 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
+from numpy import isnan
 from ._check import InitUnKnowClassError
 from .Normalization import Normalization
 
@@ -328,6 +329,15 @@ class DataDual(DataND):
         """setter of axes_dt"""
         if type(value) is list:
             for ii, obj in enumerate(value):
+                if isinstance(obj, str):  # Load from file
+                    try:
+                        obj = load_init_dict(obj)[1]
+                    except Exception as e:
+                        self.get_logger().error(
+                            "Error while loading " + obj + ", setting None instead"
+                        )
+                        obj = None
+                        value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
                         "SciDataTool.Classes", obj.get("__class__"), "axes_dt"
@@ -386,6 +396,15 @@ class DataDual(DataND):
         """setter of axes_df"""
         if type(value) is list:
             for ii, obj in enumerate(value):
+                if isinstance(obj, str):  # Load from file
+                    try:
+                        obj = load_init_dict(obj)[1]
+                    except Exception as e:
+                        self.get_logger().error(
+                            "Error while loading " + obj + ", setting None instead"
+                        )
+                        obj = None
+                        value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
                         "SciDataTool.Classes", obj.get("__class__"), "axes_df"

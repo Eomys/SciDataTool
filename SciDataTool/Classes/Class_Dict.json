@@ -79,7 +79,9 @@
             "get_axis_periodic",
             "has_period",
             "get_periodicity",
-            "to_linspace"
+            "to_linspace",
+            "get_filter",
+            "check_filter"
         ],
         "mother": "Data",
         "name": "Data1D",
@@ -121,6 +123,33 @@
                 "type": "bool",
                 "unit": "",
                 "value": false
+            },
+            {
+                "desc": "Character used to separate attributes in string case (e.g. \"r=0, stator, radial\")",
+                "max": "",
+                "min": "",
+                "name": "delimiter",
+                "type": "str",
+                "unit": "",
+                "value": "None"
+            },
+            {
+                "desc": "List of indices to use to sort axis",
+                "max": "",
+                "min": "",
+                "name": "sort_indices",
+                "type": "list",
+                "unit": "",
+                "value": null
+            },
+            {
+                "desc": "Dict of filter keys",
+                "max": "",
+                "min": "",
+                "name": "filter",
+                "type": "dict",
+                "unit": "",
+                "value": null
             }
         ]
     },
