@@ -388,6 +388,7 @@ def plot_2D_Data(
                 if len(d.axes[axis.index].get_values()) > 1:
                     legends += [
                         legend_list[i]
+                        + " "
                         + axis.name
                         + "="
                         + axis.values.tolist()[j]
@@ -395,6 +396,7 @@ def plot_2D_Data(
                         + axis_unit
                         if isinstance(axis.values.tolist()[j], str)
                         else legend_list[i]
+                        + " "
                         + axis.name
                         + "="
                         + "%.3g" % axis.values.tolist()[j]
