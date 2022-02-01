@@ -5,3 +5,5 @@ symmetries,,"Dictionary of the symmetries along each axis, used to reduce storag
 is_overlay,,True if axis must be used to overlay curves in plots,,bool,False,,,,,,has_period,,,,
 delimiter,,"Character used to separate attributes in string case (e.g. ""r=0, stator, radial"")",,str,None,,,,,,get_periodicity,,,,
 sort_indices,,List of indices to use to sort axis,,list,None,,,,,,to_linspace,,,,
+filter,,Dict of filter keys,,dict,None,,,,,,get_filter,,,,
+,,,,,,,,,,,check_filter,,,,
