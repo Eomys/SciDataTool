@@ -335,7 +335,40 @@ def test_dba_speed_order_norm():
     assert result["X"].shape == (11, 20, 6)
 
 
+@pytest.mark.validation
+def test_db_sum():
+    Freqs = DataLinspace(
+        name="freqs",
+        unit="Hz",
+        initial=0,
+        final=10000,
+        number=11,
+        include_endpoint=True,
+    )
+    Loadcase = DataLinspace(
+        name="loadcases",
+        unit="",
+        initial=0,
+        final=5,
+        number=6,
+        include_endpoint=True,
+    )
+    field = 600000 * np.ones((11, 6))
+    Field = DataFreq(
+        name="noise",
+        symbol="W",
+        unit="W",
+        values=field,
+        axes=[Freqs, Loadcase],
+        normalizations={"ref": Norm_ref(ref=1e-12)},
+    )
+    result_SI = Field.get_magnitude_along("freqs=sum", "loadcases=sum", unit="SI")
+    noise_db = 10 * np.log10(result_SI["W"] / 1e-12)
+    result_db = Field.get_magnitude_along("freqs=sum", "loadcases=sum", unit="dB")
+    assert noise_db == result_db["W"]
+
+
 if __name__ == "__main__":
-    test_dba_speed_order_norm()
+    test_db_sum()
     # test_norm()
     print("Done")

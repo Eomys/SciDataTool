@@ -135,7 +135,8 @@
         "desc": "Class for fields defined in both time and freq domains",
         "is_internal": false,
         "methods": [
-            "get_along"
+            "get_along",
+            "get_axes"
         ],
         "mother": "DataND",
         "name": "DataDual",

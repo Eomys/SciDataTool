@@ -1,5 +1,5 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
 axes_dt,,List of the Data1D objects corresponding to the axes in time/space domain,,[SciDataTool.Classes.Data],None,,,,,DataND,get_along,VERSION,1,Class for fields defined in both time and freq domains,
-values_dt,,Values of the field in time/space domain,,ndarray,None,,,,,,,,,,
+values_dt,,Values of the field in time/space domain,,ndarray,None,,,,,,get_axes,,,,
 axes_df,,List of the Data1D objects corresponding to the axes in fourier domain,,[SciDataTool.Classes.Data],None,,,,,,,,,,
 values_df,,Values of the field in fourier domain,,ndarray,None,,,,,,,,,,

@@ -20,8 +20,14 @@ try:
 except ImportError as error:
     get_along = error
 
+try:
+    from ..Methods.DataDual.get_axes import get_axes
+except ImportError as error:
+    get_axes = error
+
 
 from numpy import array, array_equal
+from numpy import isnan
 from ._check import InitUnKnowClassError
 from .Normalization import Normalization
 
@@ -31,6 +37,7 @@ class DataDual(DataND):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.DataDual.get_along
     if isinstance(get_along, ImportError):
         get_along = property(
@@ -40,6 +47,15 @@ class DataDual(DataND):
         )
     else:
         get_along = get_along
+    # cf Methods.DataDual.get_axes
+    if isinstance(get_axes, ImportError):
+        get_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataDual method get_axes: " + str(get_axes))
+            )
+        )
+    else:
+        get_axes = get_axes
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -328,6 +344,15 @@ class DataDual(DataND):
         """setter of axes_dt"""
         if type(value) is list:
             for ii, obj in enumerate(value):
+                if isinstance(obj, str):  # Load from file
+                    try:
+                        obj = load_init_dict(obj)[1]
+                    except Exception as e:
+                        self.get_logger().error(
+                            "Error while loading " + obj + ", setting None instead"
+                        )
+                        obj = None
+                        value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
                         "SciDataTool.Classes", obj.get("__class__"), "axes_dt"
@@ -386,6 +411,15 @@ class DataDual(DataND):
         """setter of axes_df"""
         if type(value) is list:
             for ii, obj in enumerate(value):
+                if isinstance(obj, str):  # Load from file
+                    try:
+                        obj = load_init_dict(obj)[1]
+                    except Exception as e:
+                        self.get_logger().error(
+                            "Error while loading " + obj + ", setting None instead"
+                        )
+                        obj = None
+                        value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
                         "SciDataTool.Classes", obj.get("__class__"), "axes_df"
