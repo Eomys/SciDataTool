@@ -4,7 +4,7 @@ from SciDataTool.Functions.derivation_integration import integrate
 from SciDataTool.Functions.conversions import convert
 
 
-def my_sum(values, index, Nper, is_aper, unit, is_fft):
+def my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit="SI"):
     """Returns the arithmetic sum of values along given axis
 
     Parameters
@@ -37,9 +37,15 @@ def my_sum(values, index, Nper, is_aper, unit, is_fft):
             if Nper is None:
                 # Set Nper to 1 in case of non-periodic axis
                 Nper = 1
-            values = 10 * np.log10(
-                np.sum(10 ** (values / 10), axis=index, keepdims=True)
-            ) + 10 * np.log10(Nper)
+            try:
+                convert(values, corr_unit, "W")
+                values = 10 * np.log10(
+                    np.sum(10 ** (values / 10), axis=index, keepdims=True)
+                ) + 10 * np.log10(Nper)
+            except Exception:
+                values = 20 * np.log10(
+                    np.sum(10 ** (values / 20), axis=index, keepdims=True)
+                ) + 20 * np.log10(Nper)
         else:
             if is_fft:  # No need to multiply by Nper in fft case
                 Nper = 1
@@ -131,7 +137,9 @@ def root_mean_square(values, ax_val, index, Nper, is_aper, is_phys, is_fft):
     return np.sqrt(my_mean(values ** 2, ax_val, index, Nper, is_aper, is_phys, is_fft))
 
 
-def root_sum_square(values, ax_val, index, Nper, is_aper, is_phys, unit, is_fft):
+def root_sum_square(
+    values, ax_val, index, Nper, is_aper, is_phys, unit, is_fft, corr_unit="SI"
+):
     """Returns the root sum square (arithmetic or integral) of values along given axis
 
     Parameters
@@ -157,7 +165,7 @@ def root_sum_square(values, ax_val, index, Nper, is_aper, is_phys, unit, is_fft)
 
     # To sum dB or dBA
     if "dB" in unit:
-        return my_sum(values, index, Nper, is_aper, unit, is_fft)
+        return my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit=corr_unit)
 
     else:
         if is_aper and Nper is not None:
@@ -170,6 +178,8 @@ def root_sum_square(values, ax_val, index, Nper, is_aper, is_phys, unit, is_fft)
         if is_phys:
             values = integrate(values ** 2, ax_val, index, Nper, is_aper, is_phys)
         else:
-            values = my_sum(values ** 2, index, Nper, is_aper, unit, is_fft)
+            values = my_sum(
+                values ** 2, index, Nper, is_aper, unit, is_fft, corr_unit=corr_unit
+            )
 
         return np.sqrt(values)

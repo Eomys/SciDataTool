@@ -63,11 +63,21 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit):
             values = np_min(values, axis=index)
         # sum over sum axes
         elif extension in "sum":
-            values = my_sum(values, index, Nper, is_aper, unit, is_fft)
+            values = my_sum(
+                values, index, Nper, is_aper, unit, is_fft, corr_unit=self.unit
+            )
         # root sum square over rss axes
         elif extension == "rss":
             values = root_sum_square(
-                values, ax_val, index, Nper, is_aper, is_phys, unit, is_fft
+                values,
+                ax_val,
+                index,
+                Nper,
+                is_aper,
+                is_phys,
+                unit,
+                is_fft,
+                corr_unit=self.unit,
             )
         # mean value over mean axes
         elif extension == "mean":
