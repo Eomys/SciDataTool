@@ -32,9 +32,12 @@ def my_sum(values, index, Nper, is_aper, unit):
     else:
         # To sum dB or dBA
         if "dB" in unit:
+            if Nper is None:
+                # Set Nper to 1 in case of non-periodic axis
+                Nper = 1
             values = 10 * np.log10(
                 np.sum(10 ** (values / 10), axis=index, keepdims=True)
-            )
+            ) + 10 * np.log10(Nper)
         else:
             # Take sum value multiplied by periodicity
             if Nper is None:
