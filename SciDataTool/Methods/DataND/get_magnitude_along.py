@@ -5,7 +5,14 @@ from numpy import apply_along_axis, add
 
 
 def get_magnitude_along(
-    self, *args, unit="SI", is_norm=False, axis_data=[], is_squeeze=True, is_sum=True
+    self,
+    *args,
+    unit="SI",
+    is_norm=False,
+    axis_data=[],
+    is_squeeze=True,
+    is_sum=True,
+    corr_unit=None
 ):
     """Returns the ndarray of the magnitude of the FT, using conversions and symmetries if needed.
     Parameters
@@ -56,7 +63,11 @@ def get_magnitude_along(
                     *new_args, axis_data=axis_data, unit=unit
                 )  # Extract first along freqs axis
                 return data.get_magnitude_along(
-                    *[args[index_freq]], unit=unit, is_squeeze=is_squeeze, is_sum=False
+                    *[args[index_freq]],
+                    unit=unit,
+                    is_squeeze=is_squeeze,
+                    is_sum=False,
+                    corr_unit=self.unit,
                 )  # Then sum on freqs axis
         else:  # Try speed/order
             is_match = 0
@@ -108,6 +119,7 @@ def get_magnitude_along(
                     unit=unit,
                     is_squeeze=is_squeeze,
                     is_sum=False,
+                    corr_unit=self.unit,
                 )  # Then sum on order axis
             elif index_order is None:  # Sum on speed axis
                 data = self.get_data_along(
@@ -118,6 +130,7 @@ def get_magnitude_along(
                     unit=unit,
                     is_squeeze=is_squeeze,
                     is_sum=False,
+                    corr_unit=self.unit,
                 )  # Then sum on speed axis
             else:  # Sum on speed and order axes
                 data = self.get_data_along(
@@ -128,12 +141,17 @@ def get_magnitude_along(
                     unit=unit,
                     is_squeeze=is_squeeze,
                     is_sum=False,
+                    corr_unit=self.unit,
                 )  # Then sum on speed and order axes
 
     else:
 
         return_dict = self.get_along(
-            *args, axis_data=axis_data, is_squeeze=is_squeeze, is_magnitude=True
+            *args,
+            axis_data=axis_data,
+            is_squeeze=is_squeeze,
+            is_magnitude=True,
+            corr_unit=corr_unit,
         )
         values = return_dict[self.symbol]
 

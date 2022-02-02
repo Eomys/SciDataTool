@@ -14,7 +14,7 @@ from SciDataTool.Functions.sum_mean import (
 )
 
 
-def _apply_operations(self, values, axes_list, is_magnitude, unit):
+def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
     """Returns the values of the field transformed or converted
     Parameters
     ----------
@@ -64,7 +64,7 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit):
         # sum over sum axes
         elif extension in "sum":
             values = my_sum(
-                values, index, Nper, is_aper, unit, is_fft, corr_unit=self.unit
+                values, index, Nper, is_aper, unit, is_fft, corr_unit=corr_unit
             )
         # root sum square over rss axes
         elif extension == "rss":
@@ -77,7 +77,7 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit):
                 is_phys,
                 unit,
                 is_fft,
-                corr_unit=self.unit,
+                corr_unit=corr_unit,
             )
         # mean value over mean axes
         elif extension == "mean":

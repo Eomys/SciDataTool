@@ -8,7 +8,8 @@ def get_along(
     is_norm=False,
     axis_data=[],
     is_squeeze=True,
-    is_magnitude=False
+    is_magnitude=False,
+    corr_unit=None,
 ):
     """Returns the ndarray of the field, using conversions and symmetries if needed.
     Parameters
@@ -55,5 +56,6 @@ def get_along(
         is_norm=is_norm,
         axis_data=axis_data,
         is_squeeze=is_squeeze,
-        is_magnitude=is_magnitude
+        is_magnitude=is_magnitude,
+        corr_unit=corr_unit,
     )
