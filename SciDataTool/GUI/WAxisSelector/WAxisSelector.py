@@ -122,10 +122,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.current_dialog.close()
             self.current_dialog.setParent(None)
             self.current_dialog = None
-        if self.name == "X":
-            axis_selected_obj = self.axes_list_obj[self.c_axis.currentIndex()]
-        else:
-            axis_selected_obj = self.axes_list_obj[self.c_axis.currentIndex() - 1]
+
+        axis_selected_obj = [
+            ax for ax in self.axes_list_obj if ax.name == self.axis_selected
+        ][0]
 
         self.current_dialog = WFilter(axis_selected_obj)
         self.current_dialog.show()
