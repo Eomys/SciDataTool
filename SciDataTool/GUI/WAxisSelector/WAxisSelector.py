@@ -122,8 +122,12 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.current_dialog.close()
             self.current_dialog.setParent(None)
             self.current_dialog = None
+        if self.name == "X":
+            axis_selected_obj = self.axes_list_obj[self.c_axis.currentIndex()]
+        else:
+            axis_selected_obj = self.axes_list_obj[self.c_axis.currentIndex() - 1]
 
-        self.current_dialog = WFilter()
+        self.current_dialog = WFilter(axis_selected_obj)
         self.current_dialog.show()
 
     def remove_axis(self, axis_to_remove):
@@ -354,7 +358,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         axis_name : string
             string that will set the text of in_name (=name of the axis)
         """
-
+        self.axes_list_obj = axes_list
         self.set_name(axis_name)
         self.set_axis_options(axes_list)
         self.update_axis()
