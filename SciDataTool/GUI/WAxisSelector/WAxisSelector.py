@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QWidget
 
 from SciDataTool.GUI.WAxisSelector.Ui_WAxisSelector import Ui_WAxisSelector
+from SciDataTool.GUI.WFilter.WFilter import WFilter
 from PySide2.QtCore import Signal
 from SciDataTool.Functions.Plot import (
     unit_dict,
@@ -43,10 +44,12 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.axis_selected = "None"  # Name of the axis selected (time, angle...)
         self.norm = None  # Name of the unit of the axis (s,m...)
         self.b_filter.setDisabled(True)
+        self.current_dialog = None
 
         self.c_axis.currentTextChanged.connect(self.update_axis)
         self.c_action.currentTextChanged.connect(self.update_action)
         self.c_unit.currentTextChanged.connect(self.update_unit)
+        self.b_filter.clicked.connect(self.open_filter)
 
     def get_axes_name(self):
         """Method that return the axes that can be selected
@@ -111,6 +114,17 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             return "None"
         else:
             return self.axis_selected
+
+    def open_filter(self):
+        """Open the Filter widget"""
+        # Close previous dialog
+        if self.current_dialog is not None:
+            self.current_dialog.close()
+            self.current_dialog.setParent(None)
+            self.current_dialog = None
+
+        self.current_dialog = WFilter()
+        self.current_dialog.show()
 
     def remove_axis(self, axis_to_remove):
         """Method that remove a given axis from the axis ComboBox.

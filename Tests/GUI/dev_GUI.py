@@ -19,13 +19,13 @@ if __name__ == "__main__":
     Field = DataTime(
         name="Airgap flux density",
         symbol="B_r",
-        unit="T",
+        unit="",
         axes=[X, Y, Z],
         values=field_3d,
     )
 
-    # test = "plot"
-    test = "autoplot"
+    test = "plot"
+    # test = "autoplot"
     # test = "plot_2axis"
     # test = "oneaxis"
     # test = "vect"

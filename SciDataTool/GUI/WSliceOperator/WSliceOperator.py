@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QWidget
 
 from SciDataTool.GUI.WSliceOperator.Ui_WSliceOperator import Ui_WSliceOperator
+from SciDataTool.GUI.WFilter.WFilter import WFilter
 from PySide2.QtCore import Signal
 from SciDataTool.Functions.Plot import axes_dict, fft_dict, ifft_dict, unit_dict
 from SciDataTool.Classes.Data import Data
@@ -50,10 +51,12 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.setupUi(self)
         self.name = "angle"
         self.axis = Data
+        self.current_dialog = None
 
         self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.lf_value.editingFinished.connect(self.update_slider)
+        self.b_action.clicked.connect(self.open_filter)
 
     def get_operation_selected(self):
         """Method that return a string of the action selected by the user on the axis of the widget.
@@ -115,6 +118,17 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             a WSliceOperator object
         """
         return self.name
+
+    def open_filter(self):
+        """Open the Filter widget"""
+        # Close previous dialog
+        if self.current_dialog is not None:
+            self.current_dialog.close()
+            self.current_dialog.setParent(None)
+            self.current_dialog = None
+
+        self.current_dialog = WFilter()
+        self.current_dialog.show()
 
     def set_name(self, name):
         """Method that set the name of the axis of the WSliceOperator
@@ -294,8 +308,8 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         elif extraction_selected == "overlay":
             self.lf_value.hide()
             self.slider.hide()
-            # self.b_action.show()
-            # self.b_action.setText(extraction_selected)
+            self.b_action.show()
+            self.b_action.setText(extraction_selected)
             self.refreshNeeded.emit()
         else:
             self.lf_value.hide()
