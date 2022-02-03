@@ -37,15 +37,9 @@ def my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit="SI"):
             if Nper is None:
                 # Set Nper to 1 in case of non-periodic axis
                 Nper = 1
-            try:
-                convert(values, corr_unit, "W")
-                values = 10 * np.log10(
-                    np.sum(10 ** (values / 10), axis=index, keepdims=True)
-                ) + 10 * np.log10(Nper)
-            except Exception:
-                values = 20 * np.log10(
-                    np.sum(10 ** (values / 20), axis=index, keepdims=True)
-                ) + 20 * np.log10(Nper)
+            values = 10 * np.log10(
+                np.sum(10 ** (values / 10), axis=index, keepdims=True)
+            ) + 10 * np.log10(Nper)
         else:
             if is_fft:  # No need to multiply by Nper in fft case
                 Nper = 1
