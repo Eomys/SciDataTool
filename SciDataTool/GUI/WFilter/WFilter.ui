@@ -58,37 +58,30 @@
     </layout>
    </item>
    <item row="0" column="0">
-    <widget class="QGroupBox" name="g_paramexplorer">
-     <property name="title">
-      <string>Design Variables</string>
+    <widget class="QTableWidget" name="tab_indices">
+     <property name="sortingEnabled">
+      <bool>true</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QTableWidget" name="tab_param">
-        <property name="rowCount">
-         <number>0</number>
-        </property>
-        <property name="columnCount">
-         <number>2</number>
-        </property>
-        <column>
-         <property name="text">
-          <string>Index</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Plot ?</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-     </layout>
+     <property name="rowCount">
+      <number>0</number>
+     </property>
+     <property name="columnCount">
+      <number>2</number>
+     </property>
+     <column>
+      <property name="text">
+       <string>Value</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Plot ?</string>
+      </property>
+     </column>
     </widget>
    </item>
   </layout>
  </widget>
- <resources>
- </resources>
+ <resources/>
  <connections/>
 </ui>

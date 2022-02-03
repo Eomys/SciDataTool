@@ -39,24 +39,19 @@ class Ui_WFilter(object):
 
         self.gridLayout_4.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
-        self.g_paramexplorer = QGroupBox(WFilter)
-        self.g_paramexplorer.setObjectName(u"g_paramexplorer")
-        self.gridLayout = QGridLayout(self.g_paramexplorer)
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.tab_param = QTableWidget(self.g_paramexplorer)
-        if self.tab_param.columnCount() < 2:
-            self.tab_param.setColumnCount(2)
+        self.tab_indices = QTableWidget(WFilter)
+        if self.tab_indices.columnCount() < 2:
+            self.tab_indices.setColumnCount(2)
         __qtablewidgetitem = QTableWidgetItem()
-        self.tab_param.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        self.tab_indices.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
-        self.tab_param.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        self.tab_param.setObjectName(u"tab_param")
-        self.tab_param.setRowCount(0)
-        self.tab_param.setColumnCount(2)
+        self.tab_indices.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        self.tab_indices.setObjectName(u"tab_indices")
+        self.tab_indices.setSortingEnabled(True)
+        self.tab_indices.setRowCount(0)
+        self.tab_indices.setColumnCount(2)
 
-        self.gridLayout.addWidget(self.tab_param, 0, 0, 1, 1)
-
-        self.gridLayout_4.addWidget(self.g_paramexplorer, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.tab_indices, 0, 0, 1, 1)
 
         self.retranslateUi(WFilter)
 
@@ -68,14 +63,11 @@ class Ui_WFilter(object):
         WFilter.setWindowTitle(QCoreApplication.translate("WFilter", u"WFilter", None))
         self.b_Ok.setText(QCoreApplication.translate("WFilter", u"Ok", None))
         self.b_cancel.setText(QCoreApplication.translate("WFilter", u"Cancel", None))
-        self.g_paramexplorer.setTitle(
-            QCoreApplication.translate("WFilter", u"Design Variables", None)
-        )
-        ___qtablewidgetitem = self.tab_param.horizontalHeaderItem(0)
+        ___qtablewidgetitem = self.tab_indices.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(
-            QCoreApplication.translate("WFilter", u"Index", None)
+            QCoreApplication.translate("WFilter", u"Value", None)
         )
-        ___qtablewidgetitem1 = self.tab_param.horizontalHeaderItem(1)
+        ___qtablewidgetitem1 = self.tab_indices.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(
             QCoreApplication.translate("WFilter", u"Plot ?", None)
         )

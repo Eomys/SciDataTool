@@ -127,7 +127,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.current_dialog.setParent(None)
             self.current_dialog = None
 
-        self.current_dialog = WFilter()
+        self.current_dialog = WFilter(self.axis)
         self.current_dialog.show()
 
     def set_name(self, name):
@@ -258,7 +258,6 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         if self.axis.is_components or self.axis.is_overlay:
             operation_list.remove("slice")
         else:
-            operation_list.remove("overlay")
             self.set_slider_floatedit()
 
         # Remove fft slice for non fft axes
