@@ -40,16 +40,10 @@ class Ui_WFilter(object):
         self.gridLayout_4.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
         self.tab_indices = QTableWidget(WFilter)
-        if self.tab_indices.columnCount() < 2:
-            self.tab_indices.setColumnCount(2)
-        __qtablewidgetitem = QTableWidgetItem()
-        self.tab_indices.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        self.tab_indices.setHorizontalHeaderItem(1, __qtablewidgetitem1)
         self.tab_indices.setObjectName(u"tab_indices")
         self.tab_indices.setSortingEnabled(True)
         self.tab_indices.setRowCount(0)
-        self.tab_indices.setColumnCount(2)
+        self.tab_indices.setColumnCount(0)
 
         self.gridLayout_4.addWidget(self.tab_indices, 0, 0, 1, 1)
 
@@ -63,13 +57,5 @@ class Ui_WFilter(object):
         WFilter.setWindowTitle(QCoreApplication.translate("WFilter", u"WFilter", None))
         self.b_Ok.setText(QCoreApplication.translate("WFilter", u"Ok", None))
         self.b_cancel.setText(QCoreApplication.translate("WFilter", u"Cancel", None))
-        ___qtablewidgetitem = self.tab_indices.horizontalHeaderItem(0)
-        ___qtablewidgetitem.setText(
-            QCoreApplication.translate("WFilter", u"Value", None)
-        )
-        ___qtablewidgetitem1 = self.tab_indices.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(
-            QCoreApplication.translate("WFilter", u"Plot ?", None)
-        )
 
     # retranslateUi

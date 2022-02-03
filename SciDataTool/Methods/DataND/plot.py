@@ -54,6 +54,9 @@ def plot(
         [arg for arg in args if arg != None], axis_data=None
     )
 
+    if unit is None:
+        unit = self.unit
+
     wid = DDataPlotter(
         data=self,
         axes_request_list=axes_request_list,

@@ -66,18 +66,8 @@
       <number>0</number>
      </property>
      <property name="columnCount">
-      <number>2</number>
+      <number>0</number>
      </property>
-     <column>
-      <property name="text">
-       <string>Value</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Plot ?</string>
-      </property>
-     </column>
     </widget>
    </item>
   </layout>
