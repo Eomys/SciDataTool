@@ -436,7 +436,7 @@ def plot_2D_Data(
     if title is None:
 
         # Reformat in case of operation
-        for ope in ["max", "min", "mean", "rms", "sum", "rss"]:
+        for ope in ["max", "min", "mean"]:
             if "=" + ope in title2:
                 title2 = ""
                 title1 = (
