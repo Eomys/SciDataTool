@@ -10,7 +10,8 @@ def get_along(
     is_norm=False,
     axis_data=[],
     is_squeeze=True,
-    is_magnitude=False
+    is_magnitude=False,
+    corr_unit=None,
 ):
     """Returns the ndarray of the field, using conversions and symmetries if needed.
     Parameters
@@ -78,7 +79,9 @@ def get_along(
     # Interpolate over axis values
     values = self._interpolate(values, axes_list)
     # Apply operations such as sum, integration, derivations etc.
-    values = self._apply_operations(values, axes_list, is_magnitude, unit=self.unit)
+    values = self._apply_operations(
+        values, axes_list, is_magnitude, unit=self.unit, corr_unit=corr_unit
+    )
     # Conversions
     values = self._convert(values, unit, is_norm, is_squeeze, axes_list)
     # Return axes and values

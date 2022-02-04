@@ -20,6 +20,11 @@ try:
 except ImportError as error:
     get_along = error
 
+try:
+    from ..Methods.DataDual.get_axes import get_axes
+except ImportError as error:
+    get_axes = error
+
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -32,6 +37,7 @@ class DataDual(DataND):
 
     VERSION = 1
 
+    # Check ImportError to remove unnecessary dependencies in unused method
     # cf Methods.DataDual.get_along
     if isinstance(get_along, ImportError):
         get_along = property(
@@ -41,6 +47,15 @@ class DataDual(DataND):
         )
     else:
         get_along = get_along
+    # cf Methods.DataDual.get_axes
+    if isinstance(get_axes, ImportError):
+        get_axes = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use DataDual method get_axes: " + str(get_axes))
+            )
+        )
+    else:
+        get_axes = get_axes
     # save and copy methods are available in all object
     save = save
     copy = copy

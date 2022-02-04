@@ -255,7 +255,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         operation_list = OPERATION_LIST.copy()
 
         # Remove slice for string axes
-        if self.axis.is_components or self.axis.is_overlay:
+        if self.axis.is_overlay:
             operation_list.remove("slice")
         else:
             self.set_slider_floatedit()
@@ -267,6 +267,8 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.c_operation.clear()
         self.c_operation.addItems(operation_list)
         self.update_layout()
+        if self.axis.is_overlay:
+            self.c_operation.setCurrentIndex(operation_list.index("overlay"))
         self.c_operation.blockSignals(False)
 
     def update_floatEdit(self, is_refresh=True):

@@ -14,7 +14,7 @@ from SciDataTool.Functions.sum_mean import (
 )
 
 
-def _apply_operations(self, values, axes_list, is_magnitude, unit):
+def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
     """Returns the values of the field transformed or converted
     Parameters
     ----------
@@ -51,6 +51,10 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit):
         else:
             is_phys = False
             is_freqs = False
+        if axis_requested.name in ["freqs", "frequency", "wavenumber"]:
+            is_fft = True
+        else:
+            is_fft = False
         # max over max axes
         if extension in "max":
             values = np_max(values, axis=index)
@@ -59,18 +63,30 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit):
             values = np_min(values, axis=index)
         # sum over sum axes
         elif extension in "sum":
-            values = my_sum(values, index, Nper, is_aper, unit)
+            values = my_sum(
+                values, index, Nper, is_aper, unit, is_fft, corr_unit=corr_unit
+            )
         # root sum square over rss axes
         elif extension == "rss":
             values = root_sum_square(
-                values, ax_val, index, Nper, is_aper, is_phys, unit
+                values,
+                ax_val,
+                index,
+                Nper,
+                is_aper,
+                is_phys,
+                unit,
+                is_fft,
+                corr_unit=corr_unit,
             )
         # mean value over mean axes
         elif extension == "mean":
-            values = my_mean(values, ax_val, index, Nper, is_aper, is_phys)
+            values = my_mean(values, ax_val, index, Nper, is_aper, is_phys, is_fft)
         # RMS over rms axes
         elif extension == "rms":
-            values = root_mean_square(values, ax_val, index, Nper, is_aper, is_phys)
+            values = root_mean_square(
+                values, ax_val, index, Nper, is_aper, is_phys, is_fft
+            )
         # integration over integration axes
         elif extension == "integrate":
             values = integrate(values, ax_val, index, Nper, is_aper, is_phys)
