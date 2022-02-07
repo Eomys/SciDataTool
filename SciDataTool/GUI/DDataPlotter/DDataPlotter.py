@@ -95,7 +95,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         plot_arg_dict : dict
             Dictionnary with arguments that must be given to the plot
         frozen_type : int
-            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations
+            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
         """
 
         # Build the interface according to the .ui file
@@ -541,6 +541,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         axes_request_list=None,
         plot_arg_dict=None,
         is_keep_config=False,
+        frozen_type=0,
     ):
         """Method to set the DDataPlotter with information given
         self : DDataPlotter
@@ -551,6 +552,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         plot_arg_dict : dict
             Dictionnary with arguments that must be given to the plot
+        frozen_type : int
+            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
         """
 
         self.plot_arg_dict = plot_arg_dict
@@ -560,6 +563,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             unit=unit,
             axes_request_list=axes_request_list,
             is_keep_config=is_keep_config,
+            frozen_type=frozen_type,
         )
 
     def showEvent(self, ev):

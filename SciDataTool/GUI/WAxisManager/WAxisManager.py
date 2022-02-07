@@ -4,6 +4,7 @@ from PySide2.QtCore import Signal
 from SciDataTool.GUI.WAxisManager.Ui_WAxisManager import Ui_WAxisManager
 from SciDataTool.GUI.WSliceOperator.WSliceOperator import WSliceOperator
 from SciDataTool.Functions import axes_dict, rev_axes_dict
+from SciDataTool.Functions.Plot import ifft_dict
 
 
 EXTENSION_DICT = {
@@ -216,7 +217,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_request_list:
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         frozen_type : int
-            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations
+            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
         """
         if is_keep_config:  # Only update slider
             for wid in self.w_slice_op:
@@ -332,6 +333,14 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
             if len(axes_list) == 1:
                 self.w_axis_2.hide()
+
+        elif frozen_type == 4:
+            self.w_axis_1.c_axis.setDisabled(True)
+            self.w_axis_2.c_axis.setDisabled(True)
+            if axes_list[0].name in ifft_dict:
+                self.w_axis_1.c_action.setDisabled(True)
+            if len(axes_list) == 2 and axes_list[1].name in ifft_dict:
+                self.w_axis_2.c_action.setDisabled(True)
 
         self.w_axis_1.blockSignals(False)
         self.w_axis_2.blockSignals(False)

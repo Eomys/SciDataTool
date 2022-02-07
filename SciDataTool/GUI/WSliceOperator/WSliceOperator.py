@@ -197,37 +197,40 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self : WSliceOperator
             a WSliceOperator object
         """
-        # Converting the axis from rad to degree if the axis is angle as we do slice in degrees
-        # Recovering the value from the axis as well
-        if self.c_operation.currentText() == "slice":
-            if self.axis.name in ifft_dict:
-                operation = self.axis.name + "_to_" + self.axis_name
-            else:
-                operation = None
-            if self.axis_name == "angle":
-                self.axis_value = self.axis.get_values(
-                    unit="°", operation=operation, corr_unit="rad", is_full=True
-                )
-                self.unit = "°"
-            else:
-                self.axis_value = self.axis.get_values(
-                    operation=operation, is_full=True
-                )
-        elif self.c_operation.currentText() == "slice (fft)":
-            if self.axis.name == "angle":
-                self.axis_value = self.axis.get_values(operation="angle_to_wavenumber")
-            elif self.axis.name == "time":
-                self.axis_value = self.axis.get_values(operation="time_to_freqs")
-            else:  # already wavenumber of freqs case
-                self.axis_value = self.axis.get_values()
+        if not self.axis.is_components:
+            # Converting the axis from rad to degree if the axis is angle as we do slice in degrees
+            # Recovering the value from the axis as well
+            if self.c_operation.currentText() == "slice":
+                if self.axis.name in ifft_dict:
+                    operation = self.axis.name + "_to_" + self.axis_name
+                else:
+                    operation = None
+                if self.axis_name == "angle":
+                    self.axis_value = self.axis.get_values(
+                        unit="°", operation=operation, corr_unit="rad", is_full=True
+                    )
+                    self.unit = "°"
+                else:
+                    self.axis_value = self.axis.get_values(
+                        operation=operation, is_full=True
+                    )
+            elif self.c_operation.currentText() == "slice (fft)":
+                if self.axis.name == "angle":
+                    self.axis_value = self.axis.get_values(
+                        operation="angle_to_wavenumber"
+                    )
+                elif self.axis.name == "time":
+                    self.axis_value = self.axis.get_values(operation="time_to_freqs")
+                else:  # already wavenumber of freqs case
+                    self.axis_value = self.axis.get_values()
 
-        # Setting the initial value of the floatEdit to the minimum inside the axis
-        self.lf_value.setValue(min(self.axis_value))
+            # Setting the initial value of the floatEdit to the minimum inside the axis
+            self.lf_value.setValue(min(self.axis_value))
 
-        # Setting the slider by giving the number of index according to the size of the axis
-        self.slider.setMinimum(0)
-        self.slider.setMaximum(len(self.axis_value) - 1)
-        self.slider.setValue(0)
+            # Setting the slider by giving the number of index according to the size of the axis
+            self.slider.setMinimum(0)
+            self.slider.setMaximum(len(self.axis_value) - 1)
+            self.slider.setValue(0)
 
     def update(self, axis):
         """Method that will update the WSliceOperator widget according to the axis given to it
