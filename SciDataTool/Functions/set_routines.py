@@ -198,7 +198,7 @@ def get_relative_tolerance(a, atol):
     """
 
     a_max = np.max(np.abs(a))
-    if a_max > 0:
+    if a_max >= 0:
         rtol = atol * np.max(np.abs(a))
 
     if rtol > 1:
