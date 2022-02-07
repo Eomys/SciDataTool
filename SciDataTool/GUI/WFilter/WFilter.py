@@ -24,7 +24,7 @@ class WFilter(Ui_WFilter, QWidget):
 
     refreshNeeded = Signal()
 
-    def __init__(self, axis, parent=None):
+    def __init__(self, axis, indices=None, parent=None):
         """Linking the button with their method + initializing the arguments used
 
         Parameters
@@ -40,6 +40,7 @@ class WFilter(Ui_WFilter, QWidget):
         self.setupUi(self)
 
         self.axis = axis
+        self.indices = indices
         self.axis_values = self.axis.get_values()
         self.init_table()
         tableModel = self.tab_indices.model()
@@ -93,7 +94,7 @@ class WFilter(Ui_WFilter, QWidget):
             self.tab_indices.setModel(data_model)
 
             self.tab_indices.setItemDelegateForColumn(
-                len(filter_list) - 1, CheckBoxDelegate(self, data_model)
+                len(filter_list) - 1, CheckBoxDelegate(self, data_model, self.indices)
             )
 
         else:
@@ -109,7 +110,7 @@ class WFilter(Ui_WFilter, QWidget):
             self.tab_indices.setModel(data_model)
 
             self.tab_indices.setItemDelegateForColumn(
-                1, CheckBoxDelegate(self, data_model)
+                1, CheckBoxDelegate(self, data_model, self.indices)
             )
 
     def update_and_close(self):
@@ -120,6 +121,27 @@ class WFilter(Ui_WFilter, QWidget):
             a WDataRange object
         """
 
+        # Get checked indices
+        indices = []
+        for i in range(self.tab_indices.model().rowCount()):
+            if (
+                self.tab_indices.model()
+                .data(
+                    self.tab_indices.model().index(
+                        i, self.tab_indices.model().columnCount() - 1
+                    )
+                )
+                .checkState()
+                .__bool__()
+            ):
+                indices.append(
+                    self.tab_indices.model()
+                    .mapToSource(self.tab_indices.model().index(i, 0))
+                    .row()
+                )
+        if indices != self.indices:
+            self.indices = indices
+            self.refreshNeeded.emit()
         self.close()
 
 
@@ -165,11 +187,13 @@ class CheckBoxDelegate(QStyledItemDelegate):
     cell of the column to which it's applied
     """
 
-    def __init__(self, parent, model):
+    def __init__(self, parent, model, indices=None):
         QStyledItemDelegate.__init__(self, parent)
         self.model = model
         # Check all boxes at initialization
-        for index in range(self.model.rowCount(None)):
+        if indices is None:
+            indices = [i for i in range(self.model.rowCount(None))]
+        for index in indices:
             self.model.setData(
                 self.model.index(index, self.model.columnCount(None) - 1),
                 True,

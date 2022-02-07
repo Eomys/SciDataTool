@@ -49,6 +49,8 @@ Y = Data1D(
     is_overlay=True,
 )
 field_filter = zeros((11, 12))
+for i in range(12):
+    field_filter[:, i] = i
 Field_filter = DataTime(
     name="Airgap flux density",
     symbol="B_r",

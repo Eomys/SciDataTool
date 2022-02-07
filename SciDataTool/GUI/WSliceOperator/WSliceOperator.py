@@ -52,6 +52,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.name = "angle"
         self.axis = Data
         self.current_dialog = None
+        self.indices = None
 
         self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
@@ -88,21 +89,10 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
                 return fft_dict[self.axis_name] + action
 
         elif action_type == "overlay":
-            # indices = self.axis.get_values()
-
-            # action = "["
-            # for idx in range(len(indices) - 1):
-            #     if isinstance(indices[idx], str):
-            #         action += str(indices[idx]) + ","
-            #     else:
-            #         action += str(int(indices[idx])) + ","
-
-            # if isinstance(indices[-1], str):
-            #     action += str(indices[-1]) + "]"
-            # else:
-            #     action += str(int(indices[-1])) + "]"
-
-            return self.axis_name + "[]"
+            if self.indices is None:
+                return self.axis_name + "[]"
+            else:
+                return self.axis_name + str(self.indices)
 
         elif action_type in type_extraction_dict:
             action = type_extraction_dict[action_type]
@@ -127,8 +117,13 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.current_dialog.setParent(None)
             self.current_dialog = None
 
-        self.current_dialog = WFilter(self.axis)
+        self.current_dialog = WFilter(self.axis, self.indices)
+        self.current_dialog.refreshNeeded.connect(self.update_indices)
         self.current_dialog.show()
+
+    def update_indices(self):
+        self.indices = self.current_dialog.indices
+        self.refreshNeeded.emit()
 
     def set_name(self, name):
         """Method that set the name of the axis of the WSliceOperator
