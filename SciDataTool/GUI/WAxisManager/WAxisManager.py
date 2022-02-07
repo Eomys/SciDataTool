@@ -243,6 +243,10 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_axis_1.blockSignals(True)
             self.w_axis_2.blockSignals(True)
 
+            # Reinitialize filter indices
+            self.w_axis_1.indices = None
+            self.w_axis_2.indices = None
+
             if axes_request_list == []:
                 # Case where no user_input was given
                 # Sending the info of data to the widget (mainly the axis)
