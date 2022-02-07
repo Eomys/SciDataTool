@@ -44,7 +44,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.axis_selected = "None"  # Name of the axis selected (time, angle...)
         self.norm = None  # Name of the unit of the axis (s,m...)
-        self.b_filter.hide()
+        self.b_filter.setEnabled(False)
         self.current_dialog = None
 
         self.c_axis.currentTextChanged.connect(self.update_axis)
@@ -446,10 +446,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         # If the action selected is filter, then we enable the button
         if self.c_action.currentText() == "Filter":
-            self.b_filter.show()
+            self.b_filter.setEnabled(True)
 
         else:
-            self.b_filter.hide()
+            self.b_filter.setEnabled(False)
 
         # Converting the axes according to action selected if possible/necessary
         if self.c_action.currentText() == "FFT" and self.axis_selected in fft_dict:
