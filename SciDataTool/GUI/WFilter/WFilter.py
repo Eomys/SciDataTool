@@ -76,7 +76,11 @@ class WFilter(Ui_WFilter, QWidget):
 
         if self.axis.is_components:
             # If we have an axis with components, then we use the filters to build the complete table
-            filter_list = list(self.axis.filter.keys())
+            if hasattr(self.axis, "filter") and self.axis.filter is not None:
+                filter_list = list(self.axis.filter.keys())
+            else:
+                ncol = len(self.axis_values[0].split(self.axis.delimiter))
+                filter_list = ["" for i in range(ncol)]
             filter_list.append("Plot ?")  # Adding the column with checkbox
 
             # Setting up the table
