@@ -40,10 +40,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.name = "X"  # Name of the axis
         self.axes_list = list()  # List of the different axes of the DataND object
         self.norm_list = None  # List of available normalizations for each axis
+        self.indices = None
 
         self.axis_selected = "None"  # Name of the axis selected (time, angle...)
         self.norm = None  # Name of the unit of the axis (s,m...)
-        self.b_filter.setDisabled(True)
+        self.b_filter.hide()
         self.current_dialog = None
 
         self.c_axis.currentTextChanged.connect(self.update_axis)
@@ -77,6 +78,13 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
 
         axis_unit_selected = self.get_axis_selected()
+
+        # Add indices if necessary
+        if self.get_current_action_name() == "Filter":
+            if self.indices is not None:
+                axis_unit_selected += str(self.indices)
+            else:
+                axis_unit_selected += "[]"
 
         if self.norm is not None:  # Add normalization
             axis_unit_selected += "->" + self.norm
@@ -127,8 +135,13 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             ax for ax in self.axes_list_obj if ax.name == self.axis_selected
         ][0]
 
-        self.current_dialog = WFilter(axis_selected_obj)
+        self.current_dialog = WFilter(axis_selected_obj, self.indices)
+        self.current_dialog.refreshNeeded.connect(self.update_indices)
         self.current_dialog.show()
+
+    def update_indices(self):
+        self.indices = self.current_dialog.indices
+        self.refreshNeeded.emit()
 
     def remove_axis(self, axis_to_remove):
         """Method that remove a given axis from the axis ComboBox.
@@ -401,15 +414,18 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.c_action.blockSignals(True)
         if self.axis_selected in fft_dict:
-
-            action = ["None", "FFT", "Filter"]
-            self.c_action.clear()
-            self.c_action.addItems(action)
-
-        else:
+            action = ["None", "FFT"]
+        elif (
+            self.axis_selected in [axis.name for axis in self.axes_list_obj]
+            and self.axes_list_obj[
+                [axis.name for axis in self.axes_list_obj].index(self.axis_selected)
+            ].is_components
+        ):
             action = ["None", "Filter"]
-            self.c_action.clear()
-            self.c_action.addItems(action)
+        else:
+            action = ["None"]
+        self.c_action.clear()
+        self.c_action.addItems(action)
         self.c_action.blockSignals(False)
 
         self.c_action.view().setMinimumWidth(max([len(ac) for ac in action]) * 6)
@@ -430,10 +446,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         """
         # If the action selected is filter, then we enable the button
         if self.c_action.currentText() == "Filter":
-            self.b_filter.setDisabled(False)
+            self.b_filter.show()
 
         else:
-            self.b_filter.setDisabled(True)
+            self.b_filter.hide()
 
         # Converting the axes according to action selected if possible/necessary
         if self.c_action.currentText() == "FFT" and self.axis_selected in fft_dict:

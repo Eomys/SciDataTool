@@ -124,6 +124,7 @@ class WFilter(Ui_WFilter, QWidget):
         # Get checked indices
         indices = []
         for i in range(self.tab_indices.model().rowCount()):
+            # Get checked indices
             if (
                 self.tab_indices.model()
                 .data(
@@ -133,7 +134,7 @@ class WFilter(Ui_WFilter, QWidget):
                 )
                 .checkState()
                 .__bool__()
-            ):
+            ):  # Use mapping to get indices before sorting
                 indices.append(
                     self.tab_indices.model()
                     .mapToSource(self.tab_indices.model().index(i, 0))
