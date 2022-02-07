@@ -39,11 +39,11 @@ class Ui_WFilter(object):
 
         self.gridLayout_4.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
-        self.tab_indices = QTableWidget(WFilter)
+        self.tab_indices = QTableView(WFilter)
         self.tab_indices.setObjectName(u"tab_indices")
         self.tab_indices.setSortingEnabled(True)
-        self.tab_indices.setRowCount(0)
-        self.tab_indices.setColumnCount(0)
+        self.tab_indices._rows = 0
+        self.tab_indices._columns = 0
 
         self.gridLayout_4.addWidget(self.tab_indices, 0, 0, 1, 1)
 
