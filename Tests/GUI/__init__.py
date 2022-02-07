@@ -21,7 +21,7 @@ Field = DataTime(
     values=field,
 )
 
-X = DataLinspace(name="time", unit="s", initial=0, final=10, number=11)
+X = DataLinspace(name="time", unit="s", initial=0, final=1, number=11)
 Y = Data1D(
     name="loadcases",
     unit="",

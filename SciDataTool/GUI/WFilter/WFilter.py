@@ -1,7 +1,5 @@
 from PySide2.QtWidgets import (
     QWidget,
-    QCheckBox,
-    QLabel,
     QStyle,
     QStyledItemDelegate,
     QStyleOptionButton,
@@ -9,9 +7,11 @@ from PySide2.QtWidgets import (
 )
 from PySide2.QtCore import Qt, QEvent, QPoint, QRect
 from PySide2.QtGui import QStandardItemModel, QStandardItem
+from PySide2.QtCore import Signal, QSortFilterProxyModel
+
+from numpy import array
 
 from SciDataTool.GUI.WFilter.Ui_WFilter import Ui_WFilter
-from PySide2.QtCore import Signal, QSortFilterProxyModel
 from SciDataTool.Functions.Plot import axes_dict
 
 # Column id
@@ -100,7 +100,7 @@ class WFilter(Ui_WFilter, QWidget):
         else:
             # Setting up the table
             data_model = MyTableModel(
-                [self.axis_values],
+                array([[format(value, ".4g") for value in self.axis_values]]).T,
                 ["Value", "Plot ?"],
                 self,
             )
