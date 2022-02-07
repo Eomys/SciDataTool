@@ -93,7 +93,7 @@ class WFilter(Ui_WFilter, QWidget):
             self.tab_indices.setModel(data_model)
 
             self.tab_indices.setItemDelegateForColumn(
-                len(filter_list) - 1, CheckBoxDelegate(self)
+                len(filter_list) - 1, CheckBoxDelegate(self, data_model)
             )
 
         else:
@@ -108,7 +108,9 @@ class WFilter(Ui_WFilter, QWidget):
                 data_model.setItem(i, 2, item)
             self.tab_indices.setModel(data_model)
 
-            self.tab_indices.setItemDelegateForColumn(1, CheckBoxDelegate(self))
+            self.tab_indices.setItemDelegateForColumn(
+                1, CheckBoxDelegate(self, data_model)
+            )
 
     def update_and_close(self):
         """Method called when the click on the Ok button
@@ -135,7 +137,6 @@ class MyTableModel(QStandardItemModel):
 
     def data(self, index, role):
         if role == Qt.EditRole:
-            print("edit mode")
             return None
         elif role != Qt.DisplayRole:
             return None
@@ -149,6 +150,14 @@ class MyTableModel(QStandardItemModel):
             return self.header_labels[section]
         return QStandardItemModel.headerData(self, section, orientation, role)
 
+    def setData(self, index, value, role):
+        if role == Qt.EditRole:
+            if index.column() == self.columnCount(None) - 1:
+                self.itemFromIndex(index).setCheckState(Qt.CheckState(value))
+        else:
+            super(MyTableModel, self).setData(index, value, role)
+        return value
+
 
 class CheckBoxDelegate(QStyledItemDelegate):
     """
@@ -156,8 +165,16 @@ class CheckBoxDelegate(QStyledItemDelegate):
     cell of the column to which it's applied
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, model):
         QStyledItemDelegate.__init__(self, parent)
+        self.model = model
+        # Check all boxes at initialization
+        for index in range(self.model.rowCount(None)):
+            self.model.setData(
+                self.model.index(index, self.model.columnCount(None) - 1),
+                True,
+                Qt.EditRole,
+            )
 
     def createEditor(self, parent, option, index):
         """
@@ -228,7 +245,7 @@ class CheckBoxDelegate(QStyledItemDelegate):
         """
         The user wanted to change the old state in the opposite.
         """
-        newValue = not index.data().checkState().__bool__()
+        newValue = not index.data().checkState()
         model.setData(index, newValue, Qt.EditRole)
 
     def getCheckBoxRect(self, option):
