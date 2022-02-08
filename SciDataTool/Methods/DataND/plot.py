@@ -43,7 +43,7 @@ def plot(
     is_create_appli : bool
         True to create an QApplication (required if not already created by another GUI)
     frozen_type : int
-        0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations
+        0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
     """
 
     if is_create_appli:
@@ -53,6 +53,9 @@ def plot(
     axes_request_list = parser.read_input_strings(
         [arg for arg in args if arg != None], axis_data=None
     )
+
+    if unit is None:
+        unit = self.unit
 
     wid = DDataPlotter(
         data=self,

@@ -1,6 +1,7 @@
 from PySide2.QtWidgets import QWidget
 
 from SciDataTool.GUI.WSliceOperator.Ui_WSliceOperator import Ui_WSliceOperator
+from SciDataTool.GUI.WFilter.WFilter import WFilter
 from PySide2.QtCore import Signal
 from SciDataTool.Functions.Plot import axes_dict, fft_dict, ifft_dict, unit_dict
 from SciDataTool.Classes.Data import Data
@@ -50,10 +51,13 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.setupUi(self)
         self.name = "angle"
         self.axis = Data
+        self.current_dialog = None
+        self.indices = None
 
         self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.lf_value.editingFinished.connect(self.update_slider)
+        self.b_action.clicked.connect(self.open_filter)
 
     def get_operation_selected(self):
         """Method that return a string of the action selected by the user on the axis of the widget.
@@ -85,21 +89,10 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
                 return fft_dict[self.axis_name] + action
 
         elif action_type == "overlay":
-            # indices = self.axis.get_values()
-
-            # action = "["
-            # for idx in range(len(indices) - 1):
-            #     if isinstance(indices[idx], str):
-            #         action += str(indices[idx]) + ","
-            #     else:
-            #         action += str(int(indices[idx])) + ","
-
-            # if isinstance(indices[-1], str):
-            #     action += str(indices[-1]) + "]"
-            # else:
-            #     action += str(int(indices[-1])) + "]"
-
-            return self.axis_name + "[]"
+            if self.indices is None:
+                return self.axis_name + "[]"
+            else:
+                return self.axis_name + str(self.indices)
 
         elif action_type in type_extraction_dict:
             action = type_extraction_dict[action_type]
@@ -115,6 +108,22 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             a WSliceOperator object
         """
         return self.name
+
+    def open_filter(self):
+        """Open the Filter widget"""
+        # Close previous dialog
+        if self.current_dialog is not None:
+            self.current_dialog.close()
+            self.current_dialog.setParent(None)
+            self.current_dialog = None
+
+        self.current_dialog = WFilter(self.axis, self.indices)
+        self.current_dialog.refreshNeeded.connect(self.update_indices)
+        self.current_dialog.show()
+
+    def update_indices(self):
+        self.indices = self.current_dialog.indices
+        self.refreshNeeded.emit()
 
     def set_name(self, name):
         """Method that set the name of the axis of the WSliceOperator
@@ -188,37 +197,40 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self : WSliceOperator
             a WSliceOperator object
         """
-        # Converting the axis from rad to degree if the axis is angle as we do slice in degrees
-        # Recovering the value from the axis as well
-        if self.c_operation.currentText() == "slice":
-            if self.axis.name in ifft_dict:
-                operation = self.axis.name + "_to_" + self.axis_name
-            else:
-                operation = None
-            if self.axis_name == "angle":
-                self.axis_value = self.axis.get_values(
-                    unit="°", operation=operation, corr_unit="rad", is_full=True
-                )
-                self.unit = "°"
-            else:
-                self.axis_value = self.axis.get_values(
-                    operation=operation, is_full=True
-                )
-        elif self.c_operation.currentText() == "slice (fft)":
-            if self.axis.name == "angle":
-                self.axis_value = self.axis.get_values(operation="angle_to_wavenumber")
-            elif self.axis.name == "time":
-                self.axis_value = self.axis.get_values(operation="time_to_freqs")
-            else:  # already wavenumber of freqs case
-                self.axis_value = self.axis.get_values()
+        if not self.axis.is_components:
+            # Converting the axis from rad to degree if the axis is angle as we do slice in degrees
+            # Recovering the value from the axis as well
+            if self.c_operation.currentText() == "slice":
+                if self.axis.name in ifft_dict:
+                    operation = self.axis.name + "_to_" + self.axis_name
+                else:
+                    operation = None
+                if self.axis_name == "angle":
+                    self.axis_value = self.axis.get_values(
+                        unit="°", operation=operation, corr_unit="rad", is_full=True
+                    )
+                    self.unit = "°"
+                else:
+                    self.axis_value = self.axis.get_values(
+                        operation=operation, is_full=True
+                    )
+            elif self.c_operation.currentText() == "slice (fft)":
+                if self.axis.name == "angle":
+                    self.axis_value = self.axis.get_values(
+                        operation="angle_to_wavenumber"
+                    )
+                elif self.axis.name == "time":
+                    self.axis_value = self.axis.get_values(operation="time_to_freqs")
+                else:  # already wavenumber of freqs case
+                    self.axis_value = self.axis.get_values()
 
-        # Setting the initial value of the floatEdit to the minimum inside the axis
-        self.lf_value.setValue(min(self.axis_value))
+            # Setting the initial value of the floatEdit to the minimum inside the axis
+            self.lf_value.setValue(min(self.axis_value))
 
-        # Setting the slider by giving the number of index according to the size of the axis
-        self.slider.setMinimum(0)
-        self.slider.setMaximum(len(self.axis_value) - 1)
-        self.slider.setValue(0)
+            # Setting the slider by giving the number of index according to the size of the axis
+            self.slider.setMinimum(0)
+            self.slider.setMaximum(len(self.axis_value) - 1)
+            self.slider.setValue(0)
 
     def update(self, axis):
         """Method that will update the WSliceOperator widget according to the axis given to it
@@ -243,8 +255,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         # Remove slice for string axes
         if self.axis.is_overlay:
             operation_list.remove("slice")
-        elif not self.axis.is_components:
-            operation_list.remove("overlay")
+        else:
             self.set_slider_floatedit()
 
         # Remove fft slice for non fft axes
@@ -253,9 +264,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
         self.c_operation.clear()
         self.c_operation.addItems(operation_list)
-        if self.axis.is_components:
-            self.c_operation.setCurrentIndex(operation_list.index("overlay"))
         self.update_layout()
+        if self.axis.is_overlay:
+            self.c_operation.setCurrentIndex(operation_list.index("overlay"))
+            self.b_action.show()
+            self.b_action.setText("Overlay")
         self.c_operation.blockSignals(False)
 
     def update_floatEdit(self, is_refresh=True):
@@ -296,8 +309,8 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         elif extraction_selected == "overlay":
             self.lf_value.hide()
             self.slider.hide()
-            # self.b_action.show()
-            # self.b_action.setText(extraction_selected)
+            self.b_action.show()
+            self.b_action.setText("Overlay")
             self.refreshNeeded.emit()
         else:
             self.lf_value.hide()
