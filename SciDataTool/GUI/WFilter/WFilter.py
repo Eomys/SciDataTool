@@ -83,12 +83,18 @@ class WFilter(Ui_WFilter, QWidget):
                 filter_list = ["" for i in range(ncol)]
             filter_list.append("Plot ?")  # Adding the column with checkbox
 
+            # Prepare strings
+            data = []
+            for value in self.axis_values:
+                data_i = []
+                elems = value.split(self.axis.delimiter)
+                for j, elem in enumerate(elems):
+                    data_i.append(elem.replace(filter_list[j] + "=", ""))
+                data.append(data_i)
+
             # Setting up the table
             data_model = MyTableModel(
-                [
-                    [string for string in value.split(self.axis.delimiter)]
-                    for value in self.axis_values
-                ],
+                data,
                 filter_list,
                 self,
             )
