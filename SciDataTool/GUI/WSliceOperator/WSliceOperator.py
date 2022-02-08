@@ -253,10 +253,14 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         operation_list = OPERATION_LIST.copy()
 
         # Remove slice for string axes
-        if self.axis.is_overlay:
+        if self.axis.is_components:
             operation_list.remove("slice")
         else:
             self.set_slider_floatedit()
+
+        # Remove overlay for non is_components axes
+        if not self.axis.is_components:
+            operation_list.remove("overlay")
 
         # Remove fft slice for non fft axes
         if not self.axis_name in fft_dict:

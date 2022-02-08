@@ -223,6 +223,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             for wid in self.w_slice_op:
                 if hasattr(wid, "axis_value"):
                     wid.update_floatEdit(is_refresh=False)
+            axes_list = data.get_axes()
 
         else:
             # Step 1 : If only one axis is given with the object, then we hide w_axis_2 and g_data_extract
@@ -257,6 +258,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
                 # Updating w_axis_2 according to w_axis_1 then generating DataSelection
                 self.axis_1_updated()
+                axes_list = self.axes_list
 
             else:
                 # Case where a userinput was given (auto plot)
