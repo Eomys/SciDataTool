@@ -259,6 +259,7 @@ def plot_2D_Data(
                 "antiperiod",
                 "smallestperiod",
                 "axis_data",
+                "list",
             ]
             and len(axis.values) > 1
             or (len(axis.values) == 1 and len(axes_list) == 1)
@@ -293,13 +294,13 @@ def plot_2D_Data(
                 xticks = None
             if (
                 axes_list[list(result.keys()).index(axes_names[0])].is_components
-                and axes_list[list(result.keys()).index(axes_names[0])].extension
-                != "list"
+                and not self.get_axes()[0].is_overlay
             ):
                 xticklabels = result[axes_names[0]]
                 xticks = Xdatas[0]
             else:
                 xticklabels = None
+                xticks = None
         else:
             is_display = True
             if axis.is_pattern and len(axis.values) == 1:
