@@ -134,6 +134,62 @@ def integrate_local(values, ax_val, index, Nper, is_aper, is_phys, is_freqs):
     return values_integ
 
 
+def integrate_local_pattern(values, ax_val, index):
+    """Returns the local integral of values along given axis (does not change the axis)
+
+    Parameters
+    ----------
+    values: ndarray
+        array to derivate
+    ax_val: ndarray
+        axis values
+    index: int
+        index of axis along which to derivate
+    Nper: int
+        number of periods to replicate
+    is_aper: bool
+        True if values is anti-periodic along axis
+    is_phys: bool
+        True if physical quantity (time/angle/z)
+    is_freqs: bool
+        True if frequency axis
+
+    Returns
+    -------
+    values_integ: ndarray
+        local integration of values
+    """
+
+    if ax_val.size > 1:
+        # Swap axis to always have integration axis on 1st position
+        values = np.swapaxes(values, index, 0)
+
+        # Init output arrays
+        shape = list(values.shape[1:])
+        shape.insert(0, values.shape[0] - 1)
+        values_int = np.zeros(shape, dtype=values.dtype)
+        ax_int = np.zeros(shape[0])
+
+        # Trapezoidal integration on each segment and calculate position of each segment middle
+        for ii in range(shape[0]):
+            values_int[ii, ...] = scp_int.trapezoid(
+                values[ii : ii + 2, ...], x=ax_val[ii : ii + 2], axis=0
+            )
+            ax_int[ii] = np.mean(ax_val[ii : ii + 2])
+
+        # Remove zero length interval
+        Ia = np.nonzero(np.diff(ax_val))[0]
+        values_int = values_int[Ia, ...]
+        ax_int = ax_int[Ia]
+
+        values_int = np.swapaxes(values_int, index, 0)
+
+    else:
+        raise Exception("Cannot locally integrate along axis if axis size is 1")
+
+    return values_int, ax_int
+
+
 def integrate(values, ax_val, index, Nper, is_aper, is_phys, is_mean=False):
     """Returns the integral of values along given axis
 

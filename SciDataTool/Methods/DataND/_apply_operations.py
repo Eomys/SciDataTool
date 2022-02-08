@@ -4,6 +4,7 @@ from SciDataTool.Functions.derivation_integration import (
     derivate,
     integrate,
     integrate_local,
+    integrate_local_pattern,
     antiderivate,
 )
 from SciDataTool.Functions.sum_mean import (
@@ -92,9 +93,13 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
             values = integrate(values, ax_val, index, Nper, is_aper, is_phys)
         # local integration over integration axes
         elif extension == "integrate_local":
-            values = integrate_local(
-                values, ax_val, index, Nper, is_aper, is_phys, is_freqs
-            )
+            if axis_requested.name == "z":
+                values, ax_val = integrate_local_pattern(values, ax_val, index)
+                axis_requested.values = ax_val
+            else:
+                values = integrate_local(
+                    values, ax_val, index, Nper, is_aper, is_phys, is_freqs
+                )
         # antiderivation over antiderivation axes
         elif extension == "antiderivate":
             values = antiderivate(
