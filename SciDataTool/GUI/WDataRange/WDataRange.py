@@ -27,6 +27,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.setupUi(self)
         self.name = ""
         self.unit_list = list()
+        self.unit = None
 
         self.c_unit.currentTextChanged.connect(self.update_unit)
         self.lf_min.editingFinished.connect(self.update_needed)
@@ -72,8 +73,9 @@ class WDataRange(Ui_WDataRange, QWidget):
                 field_max = fig.axes[1].dataLim.extents[-1]
 
         if field_min is not None:
-            self.lf_min.setValue(field_min)
-            self.lf_max.setValue(field_max)
+            is_dB = "dB" in self.unit
+            self.lf_min.setValue(field_min, is_dB)
+            self.lf_max.setValue(field_max, is_dB)
         else:
             self.lf_min.clear()
             self.lf_max.clear()
@@ -101,6 +103,7 @@ class WDataRange(Ui_WDataRange, QWidget):
             the data object that hold the field that will set the widget
         """
         if unit is not None:
+            self.unit = unit
             self.set_unit(data)
             if unit is not None and unit != "SI":  # Adding unit to unit combobox
                 if self.c_unit.currentText() != unit:
@@ -126,12 +129,13 @@ class WDataRange(Ui_WDataRange, QWidget):
         z_max : float
             Minimum value for Z axis (or Y if only one axe)
         """
+        is_dB = "dB" in self.unit
         if z_max is not None:
             # Setting max float edit
-            self.lf_max.setValue(z_max)
+            self.lf_max.setValue(z_max, is_dB)
         if z_min is not None:
             # Setting min float edit
-            self.lf_min.setValue(z_min)
+            self.lf_min.setValue(z_min, is_dB)
 
     def set_unit(self, field):
         """Method that set the unit combobox according to the unit of the field that we are plotting
@@ -147,6 +151,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         # # Updating the unit combobox
         self.c_unit.clear()
         self.c_unit.addItem(field.unit)
+        self.unit = field.unit
 
     def update_unit(self):
         """Method that clears min/max then calls update_needed
@@ -169,11 +174,11 @@ class WDataRange(Ui_WDataRange, QWidget):
         # Making sure that we always have min < max
         if self.lf_min.value() != None and self.lf_max.value() != None:
             if self.lf_min.value() > self.lf_max.value():
-
+                is_dB = "dB" in self.unit
                 self.blockSignals(True)
                 temp = self.lf_max.value()
-                self.lf_max.setValue(self.lf_min.value())
-                self.lf_min.setValue(temp)
+                self.lf_max.setValue(self.lf_min.value(), is_dB)
+                self.lf_min.setValue(temp, is_dB)
                 self.blockSignals(False)
 
         self.refreshNeeded.emit()
