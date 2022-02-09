@@ -17,8 +17,8 @@ class Ui_WSliceOperator(object):
         if not WSliceOperator.objectName():
             WSliceOperator.setObjectName(u"WSliceOperator")
         WSliceOperator.resize(318, 100)
-        self.verticalLayout = QVBoxLayout(WSliceOperator)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.gridLayout = QGridLayout(WSliceOperator)
+        self.gridLayout.setObjectName(u"gridLayout")
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.in_name = QLabel(WSliceOperator)
@@ -48,7 +48,7 @@ class Ui_WSliceOperator(object):
 
         self.horizontalLayout.addWidget(self.c_operation)
 
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -64,16 +64,24 @@ class Ui_WSliceOperator(object):
 
         self.horizontalLayout_2.addWidget(self.lf_value)
 
+        self.in_unit = QLabel(WSliceOperator)
+        self.in_unit.setObjectName(u"in_unit")
+
+        self.horizontalLayout_2.addWidget(self.in_unit)
+
         self.slider = QSlider(WSliceOperator)
         self.slider.setObjectName(u"slider")
-        sizePolicy.setHeightForWidth(self.slider.sizePolicy().hasHeightForWidth())
-        self.slider.setSizePolicy(sizePolicy)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.slider.sizePolicy().hasHeightForWidth())
+        self.slider.setSizePolicy(sizePolicy2)
         self.slider.setMinimumSize(QSize(0, 20))
         self.slider.setOrientation(Qt.Horizontal)
 
         self.horizontalLayout_2.addWidget(self.slider)
 
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
 
         self.b_action = QPushButton(WSliceOperator)
         self.b_action.setObjectName(u"b_action")
@@ -81,7 +89,7 @@ class Ui_WSliceOperator(object):
         self.b_action.setSizePolicy(sizePolicy)
         self.b_action.setMinimumSize(QSize(0, 20))
 
-        self.verticalLayout.addWidget(self.b_action)
+        self.gridLayout.addWidget(self.b_action, 2, 0, 1, 1)
 
         self.retranslateUi(WSliceOperator)
 
@@ -124,6 +132,7 @@ class Ui_WSliceOperator(object):
         self.lf_value.setText(
             QCoreApplication.translate("WSliceOperator", u"0.314", None)
         )
+        self.in_unit.setText(QCoreApplication.translate("WSliceOperator", u"[m]", None))
         self.b_action.setText(
             QCoreApplication.translate("WSliceOperator", u"Superimpose selection", None)
         )

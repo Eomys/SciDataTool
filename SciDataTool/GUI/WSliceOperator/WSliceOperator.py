@@ -227,6 +227,9 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             # Setting the initial value of the floatEdit to the minimum inside the axis
             self.lf_value.setValue(min(self.axis_value))
 
+            # Setting the axis unit
+            self.in_unit.setText("[" + self.axis.unit + "]")
+
             # Setting the slider by giving the number of index according to the size of the axis
             self.slider.setMinimum(0)
             self.slider.setMaximum(len(self.axis_value) - 1)
@@ -306,18 +309,21 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         if extraction_selected == "slice" or extraction_selected == "slice (fft)":
             self.set_slider_floatedit()
             self.lf_value.show()
+            self.in_unit.show()
             self.slider.show()
             self.b_action.hide()
             self.refreshNeeded.emit()
         # If the operation selected is overlay then we show the related button
         elif extraction_selected == "overlay":
             self.lf_value.hide()
+            self.in_unit.hide()
             self.slider.hide()
             self.b_action.show()
             self.b_action.setText("Overlay")
             self.refreshNeeded.emit()
         else:
             self.lf_value.hide()
+            self.in_unit.hide()
             self.slider.hide()
             self.b_action.hide()
             self.refreshNeeded.emit()

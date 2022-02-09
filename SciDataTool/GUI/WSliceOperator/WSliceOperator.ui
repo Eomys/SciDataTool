@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>WSliceOperator</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="in_name">
@@ -93,7 +93,7 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="FloatEdit" name="lf_value">
@@ -121,9 +121,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="in_unit">
+       <property name="text">
+        <string>[m]</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QSlider" name="slider">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -141,7 +148,7 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="2" column="0">
     <widget class="QPushButton" name="b_action">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
