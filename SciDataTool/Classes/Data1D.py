@@ -45,6 +45,16 @@ try:
 except ImportError as error:
     to_linspace = error
 
+try:
+    from ..Methods.Data1D.get_filter import get_filter
+except ImportError as error:
+    get_filter = error
+
+try:
+    from ..Methods.Data1D.check_filter import check_filter
+except ImportError as error:
+    check_filter = error
+
 
 from numpy import array, array_equal
 from numpy import isnan
@@ -117,6 +127,26 @@ class Data1D(Data):
         )
     else:
         to_linspace = to_linspace
+    # cf Methods.Data1D.get_filter
+    if isinstance(get_filter, ImportError):
+        get_filter = property(
+            fget=lambda x: raise_(
+                ImportError("Can't use Data1D method get_filter: " + str(get_filter))
+            )
+        )
+    else:
+        get_filter = get_filter
+    # cf Methods.Data1D.check_filter
+    if isinstance(check_filter, ImportError):
+        check_filter = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use Data1D method check_filter: " + str(check_filter)
+                )
+            )
+        )
+    else:
+        check_filter = check_filter
     # save and copy methods are available in all object
     save = save
     copy = copy
@@ -127,6 +157,9 @@ class Data1D(Data):
         is_components=False,
         symmetries=-1,
         is_overlay=False,
+        delimiter=None,
+        sort_indices=None,
+        filter=None,
         symbol="",
         name="",
         unit="",
@@ -157,6 +190,12 @@ class Data1D(Data):
                 symmetries = init_dict["symmetries"]
             if "is_overlay" in list(init_dict.keys()):
                 is_overlay = init_dict["is_overlay"]
+            if "delimiter" in list(init_dict.keys()):
+                delimiter = init_dict["delimiter"]
+            if "sort_indices" in list(init_dict.keys()):
+                sort_indices = init_dict["sort_indices"]
+            if "filter" in list(init_dict.keys()):
+                filter = init_dict["filter"]
             if "symbol" in list(init_dict.keys()):
                 symbol = init_dict["symbol"]
             if "name" in list(init_dict.keys()):
@@ -170,6 +209,9 @@ class Data1D(Data):
         self.is_components = is_components
         self.symmetries = symmetries
         self.is_overlay = is_overlay
+        self.delimiter = delimiter
+        self.sort_indices = sort_indices
+        self.filter = filter
         # Call Data init
         super(Data1D, self).__init__(
             symbol=symbol, name=name, unit=unit, normalizations=normalizations
@@ -193,6 +235,14 @@ class Data1D(Data):
         Data1D_str += "is_components = " + str(self.is_components) + linesep
         Data1D_str += "symmetries = " + str(self.symmetries) + linesep
         Data1D_str += "is_overlay = " + str(self.is_overlay) + linesep
+        Data1D_str += 'delimiter = "' + str(self.delimiter) + '"' + linesep
+        Data1D_str += (
+            "sort_indices = "
+            + linesep
+            + str(self.sort_indices).replace(linesep, linesep + "\t")
+            + linesep
+        )
+        Data1D_str += "filter = " + str(self.filter) + linesep
         return Data1D_str
 
     def __eq__(self, other):
@@ -211,6 +261,12 @@ class Data1D(Data):
         if other.symmetries != self.symmetries:
             return False
         if other.is_overlay != self.is_overlay:
+            return False
+        if other.delimiter != self.delimiter:
+            return False
+        if other.sort_indices != self.sort_indices:
+            return False
+        if other.filter != self.filter:
             return False
         return True
 
@@ -233,6 +289,12 @@ class Data1D(Data):
             diff_list.append(name + ".symmetries")
         if other._is_overlay != self._is_overlay:
             diff_list.append(name + ".is_overlay")
+        if other._delimiter != self._delimiter:
+            diff_list.append(name + ".delimiter")
+        if other._sort_indices != self._sort_indices:
+            diff_list.append(name + ".sort_indices")
+        if other._filter != self._filter:
+            diff_list.append(name + ".filter")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -250,6 +312,13 @@ class Data1D(Data):
             for key, value in self.symmetries.items():
                 S += getsizeof(value) + getsizeof(key)
         S += getsizeof(self.is_overlay)
+        S += getsizeof(self.delimiter)
+        if self.sort_indices is not None:
+            for value in self.sort_indices:
+                S += getsizeof(value)
+        if self.filter is not None:
+            for key, value in self.filter.items():
+                S += getsizeof(value) + getsizeof(key)
         return S
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
@@ -287,6 +356,11 @@ class Data1D(Data):
             self.symmetries.copy() if self.symmetries is not None else None
         )
         Data1D_dict["is_overlay"] = self.is_overlay
+        Data1D_dict["delimiter"] = self.delimiter
+        Data1D_dict["sort_indices"] = (
+            self.sort_indices.copy() if self.sort_indices is not None else None
+        )
+        Data1D_dict["filter"] = self.filter.copy() if self.filter is not None else None
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         Data1D_dict["__class__"] = "Data1D"
@@ -299,6 +373,9 @@ class Data1D(Data):
         self.is_components = None
         self.symmetries = None
         self.is_overlay = None
+        self.delimiter = None
+        self.sort_indices = None
+        self.filter = None
         # Set to None the properties inherited from Data
         super(Data1D, self)._set_None()
 
@@ -380,5 +457,63 @@ class Data1D(Data):
         doc=u"""True if axis must be used to overlay curves in plots
 
         :Type: bool
+        """,
+    )
+
+    def _get_delimiter(self):
+        """getter of delimiter"""
+        return self._delimiter
+
+    def _set_delimiter(self, value):
+        """setter of delimiter"""
+        check_var("delimiter", value, "str")
+        self._delimiter = value
+
+    delimiter = property(
+        fget=_get_delimiter,
+        fset=_set_delimiter,
+        doc=u"""Character used to separate attributes in string case (e.g. "r=0, stator, radial")
+
+        :Type: str
+        """,
+    )
+
+    def _get_sort_indices(self):
+        """getter of sort_indices"""
+        return self._sort_indices
+
+    def _set_sort_indices(self, value):
+        """setter of sort_indices"""
+        if type(value) is int and value == -1:
+            value = list()
+        check_var("sort_indices", value, "list")
+        self._sort_indices = value
+
+    sort_indices = property(
+        fget=_get_sort_indices,
+        fset=_set_sort_indices,
+        doc=u"""List of indices to use to sort axis
+
+        :Type: list
+        """,
+    )
+
+    def _get_filter(self):
+        """getter of filter"""
+        return self._filter
+
+    def _set_filter(self, value):
+        """setter of filter"""
+        if type(value) is int and value == -1:
+            value = dict()
+        check_var("filter", value, "dict")
+        self._filter = value
+
+    filter = property(
+        fget=_get_filter,
+        fset=_set_filter,
+        doc=u"""Dict of filter keys
+
+        :Type: dict
         """,
     )

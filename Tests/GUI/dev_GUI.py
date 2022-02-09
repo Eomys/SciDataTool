@@ -24,8 +24,8 @@ if __name__ == "__main__":
         values=field_3d,
     )
 
-    # test = "plot"
-    test = "autoplot"
+    test = "plot"
+    # test = "autoplot"
     # test = "plot_2axis"
     # test = "oneaxis"
     # test = "vect"

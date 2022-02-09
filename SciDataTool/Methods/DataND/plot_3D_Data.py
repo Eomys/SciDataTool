@@ -255,7 +255,7 @@ def plot_3D_Data(
         xticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         xticks = None
-    if axis.is_components and axis.extension != "list":
+    if axis.is_components:
         xticklabels = result[axis.name]
         xticks = Xdata
         if annotation_delim is not None and annotation_delim in xticklabels[0]:
@@ -293,7 +293,7 @@ def plot_3D_Data(
         yticks = [i * round(np_max(axis.values) / 6) for i in range(7)]
     else:
         yticks = None
-    if axis.is_components and axis.extension != "list":
+    if axis.is_components:
         yticklabels = result[axis.name]
         yticks = Ydata
         if annotation_delim is not None and annotation_delim in yticklabels[0]:
