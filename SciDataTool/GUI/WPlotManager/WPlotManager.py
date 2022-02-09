@@ -51,6 +51,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
 
+        self.b_animate.hide()  # Hide until connected to action
+
         self.default_file_path = None
 
         # Building the interaction with the UI and the UI itself
