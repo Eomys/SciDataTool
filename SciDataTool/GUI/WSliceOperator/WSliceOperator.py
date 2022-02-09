@@ -72,7 +72,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             name of the current action selected
         """
         # Recovering the action selected by the user
-        action_type = self.c_operation.currentText()
+        action_type = self.c_operation.currentText().split(" over")[0]
 
         # Formatting the string to have the right syntax
         if action_type == "slice":
@@ -165,6 +165,9 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         elif operation_type == "list":
             operation_type = "overlay"
 
+        else:
+            operation_type += " over " + self.name
+
         # Setting operation combobox to the right operation
         self.c_operation.setCurrentIndex(self.c_operation.findText(operation_type))
 
@@ -253,7 +256,10 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.set_name(self.axis_name)
 
         self.c_operation.blockSignals(True)
-        operation_list = OPERATION_LIST.copy()
+        operation_list = [
+            ope + " over " + self.name if ope in type_extraction_dict else ope
+            for ope in OPERATION_LIST
+        ]
 
         # Remove slice for string axes
         if self.axis.is_components:
@@ -303,7 +309,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             a WSliceOperator object
         """
         # Recovering the operation selected
-        extraction_selected = self.c_operation.currentText()
+        extraction_selected = self.c_operation.currentText().split(" over")[0]
 
         # If the operation selected is a slice, then we show the slider and the floatEdit
         if extraction_selected == "slice" or extraction_selected == "slice (fft)":
