@@ -319,8 +319,12 @@ def plot_2D_Data(
                 if isinstance(result_0[axis.name], str):
                     title2 += name + "=" + result_0[axis.name]
                 else:
+                    if result_0[axis.name][0] > 10:
+                        fmt = "{:.5g}"
+                    else:
+                        fmt = "{:.3g}"
                     axis_str = array2string(
-                        result_0[axis.name], formatter={"float_kind": "{:.3g}".format}
+                        result_0[axis.name], formatter={"float_kind": fmt.format}
                     ).replace(" ", ", ")
                     if len(result_0[axis.name]) == 1:
                         axis_str = axis_str.strip("[]")
@@ -338,12 +342,16 @@ def plot_2D_Data(
                 if isinstance(axis, DataPattern) and len(axis.unique_indices) == 1:
                     is_display = False
         if is_display:
+            if axes_dict_other[axis_name][0] > 10:
+                fmt = "{:.5g}"
+            else:
+                fmt = "{:.3g}"
             title3 += (
                 axis_name
                 + "="
                 + array2string(
                     axes_dict_other[axis_name][0],
-                    formatter={"float_kind": "{:.3g}".format},
+                    formatter={"float_kind": fmt.format},
                 ).replace(" ", ", ")
                 + " ["
                 + axes_dict_other[axis_name][1]

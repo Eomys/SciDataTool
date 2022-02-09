@@ -342,10 +342,14 @@ def plot_3D_Data(
             if isinstance(result[axis.name], str):
                 axis_str = result[axis.name]
             else:
+                if result[axis.name][0] > 10:
+                    fmt = "{:.5g}"
+                else:
+                    fmt = "{:.3g}"
                 axis_str = (
                     array2string(
                         result[axis.name],
-                        formatter={"float_kind": "{:.3g}".format},
+                        formatter={"float_kind": fmt.format},
                     )
                     .replace(" ", ", ")
                     .replace("[", "")
@@ -368,10 +372,14 @@ def plot_3D_Data(
             if isinstance(axes_dict_other[axis_name][0], str):
                 axis_str = axes_dict_other[axis_name][0]
             else:
+                if axes_dict_other[axis_name][0] > 10:
+                    fmt = "{:.5g}"
+                else:
+                    fmt = "{:.3g}"
                 axis_str = (
                     array2string(
                         axes_dict_other[axis_name][0],
-                        formatter={"float_kind": "{:.3g}".format},
+                        formatter={"float_kind": fmt.format},
                     ).replace(" ", ", ")
                     + " ["
                     + axes_dict_other[axis_name][1]
