@@ -396,21 +396,25 @@ def plot_2D_Data(
                     axis_unit = axis.unit
                 if len(d.axes[axis.index].get_values()) > 1:
                     legends += [
-                        legend_list[i]
-                        + " "
-                        + axis.name
-                        + "="
-                        + axis.values.tolist()[j]
-                        + " "
-                        + axis_unit
-                        if isinstance(axis.values.tolist()[j], str)
-                        else legend_list[i]
-                        + " "
-                        + axis.name
-                        + "="
-                        + "%.3g" % axis.values.tolist()[j]
-                        + " "
-                        + axis_unit
+                        (
+                            legend_list[i]
+                            + " "
+                            + axis.name
+                            + "="
+                            + axis.values.tolist()[j]
+                            + " "
+                            + axis_unit
+                            if isinstance(axis.values.tolist()[j], str)
+                            else legend_list[i]
+                            + " "
+                            + axis.name
+                            + "="
+                            + "%.3g" % axis.values.tolist()[j]
+                            + " "
+                            + axis_unit
+                        )
+                        .replace("SI", "")
+                        .replace(" []", "")
                         for j in range(n_curves)
                     ]
                 else:
@@ -462,8 +466,10 @@ def plot_2D_Data(
         title = title.rstrip(", ")
 
         # Remove dimless and quotes
-        title = title.replace("[]", "")
-        title = title.replace("'", "")
+        title = title.replace("SI", "").replace("[]", "").replace("'", "")
+
+    xlabel = xlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+    ylabel = ylabel.replace("SI", "").replace(" []", "")  # Remove dimless units
 
     # Overall computation
     if overall_axes != []:

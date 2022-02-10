@@ -85,11 +85,18 @@ class WFilter(Ui_WFilter, QWidget):
 
             # Prepare strings
             data = []
-            for value in self.axis_values:
+            for i, value in enumerate(self.axis_values):
                 data_i = []
                 elems = value.split(self.axis.delimiter)
                 for j, elem in enumerate(elems):
-                    data_i.append(elem.replace(filter_list[j] + "=", ""))
+                    string = elem.replace(filter_list[j] + "=", "")
+                    if " [" in string:
+                        if i == len(self.axis_values) - 1:
+                            filter_list[j] = (
+                                filter_list[j] + " [" + string.split(" [")[1]
+                            )
+                        string = string.split(" [")[0]
+                    data_i.append(string)
                 data.append(data_i)
 
             # Setting up the table

@@ -395,6 +395,11 @@ def plot_3D_Data(
         title = title1 + title2 + title3
         title = title.rstrip(", ")
 
+    title = title.replace("SI", "").replace(" []", "")
+    xlabel = xlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+    ylabel = ylabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+    zlabel = zlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+
     if is_fft:
 
         if thresh is None:

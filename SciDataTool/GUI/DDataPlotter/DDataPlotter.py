@@ -312,7 +312,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             if sep == ", ":
                 label = label.replace("$", "").replace("{", "").replace("}", "")
 
-            return label
+            return label.replace("SI", "").replace(" []", "")  # Remove dimless units
 
         # Set cursor
         ######################################
