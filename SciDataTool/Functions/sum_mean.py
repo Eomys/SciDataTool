@@ -38,7 +38,7 @@ def my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit="SI"):
                 # Set Nper to 1 in case of non-periodic axis
                 Nper = 1
             values = 10 * np.log10(
-                np.sum(10 ** (values / 10), axis=index, keepdims=True)
+                np.nansum(10 ** (values / 10), axis=index, keepdims=True)
             ) + 10 * np.log10(Nper)
         else:
             if is_fft:  # No need to multiply by Nper in fft case
@@ -47,7 +47,7 @@ def my_sum(values, index, Nper, is_aper, unit, is_fft, corr_unit="SI"):
             if Nper is None:
                 # Set Nper to 1 in case of non-periodic axis
                 Nper = 1
-            values = Nper * np.sum(values, axis=index, keepdims=True)
+            values = Nper * np.nansum(values, axis=index, keepdims=True)
 
     return values
 
@@ -95,7 +95,7 @@ def my_mean(values, ax_val, index, Nper, is_aper, is_phys, is_fft):
             if Nper is None:
                 # Set Nper to 1 in case of non-periodic axis
                 Nper = 1
-            values = Nper * np.mean(values, axis=index)
+            values = Nper * np.nanmean(values, axis=index)
 
     return values
 

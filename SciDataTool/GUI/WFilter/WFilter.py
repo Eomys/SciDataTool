@@ -4,6 +4,7 @@ from PySide2.QtWidgets import (
     QStyledItemDelegate,
     QStyleOptionButton,
     QApplication,
+    QCheckBox,
 )
 from PySide2.QtCore import Qt, QEvent, QPoint, QRect
 from PySide2.QtGui import QStandardItemModel, QStandardItem
@@ -43,18 +44,24 @@ class WFilter(Ui_WFilter, QWidget):
         self.indices = indices
         self.axis_values = self.axis.get_values()
         self.init_table()
-        tableModel = self.tab_indices.model()
-        proxyModel = QSortFilterProxyModel()
-        proxyModel.setSourceModel(tableModel)
-        self.tab_indices.setModel(proxyModel)
 
         if self.axis.name in axes_dict:
             self.setWindowTitle("Filtering on " + axes_dict[self.axis.name])
         else:
             self.setWindowTitle("Filtering on " + self.axis.name)
 
+        self.cb_all.stateChanged.connect(self.select_all)
         self.b_Ok.clicked.connect(self.update_and_close)
         self.b_cancel.clicked.connect(self.cancel_and_close)
+
+    def select_all(self):
+        for i in range(self.tab_indices.model().rowCount()):
+            # Check all checkboxes
+            self.tab_indices.model().data(
+                self.tab_indices.model().index(
+                    i, self.tab_indices.model().columnCount() - 1
+                )
+            ).setCheckState(self.cb_all.checkState())
 
     def cancel_and_close(self):
         """Method called when the user click on the cancel button
@@ -81,15 +88,25 @@ class WFilter(Ui_WFilter, QWidget):
             else:
                 ncol = len(self.axis_values[0].split(self.axis.delimiter))
                 filter_list = ["" for i in range(ncol)]
-            filter_list.append("Plot ?")  # Adding the column with checkbox
+            filter_list.append("Plot?")  # Adding the column with checkbox
 
             # Prepare strings
             data = []
-            for value in self.axis_values:
+            for i, value in enumerate(self.axis_values):
                 data_i = []
                 elems = value.split(self.axis.delimiter)
                 for j, elem in enumerate(elems):
-                    data_i.append(elem.replace(filter_list[j] + "=", ""))
+                    string = elem.replace(filter_list[j] + "=", "")
+                    if " [" in string:
+                        if i == len(self.axis_values) - 1:
+                            filter_list[j] = (
+                                filter_list[j] + " [" + string.split(" [")[1]
+                            ).replace(" (failed)", "")
+                        if "failed" in string:
+                            string = string.split(" [")[0] + " (failed)"
+                        else:
+                            string = string.split(" [")[0]
+                    data_i.append(string)
                 data.append(data_i)
 
             # Setting up the table
@@ -111,7 +128,7 @@ class WFilter(Ui_WFilter, QWidget):
             # Setting up the table
             data_model = MyTableModel(
                 array([[format(value, ".4g") for value in self.axis_values]]).T,
-                ["Value", "Plot ?"],
+                ["Value", "Plot?"],
                 self,
             )
             for i in range(len(self.axis_values)):
@@ -122,6 +139,23 @@ class WFilter(Ui_WFilter, QWidget):
             self.tab_indices.setItemDelegateForColumn(
                 1, CheckBoxDelegate(self, data_model, self.indices)
             )
+
+        if self.indices is None or len(self.indices) == len(self.axis_values):
+            self.cb_all.setChecked(True)
+
+        # Enable sorting
+        tableModel = self.tab_indices.model()
+        proxyModel = QSortFilterProxyModel()
+        proxyModel.setSourceModel(tableModel)
+        self.tab_indices.setModel(proxyModel)
+
+        # Connect signal
+        data_model.cb_edited.connect(self.update_cb_all)
+
+    def update_cb_all(self):
+        self.cb_all.blockSignals(True)
+        self.cb_all.setCheckState(Qt.PartiallyChecked)
+        self.cb_all.blockSignals(False)
 
     def update_and_close(self):
         """Method called when the click on the Ok button
@@ -157,6 +191,8 @@ class WFilter(Ui_WFilter, QWidget):
 
 
 class MyTableModel(QStandardItemModel):
+    cb_edited = Signal()
+
     def __init__(self, datain, header, parent=None):
         QStandardItemModel.__init__(self, parent)
         self.arraydata = datain
@@ -187,6 +223,7 @@ class MyTableModel(QStandardItemModel):
         if role == Qt.EditRole:
             if index.column() == self.columnCount(None) - 1:
                 self.itemFromIndex(index).setCheckState(Qt.CheckState(value))
+                self.cb_edited.emit()
         else:
             super(MyTableModel, self).setData(index, value, role)
         return value

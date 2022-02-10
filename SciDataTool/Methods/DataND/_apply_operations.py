@@ -1,4 +1,4 @@
-from numpy import abs as np_abs, max as np_max, min as np_min
+from numpy import abs as np_abs, nanmax, nanmin
 
 from SciDataTool.Functions.derivation_integration import (
     derivate,
@@ -58,10 +58,10 @@ def _apply_operations(self, values, axes_list, is_magnitude, unit, corr_unit):
             is_fft = False
         # max over max axes
         if extension in "max":
-            values = np_max(values, axis=index)
+            values = nanmax(values, axis=index)
         # min over max axes
         elif extension in "min":
-            values = np_min(values, axis=index)
+            values = nanmin(values, axis=index)
         # sum over sum axes
         elif extension in "sum":
             values = my_sum(

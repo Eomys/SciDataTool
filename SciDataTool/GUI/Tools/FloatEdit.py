@@ -55,7 +55,7 @@ class FloatEdit(QLineEdit):
             # call base class keyPressEvent
             QLineEdit.keyPressEvent(self, event)
 
-    def setValue(self, value):
+    def setValue(self, value, is_dB=False):
         """Allow to set the containt of the Widget with a float
 
         Parameters
@@ -72,7 +72,10 @@ class FloatEdit(QLineEdit):
         if value is None:
             self.clear()
         else:
-            self.setText(format(value, ".5g"))
+            if is_dB:
+                self.setText(format(value, ".1f"))
+            else:
+                self.setText(format(value, ".5g"))
 
     def value(self):
         """Return the content of the Widget as a float

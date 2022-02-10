@@ -342,10 +342,14 @@ def plot_3D_Data(
             if isinstance(result[axis.name], str):
                 axis_str = result[axis.name]
             else:
+                if result[axis.name][0] > 10:
+                    fmt = "{:.5g}"
+                else:
+                    fmt = "{:.3g}"
                 axis_str = (
                     array2string(
                         result[axis.name],
-                        formatter={"float_kind": "{:.3g}".format},
+                        formatter={"float_kind": fmt.format},
                     )
                     .replace(" ", ", ")
                     .replace("[", "")
@@ -368,10 +372,14 @@ def plot_3D_Data(
             if isinstance(axes_dict_other[axis_name][0], str):
                 axis_str = axes_dict_other[axis_name][0]
             else:
+                if axes_dict_other[axis_name][0] > 10:
+                    fmt = "{:.5g}"
+                else:
+                    fmt = "{:.3g}"
                 axis_str = (
                     array2string(
                         axes_dict_other[axis_name][0],
-                        formatter={"float_kind": "{:.3g}".format},
+                        formatter={"float_kind": fmt.format},
                     ).replace(" ", ", ")
                     + " ["
                     + axes_dict_other[axis_name][1]
@@ -386,6 +394,11 @@ def plot_3D_Data(
     if title is None:
         title = title1 + title2 + title3
         title = title.rstrip(", ")
+
+    title = title.replace("SI", "").replace(" []", "")
+    xlabel = xlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+    ylabel = ylabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+    zlabel = zlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
 
     if is_fft:
 

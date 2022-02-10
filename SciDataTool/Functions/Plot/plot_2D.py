@@ -197,9 +197,7 @@ def plot_2D(
             plt.xticks(rotation=90, ha="center", va="top")
         if xticklabels is not None:
             if is_indlabels:
-                ax.set_xticklabels(
-                    [i + 1 for i in range(len(xticklabels))], rotation=90
-                )
+                ax.set_xticklabels([i + 1 for i in range(len(xticklabels))], rotation=0)
                 ax.annotate(
                     xticklabels, (Xdatas[i_Xdatas[i]], Ydatas[i]), visible=False
                 )
@@ -332,9 +330,7 @@ def plot_2D(
             plt.xticks(rotation=90, ha="center", va="top")
         if xticklabels is not None:
             if is_indlabels:
-                ax.set_xticklabels(
-                    [i + 1 for i in range(len(xticklabels))], rotation=90
-                )
+                ax.set_xticklabels([i + 1 for i in range(len(xticklabels))], rotation=0)
                 ax.annotate(
                     xticklabels, (Xdatas[i_Xdatas[i]], Ydatas[i]), visible=False
                 )
@@ -359,9 +355,7 @@ def plot_2D(
             plt.xticks(rotation=90, ha="center", va="top")
         if xticklabels is not None:
             if is_indlabels:
-                ax.set_xticklabels(
-                    [i + 1 for i in range(len(xticklabels))], rotation=90
-                )
+                ax.set_xticklabels([i + 1 for i in range(len(xticklabels))], rotation=0)
                 for j, xdata in enumerate(Xdatas[i_Xdatas[i]]):
                     ax.annotate(xticklabels[j], (xdata, Ydatas[i][j]), visible=False)
             else:

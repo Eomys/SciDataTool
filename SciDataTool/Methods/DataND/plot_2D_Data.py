@@ -319,8 +319,12 @@ def plot_2D_Data(
                 if isinstance(result_0[axis.name], str):
                     title2 += name + "=" + result_0[axis.name]
                 else:
+                    if result_0[axis.name][0] > 10:
+                        fmt = "{:.5g}"
+                    else:
+                        fmt = "{:.3g}"
                     axis_str = array2string(
-                        result_0[axis.name], formatter={"float_kind": "{:.3g}".format}
+                        result_0[axis.name], formatter={"float_kind": fmt.format}
                     ).replace(" ", ", ")
                     if len(result_0[axis.name]) == 1:
                         axis_str = axis_str.strip("[]")
@@ -338,12 +342,16 @@ def plot_2D_Data(
                 if isinstance(axis, DataPattern) and len(axis.unique_indices) == 1:
                     is_display = False
         if is_display:
+            if axes_dict_other[axis_name][0] > 10:
+                fmt = "{:.5g}"
+            else:
+                fmt = "{:.3g}"
             title3 += (
                 axis_name
                 + "="
                 + array2string(
                     axes_dict_other[axis_name][0],
-                    formatter={"float_kind": "{:.3g}".format},
+                    formatter={"float_kind": fmt.format},
                 ).replace(" ", ", ")
                 + " ["
                 + axes_dict_other[axis_name][1]
@@ -388,21 +396,25 @@ def plot_2D_Data(
                     axis_unit = axis.unit
                 if len(d.axes[axis.index].get_values()) > 1:
                     legends += [
-                        legend_list[i]
-                        + " "
-                        + axis.name
-                        + "="
-                        + axis.values.tolist()[j]
-                        + " "
-                        + axis_unit
-                        if isinstance(axis.values.tolist()[j], str)
-                        else legend_list[i]
-                        + " "
-                        + axis.name
-                        + "="
-                        + "%.3g" % axis.values.tolist()[j]
-                        + " "
-                        + axis_unit
+                        (
+                            legend_list[i]
+                            + " "
+                            + axis.name
+                            + "="
+                            + axis.values.tolist()[j]
+                            + " "
+                            + axis_unit
+                            if isinstance(axis.values.tolist()[j], str)
+                            else legend_list[i]
+                            + " "
+                            + axis.name
+                            + "="
+                            + "%.3g" % axis.values.tolist()[j]
+                            + " "
+                            + axis_unit
+                        )
+                        .replace("SI", "")
+                        .replace(" []", "")
                         for j in range(n_curves)
                     ]
                 else:
@@ -454,8 +466,10 @@ def plot_2D_Data(
         title = title.rstrip(", ")
 
         # Remove dimless and quotes
-        title = title.replace("[]", "")
-        title = title.replace("'", "")
+        title = title.replace("SI", "").replace("[]", "").replace("'", "")
+
+    xlabel = xlabel.replace("SI", "").replace(" []", "")  # Remove dimless units
+    ylabel = ylabel.replace("SI", "").replace(" []", "")  # Remove dimless units
 
     # Overall computation
     if overall_axes != []:
