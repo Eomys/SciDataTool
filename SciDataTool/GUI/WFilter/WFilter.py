@@ -94,8 +94,11 @@ class WFilter(Ui_WFilter, QWidget):
                         if i == len(self.axis_values) - 1:
                             filter_list[j] = (
                                 filter_list[j] + " [" + string.split(" [")[1]
-                            )
-                        string = string.split(" [")[0]
+                            ).replace(" (failed)", "")
+                        if "failed" in string:
+                            string = string.split(" [")[0] + " (failed)"
+                        else:
+                            string = string.split(" [")[0]
                     data_i.append(string)
                 data.append(data_i)
 
