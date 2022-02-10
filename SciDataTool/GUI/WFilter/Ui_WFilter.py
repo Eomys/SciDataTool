@@ -9,6 +9,8 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
+from SciDataTool.GUI.Tools.CheckBox import CheckBox
+
 
 class Ui_WFilter(object):
     def setupUi(self, WFilter):
@@ -17,8 +19,19 @@ class Ui_WFilter(object):
         WFilter.resize(831, 644)
         WFilter.setMinimumSize(QSize(630, 470))
         WFilter.setMaximumSize(QSize(16777215, 16777215))
-        self.gridLayout_4 = QGridLayout(WFilter)
-        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.gridLayout = QGridLayout(WFilter)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.tab_indices = QTableView(WFilter)
+        self.tab_indices.setObjectName(u"tab_indices")
+
+        self.gridLayout.addWidget(self.tab_indices, 0, 0, 1, 1)
+
+        self.cb_all = CheckBox(WFilter)
+        self.cb_all.setObjectName(u"cb_all")
+        self.cb_all.setTristate(True)
+
+        self.gridLayout.addWidget(self.cb_all, 1, 0, 1, 1)
+
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalSpacer = QSpacerItem(
@@ -37,15 +50,7 @@ class Ui_WFilter(object):
 
         self.horizontalLayout.addWidget(self.b_cancel)
 
-        self.gridLayout_4.addLayout(self.horizontalLayout, 1, 0, 1, 1)
-
-        self.tab_indices = QTableView(WFilter)
-        self.tab_indices.setObjectName(u"tab_indices")
-        self.tab_indices.setSortingEnabled(True)
-        self.tab_indices._rows = 0
-        self.tab_indices._columns = 0
-
-        self.gridLayout_4.addWidget(self.tab_indices, 0, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
 
         self.retranslateUi(WFilter)
 
@@ -55,6 +60,9 @@ class Ui_WFilter(object):
 
     def retranslateUi(self, WFilter):
         WFilter.setWindowTitle(QCoreApplication.translate("WFilter", u"WFilter", None))
+        self.cb_all.setText(
+            QCoreApplication.translate("WFilter", u"Select/Deselect all", None)
+        )
         self.b_Ok.setText(QCoreApplication.translate("WFilter", u"Ok", None))
         self.b_cancel.setText(QCoreApplication.translate("WFilter", u"Cancel", None))
 
