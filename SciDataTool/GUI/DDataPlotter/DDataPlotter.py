@@ -167,6 +167,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         if self.is_auto_refresh.isChecked():
             # When auto-refresh is enabled, the refresh button must be disabled
             self.b_refresh.setDisabled(True)
+            # Refresh
+            self.update_plot()
         else:
             # When auto-refresh is disabled, the refresh button must be enabled
             self.b_refresh.setDisabled(False)
