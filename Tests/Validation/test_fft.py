@@ -1,5 +1,13 @@
+from pandas import NA
 import pytest
-from SciDataTool import DataTime, DataFreq, DataLinspace, Data1D, VectorField
+from SciDataTool import (
+    DataTime,
+    DataFreq,
+    DataLinspace,
+    Data1D,
+    VectorField,
+    Norm_indices,
+)
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 from numpy import zeros, exp, real, pi, take, insert, delete
@@ -851,5 +859,82 @@ def test_fft2_anti_period_random():
     )
 
 
+@pytest.mark.validation
+def test_fft1d_non_uniform(per_a=2, is_apera=True, is_add_zero_freq=True):
+    """check non uniform fft1d
+    TODO: solve bug for a single frequency vector"""
+    # %%
+    f = 50
+    Na = 4 * 10
+    slip = 0.01
+    Nt = 100
+    A0 = 10
+
+    sym_dict = dict()
+    per_a0 = per_a
+    if is_apera:
+        per_a *= 2
+        sym_dict["antiperiod"] = per_a
+    elif per_a > 1:
+        sym_dict["period"] = per_a
+
+    # Creating the data object
+    Phase = DataLinspace(
+        name="phase",
+        unit="rad",
+        initial=0,
+        final=2 * pi / per_a,
+        number=int(Na / per_a),
+        include_endpoint=False,
+        symmetries=sym_dict,
+        normalizations={"bar_id": Norm_indices()},
+        is_overlay=True,
+    )
+
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=Nt,
+        symmetries={"antiperiod": 4},
+    )
+
+    angle_bars = Phase.get_values(is_smallestperiod=True)
+
+    if is_add_zero_freq:
+        values = np.zeros((2, angle_bars.size), dtype=complex)
+        values[1, :] = A0 * np.exp(1j * per_a0 * angle_bars)
+        freqs_val = np.array([0, slip * f])
+    else:
+        values = A0 * np.exp(1j * per_a0 * angle_bars[None, :])
+        freqs_val = np.array([slip * f])
+
+    Freqs = Data1D(
+        name="freqs",
+        symbol="",
+        unit="Hz",
+        values=freqs_val,
+        normalizations=dict(),
+    )
+
+    Data = DataFreq(
+        name="field", unit="A", symbol="X", axes=[Freqs, Phase], values=values
+    )
+
+    val_time = Data.get_data_along(
+        "time=axis_data", "phase", axis_data={"time": Time.get_values()}
+    )
+
+    # Plot
+    # val_time.plot_2D_Data("phase", "time[0]", type_plot="bargraph")
+    # val_time.plot_2D_Data("time", "phase[0,1,2,3]")
+
+    val_check = A0 * np.cos(2 * np.pi * slip * f * Time.get_values())
+    assert_array_almost_equal(val_time.values[:, 0], val_check)
+
+
 if __name__ == "__main__":
-    test_ifft2d_period()
+    # test_ifft2d_period()
+    test_fft1d_non_uniform(is_add_zero_freq=True)
+    test_fft1d_non_uniform(is_add_zero_freq=False)

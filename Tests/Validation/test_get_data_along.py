@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_equal
 
-from SciDataTool import DataLinspace, DataTime, Norm_ref, Data1D
+from SciDataTool import DataLinspace, DataTime, Norm_ref, Data1D, DataPattern
 
 
 @pytest.mark.validation
@@ -491,10 +491,94 @@ def test_get_data_along_integrate_local():
     assert Field_int_loc.unit == "ms"
 
 
+@pytest.mark.validation
+def test_get_data_along_integrate_local_pattern():
+
+    # Test integration per step with DataPattern
+    f = 50
+    A = 5
+    Nt = 3
+    Time = DataLinspace(
+        name="time",
+        unit="s",
+        initial=0,
+        final=1 / f,
+        number=Nt,
+        include_endpoint=False,
+    )
+
+    z = DataPattern(
+        name="z",
+        unit="m",
+        values=np.array([-0.045, -0.09]),
+        rebuild_indices=[1, 1, 0, 0, 0, 0, 1, 1],
+        unique_indices=[2, 0],
+        values_whole=np.array([-0.09, -0.045, -0.045, 0.0, 0.0, 0.045, 0.045, 0.09]),
+        is_step=True,
+    )
+
+    time = Time.get_values()
+    field = np.zeros((Nt, 2))
+    field[:, 0] = A * np.cos(2 * np.pi * f * time)
+    field[:, 1] = 0.5 * A * np.cos(2 * np.pi * f * time)
+
+    Field = DataTime(
+        name="Example field",
+        symbol="X",
+        unit="T/m",
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+        axes=[Time, z],
+        values=field,
+    )
+
+    # Field.plot_3D_Data("time", "z")
+    # Field.plot_2D_Data("z", "time[0]")
+    Field_int_loc = Field.get_data_along("time", "z=integrate_local")
+    assert_equal(Field_int_loc.values.shape, (Nt, 4))
+    assert_array_almost_equal(
+        2 * Field_int_loc.values[:, [0, 3]], Field_int_loc.values[:, [1, 2]]
+    )
+
+    z2 = DataPattern(
+        name="z",
+        unit="m",
+        values=np.array([-0.09, -0.045, 0.0, 0.045, 0.09]),
+        rebuild_indices=[0, 1, 2, 3, 4],
+        unique_indices=[0, 1, 2, 3, 4],
+        values_whole=np.array([-0.09, -0.045, 0.0, 0.045, 0.09]),
+        is_step=False,
+    )
+
+    field2 = np.zeros((Nt, 5))
+    field2[:, 0] = A * np.cos(2 * np.pi * f * time)
+    field2[:, 1] = 0.8 * A * np.cos(2 * np.pi * f * time)
+    field2[:, 2] = 0.6 * A * np.cos(2 * np.pi * f * time)
+    field2[:, 3] = 0.4 * A * np.cos(2 * np.pi * f * time)
+    field2[:, 4] = 0.2 * A * np.cos(2 * np.pi * f * time)
+
+    Field2 = DataTime(
+        name="Example field 2",
+        symbol="X",
+        unit="T/m",
+        normalizations={"ref": Norm_ref(ref=2e-5)},
+        axes=[Time, z2],
+        values=field2,
+    )
+
+    Field2.plot_3D_Data("time", "z")
+    Field2.plot_2D_Data("z", "time[0]")
+    Field_int_loc2 = Field2.get_data_along("time", "z=integrate_local")
+    assert_equal(Field_int_loc2.values.shape, (Nt, 4))
+    # assert_array_almost_equal(
+    #     0.8 * Field_int_loc2.values[:, 0], Field_int_loc2.values[:, 1]
+    # )
+
+
 if __name__ == "__main__":
     # test_get_data_along_single()
     # test_get_data_along_integrate()
     # test_get_data_along_derivate()
     # test_get_data_along_antiderivate()
     # test_get_data_along_to_linspace()
-    test_get_data_along_integrate_local()
+    # test_get_data_along_integrate_local()
+    test_get_data_along_integrate_local_pattern()
