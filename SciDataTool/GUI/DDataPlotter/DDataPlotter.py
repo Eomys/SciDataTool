@@ -301,7 +301,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 else:
                     zlabel = latex(self.data._name)
 
-                zunit = "[" + latex(self.data.unit) + "]"
+                zunit = "[" + latex(output_range["unit"]) + "]"
 
                 if zlabel == "W" and "dBA" in zunit:
                     zlabel = "ASWL"
@@ -412,6 +412,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     self.ax.texts[-1].set_visible(True)
                     self.ax.lines[-1].set_visible(True)
                     self.ax.lines[-2].set_visible(True)
+                    self.ax.zorder = 10
                     self.canvas.draw()
 
         def delete_cursor(event):
