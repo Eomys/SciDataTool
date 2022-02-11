@@ -319,13 +319,17 @@ def plot_2D_Data(
                 if isinstance(result_0[axis.name], str):
                     title2 += name + "=" + result_0[axis.name]
                 else:
-                    if result_0[axis.name][0] > 10:
-                        fmt = "{:.5g}"
+                    if isinstance(result_0[axis.name][0], str):
+                        axis_str = result_0[axis.name][0]
                     else:
-                        fmt = "{:.3g}"
-                    axis_str = array2string(
-                        result_0[axis.name], formatter={"float_kind": fmt.format}
-                    ).replace(" ", ", ")
+                        if result_0[axis.name][0] > 10:
+                            fmt = "{:.5g}"
+                        else:
+                            fmt = "{:.3g}"
+                        axis_str = array2string(
+                            result_0[axis.name], formatter={"float_kind": fmt.format}
+                        ).replace(" ", ", ")
+
                     if len(result_0[axis.name]) == 1:
                         axis_str = axis_str.strip("[]")
 
