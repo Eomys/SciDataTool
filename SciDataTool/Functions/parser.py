@@ -175,6 +175,10 @@ def read_input_strings(args, axis_data):
             elif len(ind_str) == 0:
                 extension = "list"
                 indices = [":"]
+            # N largest
+            elif "largest" in ind_str:
+                extension = "list"
+                indices = [ind_str.split("largest")[0]]
             # Single index
             else:
                 extension = "single"
