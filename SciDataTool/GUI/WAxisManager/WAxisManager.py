@@ -81,7 +81,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
         self.fft_sync("axis 1")
 
-    def gen_slice_op(self):
+    def gen_slice_op(self, axes_request_list=None):
         """Method that gen the right WDataExtrator widget according to the axis selected by the user in the UI
         Parameters
         ----------
@@ -123,7 +123,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             for axis in axes_gen:
                 temp = WSliceOperator(self.g_data_extract)
                 temp.setObjectName(axis)
-                for ax in self.axes_list:
+                for i, ax in enumerate(self.axes_list):
                     if (
                         ax.name == axis
                         or axis in axes_dict
@@ -131,7 +131,17 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                         or axis in rev_axes_dict
                         and ax.name in rev_axes_dict[axis]
                     ):
-                        temp.update(ax)
+                        if axes_request_list is not None and axis in [
+                            x.name for x in axes_request_list
+                        ]:
+                            temp.update(
+                                ax,
+                                axis_request=axes_request_list[
+                                    [x.name for x in axes_request_list].index(axis)
+                                ],
+                            )
+                        else:
+                            temp.update(ax)
                 temp.refreshNeeded.connect(self.update_needed)
                 self.w_slice_op.append(temp)
                 self.lay_data_extract.addWidget(temp)
@@ -205,7 +215,11 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.gen_slice_op()
 
     def set_axis_widgets(
-        self, data, axes_request_list, frozen_type=0, is_keep_config=False
+        self,
+        data,
+        axes_request_list,
+        frozen_type=0,
+        is_keep_config=False,
     ):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
@@ -295,10 +309,10 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
                 # Generating DataSelection with the input of user if they are given or by default (like in a manual plot)
                 if len(slices_op_list) != 0:
-                    self.gen_slice_op()
+                    self.gen_slice_op(axes_request_list)
                     self.set_slice_op(slices_op_list)
                 else:
-                    self.gen_slice_op()
+                    self.gen_slice_op(axes_request_list)
 
         # Depending on the value of frozen type we are going to act on the UI
         if frozen_type == 1 and len(axes_list) == 2:
