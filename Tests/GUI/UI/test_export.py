@@ -18,7 +18,7 @@ class TestGUI(object):
         cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
-    def check_export_path(self):
+    def test_check_export_path(self):
         """Testing that the export function save a file at the right place by checking the path"""
 
         # Exporting the file
@@ -31,12 +31,11 @@ class TestGUI(object):
         ]
 
         file_name = (
-            "plot_"
-            + self.UI.w_plot_manager.data.symbol
-            + "_"
-            + "_".join(param_list)
-            + ".csv"
-        )
+            (self.UI.w_plot_manager.data.symbol + "_" + "_".join(param_list))
+            .replace("{", "")
+            .replace("}", "")
+            .replace(".", ",")
+        ) + ".csv"
 
         # Testing that the file exists
         assert isfile(join(save_gui_path, file_name))
@@ -47,6 +46,6 @@ if __name__ == "__main__":
     a.setup_class()
 
     # Testing that the file exists in the right folder
-    a.check_export_path()
+    a.test_check_export_path()
 
     print("Done")

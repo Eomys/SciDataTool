@@ -98,7 +98,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axis_selected_1 = self.w_axis_1.get_axis_selected()
         axis_selected_2 = self.w_axis_2.get_axis_selected()
 
-        axes_list_1.remove(axis_selected_1)
+        if axis_selected_1 in axes_list_1:
+            axes_list_1.remove(axis_selected_1)
         if axis_selected_2 in axes_list_2:
             axes_list_2.remove(axis_selected_2)
 

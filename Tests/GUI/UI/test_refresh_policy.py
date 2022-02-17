@@ -16,7 +16,7 @@ class TestGUI(object):
         cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
-    def check_autorefresh_update(self):
+    def test_check_autorefresh_update(self):
         """Testing that the auto-refresh combobox update the policy correctly"""
 
         self.UI.is_auto_refresh.setChecked(True)
@@ -26,7 +26,7 @@ class TestGUI(object):
         assert self.UI.auto_refresh == False
 
     @pytest.mark.gui
-    def check_signal(self):
+    def test_check_signal(self):
         """Testing that the signals are handled correctly depending on the autorefresh policy"""
 
         # Setting the policy to true
@@ -44,7 +44,7 @@ class TestGUI(object):
         assert self.UI.is_plot_updated == False
 
     @pytest.mark.gui
-    def check_b_refresh_auto_refresh(self):
+    def test_check_b_refresh_auto_refresh(self):
         """Testing that the refresh button is enabled and disabled according to the action on the UI"""
 
         # Testing that when auto-refresh is checked, then the refresh button is disabled
@@ -56,7 +56,7 @@ class TestGUI(object):
         assert self.UI.b_refresh.isEnabled() == True
 
     @pytest.mark.gui
-    def check_b_refresh_auto(self):
+    def test_check_b_refresh_auto(self):
         "Testing that when a plot is updated, then the refresh button is disabled and that we enable it once the UI is modified"
 
         # After updating the plot, the button should be disabled
@@ -73,12 +73,12 @@ if __name__ == "__main__":
     a.setup_class()
 
     # Testing the checkbox
-    a.check_autorefresh_update()
+    a.test_check_autorefresh_update()
     # Verifying the handling of the signals
-    a.check_signal()
+    a.test_check_signal()
     # Testing that we disable/enable b_refresh according to is_auto_refresh (checkBox)
-    a.check_b_refresh_auto_refresh()
+    a.test_check_b_refresh_auto_refresh()
     # Testing that the button is disabled after the plot is updated and enabled after changing the UI
-    a.check_b_refresh_auto
+    a.test_check_b_refresh_auto
 
     print("Done")

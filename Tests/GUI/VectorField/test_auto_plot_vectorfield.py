@@ -82,7 +82,7 @@ class TestGUI(object):
 
     @pytest.mark.gui
     @pytest.mark.parametrize("test_dict", a_p_list)
-    def check_a_p(self, test_dict):
+    def test_check_a_p(self, test_dict):
         """Test to make sure that the auto-plot works as intended"""
 
         # Launching the auto plot with info from the dict
@@ -110,23 +110,19 @@ class TestGUI(object):
             or "comp_z" not in self.VecField.components
         ):
             assert self.UI.w_plot_manager.w_vect_selector.component_list == [
-                "Polar coordinates",
                 "radial",
-                "tangential",
-                "Cartesian coordinates",
-                "comp_x",
-                "comp_y",
+                "circumferential",
+                "x-axis component",
+                "y-axis component",
             ]
         else:
             assert self.UI.w_plot_manager.w_vect_selector.component_list == [
-                "Polar coordinates",
                 "radial",
-                "tangential",
+                "circumferential",
                 "axial",
-                "Cartesian coordinates",
-                "comp_x",
-                "comp_y",
-                "comp_z",
+                "x-axis component",
+                "y-axis component",
+                "z-axis component",
             ]
 
         # Step 1 :  making sure that the right component is selected
@@ -203,8 +199,14 @@ class TestGUI(object):
         # Checking the unit
         if axes_given[0].unit == "SI":
             # If the unit is not given, then we make sure that the unit by default is selected
-            assert (
-                axes_sent[0].unit == self.UI.w_plot_manager.w_axis_manager.w_axis_1.unit
+            assert axes_sent[
+                0
+            ].unit == self.UI.w_plot_manager.w_axis_manager.w_axis_1.get_axis_unit_selected().split(
+                "{"
+            )[
+                1
+            ].rstrip(
+                "}"
             )
         else:
             assert axes_sent[0].unit == axes_given[0].unit
@@ -240,14 +242,21 @@ class TestGUI(object):
                     if actions_given[i].indices[0] < 0:
                         # if we gave a negative index, we have to update the value nmanally (slider accept/return only positive value)
                         assert (
-                            actions_sent[i].indices[0]
+                            self.UI.w_plot_manager.w_axis_manager.w_slice_op[
+                                i
+                            ].slider.value()
                             == self.UI.w_plot_manager.w_axis_manager.w_slice_op[
                                 i
                             ].slider.maximum()
                             + actions_given[i].indices[0]
                         )
                     else:
-                        assert actions_sent[i].indices[0] == actions_given[i].indices[0]
+                        assert (
+                            self.UI.w_plot_manager.w_axis_manager.w_slice_op[
+                                i
+                            ].slider.value()
+                            == actions_given[i].indices[0]
+                        )
 
                 # Checking the units
                 if actions_given[i].unit == "SI":
@@ -278,5 +287,5 @@ if __name__ == "__main__":
     for ii, a_p_test in enumerate(a_p_list):
         a = TestGUI()
         a.setup_class()
-        a.check_a_p(a_p_test)
+        a.test_check_a_p(a_p_test)
         print("Test n°" + str(ii) + " done")

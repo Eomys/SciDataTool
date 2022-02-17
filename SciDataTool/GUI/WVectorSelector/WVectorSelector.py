@@ -75,10 +75,8 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         """
 
         # Setting the combobox with the right component
-        if component_selected in self.component_list:
-            self.c_component.setCurrentIndex(
-                self.component_list.index(component_selected)
-            )
+        if REV_COMP_DICT[component_selected] in self.component_list:
+            self.c_component.setCurrentText(REV_COMP_DICT[component_selected])
         else:
             print(
                 "WARNING : Trying to set the vector to "

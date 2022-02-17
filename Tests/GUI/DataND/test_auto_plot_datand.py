@@ -193,7 +193,7 @@ class TestGUI(object):
 
     @pytest.mark.gui
     @pytest.mark.parametrize("test_dict", a_p_list)
-    def check_a_p(self, test_dict):
+    def test_check_a_p(self, test_dict):
         """Test to make sure that the auto-plot works as intended"""
 
         # Launching the auto plot with info from the dict
@@ -239,8 +239,14 @@ class TestGUI(object):
         # Checking the unit
         if axes_given[0].unit == "SI":
             # If the unit is not given, then we make sure that the unit by default is selected
-            assert (
-                axes_sent[0].unit == self.UI.w_plot_manager.w_axis_manager.w_axis_1.unit
+            assert axes_sent[
+                0
+            ].unit == self.UI.w_plot_manager.w_axis_manager.w_axis_1.get_axis_unit_selected().split(
+                "{"
+            )[
+                1
+            ].rstrip(
+                "}"
             )
         else:
             assert axes_sent[0].unit == axes_given[0].unit
@@ -250,9 +256,14 @@ class TestGUI(object):
             assert axes_sent[1].name == axes_given[1].name
             if axes_given[1].unit == "SI":
                 # If the unit is not given, then we make sure that the unit by default is selected
-                assert (
-                    axes_sent[1].unit
-                    == self.UI.w_plot_manager.w_axis_manager.w_axis_2.unit
+                assert axes_sent[
+                    1
+                ].unit == self.UI.w_plot_manager.w_axis_manager.w_axis_2.get_axis_unit_selected().split(
+                    "{"
+                )[
+                    1
+                ].rstrip(
+                    "}"
                 )
 
         # Step 2 : Checking the actions
@@ -274,16 +285,23 @@ class TestGUI(object):
                 if actions_sent[i].extension == "single":
 
                     if actions_given[i].indices[0] < 0:
-                        # if we gave a negative index, we have to update the value nmanally (slider accept/return only positive value)
+                        # if we gave a negative index, we have to update the value manually (slider accept/return only positive value)
                         assert (
-                            actions_sent[i].indices[0]
+                            self.UI.w_plot_manager.w_axis_manager.w_slice_op[
+                                i
+                            ].slider.value()
                             == self.UI.w_plot_manager.w_axis_manager.w_slice_op[
                                 i
                             ].slider.maximum()
                             + actions_given[i].indices[0]
                         )
                     else:
-                        assert actions_sent[i].indices[0] == actions_given[i].indices[0]
+                        assert (
+                            self.UI.w_plot_manager.w_axis_manager.w_slice_op[
+                                i
+                            ].slider.value()
+                            == actions_given[i].indices[0]
+                        )
 
                 # Checking the units
                 if actions_given[i].unit == "SI":
@@ -302,7 +320,10 @@ class TestGUI(object):
                     == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].axis.name
                 )
                 assert actions_sent[i].extension == "single"
-                assert actions_sent[i].indices[0] == 0
+                assert (
+                    self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].slider.value()
+                    == 0
+                )
                 assert (
                     actions_sent[i].unit
                     == self.UI.w_plot_manager.w_axis_manager.w_slice_op[i].unit
@@ -358,12 +379,12 @@ class TestGUI(object):
                         self.UI.w_plot_manager.w_axis_manager.get_axes_selected()[1],
                     )
             if test_dict["z_min"] == None:
-                # Making sure that the value are equal with a threshold of 1e-7
-                eps = 1e-7
+                # Making sure that the value are equal with a threshold of 1e-4
+                eps = 1e-4
                 assert drange["min"] - field_value[self.Field.symbol].min() < eps
             if test_dict["z_max"] == None:
-                # Making sure that the value are equal with a threshold of 1e-7
-                eps = 1e-7
+                # Making sure that the value are equal with a threshold of 1e-4
+                eps = 1e-4
                 assert drange["max"] - field_value[self.Field.symbol].max() < eps
         else:
             # If min and max are given, we just have to compare them
@@ -383,5 +404,5 @@ if __name__ == "__main__":
     for ii, a_p_test in enumerate(a_p_list):
         a = TestGUI()
         a.setup_class()
-        a.check_a_p(a_p_test)
+        a.test_check_a_p(a_p_test)
         print("Test n°" + str(ii) + " done")

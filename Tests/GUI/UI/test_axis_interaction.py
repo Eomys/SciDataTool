@@ -17,7 +17,7 @@ class TestGUI(object):
         cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
-    def check_axis_removal(self):
+    def test_check_axis_removal(self):
         """Test that make sure that when an axis is selected in axis 1 then it is not in axis 2"""
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
         axis_2 = self.UI.w_plot_manager.w_axis_manager.w_axis_2
@@ -30,7 +30,7 @@ class TestGUI(object):
                 assert axis_1.c_axis.currentText() != axis_2.c_axis.currentText()
 
     @pytest.mark.gui
-    def check_filter(self):
+    def test_check_filter(self):
         """Checking that when Filter is selected, then the button is enabled. Otherwise it must be disabled."""
         # Making sure that the two axis have their default value (time and None)
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
@@ -48,7 +48,7 @@ class TestGUI(object):
                 assert not axis_1.b_filter.isEnabled()
 
     @pytest.mark.gui
-    def check_ope_available(self):
+    def test_check_ope_available(self):
         """Test to make sure that the action available for each axis is correct"""
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
 
@@ -61,13 +61,20 @@ class TestGUI(object):
                 action_list.append(axis_1.c_action.currentText())
 
             assert "None" in action_list
-            assert "Filter" in action_list
+            if axis_1.axes_list_obj[
+                axis_1.axes_list.index(axis_1.axis_selected)
+            ].is_components:
+                assert "Filter" in action_list
+            else:
+                assert "Filter" not in action_list
 
             if axis_1.c_axis.currentText() in fft_dict:
                 assert "FFT" in action_list
+            else:
+                assert "FFT" not in action_list
 
     @pytest.mark.gui
-    def check_ope_sync(self):
+    def test_check_ope_sync(self):
         """Checking that when FFT or '' is selected in axis 1 then the action of the axis 2 is synchronized to be the same"""
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
         axis_2 = self.UI.w_plot_manager.w_axis_manager.w_axis_2
@@ -109,7 +116,7 @@ class TestGUI(object):
         assert axis_2.c_action.currentIndex() == axis_1.c_action.currentIndex()
 
     @pytest.mark.gui
-    def check_unit_available(self):
+    def test_check_unit_available(self):
         """Test to make sure that the unit available are adapting correctly depending on the combination of axis and action"""
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
 
@@ -135,14 +142,14 @@ if __name__ == "__main__":
     a.setup_class()
 
     # Testing the removal of axis1 in axis2
-    a.check_axis_removal()
+    a.test_check_axis_removal()
     # Checking the update of the action according to the choice of the axis selected
-    a.check_ope_available()
+    a.test_check_ope_available()
     # Checking the update of the unit according to the action and the axis selected
-    a.check_unit_available()
+    a.test_check_unit_available()
     # Checking the update of the FFT action of axis2 if selected in axis1
-    a.check_ope_sync()
+    a.test_check_ope_sync()
     # Checking the interaction with filter button
-    a.check_filter()
+    a.test_check_filter()
 
     print("Done")

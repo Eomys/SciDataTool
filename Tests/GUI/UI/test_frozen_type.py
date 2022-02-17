@@ -68,7 +68,7 @@ class TestGUI(object):
 
     @pytest.mark.gui
     @pytest.mark.parametrize("test_dict", f_t_test_list)
-    def check_frozen_type(self, test_dict):
+    def test_check_frozen_type(self, test_dict):
         """Test to make sure that the auto-plot works as intended"""
 
         # Launching the auto plot with info from the dict
@@ -115,6 +115,6 @@ if __name__ == "__main__":
         a.setup_class()
 
         # Testing that the checkbox are disabled if there is only one item in them
-        a.check_frozen_type(f_t_test)
+        a.test_check_frozen_type(f_t_test)
 
         print("Test n°" + str(ii) + " done")

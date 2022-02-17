@@ -82,7 +82,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             param_list.remove(None)
 
         file_name = self.data.symbol + "_" + "_".join(param_list)
-        file_name.replace("{", "").replace("}", "")
+        file_name = file_name.replace("{", "").replace("}", "").replace(".", ",")
         return file_name
 
     def export(self, save_file_path=False):
