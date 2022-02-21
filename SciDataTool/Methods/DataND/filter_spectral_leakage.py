@@ -126,10 +126,13 @@ def filter_spectral_leakage(
         # Mirror spectrum
         if "wavenumber" in result:
             # Mirror negative frequencies to negative wavenumbers
+            Ifn = ~Ifp
+            if freqs_th[0] == 0:
+                Ifn[I0] = True
             spectrum_filt = np.concatenate(
                 (
                     spectrum_filt[Ifp, ...],
-                    np.flip(np.conj(spectrum_filt[~Ifp, 1:-1, ...])),
+                    np.flip(np.conj(spectrum_filt[Ifn, 1:-1, ...])),
                 ),
                 axis=1,
             )

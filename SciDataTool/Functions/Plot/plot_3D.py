@@ -98,7 +98,7 @@ def plot_3D(
     is_contour : bool
         True to show contour line if type_plot = "pcolor"
     is_shading_flat : bool
-        True to use flat shading instead of Gouraud
+        True to use flat shading instead of Gouraud for pcolormesh or bilinear for pcolor
     save_path : str
         full path including folder, name and extension of the file to save if save_path is not None
     is_show_fig : bool

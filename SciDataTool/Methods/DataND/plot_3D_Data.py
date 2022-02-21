@@ -120,6 +120,8 @@ def plot_3D_Data(
         threshold for automatic fft ticks
     is_switch_axes : bool
         to switch x and y axes
+    is_shading_flat : bool
+        True to use flat shading instead of Gouraud for pcolormesh or bilinear for pcolor
     """
 
     # Dynamic import to avoid import loop
