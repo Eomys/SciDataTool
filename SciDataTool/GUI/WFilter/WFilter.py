@@ -5,6 +5,7 @@ from PySide2.QtWidgets import (
     QStyleOptionButton,
     QApplication,
     QCheckBox,
+    QHeaderView,
 )
 from PySide2.QtCore import Qt, QEvent, QPoint, QRect
 from PySide2.QtGui import QStandardItemModel, QStandardItem
@@ -25,7 +26,7 @@ class WFilter(Ui_WFilter, QWidget):
 
     refreshNeeded = Signal()
 
-    def __init__(self, axis, indices=None, parent=None):
+    def __init__(self, axis, indices=None, is_overlay=True, parent=None):
         """Linking the button with their method + initializing the arguments used
 
         Parameters
@@ -88,6 +89,11 @@ class WFilter(Ui_WFilter, QWidget):
             else:
                 ncol = len(self.axis_values[0].split(self.axis.delimiter))
                 filter_list = ["" for i in range(ncol)]
+            if (
+                hasattr(self.axis, "sort_indices")
+                and self.axis.sort_indices is not None
+            ):
+                filter_list.append("Rank")
             filter_list.append("Plot?")  # Adding the column with checkbox
 
             # Prepare strings
@@ -106,7 +112,16 @@ class WFilter(Ui_WFilter, QWidget):
                             string = string.split(" [")[0] + " (failed)"
                         else:
                             string = string.split(" [")[0]
+                    if self.axis.char_to_rm is not None:
+                        for char in self.axis.char_to_rm:
+                            string = string.replace(char, "")
+                        try:
+                            string = float(string)
+                        except:
+                            pass
                     data_i.append(string)
+                if "Rank" in filter_list:
+                    data_i.append(self.axis.sort_indices.index(i) + 1)
                 data.append(data_i)
 
             # Setting up the table
@@ -148,6 +163,11 @@ class WFilter(Ui_WFilter, QWidget):
         proxyModel = QSortFilterProxyModel()
         proxyModel.setSourceModel(tableModel)
         self.tab_indices.setModel(proxyModel)
+
+        # Adjust column width
+        header = self.tab_indices.horizontalHeader()
+        for i in range(self.tab_indices.model().columnCount()):
+            header.setSectionResizeMode(i, QHeaderView.ResizeToContents)
 
         # Connect signal
         data_model.cb_edited.connect(self.update_cb_all)

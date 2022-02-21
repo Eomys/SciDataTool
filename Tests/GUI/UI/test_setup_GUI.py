@@ -18,7 +18,7 @@ class TestGUI(object):
         cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
-    def check_axes(self):
+    def test_check_axes(self):
         """Checking that the axes_list inside WAxisSelector corresponds to the axes of Field"""
         axes_expected = [axis.name for axis in Field.get_axes()]
         assert self.UI.w_plot_manager.w_axis_manager.w_axis_1.axes_list == axes_expected
@@ -27,7 +27,7 @@ class TestGUI(object):
         assert self.UI.w_plot_manager.w_axis_manager.w_axis_2.axes_list == axes_expected
 
     @pytest.mark.gui
-    def check_data_sel(self):
+    def test_check_data_sel(self):
         """Checking the axis/axes of DataSelection have not been selected by the user before"""
 
         axes_selected = [
@@ -39,11 +39,11 @@ class TestGUI(object):
             assert not wid.axis in axes_selected
 
     @pytest.mark.gui
-    def check_range(self):
+    def test_check_range(self):
         """Method that check that the units and the values of min and max set by default in the app corresponds to those of the field."""
 
         # Checking the unit of WDataRange
-        assert Field.unit in self.UI.w_plot_manager.w_range.unit_list
+        assert Field.unit == self.UI.w_plot_manager.w_range.c_unit.currentText()
 
         # Recovering the axis selected and their units
         axes_selected = self.UI.w_plot_manager.w_axis_manager.get_axes_selected()
@@ -55,7 +55,7 @@ class TestGUI(object):
         # Recovering the minimum and the maximum of the field
         if len(axes_selected) == 1:
             # Checking that the right name is given to the groupBow with WDataRange
-            assert self.UI.w_plot_manager.w_range.g_range.title() == "Y"
+            assert self.UI.w_plot_manager.w_range.g_range.title() == "Y Range"
 
             # Checking if the field is plotted in fft, then we use get_magnitude_along
             # Otherwise we use get_along
@@ -97,13 +97,17 @@ class TestGUI(object):
         delta = field_max - field_min
 
         # Checking that the values are close enough
-        eps = 1e-5
+        eps = 1e-4
         assert (
-            abs(field_min - delta * 0.1 - self.UI.w_plot_manager.w_range.lf_min.value())
+            abs(
+                field_min - delta * 0.05 - self.UI.w_plot_manager.w_range.lf_min.value()
+            )
             < eps
         )
         assert (
-            abs(field_max + delta * 0.1 - self.UI.w_plot_manager.w_range.lf_max.value())
+            abs(
+                field_max + delta * 0.05 - self.UI.w_plot_manager.w_range.lf_max.value()
+            )
             < eps
         )
 
@@ -112,8 +116,8 @@ if __name__ == "__main__":
     a = TestGUI()
     a.setup_class()
 
-    a.check_axes()
-    a.check_data_sel()
-    a.check_range()
+    a.test_check_axes()
+    a.test_check_data_sel()
+    a.test_check_range()
 
     print("Done")

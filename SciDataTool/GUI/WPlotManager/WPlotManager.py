@@ -82,7 +82,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             param_list.remove(None)
 
         file_name = self.data.symbol + "_" + "_".join(param_list)
-        file_name.replace("{", "").replace("}", "")
+        file_name = file_name.replace("{", "").replace("}", "").replace(".", ",")
         return file_name
 
     def export(self, save_file_path=False):
@@ -217,7 +217,10 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.w_vect_selector.hide()
 
         self.w_axis_manager.set_axis_widgets(
-            self.data, axes_request_list, frozen_type, is_keep_config=is_keep_config
+            self.data,
+            axes_request_list,
+            frozen_type,
+            is_keep_config=is_keep_config,
         )
         self.update_range(
             unit=unit,

@@ -135,7 +135,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             ax for ax in self.axes_list_obj if ax.name == self.axis_selected
         ][0]
 
-        self.current_dialog = WFilter(axis_selected_obj, self.indices)
+        self.current_dialog = WFilter(axis_selected_obj, self.indices, is_overlay=False)
         self.current_dialog.refreshNeeded.connect(self.update_indices)
         self.current_dialog.show()
 
@@ -186,6 +186,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             axis that we want to have in the WAxisSelector
         """
         self.blockSignals(True)
+        self.indices = axis.indices
         # Step 1 : Getting the name of the axis and selecting the right combobox (axis and action)
         axis_name = axis.name
 

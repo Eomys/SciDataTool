@@ -17,32 +17,36 @@ class TestGUI(object):
         cls.UI = cls.VecField.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
-    def check_component_selected(self):
+    def test_check_component_selected(self):
         """Testing that when the user select a component, then it is used for the rest of the calculation"""
         w_selector = self.UI.w_plot_manager.w_vect_selector
 
         for index_component in range(w_selector.c_component.count()):
-            w_selector.c_component.setCurrentIndex(index_component)
-            component_selected = w_selector.c_component.currentText()
+            if w_selector.c_component.itemText(index_component) not in [
+                "Polar coordinates",
+                "Cartesian coordinates",
+            ]:
+                w_selector.c_component.setCurrentIndex(index_component)
+                component_selected = w_selector.c_component.currentText()
 
-            if component_selected in ["radial", "tangential", "axial"]:
-                assert (
-                    self.UI.w_plot_manager.data
-                    == self.UI.w_plot_manager.data_obj.to_rphiz().components[
-                        component_selected
-                    ]
-                )
+                if component_selected in ["radial", "tangential", "axial"]:
+                    assert (
+                        self.UI.w_plot_manager.data
+                        == self.UI.w_plot_manager.data_obj.to_rphiz().components[
+                            component_selected
+                        ]
+                    )
 
-            elif component_selected in ["comp_x", "comp_y", "comp_z"]:
-                assert (
-                    self.UI.w_plot_manager.data
-                    == self.UI.w_plot_manager.data_obj.to_xyz().components[
-                        component_selected
-                    ]
-                )
+                elif component_selected in ["comp_x", "comp_y", "comp_z"]:
+                    assert (
+                        self.UI.w_plot_manager.data
+                        == self.UI.w_plot_manager.data_obj.to_xyz().components[
+                            component_selected
+                        ]
+                    )
 
     @pytest.mark.gui
-    def check_hide_show(self):
+    def test_check_hide_show(self):
         """Testing that the UI is rightly updated as we are plotting a VectorField"""
 
         # Testing that the groupbox is shown
@@ -61,10 +65,10 @@ class TestGUI(object):
 
         if not "axial" in self.VecField.components:
             assert not "axial" in components_list
-            assert not "comp_z" in components_list
+            assert not "z-axis component" in components_list
 
         elif not "tangential" in self.VecField.components:
-            assert not "tangential" in components_list
+            assert not "circumferential" in components_list
 
 
 if __name__ == "__main__":
@@ -72,8 +76,8 @@ if __name__ == "__main__":
     a.setup_class()
 
     # Testing the checkbox
-    a.check_hide_show()
+    # a.test_check_hide_show()
     # Verifying the handling of the signals
-    a.check_component_selected()
+    a.test_check_component_selected()
 
     print("Done")

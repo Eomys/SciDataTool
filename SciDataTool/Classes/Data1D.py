@@ -160,6 +160,7 @@ class Data1D(Data):
         delimiter=None,
         sort_indices=None,
         filter=None,
+        char_to_rm=None,
         symbol="",
         name="",
         unit="",
@@ -196,6 +197,8 @@ class Data1D(Data):
                 sort_indices = init_dict["sort_indices"]
             if "filter" in list(init_dict.keys()):
                 filter = init_dict["filter"]
+            if "char_to_rm" in list(init_dict.keys()):
+                char_to_rm = init_dict["char_to_rm"]
             if "symbol" in list(init_dict.keys()):
                 symbol = init_dict["symbol"]
             if "name" in list(init_dict.keys()):
@@ -212,6 +215,7 @@ class Data1D(Data):
         self.delimiter = delimiter
         self.sort_indices = sort_indices
         self.filter = filter
+        self.char_to_rm = char_to_rm
         # Call Data init
         super(Data1D, self).__init__(
             symbol=symbol, name=name, unit=unit, normalizations=normalizations
@@ -243,6 +247,12 @@ class Data1D(Data):
             + linesep
         )
         Data1D_str += "filter = " + str(self.filter) + linesep
+        Data1D_str += (
+            "char_to_rm = "
+            + linesep
+            + str(self.char_to_rm).replace(linesep, linesep + "\t")
+            + linesep
+        )
         return Data1D_str
 
     def __eq__(self, other):
@@ -267,6 +277,8 @@ class Data1D(Data):
         if other.sort_indices != self.sort_indices:
             return False
         if other.filter != self.filter:
+            return False
+        if other.char_to_rm != self.char_to_rm:
             return False
         return True
 
@@ -295,6 +307,8 @@ class Data1D(Data):
             diff_list.append(name + ".sort_indices")
         if other._filter != self._filter:
             diff_list.append(name + ".filter")
+        if other._char_to_rm != self._char_to_rm:
+            diff_list.append(name + ".char_to_rm")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -319,6 +333,9 @@ class Data1D(Data):
         if self.filter is not None:
             for key, value in self.filter.items():
                 S += getsizeof(value) + getsizeof(key)
+        if self.char_to_rm is not None:
+            for value in self.char_to_rm:
+                S += getsizeof(value)
         return S
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
@@ -361,6 +378,9 @@ class Data1D(Data):
             self.sort_indices.copy() if self.sort_indices is not None else None
         )
         Data1D_dict["filter"] = self.filter.copy() if self.filter is not None else None
+        Data1D_dict["char_to_rm"] = (
+            self.char_to_rm.copy() if self.char_to_rm is not None else None
+        )
         # The class name is added to the dict for deserialisation purpose
         # Overwrite the mother class name
         Data1D_dict["__class__"] = "Data1D"
@@ -376,6 +396,7 @@ class Data1D(Data):
         self.delimiter = None
         self.sort_indices = None
         self.filter = None
+        self.char_to_rm = None
         # Set to None the properties inherited from Data
         super(Data1D, self)._set_None()
 
@@ -515,5 +536,25 @@ class Data1D(Data):
         doc=u"""Dict of filter keys
 
         :Type: dict
+        """,
+    )
+
+    def _get_char_to_rm(self):
+        """getter of char_to_rm"""
+        return self._char_to_rm
+
+    def _set_char_to_rm(self, value):
+        """setter of char_to_rm"""
+        if type(value) is int and value == -1:
+            value = list()
+        check_var("char_to_rm", value, "list")
+        self._char_to_rm = value
+
+    char_to_rm = property(
+        fget=_get_char_to_rm,
+        fset=_set_char_to_rm,
+        doc=u"""List of characters to remove in filter table
+
+        :Type: list
         """,
     )

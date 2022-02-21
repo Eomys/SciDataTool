@@ -105,12 +105,14 @@ class WDataRange(Ui_WDataRange, QWidget):
         if unit is not None:
             self.unit = unit
             self.set_unit(data)
-            if unit is not None and unit != "SI":  # Adding unit to unit combobox
+            if unit != "SI":  # Adding unit to unit combobox
                 if self.c_unit.currentText() != unit:
                     self.c_unit.insertItem(0, unit)
             if unit == "dBA" and self.c_unit.count() > 1:  # Also adding dB
                 self.c_unit.insertItem(1, "dB")
             self.c_unit.setCurrentIndex(0)
+        else:
+            self.set_unit(data)
         self.lf_min.clear()
         self.lf_max.clear()
 

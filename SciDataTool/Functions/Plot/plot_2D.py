@@ -447,7 +447,6 @@ def plot_2D(
         else:
             ax.legend(
                 prop={"family": font_name, "size": font_size_legend},
-                loc="center left",
                 frameon=is_frame_legend,
             )
 

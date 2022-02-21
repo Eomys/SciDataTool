@@ -238,7 +238,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.slider.setMaximum(len(self.axis_value) - 1)
             self.slider.setValue(0)
 
-    def update(self, axis):
+    def update(self, axis, axis_request=None):
         """Method that will update the WSliceOperator widget according to the axis given to it
         Parameters
         ----------
@@ -248,6 +248,9 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             string with the name of the axis that should set the WSliceOperator widget
         """
         self.axis = axis
+        if axis_request is not None:
+            axis_request.get_axis(axis, True)
+            self.indices = axis_request.indices
         self.unit = axis.unit
         if axis.name in ifft_dict:  # DataFreq case
             self.axis_name = ifft_dict[axis.name]

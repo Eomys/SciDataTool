@@ -150,6 +150,15 @@
                 "type": "dict",
                 "unit": "",
                 "value": null
+            },
+            {
+                "desc": "List of characters to remove in filter table",
+                "max": "",
+                "min": "",
+                "name": "char_to_rm",
+                "type": "list",
+                "unit": "",
+                "value": null
             }
         ]
     },

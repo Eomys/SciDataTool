@@ -16,7 +16,7 @@ class TestGUI(object):
         cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
-    def check_layout(self):
+    def test_check_layout(self):
         """Test that the layout is set up according to the operation selected"""
 
         for wid in self.UI.w_plot_manager.w_axis_manager.w_slice_op:
@@ -56,7 +56,7 @@ class TestGUI(object):
                 wid.blockSignals(False)
 
     @pytest.mark.gui
-    def check_slider_floatEdit(self):
+    def test_check_slider_floatEdit(self):
         """Testing that the slider is updated correctly according to the slider and vice versa"""
 
         for wid in self.UI.w_plot_manager.w_axis_manager.w_slice_op:
@@ -82,8 +82,8 @@ if __name__ == "__main__":
     a.setup_class()
 
     # Checking the interaction between the slider and floatEdit
-    a.check_slider_floatEdit()
+    a.test_check_slider_floatEdit()
     # Checking the generation of the layout
-    a.check_layout()
+    a.test_check_layout()
 
     print("Done")

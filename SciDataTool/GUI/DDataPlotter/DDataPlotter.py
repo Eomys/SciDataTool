@@ -542,7 +542,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         data,
         unit=None,
         axes_request_list=None,
-        plot_arg_dict=None,
+        plot_arg_dict=dict(),
         is_keep_config=False,
         frozen_type=0,
     ):

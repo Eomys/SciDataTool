@@ -19,7 +19,7 @@ class TestGUI(object):
         cls.UI = Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
-    def check_axes_strings(self):
+    def test_check_axes_strings(self):
         "Testing that the string generated corresponds to the info given by the user"
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
         axis_2 = self.UI.w_plot_manager.w_axis_manager.w_axis_2
@@ -73,25 +73,8 @@ class TestGUI(object):
                     # Checking that the unit in the string is correct
                     assert axes_selected[1].unit == axis_2.c_unit.currentText()
 
-                # Checking that the axes in DataSelection are not those selected
-                action_selected = parser.read_input_strings(
-                    self.UI.w_plot_manager.w_axis_manager.get_operation_selected(),
-                    axis_data=None,
-                )
-
-                if len(action_selected) == 1:
-                    assert (
-                        action_selected[0].name != axes_selected[0].name
-                        and action_selected[0].name != axes_selected[1].name
-                    )
-
-                if len(action_selected) > 1:
-
-                    for action in action_selected:
-                        assert action.name != axes_selected[0].name
-
     @pytest.mark.gui
-    def check_axis_updated(self):
+    def test_check_axis_updated(self):
         """Test to make sure that when we switch from time to frequency (or from angle to wavenb), the string is updated correclty"""
         axis_1 = self.UI.w_plot_manager.w_axis_manager.w_axis_1
         axis_2 = self.UI.w_plot_manager.w_axis_manager.w_axis_2
@@ -113,7 +96,7 @@ class TestGUI(object):
                 assert axes_parsed[1].name == fft_dict[axes_parsed[0].name]
 
     @pytest.mark.gui
-    def check_range_updated(self):
+    def test_check_range_updated(self):
         """Testing how WDataRange string are generated after updating the widget"""
 
         # Test 1 : Making sure that min and max are updated
@@ -148,7 +131,7 @@ class TestGUI(object):
                 )
 
     @pytest.mark.gui
-    def check_string_dataselection(self):
+    def test_check_string_dataselection(self):
         """Test to make sure that when DataSelection is modified, the string is updated correctly"""
 
         # Modifying the operation and making sure that the string is updated
@@ -163,24 +146,21 @@ class TestGUI(object):
                     assert (
                         wid.get_operation_selected()
                         == wid.axis.name
-                        + "["
-                        + str(wid.slider.value())
-                        + "]"
+                        + "="
+                        + str(wid.lf_value.value())
                         + "{"
                         + wid.unit
                         + "}"
                     )
                 elif operation == "slice (fft)":
-                    assert (
-                        wid.get_operation_selected()
-                        == fft_dict[wid.axis.name] + "[" + str(wid.slider.value()) + "]"
-                    )
-                elif operation in type_extraction_dict:
-
+                    assert wid.get_operation_selected() == fft_dict[
+                        wid.axis.name
+                    ] + "=" + str(wid.lf_value.value())
+                elif operation.split(" ")[0] in type_extraction_dict:
                     assert (
                         wid.get_operation_selected()
                         == wid.axis.name
-                        + type_extraction_dict[operation]
+                        + type_extraction_dict[operation.split(" ")[0]]
                         + "{"
                         + wid.unit
                         + "}"
@@ -204,7 +184,7 @@ class TestGUI(object):
                     action = parser.read_input_strings(
                         [wid.get_operation_selected()], axis_data=None
                     )
-                    assert action[0].indices[0] == index
+                    assert action[0].input_data[0] == wid.lf_value.value()
 
                     # Modifying the floatEdit by setting it to the initial value (index = 0)
                     wid.lf_value.setValue(wid.axis.initial)
@@ -212,7 +192,7 @@ class TestGUI(object):
                     action = parser.read_input_strings(
                         [wid.get_operation_selected()], axis_data=None
                     )
-                    assert action[0].indices[0] == 0
+                    assert action[0].input_data[0] == wid.lf_value.value()
 
 
 if __name__ == "__main__":
@@ -220,12 +200,12 @@ if __name__ == "__main__":
     a.setup_class()
 
     # Checking that the string generated for the axes are correct
-    a.check_axes_strings()
+    a.test_check_axes_strings()
     # Making sure that the string is updated according to the change of the UI (FFT to '' for ex)
-    a.check_axis_updated()
+    a.test_check_axis_updated()
     # When modifying WDataRange, making sure that the string is updated correctly
-    a.check_range_updated()
+    a.test_check_range_updated()
     # When modifying DataSelection, making sure that the string is updated correctly (slice to sum for ex)
-    a.check_string_dataselection()
+    a.test_check_string_dataselection()
 
     print("Done")

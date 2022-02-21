@@ -23,6 +23,7 @@ class TestGUI(object):
             final=2 * pi,
             number=21,
             is_overlay=True,
+            is_components=True,
         )
         field_2d = ones((11, 21))
         for i in range(11):
@@ -39,7 +40,7 @@ class TestGUI(object):
         cls.UI = cls.Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
-    def check_combobox(self):
+    def test_check_combobox(self):
         """Testing that the combobox is disabled if there is only one item"""
 
         # As we only have one axis then the combobox is disabled
@@ -47,12 +48,12 @@ class TestGUI(object):
             self.UI.w_plot_manager.w_axis_manager.w_axis_1.c_axis.isEnabled() == False
         )
 
-    def check_axis_2(self):
+    def test_check_axis_2(self):
         """Testing that the second WAxisSelector is hidden as the second axis has is_overlay = True"""
 
         assert self.UI.w_plot_manager.w_axis_manager.w_axis_2.isHidden() == True
 
-    def check_slice_op(self):
+    def test_check_slice_op(self):
         """Testing that the is_overlay axis generated a WSliceOperator widget"""
 
         axis_slice_op = self.UI.w_plot_manager.w_axis_manager.w_slice_op[0].axis
@@ -66,12 +67,12 @@ if __name__ == "__main__":
     a.setup_class()
 
     # Testing that the checkbox are disabled if there is only one item in them
-    a.check_combobox()
+    a.test_check_combobox()
 
     # Testing that axis 2 is hidden
-    a.check_axis_2()
+    a.test_check_axis_2()
 
     # Testing that the second axis is a WSliceOperator widget
-    a.check_slice_op()
+    a.test_check_slice_op()
 
     print("Done")
