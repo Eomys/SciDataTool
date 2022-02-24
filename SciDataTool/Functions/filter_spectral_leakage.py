@@ -45,11 +45,18 @@ def filter_spectral_leakage(
         Filtering matrix
     """
 
-    # Expand theoretical frequencies to negative values
-    freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))
-    Nfreq = freqs_th.size
+    # Symmetrize theoretical frequencies to negative values if necessary
+    Nhalf = (
+        int(freqs_th.size / 2)
+        if freqs_th.size % 2 == 0
+        else int((freqs_th.size + 1) / 2)
+    )
+    if not np.all(freqs_th[:Nhalf] == -np.flip(freqs_th[Nhalf:])):
+        freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))
 
     if Wmatf.size == 0 or If.size == 0:
+
+        Nfreq = freqs_th.size
 
         # Check frequency resolution
         df_fft = np.min(np.abs(np.diff(freqs)))
@@ -60,7 +67,7 @@ def filter_spectral_leakage(
             )
 
         # Keep only theoretical frequencies in the calculated range
-        I1 = np.abs(freqs_th) <= np.max(freqs)
+        I1 = np.abs(freqs_th) <= np.max(np.abs(freqs))
         freqs_th = freqs_th[I1]
 
         # Find closest index of each frequency in the grid

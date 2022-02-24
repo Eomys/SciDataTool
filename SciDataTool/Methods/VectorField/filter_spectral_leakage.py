@@ -27,7 +27,14 @@ def filter_spectral_leakage(self, freqs_th):
     If = np.array([])
     for comp, data in self.components.items():
         # Filter components by components
-        data_filt, axes_list, arg_list, Wmatf, If = data.filter_spectral_leakage(
+        (
+            data_filt,
+            axes_list,
+            arg_list,
+            Wmatf,
+            If,
+            freqs_th,
+        ) = data.filter_spectral_leakage(
             freqs_th, axes_list, arg_list, Wmatf, If, is_return_calc_data=True
         )
         # Store filtered data in VectorField
