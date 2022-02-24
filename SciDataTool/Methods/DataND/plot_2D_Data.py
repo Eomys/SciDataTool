@@ -163,23 +163,23 @@ def plot_2D_Data(
         unit = self.unit
 
     # Detect if is fft, build ylabel
+    if "dB" in unit and "ref" in self.normalizations:
+        unit_str = (
+            "["
+            + unit
+            + " re. "
+            + str(self.normalizations["ref"].ref)
+            + " $"
+            + self.unit
+            + "$]"
+        )
+    else:
+        unit_str = r"$[" + unit + "]$"
     is_fft = False
     if (
         any("wavenumber" in s for s in arg_list) or any("freqs" in s for s in arg_list)
     ) and type_plot != "curve":
         is_fft = True
-        if "dB" in unit:
-            unit_str = (
-                "["
-                + unit
-                + " re. "
-                + str(self.normalizations["ref"].ref)
-                + " $"
-                + self.unit
-                + "$]"
-            )
-        else:
-            unit_str = r"$[" + unit + "]$"
         if self.symbol == "Magnitude":
             if ylabel is None:
                 ylabel = "Magnitude " + unit_str
@@ -190,21 +190,15 @@ def plot_2D_Data(
         if is_norm:
             if ylabel is None:
                 ylabel = (
-                    r"$\frac{"
-                    + self.symbol
-                    + "}{"
-                    + self.symbol
-                    + "_0}\, ["
-                    + unit
-                    + "]$"
+                    r"$\frac{" + self.symbol + "}{" + self.symbol + "_0}\,$" + unit_str
                 )
         else:
             if self.symbol == "Magnitude":
                 if ylabel is None:
-                    ylabel = "Magnitude " + r"$[" + unit + "]$"
+                    ylabel = "Magnitude " + unit_str
             else:
                 if ylabel is None:
-                    ylabel = r"$" + self.symbol + "\, [" + unit + "]$"
+                    ylabel = r"$" + self.symbol + "\,$" + unit_str
 
     # Extract field and axes
     Xdatas = []
@@ -346,21 +340,24 @@ def plot_2D_Data(
                 if isinstance(axis, DataPattern) and len(axis.unique_indices) == 1:
                     is_display = False
         if is_display:
-            if axes_dict_other[axis_name][0] > 10:
-                fmt = "{:.5g}"
+            if isinstance(axes_dict_other[axis_name][0], str):
+                title3 += axis_name + "=" + axes_dict_other[axis_name][0]
             else:
-                fmt = "{:.3g}"
-            title3 += (
-                axis_name
-                + "="
-                + array2string(
-                    axes_dict_other[axis_name][0],
-                    formatter={"float_kind": fmt.format},
-                ).replace(" ", ", ")
-                + " ["
-                + axes_dict_other[axis_name][1]
-                + "], "
-            )
+                if axes_dict_other[axis_name][0] > 10:
+                    fmt = "{:.5g}"
+                else:
+                    fmt = "{:.3g}"
+                title3 += (
+                    axis_name
+                    + "="
+                    + array2string(
+                        axes_dict_other[axis_name][0],
+                        formatter={"float_kind": fmt.format},
+                    ).replace(" ", ", ")
+                    + " ["
+                    + axes_dict_other[axis_name][1]
+                    + "], "
+                )
 
     if title2 == "for " and title3 == "":
         title2 = ""

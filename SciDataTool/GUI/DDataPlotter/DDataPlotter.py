@@ -279,6 +279,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 elif ylabel == "W" and "dB" in yunit:
                     ylabel = "SWL"
 
+            # Keep only one decimal in dB case
+            if "dB" in yunit:
+                Y_str = format(float(Y_str), ".1f")
+
             label = (
                 xlabel
                 + " = "
@@ -308,7 +312,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 elif zlabel == "W" and "dB" in zunit:
                     zlabel = "SWL"
 
-                label += sep + zlabel + " = " + format(z, ".4g") + " " + zunit
+                # Keep only one decimal in dB case
+                if "dB" in yunit:
+                    Z_str = format(z, ".1f")
+                else:
+                    Z_str = format(z, ".4g")
+
+                label += sep + zlabel + " = " + Z_str + " " + zunit
 
             # Remove latex marks for top right corner
             if sep == ", ":
