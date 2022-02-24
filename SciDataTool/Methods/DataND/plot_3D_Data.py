@@ -62,6 +62,7 @@ def plot_3D_Data(
     type_plot=None,
     annotation_delim=None,
     marker_color="k",
+    is_shading_flat=None,
 ):
     """Plots a field as a function of two axes
 
@@ -119,6 +120,8 @@ def plot_3D_Data(
         threshold for automatic fft ticks
     is_switch_axes : bool
         to switch x and y axes
+    is_shading_flat : bool
+        True to use flat shading instead of Gouraud for pcolormesh or bilinear for pcolor
     """
 
     # Dynamic import to avoid import loop
@@ -316,15 +319,16 @@ def plot_3D_Data(
         annotations = None
 
     # Detect discontinuous axis (Norm_indices) to use flat shading
-    is_shading_flat = False
-    flat_indices = []
-    for axis in axes_list:
-        if axis.unit in self.axes[axis.index].normalizations:
-            if isinstance(
-                self.axes[axis.index].normalizations[axis.unit], Norm_indices
-            ):
-                is_shading_flat = True
-                flat_indices.append(axes_names.index(axis.name))
+    if is_shading_flat is None:
+        is_shading_flat = False
+        flat_indices = []
+        for axis in axes_list:
+            if axis.unit in self.axes[axis.index].normalizations:
+                if isinstance(
+                    self.axes[axis.index].normalizations[axis.unit], Norm_indices
+                ):
+                    is_shading_flat = True
+                    flat_indices.append(axes_names.index(axis.name))
 
     title2 = "for "
     for axis in axes_list[2:]:
@@ -594,8 +598,7 @@ def plot_3D_Data(
         if is_2D_view:
             if type_plot is None:
                 type_plot = "pcolor"
-            if is_shading_flat:
-                type_plot = "pcolormesh"
+            if is_shading_flat and type_plot == "pcolormesh":
                 # 0.5 offset
                 if 0 in flat_indices:
                     Xdata = Xdata - 0.5
@@ -677,4 +680,5 @@ def plot_3D_Data(
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
                 is_disp_title=is_disp_title,
+                is_shading_flat=is_shading_flat,
             )

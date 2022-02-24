@@ -126,7 +126,7 @@ def test_filter_spectral_leakage_vectorfield():
     Wavenumber = Data1D(
         name="wavenumber",
         unit="",
-        values=[-2, 0, 2],
+        values=wavenumber,
     )
 
     FFT_r_val = np.zeros((freqs_th.size, wavenumber.size), dtype=complex)
