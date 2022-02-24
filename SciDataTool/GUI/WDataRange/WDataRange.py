@@ -111,8 +111,8 @@ class WDataRange(Ui_WDataRange, QWidget):
             if unit == "dBA" and self.c_unit.count() > 1:  # Also adding dB
                 self.c_unit.insertItem(1, "dB")
             self.c_unit.setCurrentIndex(0)
-        else:
-            self.set_unit(data)
+        # else:
+        #     self.set_unit(data)
         self.lf_min.clear()
         self.lf_max.clear()
 

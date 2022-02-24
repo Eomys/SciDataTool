@@ -14,7 +14,7 @@ class TestGUI(object):
             cls.app = QtWidgets.QApplication.instance()
 
         cls.VecField = VecField
-        cls.UI = cls.VecField.plot(is_show_fig=False, is_create_appli=False)
+        cls.UI = cls.VecField.plot(is_show_fig=False, is_create_appli=False, unit="m")
 
     @pytest.mark.gui
     def test_check_component_selected(self):
