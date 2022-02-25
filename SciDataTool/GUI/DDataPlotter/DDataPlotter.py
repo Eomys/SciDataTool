@@ -514,15 +514,29 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 for param in PARAM_3D:
                     if param in plot_arg_dict_2D:
                         del plot_arg_dict_2D[param]
-                self.data.plot_2D_Data(
-                    *[*axes_selected, *data_selection],
-                    **plot_arg_dict_2D,
-                    unit=output_range["unit"],
-                    fig=self.fig,
-                    ax=self.ax,
-                    y_min=output_range["min"],
-                    y_max=output_range["max"],
-                )
+                if (
+                    "type_plot" in plot_arg_dict_2D
+                    and plot_arg_dict_2D["type_plot"] == "quiver"
+                ):
+                    self.plot_2D_Data(
+                        *[*axes_selected, *data_selection],
+                        **plot_arg_dict_2D,
+                        unit=output_range["unit"],
+                        fig=self.fig,
+                        ax=self.ax,
+                        y_min=output_range["min"],
+                        y_max=output_range["max"],
+                    )
+                else:
+                    self.data.plot_2D_Data(
+                        *[*axes_selected, *data_selection],
+                        **plot_arg_dict_2D,
+                        unit=output_range["unit"],
+                        fig=self.fig,
+                        ax=self.ax,
+                        y_min=output_range["min"],
+                        y_max=output_range["max"],
+                    )
 
             elif len(axes_selected) == 2:
                 plot_arg_dict_3D = self.plot_arg_dict.copy()
