@@ -348,9 +348,6 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                 w_slice.lf_value.setDisabled(True)
                 w_slice.slider.setDisabled(True)
 
-            if len(axes_list) == 1:
-                self.w_axis_2.hide()
-
         elif frozen_type == 4:
             self.w_axis_1.c_axis.setDisabled(True)
             self.w_axis_2.c_axis.setDisabled(True)
@@ -360,6 +357,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                 axes_list[1].name in ifft_dict or axes_list[0].name in fft_dict
             ):
                 self.w_axis_2.c_action.setDisabled(True)
+
+        if len(axes_list) == 1:
+            self.w_axis_2.hide()
 
         self.w_axis_1.blockSignals(False)
         self.w_axis_2.blockSignals(False)
