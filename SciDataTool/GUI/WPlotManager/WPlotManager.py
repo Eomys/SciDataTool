@@ -173,6 +173,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         z_max=None,
         frozen_type=0,
         is_keep_config=False,
+        is_quiver=False,
     ):
         """Method that use the info given by DDataPlotter to setup the widget
 
@@ -213,6 +214,12 @@ class WPlotManager(Ui_WPlotManager, QWidget):
                 self.update_component(is_update_plot=False)
             else:
                 self.update_component(is_update_plot=False)
+            # Add "all" components in case of quiver plot
+            if is_quiver:
+                self.w_vect_selector.c_component.blockSignals(True)
+                self.w_vect_selector.c_component.insertItem(0, "all")
+                self.w_vect_selector.c_component.setCurrentIndex(0)
+                self.w_vect_selector.c_component.blockSignals(False)
         else:
             self.w_vect_selector.hide()
 
@@ -245,6 +252,10 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.data = self.data_obj.to_rphiz().components[component_name]
         elif component_name in ["comp_x", "comp_y", "comp_z"]:
             self.data = self.data_obj.to_xyz().components[component_name]
+        elif component_name == "all":
+            self.data = self.data_obj.components[
+                list(self.data_obj.components.keys())[0]
+            ]
 
         self.w_range.set_range(self.data)
 

@@ -147,37 +147,62 @@ def plot_2D_Data(
                 (squeeze(result["comp_x"]), squeeze(result["comp_y"]))
             )
         else:
-            result = self.components[component_list[0]].get_along(
-                arg_list,
-                axis_data=axis_data,
-                unit=unit,
-                is_norm=is_norm,
-            )
-            Y_comp = result[self.components[component_list[0]].symbol]
-
-            if "x" in result and "y" in result:
-                Xdatas = column_stack((result["x"], result["y"]))
-                rphiz = xyz_to_rphiz(Xdatas)
-
-                if component_list[0] == "radial":
-                    Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+            if component_list[0] in ["comp_x", "comp_y"]:
+                vecfield = self.to_xyz()
+                result = vecfield.components[component_list[0]].get_along(
+                    arg_list,
+                    axis_data=axis_data,
+                    unit=unit,
+                    is_norm=is_norm,
+                )
+                if "x" in result and "y" in result:
+                    Xdatas = column_stack((result["x"], result["y"]))
                 else:
-                    Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
-
-                Ydatas = rphiz_to_xyz_field(Y_3d, rphiz[:, 1])
-
+                    if radius is None:
+                        radius = 1
+                    phi = result["angle"]
+                    rphi = column_stack((array([radius] * len(phi)), phi))
+                    Xdatas = rphiz_to_xyz(rphi)
+                Y_comp = result[vecfield.components[component_list[0]].symbol]
+                if component_list[0] == "comp_x":
+                    Y_comp[Xdatas[:, 0] < 0] = -Y_comp[Xdatas[:, 0] < 0]
+                    Ydatas = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+                else:
+                    Y_comp[Xdatas[:, 1] < 0] = -Y_comp[Xdatas[:, 1] < 0]
+                    Ydatas = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
             else:
-                if radius is None:
-                    radius = 1
-                phi = result["angle"]
-                rphi = column_stack((array([radius] * len(phi)), phi))
-                Xdatas = rphiz_to_xyz(rphi)
-                if component_list[0] == "radial":
-                    Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
-                else:
-                    Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
+                vecfield = self.to_rphiz()
+                result = vecfield.components[component_list[0]].get_along(
+                    arg_list,
+                    axis_data=axis_data,
+                    unit=unit,
+                    is_norm=is_norm,
+                )
+                Y_comp = result[vecfield.components[component_list[0]].symbol]
 
-                Ydatas = rphiz_to_xyz_field(Y_3d, phi)
+                if "x" in result and "y" in result:
+                    Xdatas = column_stack((result["x"], result["y"]))
+                    rphiz = xyz_to_rphiz(Xdatas)
+
+                    if component_list[0] == "radial":
+                        Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+                    else:
+                        Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
+
+                    Ydatas = rphiz_to_xyz_field(Y_3d, rphiz[:, 1])
+
+                else:
+                    if radius is None:
+                        radius = 1
+                    phi = result["angle"]
+                    rphi = column_stack((array([radius] * len(phi)), phi))
+                    Xdatas = rphiz_to_xyz(rphi)
+                    if component_list[0] == "radial":
+                        Y_3d = column_stack((Y_comp, 0 * Y_comp, 0 * Y_comp))
+                    else:
+                        Y_3d = column_stack((0 * Y_comp, Y_comp, 0 * Y_comp))
+
+                    Ydatas = rphiz_to_xyz_field(Y_3d, phi)
 
         Ydatas = real(Ydatas * exp(1j * phase))
 
