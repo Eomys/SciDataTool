@@ -537,8 +537,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         ]
                     else:
                         component_list = None
+                    angle_str = "angle"
+                    if "is_smallestperiod" in plot_arg_dict_2D:
+                        if plot_arg_dict_2D["is_smallestperiod"]:
+                            angle_str = "angle[smallestperiod]"
+                        del plot_arg_dict_2D["is_smallestperiod"]
                     self.data_orig.plot_2D_Data(
-                        *[*["angle"], *data_selection],
+                        *[*[angle_str], *data_selection],
                         **plot_arg_dict_2D,
                         unit=output_range["unit"],
                         fig=self.fig,

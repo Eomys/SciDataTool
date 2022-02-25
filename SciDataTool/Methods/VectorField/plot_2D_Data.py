@@ -1,10 +1,12 @@
-from numpy import column_stack, array, exp, real, squeeze
+from numpy import column_stack, array, exp, real, squeeze, array2string
 from SciDataTool.Functions.Plot.plot_2D import plot_2D
 from SciDataTool.Functions.conversions import (
     rphiz_to_xyz,
     xyz_to_rphiz,
     rphiz_to_xyz_field,
 )
+from SciDataTool.GUI.WVectorSelector.WVectorSelector import REV_COMP_DICT
+from SciDataTool.Functions.Load.import_class import import_class
 
 
 def plot_2D_Data(
@@ -123,10 +125,14 @@ def plot_2D_Data(
         True to display legend in a frame
     """
 
+    # Dynamic import to avoid import loop
+    DataPattern = import_class("SciDataTool.Classes", "DataPattern")
+
     # Special case of quiver plot
     if type_plot == "quiver":
 
         if component_list is None:
+            title = "Total " + self.name
             result = self.get_xyz_along(
                 arg_list,
                 axis_data=axis_data,
@@ -147,6 +153,7 @@ def plot_2D_Data(
                 (squeeze(result["comp_x"]), squeeze(result["comp_y"]))
             )
         else:
+            title = REV_COMP_DICT[component_list[0]] + " " + self.name
             if component_list[0] in ["comp_x", "comp_y"]:
                 vecfield = self.to_xyz()
                 result = vecfield.components[component_list[0]].get_along(
@@ -206,6 +213,60 @@ def plot_2D_Data(
 
         Ydatas = real(Ydatas * exp(1j * phase))
 
+        title2 = " for "
+        if "time" in result:
+            title2 += (
+                "time="
+                + array2string(
+                    result["time"], formatter={"float_kind": "{:.3g}".format}
+                )
+                .replace(" ", ", ")
+                .replace("[", "")
+                .replace("]", "")
+                + "[s]"
+            )
+        elif "freqs" in result:
+            title2 += (
+                "freqs="
+                + array2string(
+                    result["freqs"], formatter={"float_kind": "{:.5g}".format}
+                )
+                .replace(" ", ", ")
+                .replace("[", "")
+                .replace("]", "")
+                + "[Hz]"
+            )
+
+        title3 = ""
+        axes_dict_other = result["axes_dict_other"]
+        for axis_name in axes_dict_other:
+            is_display = True
+            for axis in self.get_axes():
+                if axis.name == axis_name:
+                    if isinstance(axis, DataPattern) and len(axis.unique_indices) == 1:
+                        is_display = False
+            if is_display:
+                if isinstance(axes_dict_other[axis_name][0], str):
+                    title3 += axis_name + "=" + axes_dict_other[axis_name][0]
+                else:
+                    title3 += (
+                        axis_name
+                        + "="
+                        + array2string(
+                            axes_dict_other[axis_name][0],
+                            formatter={"float_kind": "{:.3g}".format},
+                        )
+                        .replace(" ", ", ")
+                        .replace("[", "")
+                        .replace("]", "")
+                        + " ["
+                        + axes_dict_other[axis_name][1]
+                        + "], "
+                    )
+        if title2 == " for " and title3 == "":
+            title2 = ""
+        title = title + title2 + title3
+
         # Normalize Ydatas
         # Ydatas = Ydatas / (np_max(Ydatas) * 0.001 * radius)
         plot_2D(
@@ -214,7 +275,7 @@ def plot_2D_Data(
             color_list=color_list,
             linestyle_list=linestyles,
             linewidth_list=linewidth_list,
-            title=self.name.capitalize() + " quiver plot",
+            title=title,
             legend_list=[self.name],
             xlabel="[m]",
             ylabel="[m]",
