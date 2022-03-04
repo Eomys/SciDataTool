@@ -437,7 +437,7 @@ def plot_2D_Data(
                 axis_index = where(array(d.shape) == n_curves)[0]
                 if axis_index.size > 1:
                     print("WARNING, several axes with same dimensions")
-                Ydata += split(d, n_curves, axis=axis_index[0])
+                Ydata += split(d, n_curves, axis=axis_index[-1])
             else:
                 Ydata += [d]
         Ydatas = [squeeze(d) for d in Ydata]
