@@ -153,7 +153,7 @@ def plot_2D_Data(
                 (squeeze(result["comp_x"]), squeeze(result["comp_y"]))
             )
         else:
-            title = REV_COMP_DICT[component_list[0]] + " " + self.name
+            title = REV_COMP_DICT[component_list[0]].capitalize() + " " + self.name
             if component_list[0] in ["comp_x", "comp_y"]:
                 vecfield = self.to_xyz()
                 result = vecfield.components[component_list[0]].get_along(
