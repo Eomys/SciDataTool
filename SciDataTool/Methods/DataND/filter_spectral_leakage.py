@@ -45,6 +45,8 @@ def filter_spectral_leakage(
         Filtering matrix
     If: ndarray
         Index of FFT harmonics components used to calculate Wmatf
+    freqs_th : ndarray
+        theoretical frequencies
     """
 
     module = __import__("SciDataTool.Classes.DataFreq", fromlist=["DataFreq"])
@@ -72,7 +74,7 @@ def filter_spectral_leakage(
 
     is_real = self.is_real
     self.is_real = False  # To have negative frequencies
-    result = self.get_along(*arg_list)
+    result = self.get_along(*arg_list, is_squeeze=False)
     freqs = result["freqs"]
     spectrum = result[self.symbol]
 
@@ -121,13 +123,13 @@ def filter_spectral_leakage(
 
         # Keep only positive frequencies
         Ifp = freqs_th >= 0
-        freqs_th = freqs_th[Ifp]
+        freqs_th_store = freqs_th[Ifp]
 
         # Mirror spectrum
         if "wavenumber" in result:
             # Mirror negative frequencies to negative wavenumbers
             Ifn = ~Ifp
-            if freqs_th[0] == 0:
+            if freqs_th_store[0] == 0:
                 Ifn[I0] = True
             spectrum_filt = np.concatenate(
                 (
@@ -139,13 +141,16 @@ def filter_spectral_leakage(
         else:
             spectrum_filt = spectrum_filt[Ifp, ...]
 
+    else:
+        freqs_th_store = np.array(freqs_th)
+
     if len(axes_list_filt) == 0:
         axes_list_filt = list()  # Reinstantiate a different list
         axes_list_filt.append(
             Data1D(
                 name="freqs",
                 unit="Hz",
-                values=freqs_th,
+                values=freqs_th_store,
                 normalizations=axes_list[0].normalizations,
                 symmetries=dict(),
             )
@@ -183,7 +188,7 @@ def filter_spectral_leakage(
     self.is_real = is_real
 
     if is_return_calc_data:
-        return data_filt, axes_list_filt, arg_list, Wmatf, If
+        return data_filt, axes_list_filt, arg_list, Wmatf, If, freqs_th
 
     else:
         return data_filt
