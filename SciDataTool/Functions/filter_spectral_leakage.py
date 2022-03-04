@@ -52,7 +52,7 @@ def filter_spectral_leakage(
         if freqs_th.size % 2 == 0
         else int((freqs_th.size + 1) / 2)
     )
-    if not np.all(freqs_th[:Nhalf] == -np.flip(freqs_th[Nhalf:])):
+    if freqs_th.size == 1 or not np.all(freqs_th[:Nhalf] == -np.flip(freqs_th[Nhalf:])):
         freqs_th = unique_tol(np.concatenate((freqs_th, -freqs_th), axis=0))
 
     if Wmatf.size == 0 or If.size == 0:
@@ -100,11 +100,10 @@ def filter_spectral_leakage(
 
     # Check that spectrum is either 1D or 3D
     if spectrum.ndim > 2:
+        # Reshape into 2D matrix
         Nangle = spectrum.shape[1]
         Nslice = spectrum.shape[2]
-        if Nslice > 1:
-            # Reshape into 2D matrix
-            spectrum = np.reshape(spectrum, (spectrum.shape[0], Nangle * Nslice))
+        spectrum = np.reshape(spectrum, (spectrum.shape[0], Nangle * Nslice))
         is_3D = True
     else:
         # Add 3rd dimension and squeeze after filtering
