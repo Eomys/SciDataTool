@@ -13,6 +13,7 @@ def filter_spectral_leakage(
     is_freq_pos=True,
     Wmatf=np.array([]),
     If=np.array([]),
+    is_plot=False,
 ):
     """Filter spectral leakage from the input spectrum and theoretical frequencies accordingly to the method developed in
     Rainer et al., "Weak Coupling Between Electromagnetic and Structural Models for Electrical Machines",
@@ -56,8 +57,6 @@ def filter_spectral_leakage(
 
     if Wmatf.size == 0 or If.size == 0:
 
-        Nfreq = freqs_th.size
-
         # Check frequency resolution
         df_fft = np.min(np.abs(np.diff(freqs)))
         df_th = np.min(np.abs(np.diff(freqs_th)))
@@ -98,8 +97,6 @@ def filter_spectral_leakage(
         # Calculate filtering matrix: spectrum of door window
         xfreqs2, xfreqs1 = np.meshgrid(freqs_th, freqs[If])
         Wmatf = my_doorwin(xfreqs1 - xfreqs2, Nt, dt, tol0=1e-4)
-    else:
-        Nfreq = Wmatf.shape[0]
 
     # Check that spectrum is either 1D or 3D
     if spectrum.ndim > 2:
@@ -107,7 +104,7 @@ def filter_spectral_leakage(
         Nslice = spectrum.shape[2]
         if Nslice > 1:
             # Reshape into 2D matrix
-            spectrum = np.reshape(spectrum, (Nfreq, Nangle * Nslice))
+            spectrum = np.reshape(spectrum, (spectrum.shape[0], Nangle * Nslice))
         is_3D = True
     else:
         # Add 3rd dimension and squeeze after filtering
@@ -116,25 +113,12 @@ def filter_spectral_leakage(
     # Filter spectrum
     spectrum_filt = np_lin.solve(Wmatf, spectrum[If, ...])
 
-    # import matplotlib.pyplot as plt
-
-    # If_max = np.where(freqs > freqs_th.max())[0][0]
-    # If_ref = np.arange(If_min, If_max, 1, dtype=int)
-    # spec_val = np.abs(np.sqrt(np.sum(spectrum[If_ref, :] ** 2, axis=-1)))
-    # spec_val0 = np.abs(np.sqrt(np.sum(spectrum[If, :] ** 2, axis=-1)))
-    # # spec_val1 = np.abs(np.sqrt(np.sum(spectrum[If1, :] ** 2, axis=-1)))
-    # spec_val_filt = np.abs(np.sqrt(np.sum(spectrum_filt ** 2, axis=-1)))
-    # plt.figure()
-    # plt.plot(freqs[If_ref], spec_val)
-    # plt.plot(freqs[If], spec_val0)
-    # # plt.plot(freqs[If1], spec_val1)
-    # plt.plot(freqs[If], spec_val_filt)
-    # plt.show()
-
     if is_3D:
         if Nslice > 1:
             # Reshape to initial 3D shape
-            spectrum_filt = np.reshape(spectrum_filt, (Nfreq, Nangle, Nslice))
+            spectrum_filt = np.reshape(
+                spectrum_filt, (spectrum_filt.shape[0], Nangle, Nslice)
+            )
         else:
             # Expand to 3D if requested
             spectrum_filt = spectrum_filt[:, :, None]
@@ -149,6 +133,22 @@ def filter_spectral_leakage(
         spectrum_filt *= 2
         I0 = freqs_th == 0
         spectrum_filt[I0, ...] = 0.5 * spectrum_filt[I0, ...]
+
+    if is_plot:
+        import matplotlib.pyplot as plt
+
+        # If_max = np.where(freqs > freqs_th.max())[0][0]
+        # If_ref = np.arange(If_min, If_max, 1, dtype=int)
+        # spec_val = np.abs(np.sqrt(np.sum(spectrum[If_ref, :] ** 2, axis=-1)))
+        spec_val0 = np.abs(np.sqrt(np.sum(spectrum[If, :] ** 2, axis=-1)))
+        # spec_val1 = np.abs(np.sqrt(np.sum(spectrum[If1, :] ** 2, axis=-1)))
+        spec_val_filt = np.abs(np.sqrt(np.sum(spectrum_filt ** 2, axis=-1)))
+        plt.figure()
+        # plt.plot(freqs[If_ref], spec_val)
+        plt.plot(freqs[If], spec_val0)
+        # plt.plot(freqs[If1], spec_val1)
+        plt.plot(freqs[If], spec_val_filt)
+        plt.show()
 
     return spectrum_filt, freqs_th, Wmatf, If
 

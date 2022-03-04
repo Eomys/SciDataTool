@@ -74,7 +74,7 @@ def filter_spectral_leakage(
 
     is_real = self.is_real
     self.is_real = False  # To have negative frequencies
-    result = self.get_along(*arg_list)
+    result = self.get_along(*arg_list, is_squeeze=False)
     freqs = result["freqs"]
     spectrum = result[self.symbol]
 
