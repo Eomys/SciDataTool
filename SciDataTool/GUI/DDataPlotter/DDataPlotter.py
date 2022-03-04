@@ -110,10 +110,19 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         self.plot_arg_dict = plot_arg_dict
         self.data = data
+        self.data_orig = data
 
         # Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
         # self.set_figure(self.fig)
+
+        if (
+            "type_plot" in self.plot_arg_dict
+            and self.plot_arg_dict["type_plot"] == "quiver"
+        ):
+            is_quiver = True
+        else:
+            is_quiver = False
 
         # Initializing the WPlotManager
         self.w_plot_manager.set_info(
@@ -124,6 +133,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             z_min=z_min,
             z_max=z_max,
             frozen_type=frozen_type,
+            is_quiver=is_quiver,
         )
 
         # Building the interaction with the UI itself
@@ -514,15 +524,44 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 for param in PARAM_3D:
                     if param in plot_arg_dict_2D:
                         del plot_arg_dict_2D[param]
-                self.data.plot_2D_Data(
-                    *[*axes_selected, *data_selection],
-                    **plot_arg_dict_2D,
-                    unit=output_range["unit"],
-                    fig=self.fig,
-                    ax=self.ax,
-                    y_min=output_range["min"],
-                    y_max=output_range["max"],
-                )
+                if (
+                    "type_plot" in plot_arg_dict_2D
+                    and plot_arg_dict_2D["type_plot"] == "quiver"
+                ):
+                    if (
+                        self.w_plot_manager.w_vect_selector.get_component_selected()
+                        != "all"
+                    ):
+                        component_list = [
+                            self.w_plot_manager.w_vect_selector.get_component_selected()
+                        ]
+                    else:
+                        component_list = None
+                    angle_str = "angle"
+                    if "is_smallestperiod" in plot_arg_dict_2D:
+                        if plot_arg_dict_2D["is_smallestperiod"]:
+                            angle_str = "angle[smallestperiod]"
+                        del plot_arg_dict_2D["is_smallestperiod"]
+                    self.data_orig.plot_2D_Data(
+                        *[*[angle_str], *data_selection],
+                        **plot_arg_dict_2D,
+                        unit=output_range["unit"],
+                        fig=self.fig,
+                        ax=self.ax,
+                        y_min=output_range["min"],
+                        y_max=output_range["max"],
+                        component_list=component_list,
+                    )
+                else:
+                    self.data.plot_2D_Data(
+                        *[*axes_selected, *data_selection],
+                        **plot_arg_dict_2D,
+                        unit=output_range["unit"],
+                        fig=self.fig,
+                        ax=self.ax,
+                        y_min=output_range["min"],
+                        y_max=output_range["max"],
+                    )
 
             elif len(axes_selected) == 2:
                 plot_arg_dict_3D = self.plot_arg_dict.copy()
@@ -570,6 +609,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         """
 
         self.plot_arg_dict = plot_arg_dict
+        if (
+            "type_plot" in self.plot_arg_dict
+            and self.plot_arg_dict["type_plot"] == "quiver"
+        ):
+            is_quiver = True
+        else:
+            is_quiver = False
 
         self.w_plot_manager.set_info(
             data=data,
@@ -577,6 +623,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             axes_request_list=axes_request_list,
             is_keep_config=is_keep_config,
             frozen_type=frozen_type,
+            is_quiver=is_quiver,
         )
 
     def showEvent(self, ev):

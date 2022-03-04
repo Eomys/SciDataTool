@@ -173,7 +173,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
         # Setting the slider to the right value if the operation is slice
         if operation_type == "slice":
-            self.set_slider(user_input.indices[0])
+            if user_input.indices is None:
+                index = 0
+            else:
+                index = user_input.indices[0]
+            self.set_slider(index)
 
     def set_slider(self, index):
         """Method that set the value of the slider of the WSliceOperator and then update floatEdit
@@ -208,6 +212,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
                     operation = self.axis.name + "_to_" + self.axis_name
                 else:
                     operation = None
+                if self.axis_name in ifft_dict:
+                    name = ifft_dict[self.axis_name]
+                else:
+                    name = self.axis_name
+                self.set_name(name)
                 if self.axis_name == "angle":
                     self.axis_value = self.axis.get_values(
                         unit="°", operation=operation, corr_unit="rad", is_full=True
@@ -218,12 +227,19 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
                         operation=operation, is_full=True
                     )
             elif self.c_operation.currentText() == "slice (fft)":
+                if self.axis_name in fft_dict:
+                    name = fft_dict[self.axis_name]
+                else:
+                    name = self.axis_name
+                self.set_name(name)
                 if self.axis.name == "angle":
                     self.axis_value = self.axis.get_values(
                         operation="angle_to_wavenumber"
                     )
+                    self.unit = ""
                 elif self.axis.name == "time":
                     self.axis_value = self.axis.get_values(operation="time_to_freqs")
+                    self.unit = "Hz"
                 else:  # already wavenumber of freqs case
                     self.axis_value = self.axis.get_values()
 
@@ -231,7 +247,9 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.setValue(min(self.axis_value))
 
             # Setting the axis unit
-            self.in_unit.setText("[" + self.axis.unit + "]")
+            if name in unit_dict:
+                self.unit = unit_dict[name]
+            self.in_unit.setText("[" + self.unit + "]")
 
             # Setting the slider by giving the number of index according to the size of the axis
             self.slider.setMinimum(0)
@@ -249,6 +267,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         """
         self.axis = axis
         if axis_request is not None:
+            axis_request.corr_unit = axis_request.unit
             axis_request.get_axis(axis, True)
             self.indices = axis_request.indices
         self.unit = axis.unit

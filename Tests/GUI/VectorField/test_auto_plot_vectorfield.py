@@ -93,7 +93,6 @@ class TestGUI(object):
                 is_create_appli=test_dict["is_create_appli"],
                 is_show_fig=test_dict["is_show_fig"],
                 component=test_dict["component"],
-                unit="m",
             )
 
         elif len(test_dict["axis"]) == 2:
@@ -103,7 +102,6 @@ class TestGUI(object):
                 is_create_appli=test_dict["is_create_appli"],
                 is_show_fig=test_dict["is_show_fig"],
                 component=test_dict["component"],
-                unit="m",
             )
 
         # Step 0 : Making sure that the components in the combobox :

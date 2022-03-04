@@ -5,6 +5,7 @@ from PySide2.QtCore import Signal
 from PySide2.QtGui import QStandardItem
 
 COMP_DICT = {
+    "all": "all",
     "radial": "radial",
     "circumferential": "tangential",
     "axial": "axial",
