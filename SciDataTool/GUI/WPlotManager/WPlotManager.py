@@ -51,8 +51,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
 
-        self.b_animate.hide()  # Hide until connected to action
-
         self.default_file_path = None
 
         # Building the interaction with the UI and the UI itself
@@ -61,7 +59,30 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         # Linking the signals for the autoRefresh
         self.w_axis_manager.refreshNeeded.connect(self.auto_update)
+        self.w_axis_manager.generateAnimation.connect(self.gen_animate)
         self.w_range.refreshNeeded.connect(self.auto_update)
+
+    def gen_animate(self):
+        """Methods called after clicking on animate button to generate a gif on the axis selected and display it
+        Parameters
+        ----------
+        self : WAxisManager
+            a WSliceOperator object
+
+        Output
+        ---------
+        None
+        """
+        # Recovering axes and operations selected
+        axes_selected = self.w_axis_manager.get_axes_selected()
+        operations_selected = self.w_axis_manager.get_operation_selected()
+
+        # Recovering the axis to animate (=> first sliced axis)
+        for ope in operations_selected:
+            if "to_animate" in ope:
+                animated_axis = ope.split("to_animate")[0]
+
+        print(animated_axis)
 
     def auto_update(self):
         """Method that update range before sending the signal to update the plot. The auto-refresh policy will be handled in the DDataPlotter

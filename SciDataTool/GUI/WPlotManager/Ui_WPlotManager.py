@@ -60,15 +60,11 @@ class Ui_WPlotManager(object):
         self.gridLayout_2.setSpacing(5)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_2.setContentsMargins(11, 11, 10, 11)
-        self.b_animate = QPushButton(WPlotManager)
-        self.b_animate.setObjectName(u"b_animate")
-        sizePolicy.setHeightForWidth(self.b_animate.sizePolicy().hasHeightForWidth())
-        self.b_animate.setSizePolicy(sizePolicy)
-        self.b_animate.setMinimumSize(QSize(0, 0))
-        self.b_animate.setMaximumSize(QSize(16777215, 16777215))
-        self.b_animate.setLayoutDirection(Qt.LeftToRight)
+        self.horizontalSpacer = QSpacerItem(
+            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
+        )
 
-        self.gridLayout_2.addWidget(self.b_animate, 0, 1, 1, 1)
+        self.gridLayout_2.addItem(self.horizontalSpacer, 0, 0, 1, 1)
 
         self.b_export = QPushButton(WPlotManager)
         self.b_export.setObjectName(u"b_export")
@@ -77,13 +73,7 @@ class Ui_WPlotManager(object):
         self.b_export.setMinimumSize(QSize(0, 0))
         self.b_export.setMaximumSize(QSize(16777215, 16777215))
 
-        self.gridLayout_2.addWidget(self.b_export, 1, 1, 1, 1)
-
-        self.horizontalSpacer = QSpacerItem(
-            40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
-        )
-
-        self.gridLayout_2.addItem(self.horizontalSpacer, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.b_export, 0, 1, 1, 1)
 
         self.verticalLayout.addLayout(self.gridLayout_2)
 
@@ -102,9 +92,6 @@ class Ui_WPlotManager(object):
     def retranslateUi(self, WPlotManager):
         WPlotManager.setWindowTitle(
             QCoreApplication.translate("WPlotManager", u"WPlotManager", None)
-        )
-        self.b_animate.setText(
-            QCoreApplication.translate("WPlotManager", u"Animate", None)
         )
         self.b_export.setText(
             QCoreApplication.translate("WPlotManager", u"Export", None)

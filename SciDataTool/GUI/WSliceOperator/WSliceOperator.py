@@ -34,6 +34,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
     """Widget to define how to handle the 'non-plot' axis"""
 
     refreshNeeded = Signal()
+    generateAnimation = Signal()
 
     def __init__(self, parent=None):
         """Initialize the GUI according to info given by the WAxisManager widget
@@ -53,11 +54,27 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.axis = Data
         self.current_dialog = None
         self.indices = None
+        self.is_animate = False  # boolean to define if an animation must on this axis (must be on slice)
 
         self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.lf_value.editingFinished.connect(self.update_slider)
         self.b_action.clicked.connect(self.open_filter)
+        self.b_animate.clicked.connect(self.gen_animate)
+
+    def gen_animate(self):
+        """Methods called after clicking on animate button that emit a signal to generate a gif on the axis selected and display it
+        Parameters
+        ----------
+        self : WSliceOperator
+            a WSliceOperator object
+
+        Output
+        ---------
+        None
+        """
+        self.is_animate = True
+        self.generateAnimation.emit()
 
     def get_operation_selected(self):
         """Method that return a string of the action selected by the user on the axis of the widget.
@@ -79,26 +96,26 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             # slice_index = self.slider.value()
             # action = "[" + str(slice_index) + "]"
             action = "=" + str(self.lf_value.value())
-            return self.axis_name + action + "{" + self.unit + "}"
+            return self.axis_name + action + "{" + self.unit + "}", self.is_animate
 
         elif action_type == "slice (fft)":
             # slice_index = self.slider.value()
             # action = "[" + str(slice_index) + "]"
             action = "=" + str(self.lf_value.value())
             if self.axis_name in fft_dict:
-                return fft_dict[self.axis_name] + action
+                return fft_dict[self.axis_name] + action, None
 
         elif action_type == "overlay":
             if self.indices is None:
-                return self.axis_name + "[]"
+                return self.axis_name + "[]", None
             else:
-                return self.axis_name + str(self.indices)
+                return self.axis_name + str(self.indices), None
 
         elif action_type in type_extraction_dict:
             action = type_extraction_dict[action_type]
-            return self.axis_name + action + "{" + self.unit + "}"
+            return self.axis_name + action + "{" + self.unit + "}", None
         else:
-            return None
+            return None, None
 
     def get_name(self):
         """Method that return the name of the axis of the WSliceOperator

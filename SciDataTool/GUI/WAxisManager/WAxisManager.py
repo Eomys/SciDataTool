@@ -27,6 +27,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
     refreshNeeded = Signal()
     refreshRange = Signal()
+    generateAnimation = Signal()
 
     def __init__(self, parent=None):
         """Initializing the widget by hiding/showing widget and connecting buttons
@@ -144,6 +145,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                         else:
                             temp.update(ax)
                 temp.refreshNeeded.connect(self.update_needed)
+                temp.generateAnimation.connect(self.gen_animate)
                 self.w_slice_op.append(temp)
                 self.lay_data_extract.addWidget(temp)
 
@@ -151,6 +153,20 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_slice_op = list()
             self.g_data_extract.hide()
         self.update_needed()
+
+    def gen_animate(self):
+        """Methods called after clicking on animate button to generate a gif on the axis selected and display it
+        Parameters
+        ----------
+        self : WAxisManager
+            a WSliceOperator object
+
+        Output
+        ---------
+        None
+        """
+
+        self.generateAnimation.emit()
 
     def get_axes_selected(self):
         """Method that return the axes chosen by the user and their unit as a string
@@ -188,8 +204,18 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         string
             name of the operation and its axis
         """
+        operations_selected = list()
 
-        return [wid.get_operation_selected() for wid in self.w_slice_op]
+        for wid in self.w_slice_op:
+            ope_selected, is_animate = wid.get_operation_selected()
+
+            if is_animate == True:
+                operations_selected.append(ope_selected + "[oneperiod]" + "to_animate")
+                wid.is_animate = False
+            else:
+                operations_selected.append(ope_selected)
+
+        return operations_selected
 
     def fft_sync(self, axis_changed):
         """Method that will check the action chosen and that update the other action combobox to have the same action.
