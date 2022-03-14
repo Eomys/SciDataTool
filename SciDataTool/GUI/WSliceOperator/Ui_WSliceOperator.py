@@ -16,39 +16,19 @@ class Ui_WSliceOperator(object):
     def setupUi(self, WSliceOperator):
         if not WSliceOperator.objectName():
             WSliceOperator.setObjectName(u"WSliceOperator")
-        WSliceOperator.resize(318, 100)
+        WSliceOperator.resize(334, 130)
         self.gridLayout = QGridLayout(WSliceOperator)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.in_name = QLabel(WSliceOperator)
-        self.in_name.setObjectName(u"in_name")
+        self.b_action = QPushButton(WSliceOperator)
+        self.b_action.setObjectName(u"b_action")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.in_name.sizePolicy().hasHeightForWidth())
-        self.in_name.setSizePolicy(sizePolicy)
-        self.in_name.setMinimumSize(QSize(0, 20))
+        sizePolicy.setHeightForWidth(self.b_action.sizePolicy().hasHeightForWidth())
+        self.b_action.setSizePolicy(sizePolicy)
+        self.b_action.setMinimumSize(QSize(0, 20))
 
-        self.horizontalLayout.addWidget(self.in_name)
-
-        self.c_operation = QComboBox(WSliceOperator)
-        self.c_operation.addItem("")
-        self.c_operation.addItem("")
-        self.c_operation.addItem("")
-        self.c_operation.addItem("")
-        self.c_operation.addItem("")
-        self.c_operation.addItem("")
-        self.c_operation.addItem("")
-        self.c_operation.addItem("")
-        self.c_operation.setObjectName(u"c_operation")
-        sizePolicy.setHeightForWidth(self.c_operation.sizePolicy().hasHeightForWidth())
-        self.c_operation.setSizePolicy(sizePolicy)
-        self.c_operation.setMinimumSize(QSize(0, 20))
-
-        self.horizontalLayout.addWidget(self.c_operation)
-
-        self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.b_action, 2, 0, 1, 1)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -83,13 +63,38 @@ class Ui_WSliceOperator(object):
 
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
 
-        self.b_action = QPushButton(WSliceOperator)
-        self.b_action.setObjectName(u"b_action")
-        sizePolicy.setHeightForWidth(self.b_action.sizePolicy().hasHeightForWidth())
-        self.b_action.setSizePolicy(sizePolicy)
-        self.b_action.setMinimumSize(QSize(0, 20))
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.in_name = QLabel(WSliceOperator)
+        self.in_name.setObjectName(u"in_name")
+        sizePolicy.setHeightForWidth(self.in_name.sizePolicy().hasHeightForWidth())
+        self.in_name.setSizePolicy(sizePolicy)
+        self.in_name.setMinimumSize(QSize(0, 20))
 
-        self.gridLayout.addWidget(self.b_action, 2, 0, 1, 1)
+        self.horizontalLayout.addWidget(self.in_name)
+
+        self.c_operation = QComboBox(WSliceOperator)
+        self.c_operation.addItem("")
+        self.c_operation.addItem("")
+        self.c_operation.addItem("")
+        self.c_operation.addItem("")
+        self.c_operation.addItem("")
+        self.c_operation.addItem("")
+        self.c_operation.addItem("")
+        self.c_operation.addItem("")
+        self.c_operation.setObjectName(u"c_operation")
+        sizePolicy.setHeightForWidth(self.c_operation.sizePolicy().hasHeightForWidth())
+        self.c_operation.setSizePolicy(sizePolicy)
+        self.c_operation.setMinimumSize(QSize(0, 20))
+
+        self.horizontalLayout.addWidget(self.c_operation)
+
+        self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
+
+        self.b_animate = QPushButton(WSliceOperator)
+        self.b_animate.setObjectName(u"b_animate")
+
+        self.gridLayout.addWidget(self.b_animate, 3, 0, 1, 1)
 
         self.retranslateUi(WSliceOperator)
 
@@ -101,6 +106,13 @@ class Ui_WSliceOperator(object):
         WSliceOperator.setWindowTitle(
             QCoreApplication.translate("WSliceOperator", u"WSliceOperator", None)
         )
+        self.b_action.setText(
+            QCoreApplication.translate("WSliceOperator", u"Overlay", None)
+        )
+        self.lf_value.setText(
+            QCoreApplication.translate("WSliceOperator", u"0.314", None)
+        )
+        self.in_unit.setText(QCoreApplication.translate("WSliceOperator", u"[m]", None))
         self.in_name.setText(
             QCoreApplication.translate("WSliceOperator", u"angle", None)
         )
@@ -129,12 +141,8 @@ class Ui_WSliceOperator(object):
             7, QCoreApplication.translate("WSliceOperator", u"overlay/filter", None)
         )
 
-        self.lf_value.setText(
-            QCoreApplication.translate("WSliceOperator", u"0.314", None)
-        )
-        self.in_unit.setText(QCoreApplication.translate("WSliceOperator", u"[m]", None))
-        self.b_action.setText(
-            QCoreApplication.translate("WSliceOperator", u"Superimpose selection", None)
+        self.b_animate.setText(
+            QCoreApplication.translate("WSliceOperator", u"Animate", None)
         )
 
     # retranslateUi

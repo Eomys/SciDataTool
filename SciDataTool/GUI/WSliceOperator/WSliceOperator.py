@@ -339,6 +339,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.show()
             self.in_unit.show()
             self.slider.show()
+            self.b_animate.show()
             self.b_action.hide()
             self.refreshNeeded.emit()
         # If the operation selected is overlay then we show the related button
@@ -346,6 +347,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.hide()
             self.in_unit.hide()
             self.slider.hide()
+            self.b_animate.hide()
             self.b_action.show()
             self.b_action.setText("Overlay")
             self.refreshNeeded.emit()
@@ -353,6 +355,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.hide()
             self.in_unit.hide()
             self.slider.hide()
+            self.b_animate.hide()
             self.b_action.hide()
             self.refreshNeeded.emit()
 
