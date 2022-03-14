@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
-from os.path import dirname, basename
+from os.path import dirname, basename, join, isfile
 from SciDataTool.Functions.Load.import_class import import_class
-
+from PySide2.QtCore import QThread
 
 from PySide2.QtCore import Signal
 from SciDataTool.GUI.WPlotManager.Ui_WPlotManager import Ui_WPlotManager
@@ -51,7 +51,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
 
-        self.default_file_path = None
+        self.default_file_path = None  # Path to export in csv
+        self.save_path = None  # Path to animation
 
         # Building the interaction with the UI and the UI itself
         self.w_axis_manager.refreshRange.connect(self.update_range)
@@ -75,6 +76,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """
         # Recovering axes and operations selected
         axes_selected = self.w_axis_manager.get_axes_selected()
+
+        # Only available for 2D plot for now
+        if len(axes_selected) > 1:
+            return None
+
         operations_selected = self.w_axis_manager.get_operation_selected()
 
         # Recovering the axis to animate (=> first sliced axis)
@@ -82,7 +88,44 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             if "to_animate" in ope:
                 animated_axis = ope.split("to_animate")[0]
 
-        print(animated_axis)
+        str_format = ".gif"
+        gif_name = self.data_obj.name + " vs " + axes_selected[0].split("{")[0]
+
+        # if isinstance(self.output.simu.var_simu, VarLoadTorque) or isinstance(
+        #     self.output.simu.var_simu, VarParam
+        # ):
+        #     out = self.output.output_list[self.cb_torque.currentIndex()]
+        #     gif_name += "_DP_" + str(self.cb_torque.currentIndex() + 1)
+        # else:
+        #     out = self.output
+
+        # if isinstance(out, XOutput):
+        #     gif_name += "_OP_" + str(self.cb_op.currentIndex() + 1)
+
+        gif = join(self.output.get_path_result_post(), gif_name + str_format)
+        self.gif = gif
+
+        if not isfile(gif):
+            # Creating a QThread associated to the worker saving the gif
+            self.th = QThread(parent=self)
+            self.worker = SaveGifWorker(widget=self)
+            self.worker.moveToThread(self.th)
+
+            # Connecting the end of generation of GIF to display, end thread and killing process
+            self.worker.gif_available.connect(self.th.finished)
+            self.worker.gif_available.connect(lambda: self.worker.kill_worker())
+            self.worker.gif_available.connect(lambda: self.display_gif())
+
+            self.th.started.connect(self.worker.run)
+            self.th.finished.connect(self.th.quit)
+            self.th.start()
+
+            self.enable_config_when_generating_gif(False)
+            # Showing "Generating..." under the animate button
+            self.l_loading.setHidden(False)
+        else:
+            self.save_path = gif
+            self.display_gif()
 
     def auto_update(self):
         """Method that update range before sending the signal to update the plot. The auto-refresh policy will be handled in the DDataPlotter
