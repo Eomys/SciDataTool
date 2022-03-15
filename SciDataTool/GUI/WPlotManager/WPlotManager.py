@@ -90,9 +90,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         axes_selected = self.w_axis_manager.get_axes_selected()
         operations_selected = self.w_axis_manager.get_operation_selected()
 
-        # Only available for 2D plot for now
-        if len(axes_selected) > 1:
-            return None
+        is_3D = len(axes_selected) == 2
 
         # Recovering the axis to animate (operation axis with "to_animate")
         for idx_ope in range(len(operations_selected)):
@@ -110,19 +108,29 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         str_format = ".gif"
 
+        # Building string of the axis/axes selected for the name of the gif
+        if is_3D:
+            axis_name = (
+                axes_selected[0].split("{")[0]
+                + " and "
+                + axes_selected[1].split("{")[0]
+            )
+        else:
+            axis_name = axes_selected[0].split("{")[0]
+
         # Building string of the operation selected for the name of the gif
-        operations_name = " for "
         if len(operations_selected) > 0:
+            operations_name = " for "
             for ope in operations_selected:
                 operations_name += (
                     ope.replace("{", " ").replace("}", " ").replace(".", ",")
                 )
 
-        operations_name = operations_name[:-1]
+            operations_name = operations_name[:-1]
+        else:
+            operations_name = ""
 
-        gif_name = (
-            self.data.name + " vs " + axes_selected[0].split("{")[0] + operations_name
-        )
+        gif_name = self.data.name + " vs " + axis_name + operations_name
 
         # Recovering "Generating label" from the WSliceOperator with the axis that we want to animate
         for wid in self.w_axis_manager.w_slice_op:
@@ -146,7 +154,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         if not isfile(gif):
             # Creating a QThread associated to the worker saving the gif
             self.th = QThread(parent=self)
-            self.worker = SaveGifWorker(widget=self, plot_input=plot_input)
+            self.worker = SaveGifWorker(widget=self, plot_input=plot_input, is_3D=is_3D)
             self.worker.moveToThread(self.th)
 
             # Connecting the end of generation of GIF to display, end thread and killing process

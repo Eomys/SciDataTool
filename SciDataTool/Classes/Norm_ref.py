@@ -21,7 +21,6 @@ except ImportError as error:
     normalize = error
 
 
-from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -103,14 +102,7 @@ class Norm_ref(Normalization):
 
         # Check the properties inherited from Normalization
         diff_list.extend(super(Norm_ref, self).compare(other, name=name))
-        if (
-            other._ref is not None
-            and self._ref is not None
-            and isnan(other._ref)
-            and isnan(self._ref)
-        ):
-            pass
-        elif other._ref != self._ref:
+        if other._ref != self._ref:
             diff_list.append(name + ".ref")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))

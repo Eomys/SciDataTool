@@ -21,7 +21,6 @@ except ImportError as error:
     _set_normalizations = error
 
 
-from numpy import isnan
 from ._check import InitUnKnowClassError
 from .Normalization import Normalization
 
