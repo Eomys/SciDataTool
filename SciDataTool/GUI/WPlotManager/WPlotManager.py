@@ -89,14 +89,13 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """
         # Recovering axes and operations selected
         axes_selected = self.w_axis_manager.get_axes_selected()
+        operations_selected = self.w_axis_manager.get_operation_selected()
 
         # Only available for 2D plot for now
         if len(axes_selected) > 1:
             return None
 
-        operations_selected = self.w_axis_manager.get_operation_selected()
-
-        # Recovering the axis to animate (=> first sliced axis)
+        # Recovering the axis to animate (operation axis with "to_animate")
         for idx_ope in range(len(operations_selected)):
             ope = operations_selected[idx_ope]
             if "to_animate" in ope:
@@ -105,12 +104,26 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         operations_selected.pop(idx_animate)
 
+        # Gathering the other axes and operations selected
         axes_to_animate = [animated_axis]
         axes_to_animate.extend(axes_selected)
         axes_to_animate.extend(operations_selected)
 
         str_format = ".gif"
-        gif_name = self.data.name + " vs " + axes_selected[0].split("{")[0]
+
+        # Building string of the operation selected for the name of the gif
+        operations_name = " for "
+        if len(operations_selected) > 0:
+            for ope in operations_selected:
+                operations_name += (
+                    ope.replace("{", " ").replace("}", " ").replace(".", ",")
+                )
+
+        operations_name = operations_name[:-1]
+
+        gif_name = (
+            self.data.name + " vs " + axes_selected[0].split("{")[0] + operations_name
+        )
 
         # if isinstance(self.output.simu.var_simu, VarLoadTorque) or isinstance(
         #     self.output.simu.var_simu, VarParam
