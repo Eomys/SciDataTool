@@ -16,7 +16,7 @@ class Ui_WSliceOperator(object):
     def setupUi(self, WSliceOperator):
         if not WSliceOperator.objectName():
             WSliceOperator.setObjectName(u"WSliceOperator")
-        WSliceOperator.resize(334, 130)
+        WSliceOperator.resize(334, 158)
         self.gridLayout = QGridLayout(WSliceOperator)
         self.gridLayout.setObjectName(u"gridLayout")
         self.b_action = QPushButton(WSliceOperator)
@@ -63,6 +63,11 @@ class Ui_WSliceOperator(object):
 
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
 
+        self.b_animate = QPushButton(WSliceOperator)
+        self.b_animate.setObjectName(u"b_animate")
+
+        self.gridLayout.addWidget(self.b_animate, 4, 0, 1, 1)
+
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.in_name = QLabel(WSliceOperator)
@@ -91,10 +96,11 @@ class Ui_WSliceOperator(object):
 
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
 
-        self.b_animate = QPushButton(WSliceOperator)
-        self.b_animate.setObjectName(u"b_animate")
+        self.l_loading = QLabel(WSliceOperator)
+        self.l_loading.setObjectName(u"l_loading")
+        self.l_loading.setEnabled(True)
 
-        self.gridLayout.addWidget(self.b_animate, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.l_loading, 3, 0, 1, 1)
 
         self.retranslateUi(WSliceOperator)
 
@@ -113,6 +119,9 @@ class Ui_WSliceOperator(object):
             QCoreApplication.translate("WSliceOperator", u"0.314", None)
         )
         self.in_unit.setText(QCoreApplication.translate("WSliceOperator", u"[m]", None))
+        self.b_animate.setText(
+            QCoreApplication.translate("WSliceOperator", u"Animate", None)
+        )
         self.in_name.setText(
             QCoreApplication.translate("WSliceOperator", u"angle", None)
         )
@@ -141,8 +150,8 @@ class Ui_WSliceOperator(object):
             7, QCoreApplication.translate("WSliceOperator", u"overlay/filter", None)
         )
 
-        self.b_animate.setText(
-            QCoreApplication.translate("WSliceOperator", u"Animate", None)
+        self.l_loading.setText(
+            QCoreApplication.translate("WSliceOperator", u"Generating...", None)
         )
 
     # retranslateUi

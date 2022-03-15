@@ -61,6 +61,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.lf_value.editingFinished.connect(self.update_slider)
         self.b_action.clicked.connect(self.open_filter)
         self.b_animate.clicked.connect(self.gen_animate)
+        self.l_loading.setHidden(True)
 
     def gen_animate(self):
         """Methods called after clicking on animate button that emit a signal to generate a gif on the axis selected and display it
