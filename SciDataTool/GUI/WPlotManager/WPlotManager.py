@@ -101,14 +101,16 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             ope = operations_selected[idx_ope]
             if "to_animate" in ope:
                 animated_axis = ope.split("to_animate")[0]
-                operations_selected.pop(idx_ope)
+                idx_animate = idx_ope
+
+        operations_selected.pop(idx_animate)
 
         axes_to_animate = [animated_axis]
         axes_to_animate.extend(axes_selected)
         axes_to_animate.extend(operations_selected)
 
         str_format = ".gif"
-        gif_name = self.data_obj.name + " vs " + axes_selected[0].split("{")[0]
+        gif_name = self.data.name + " vs " + axes_selected[0].split("{")[0]
 
         # if isinstance(self.output.simu.var_simu, VarLoadTorque) or isinstance(
         #     self.output.simu.var_simu, VarParam
@@ -139,9 +141,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.th.finished.connect(self.th.quit)
             self.th.start()
 
-            self.enable_config_when_generating_gif(False)
-            # Showing "Generating..." under the animate button
-            self.l_loading.setHidden(False)
+            # self.enable_config_when_generating_gif(False)
+            # # Showing "Generating..." under the animate button
+            # self.l_loading.setHidden(False)
         else:
             self.param_dict["save_path"] = gif
             self.display_gif()
@@ -160,7 +162,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.animation_label.setWindowTitle(basename(self.gif).replace(".gif", ""))
         self.gif_widget.start()
         # Setting size of the window showing the animation to the size of the gif
-        self.animation_label.setFixedSize(self.gif_widget.currentImage().size())
+        # self.animation_label.setFixedSize(self.gif_widget.currentImage().size())
         self.animation_label.show()
         # self.l_loading.setHidden(True)
         # self.enable_config_when_generating_gif(True)

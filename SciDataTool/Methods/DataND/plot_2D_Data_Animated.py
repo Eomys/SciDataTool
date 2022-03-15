@@ -25,7 +25,9 @@ def plot_2D_Data_Animated(
     else:
         result = self.get_along(animated_axis, *param_list)
 
+    animated_axis_unit = "{" + animated_axis.split("{")[1]
     animated_axis = animated_axis.split("[")[0]
+
     value_max = np.nanmax(result[animated_axis])
     value_min = np.nanmin(result[animated_axis])
     variation_step = (value_max - value_min) / nb_frames
@@ -45,9 +47,12 @@ def plot_2D_Data_Animated(
     while value_min < value_max:
         # plotting image
         self.plot_2D_Data(
-            *param_list, animated_axis + "=" + str(value_min), **param_dict
+            *param_list,
+            animated_axis + "=" + str(value_min) + animated_axis_unit,
+            **param_dict
         )
         # Getting the figure generated with plot_2D_DATA
+        fig = plt.gcf()
         fig.canvas.draw()
         image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))

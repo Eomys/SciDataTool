@@ -10,10 +10,10 @@ def save_gif(queue, widget, axes_to_animate):
     animated_axis = axes_to_animate.pop(0)
 
     widget.param_dict["save_path"] = widget.gif
-    # if "component_list" in widget.plot_options_current:
-    #     widget.plot_options_current.pop("component_list")
+    if "component_list" in widget.param_dict:
+        widget.param_dict.pop("component_list")
 
-    widget.data_obj.plot_2D_Data_Animated(
+    widget.data.plot_2D_Data_Animated(
         animated_axis, *axes_to_animate, **widget.param_dict
     )
     queue.put("gif generated")
