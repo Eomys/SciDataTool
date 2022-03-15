@@ -159,7 +159,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         Parameters
         ----------
         self : WAxisManager
-            a WSliceOperator object
+            a WAxisManager object
 
         Output
         ---------

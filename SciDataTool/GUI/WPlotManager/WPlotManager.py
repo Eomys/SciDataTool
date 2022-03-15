@@ -79,8 +79,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """Methods called after clicking on animate button to generate a gif on the axis selected and display it
         Parameters
         ----------
-        self : WAxisManager
-            a WSliceOperator object
+        self : WPlotManager
+            a WPlotManager object
 
         Output
         ---------
@@ -104,9 +104,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         operations_selected.pop(idx_animate)
 
         # Gathering the other axes and operations selected
-        axes_to_animate = [animated_axis]
-        axes_to_animate.extend(axes_selected)
-        axes_to_animate.extend(operations_selected)
+        plot_input = [animated_axis]
+        plot_input.extend(axes_selected)
+        plot_input.extend(operations_selected)
 
         str_format = ".gif"
 
@@ -146,7 +146,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         if not isfile(gif):
             # Creating a QThread associated to the worker saving the gif
             self.th = QThread(parent=self)
-            self.worker = SaveGifWorker(widget=self, axes_to_animate=axes_to_animate)
+            self.worker = SaveGifWorker(widget=self, plot_input=plot_input)
             self.worker.moveToThread(self.th)
 
             # Connecting the end of generation of GIF to display, end thread and killing process
