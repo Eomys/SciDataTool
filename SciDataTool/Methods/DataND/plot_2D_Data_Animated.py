@@ -25,6 +25,7 @@ def plot_2D_Data_Animated(
     else:
         result = self.get_along(animated_axis, *param_list)
 
+    animated_axis = animated_axis.split("[")[0]
     value_max = np.nanmax(result[animated_axis])
     value_min = np.nanmin(result[animated_axis])
     variation_step = (value_max - value_min) / nb_frames
@@ -37,6 +38,7 @@ def plot_2D_Data_Animated(
     param_dict["y_min"] = np.nanmin(result[self.symbol]) - abs(marge)
     param_dict["y_max"] = np.nanmax(result[self.symbol]) + abs(marge)
     param_dict["is_show_fig"] = False
+
     # Getting the name of the gif
     save_path = param_dict["save_path"].replace(".png", ".gif")
     param_dict["save_path"] = None
@@ -46,12 +48,12 @@ def plot_2D_Data_Animated(
             *param_list, animated_axis + "=" + str(value_min), **param_dict
         )
         # Getting the figure generated with plot_2D_DATA
-        fig = plt.gcf()
         fig.canvas.draw()
         image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
         images.append(image)
-        plt.close(fig)
         value_min += variation_step
     # Creating the gif
+    plt.close(fig)
+
     imageio.mimsave(save_path, images, format="GIF-PIL", fps=fps)

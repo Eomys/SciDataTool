@@ -279,5 +279,4 @@ def plot_2D_Data_Animated(
                 font_size_title=font_size_title,
                 font_size_label=font_size_label,
                 font_size_legend=font_size_legend,
-                is_plot_only=is_plot_only,
             )

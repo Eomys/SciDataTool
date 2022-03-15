@@ -210,7 +210,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             ope_selected, is_animate = wid.get_operation_selected()
 
             if is_animate == True:
-                operations_selected.append(ope_selected + "[oneperiod]" + "to_animate")
+                operations_selected.append(
+                    ope_selected.split("=")[0] + "[oneperiod]" + "to_animate"
+                )
                 wid.is_animate = False
             else:
                 operations_selected.append(ope_selected)

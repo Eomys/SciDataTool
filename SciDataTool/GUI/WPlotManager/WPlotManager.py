@@ -1,9 +1,22 @@
 from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
-from os.path import dirname, basename, join, isfile
-from SciDataTool.Functions.Load.import_class import import_class
-from PySide2.QtCore import QThread
-
 from PySide2.QtCore import Signal
+from PySide2.QtCore import QByteArray, Qt
+from PySide2.QtCore import QThread
+from PySide2.QtGui import QMovie
+from PySide2.QtWidgets import (
+    QFileDialog,
+    QLabel,
+    QSizePolicy,
+    QMessageBox,
+)
+
+from os.path import dirname, basename, join, isfile
+
+from SciDataTool.Functions.Load.import_class import import_class
+from SciDataTool.GUI.Tools.SaveGifWorker import SaveGifWorker
+from SciDataTool.GUI.Tools import TEMP_DIR
+
+
 from SciDataTool.GUI.WPlotManager.Ui_WPlotManager import Ui_WPlotManager
 
 SYMBOL_DICT = {
@@ -52,7 +65,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.setupUi(self)
 
         self.default_file_path = None  # Path to export in csv
-        self.save_path = None  # Path to animation
+        self.param_dict = dict()  # Dict with param for animation to animation
 
         # Building the interaction with the UI and the UI itself
         self.w_axis_manager.refreshRange.connect(self.update_range)
@@ -84,9 +97,15 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         operations_selected = self.w_axis_manager.get_operation_selected()
 
         # Recovering the axis to animate (=> first sliced axis)
-        for ope in operations_selected:
+        for idx_ope in range(len(operations_selected)):
+            ope = operations_selected[idx_ope]
             if "to_animate" in ope:
                 animated_axis = ope.split("to_animate")[0]
+                operations_selected.pop(idx_ope)
+
+        axes_to_animate = [animated_axis]
+        axes_to_animate.extend(axes_selected)
+        axes_to_animate.extend(operations_selected)
 
         str_format = ".gif"
         gif_name = self.data_obj.name + " vs " + axes_selected[0].split("{")[0]
@@ -102,13 +121,13 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         # if isinstance(out, XOutput):
         #     gif_name += "_OP_" + str(self.cb_op.currentIndex() + 1)
 
-        gif = join(self.output.get_path_result_post(), gif_name + str_format)
+        gif = join(TEMP_DIR, gif_name + str_format)
         self.gif = gif
 
         if not isfile(gif):
             # Creating a QThread associated to the worker saving the gif
             self.th = QThread(parent=self)
-            self.worker = SaveGifWorker(widget=self)
+            self.worker = SaveGifWorker(widget=self, axes_to_animate=axes_to_animate)
             self.worker.moveToThread(self.th)
 
             # Connecting the end of generation of GIF to display, end thread and killing process
@@ -124,8 +143,38 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             # Showing "Generating..." under the animate button
             self.l_loading.setHidden(False)
         else:
-            self.save_path = gif
+            self.param_dict["save_path"] = gif
             self.display_gif()
+
+    def display_gif(self):
+        self.gif_widget = QMovie(self.gif, QByteArray(), self)
+        self.gif_widget.setCacheMode(QMovie.CacheAll)
+        self.gif_widget.setSpeed(100)
+        # set up the movie screen on a label
+        self.animation_label = QLabel(self, Qt.Window)
+        self.animation_label.closeEvent = self.close_gif
+        # expand and center the label
+        self.animation_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.animation_label.setAlignment(Qt.AlignCenter)
+        self.animation_label.setMovie(self.gif_widget)
+        self.animation_label.setWindowTitle(basename(self.gif).replace(".gif", ""))
+        self.gif_widget.start()
+        # Setting size of the window showing the animation to the size of the gif
+        self.animation_label.setFixedSize(self.gif_widget.currentImage().size())
+        self.animation_label.show()
+        # self.l_loading.setHidden(True)
+        # self.enable_config_when_generating_gif(True)
+
+    def close_gif(self, ev):
+        """Stops the gif and closes the pop up running the GUI"""
+        # Stopping the animation and resetting the gif widget (QMovie)
+        self.gif_widget.stop()
+        self.gif_widget.setParent(None)
+        self.gif_widget = None
+        # Closing and resetting to None the windows that pops up to show animation
+        self.animation_label.close()
+        self.animation_label.setParent(None)
+        self.animation_label = None
 
     def auto_update(self):
         """Method that update range before sending the signal to update the plot. The auto-refresh policy will be handled in the DDataPlotter
