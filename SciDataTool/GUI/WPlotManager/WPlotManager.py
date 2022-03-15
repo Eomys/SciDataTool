@@ -11,10 +11,9 @@ from PySide2.QtWidgets import (
 )
 
 from os.path import dirname, basename, join, isfile
-
+from SciDataTool.GUI import DATA_DIR
 from SciDataTool.Functions.Load.import_class import import_class
 from SciDataTool.GUI.Tools.SaveGifWorker import SaveGifWorker
-from SciDataTool.GUI.Tools import TEMP_DIR
 
 
 from SciDataTool.GUI.WPlotManager.Ui_WPlotManager import Ui_WPlotManager
@@ -141,7 +140,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         # if isinstance(out, XOutput):
         #     gif_name += "_OP_" + str(self.cb_op.currentIndex() + 1)
 
-        gif = join(TEMP_DIR, gif_name + str_format)
+        gif = join(DATA_DIR, gif_name + str_format)
         self.gif = gif
 
         if not isfile(gif):
@@ -177,7 +176,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.animation_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.animation_label.setAlignment(Qt.AlignCenter)
         self.animation_label.setMovie(self.gif_widget)
-        self.animation_label.setWindowTitle(basename(self.gif).replace(".gif", ""))
+        self.animation_label.setWindowTitle(
+            "Animation at: " + self.param_dict["save_path"].replace(".gif", "")
+        )
         self.gif_widget.start()
         # Setting size of the window showing the animation to the size of the gif
         # self.animation_label.setFixedSize(self.gif_widget.currentImage().size())
