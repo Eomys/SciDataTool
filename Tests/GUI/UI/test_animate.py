@@ -19,7 +19,7 @@ class TestGUI(object):
             cls.app = QtWidgets.QApplication.instance()
 
         cls.VecField = VecField
-        cls.UI = cls.VecField.plot(is_show_fig=True, is_create_appli=False)
+        cls.UI = cls.VecField.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
     def test_check_animation_2D(self):
@@ -35,7 +35,7 @@ class TestGUI(object):
         assert isfile(self.UI.w_plot_manager.gif) == True
 
         # Closing the animation
-        self.UI.w_plot_manager.animation_label.close()
+        self.UI.close()
 
         # Deleting gif for future test
         remove(self.UI.w_plot_manager.gif)
