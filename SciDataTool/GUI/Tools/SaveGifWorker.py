@@ -5,11 +5,11 @@ from SciDataTool.GUI.Tools.GifHandler import GifHandler
 from logging.handlers import QueueListener
 
 
-def save_gif(queue, widget, plot_input, is_3D):
+def save_gif(queue, widget, gif, plot_input, is_3D):
 
     animated_axis = plot_input.pop(0)
 
-    widget.param_dict["save_path"] = widget.gif
+    widget.param_dict["save_path"] = gif
     if "component_list" in widget.param_dict:
         widget.param_dict.pop("component_list")
 
@@ -29,9 +29,10 @@ class SaveGifWorker(QObject):
 
     gif_available = Signal()
 
-    def __init__(self, widget=None, plot_input=list(), is_3D=False):
+    def __init__(self, widget=None, gif="", plot_input=list(), is_3D=False):
         super().__init__()
         self.widget = widget
+        self.gif = gif
         self.plot_input = plot_input
         self.is_3D = is_3D
         self.queue = multiprocessing.Queue()
@@ -48,6 +49,7 @@ class SaveGifWorker(QObject):
             args=(
                 self.queue,
                 self.widget,
+                self.gif,
                 self.plot_input,
                 self.is_3D,
             ),
