@@ -66,6 +66,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.default_file_path = None  # Path to export in csv
         self.param_dict = dict()  # Dict with param for animation to animation
 
+        self.gif_path_list = list()
+
         # Storing each animation as a list with a QMovie, a QLabel and the path to the gif inside gif_widget_list
         self.gif_widget_list = list()
 
@@ -152,7 +154,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         #     gif_name += "_OP_" + str(self.cb_op.currentIndex() + 1)
 
         gif = join(DATA_DIR, gif_name + str_format)
-
+        self.gif_path_list.append(gif)
         if not isfile(gif):
             # Creating a QThread associated to the worker saving the gif
             self.th = QThread(parent=self)
