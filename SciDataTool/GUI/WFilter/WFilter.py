@@ -94,7 +94,7 @@ class WFilter(Ui_WFilter, QWidget):
                 and self.axis.sort_indices is not None
             ):
                 filter_list.append("Rank")
-            filter_list.append("Plot?")  # Adding the column with checkbox
+            filter_list.append("Plot")  # Adding the column with checkbox
 
             # Prepare strings
             data = []
