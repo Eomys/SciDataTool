@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
+from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox, QVBoxLayout
 from PySide2.QtCore import Signal
 from PySide2.QtCore import QByteArray, Qt
 from PySide2.QtCore import QThread
@@ -66,7 +66,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.default_file_path = None  # Path to export in csv
         self.param_dict = dict()  # Dict with param for animation to animation
 
-        self.gif_path_list = list()
+        self.gif_path_list = list()  # List of path to the gifs created (used in test)
 
         # Storing each animation as a list with a QMovie, a QLabel and the path to the gif inside gif_widget_list
         self.gif_widget_list = list()
@@ -181,27 +181,54 @@ class WPlotManager(Ui_WPlotManager, QWidget):
     def display_gif(self, gif):
         "Method that create a display an animation and store it inside gif_widget_list"
 
+        # Creating widget and layout that will contain the animation and its path
+        widget = QWidget()
+        layout = QVBoxLayout()
+
+        # Adding the animation (QMovie inside a QLabel) inside the widget
         new_gif_widget = QMovie(gif, QByteArray(), self)
         new_gif_widget.setCacheMode(QMovie.CacheAll)
         new_gif_widget.setSpeed(100)
         # set up the movie screen on a label
         new_animation_label = QLabel(self, Qt.Window)
-        new_animation_label.closeEvent = lambda ev: self.close_gif(
-            ev, new_animation_label
-        )
+
         # expand and center the label
         new_animation_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         new_animation_label.setAlignment(Qt.AlignCenter)
         new_animation_label.setMovie(new_gif_widget)
-        new_animation_label.setWindowTitle(gif.replace(".gif", ""))
         new_gif_widget.start()
-        # Setting size of the window showing the animation to the size of the gif
-        new_animation_label.setFixedSize(new_gif_widget.currentImage().size())
-        new_animation_label.show()
+
+        layout.addWidget(new_animation_label)
+
+        # Adding a second QLabel with the path to the animation
+        path_to_file_label = QLabel(self)
+        path_to_file_label.setText("Gif stored at : " + gif)
+        layout.addWidget(path_to_file_label)
+
+        # Setting size of the widget showing the animation to the size of the gif + the label for the path
+        widget_width = max(
+            [
+                new_gif_widget.currentImage().size().width(),
+                path_to_file_label.size().width(),
+            ]
+        )
+        widget_height = (
+            new_gif_widget.currentImage().size().height()
+            + path_to_file_label.size().height()
+        )
+        widget.setFixedSize(widget_width, widget_height)
+
+        # Setting the rest of the widget and showing it
+        widget.closeEvent = lambda ev: self.close_gif(ev, new_animation_label)
+        widget.setWindowTitle(gif.split("\\")[-1].replace(".gif", ""))
+        widget.setLayout(layout)
+        widget.show()
+
+        # Hiding the "Generating..." label
         self.l_loading.setHidden(True)
 
         # Adding the animation to the list
-        self.gif_widget_list.append([new_gif_widget, new_animation_label, gif])
+        self.gif_widget_list.append([new_gif_widget, new_animation_label, gif, widget])
 
     def close_gif(self, ev, animation_label_closed):
         """Stops the gif and closes the pop up running"""
@@ -212,6 +239,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
             if animation_label == animation_label_closed:
                 gif_widget = self.gif_widget_list[idx][0]
+                widget = self.gif_widget_list[idx][3]
                 break
 
         # Stopping the animation and resetting the gif widget (QMovie)
@@ -222,6 +250,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         animation_label.close()
         animation_label.setParent(None)
         animation_label = None
+
+        # Closing the widget containing the animation
+        widget.close()
+        widget.setParent(None)
+        widget = None
 
         # Removing the animation from the list
         self.gif_widget_list.pop(idx)
