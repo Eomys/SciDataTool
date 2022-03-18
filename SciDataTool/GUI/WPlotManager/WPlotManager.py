@@ -135,7 +135,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         else:
             operations_name = ""
 
-        gif_name = self.data.name + " vs " + axis_name + operations_name
+        # Recovering the name of the gif (changing name for animated axis)
+        gif_name = self.get_file_name(is_gif=True, animated_axis=animated_axis)
 
         # Recovering "Generating label" from the WSliceOperator with the axis that we want to animate
         for wid in self.w_axis_manager.w_slice_op:
@@ -269,7 +270,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """
         self.updatePlot.emit()
 
-    def get_file_name(self):
+    def get_file_name(self, is_gif=False, animated_axis=""):
+        """Method that create the name of the file according to the input of the user"""
         param_list = [
             *self.w_axis_manager.get_axes_selected(),
             *self.w_axis_manager.get_operation_selected(),
@@ -277,8 +279,20 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         if None in param_list:
             param_list.remove(None)
 
-        file_name = self.data.symbol + "_" + "_".join(param_list)
-        file_name = file_name.replace("{", "").replace("}", "").replace(".", ",")
+        # Creating the name of the gif (changing name of animated axis + unit of field)
+        if is_gif:
+            for idx_ax in range(len(param_list)):
+                ax = param_list[idx_ax]
+                if animated_axis.split("[")[0] in ax:
+                    param_list[idx_ax] = ax.split("=")[0] + "=animated"
+
+            data_unit = self.w_range.get_field_selected()["unit"]
+            file_name = self.data.symbol + data_unit + "_" + "_".join(param_list)
+            file_name = file_name.replace("{", "").replace("}", "").replace(".", ",")
+        # Creating the name of the csv
+        else:
+            file_name = self.data.symbol + "_" + "_".join(param_list)
+            file_name = file_name.replace("{", "").replace("}", "").replace(".", ",")
         return file_name
 
     def export(self, save_file_path=False):
