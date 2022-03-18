@@ -11,7 +11,7 @@ from PySide2.QtWidgets import (
 )
 
 from os.path import dirname, basename, join, isfile
-from SciDataTool.GUI import DATA_DIR
+from Tests import save_gui_path
 from SciDataTool.Functions.Load.import_class import import_class
 from SciDataTool.GUI.Tools.SaveGifWorker import SaveGifWorker
 
@@ -134,7 +134,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             if wid.axis_name == animated_axis.split("[")[0]:
                 self.l_loading = wid.l_loading
 
-        gif = join(DATA_DIR, gif_name + str_format)
+        gif = join(save_gui_path, gif_name + str_format)
         self.gif_path_list.append(gif)
         if not isfile(gif):
             # Creating a QThread associated to the worker saving the gif
