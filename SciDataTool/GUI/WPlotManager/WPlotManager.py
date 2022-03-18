@@ -66,6 +66,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.default_file_path = None  # Path to export in csv
         self.param_dict = dict()  # Dict with param for animation to animation
 
+        self.is_test = False  # Used in test to disable showing the animation
         self.gif_path_list = list()  # List of path to the gifs created (used in test)
 
         # Storing each animation as a list with a QMovie, a QLabel and the path to the gif inside gif_widget_list
@@ -202,7 +203,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         widget.closeEvent = lambda ev: self.close_gif(ev, new_animation_label)
         widget.setWindowTitle(gif.split("\\")[-1].replace(".gif", ""))
         widget.setLayout(layout)
-        widget.show()
+        if not self.is_test:
+            widget.show()
 
         # Hiding the "Generating..." label
         self.l_loading.setHidden(True)
