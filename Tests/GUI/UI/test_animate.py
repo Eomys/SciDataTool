@@ -12,13 +12,13 @@ class TestGUI(object):
     @classmethod
     def setup_class(cls):
         """Run at the begining of every test to setup the gui"""
-        if not QtWidgets.QApplication.instance():
-            cls.app = QtWidgets.QApplication(sys.argv)
-        else:
-            cls.app = QtWidgets.QApplication.instance()
+        # if not QtWidgets.QApplication.instance():
+        #     cls.app = QtWidgets.QApplication(sys.argv)
+        # else:
+        #     cls.app = QtWidgets.QApplication.instance()
 
         cls.Field = Field
-        cls.UI = cls.Field.plot(is_show_fig=False, is_create_appli=False)
+        cls.UI = cls.Field.plot(is_show_fig=True, is_create_appli=True)
 
     @pytest.mark.gui
     def test_check_animation_2D(self):
@@ -36,7 +36,7 @@ class TestGUI(object):
         assert isfile(path_to_gif) == True
 
         # Closing the animation
-        self.UI.close()
+        self.UI.w_plot_manager.close_all_gif()
 
         # Deleting gif for future test
         remove(path_to_gif)
@@ -60,7 +60,7 @@ class TestGUI(object):
         assert isfile(path_to_file) == True
 
         # Closing the animation
-        self.UI.close()
+        self.UI.w_plot_manager.close_all_gif()
 
         # Deleting gif for future test
         remove(path_to_file)
@@ -92,7 +92,7 @@ class TestGUI(object):
         assert isfile(path_to_file_z) == True
 
         # Closing the animation
-        self.UI.close()
+        self.UI.w_plot_manager.close_all_gif()
 
         # Deleting gif for future test
         remove(path_to_file_a)
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     a.setup_class()
 
     # Testing that the gif is created and located at the right path (2D plot)
-    a.test_check_ankimation_2D()
+    # a.test_check_animation_2D()
 
     # Testing that the gif is created and located at the right path (3D plot)
     # a.test_check_animation_3D()

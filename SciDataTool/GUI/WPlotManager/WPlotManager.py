@@ -113,16 +113,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         str_format = ".gif"
 
-        # Building string of the axis/axes selected for the name of the gif
-        if is_3D:
-            axis_name = (
-                axes_selected[0].split("{")[0]
-                + " and "
-                + axes_selected[1].split("{")[0]
-            )
-        else:
-            axis_name = axes_selected[0].split("{")[0]
-
         # Building string of the operation selected for the name of the gif
         if len(operations_selected) > 0:
             operations_name = " for "
@@ -142,17 +132,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         for wid in self.w_axis_manager.w_slice_op:
             if wid.axis_name == animated_axis.split("[")[0]:
                 self.l_loading = wid.l_loading
-
-        # if isinstance(self.output.simu.var_simu, VarLoadTorque) or isinstance(
-        #     self.output.simu.var_simu, VarParam
-        # ):
-        #     out = self.output.output_list[self.cb_torque.currentIndex()]
-        #     gif_name += "_DP_" + str(self.cb_torque.currentIndex() + 1)
-        # else:
-        #     out = self.output
-
-        # if isinstance(out, XOutput):
-        #     gif_name += "_OP_" + str(self.cb_op.currentIndex() + 1)
 
         gif = join(DATA_DIR, gif_name + str_format)
         self.gif_path_list.append(gif)
@@ -260,6 +239,12 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         # Removing the animation from the list
         self.gif_widget_list.pop(idx)
 
+    def close_all_gif(self):
+        """Method used to close all the gif currently running. Only used in test for now"""
+
+        for _, _, _, widget in self.gif_widget_list:
+            widget.close()
+
     def auto_update(self):
         """Method that update range before sending the signal to update the plot. The auto-refresh policy will be handled in the DDataPlotter
         Parameters
@@ -279,20 +264,17 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         if None in param_list:
             param_list.remove(None)
 
-        # Creating the name of the gif (changing name of animated axis + unit of field)
+        # Changing name of animated axis + unit of field for gif
         if is_gif:
             for idx_ax in range(len(param_list)):
                 ax = param_list[idx_ax]
                 if animated_axis.split("[")[0] in ax:
                     param_list[idx_ax] = ax.split("=")[0] + "=animated"
 
-            data_unit = self.w_range.get_field_selected()["unit"]
-            file_name = self.data.symbol + data_unit + "_" + "_".join(param_list)
-            file_name = file_name.replace("{", "").replace("}", "").replace(".", ",")
-        # Creating the name of the csv
-        else:
-            file_name = self.data.symbol + "_" + "_".join(param_list)
-            file_name = file_name.replace("{", "").replace("}", "").replace(".", ",")
+        data_unit = "[" + self.w_range.get_field_selected()["unit"] + "]"
+        file_name = self.data.symbol + data_unit + "_" + "_".join(param_list)
+        file_name = file_name.replace("{", "[").replace("}", "]").replace(".", ",")
+
         return file_name
 
     def export(self, save_file_path=False):
