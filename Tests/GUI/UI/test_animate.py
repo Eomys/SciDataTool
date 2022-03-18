@@ -12,13 +12,13 @@ class TestGUI(object):
     @classmethod
     def setup_class(cls):
         """Run at the begining of every test to setup the gui"""
-        # if not QtWidgets.QApplication.instance():
-        #     cls.app = QtWidgets.QApplication(sys.argv)
-        # else:
-        #     cls.app = QtWidgets.QApplication.instance()
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
 
         cls.Field = Field
-        cls.UI = cls.Field.plot(is_show_fig=True, is_create_appli=True)
+        cls.UI = cls.Field.plot(is_show_fig=False, is_create_appli=False)
 
     @pytest.mark.gui
     def test_check_animation_2D(self):
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     a.setup_class()
 
     # Testing that the gif is created and located at the right path (2D plot)
-    # a.test_check_animation_2D()
+    a.test_check_animation_2D()
 
     # Testing that the gif is created and located at the right path (3D plot)
     # a.test_check_animation_3D()
