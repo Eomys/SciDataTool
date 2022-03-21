@@ -3,22 +3,56 @@ from os import remove
 import pytest
 from PySide2 import QtWidgets
 import sys
-
+from SciDataTool import DataPattern, DataLinspace, DataTime
 from tenacity import sleep
 from Tests.GUI import Field
+from numpy.random import random
+from numpy import pi
 
 
 class TestGUI(object):
     @classmethod
     def setup_class(cls):
         """Run at the begining of every test to setup the gui"""
-        if not QtWidgets.QApplication.instance():
-            cls.app = QtWidgets.QApplication(sys.argv)
-        else:
-            cls.app = QtWidgets.QApplication.instance()
+        # if not QtWidgets.QApplication.instance():
+        #     cls.app = QtWidgets.QApplication(sys.argv)
+        # else:
+        #     cls.app = QtWidgets.QApplication.instance()
+
+        Slice = DataPattern(
+            name="z",
+            unit="m",
+            values=[-1, 0],
+            is_step=True,
+            values_whole=[-1, 0, 0, 1],
+            rebuild_indices=[0, 0, 1, 1],
+            unique_indices=[0, 0, 1, 1],
+        )
+
+        f = 50
+        Nt_tot = 16
+        Na_tot = 20
+
+        Time = DataLinspace(
+            name="time", unit="s", initial=0, final=1 / (2 * f), number=Nt_tot
+        )
+        Angle = DataLinspace(
+            name="angle", unit="rad", initial=0, final=2 * pi, number=Na_tot
+        )
+        Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3)
+
+        field = random((Nt_tot, Na_tot, 2))
+
+        Field = DataTime(
+            name="Airgap flux density",
+            symbol="B_r",
+            unit="T",
+            axes=[Time, Angle, Slice],
+            values=field,
+        )
 
         cls.Field = Field
-        cls.UI = cls.Field.plot(is_show_fig=False, is_create_appli=False)
+        cls.UI = cls.Field.plot(is_show_fig=True, is_create_appli=True)
 
     @classmethod
     def teardown_class(cls):
@@ -108,14 +142,14 @@ if __name__ == "__main__":
     a = TestGUI()
     a.setup_class()
 
-    # Testing that the gif is created and located at the right path (2D plot)
-    a.test_check_animation_2D()
+    # # Testing that the gif is created and located at the right path (2D plot)
+    # a.test_check_animation_2D()
 
-    # Testing that the animations are closed correctly
-    a.test_close_few_animation()
+    # # Testing that the animations are closed correctly
+    # a.test_close_few_animation()
 
-    # Testing that the gif is created and located at the right path (3D plot)
-    a.test_check_animation_3D()
+    # # Testing that the gif is created and located at the right path (3D plot)
+    # a.test_check_animation_3D()
 
-    a.teardown_class()
+    # a.teardown_class()
     print("Done")

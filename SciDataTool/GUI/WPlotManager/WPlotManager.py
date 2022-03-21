@@ -399,7 +399,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """
         # Recovering the object that we want to show and how we want to show it
         self.data = data
-        self.param_dict = plot_arg_dict
+        self.param_dict = plot_arg_dict.copy()
         if save_path != "":
             self.save_path = save_path
 
