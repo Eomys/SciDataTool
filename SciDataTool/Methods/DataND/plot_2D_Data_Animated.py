@@ -23,9 +23,10 @@ def plot_2D_Data_Animated(
     DataPattern = getattr(module, "DataPattern")
 
     # Making sure that we have the right argument for a plot2D
+    plot_options = param_dict.copy()
     for param in PARAM_3D:
-        if param in param_dict:
-            del param_dict[param]
+        if param in plot_options:
+            del plot_options[param]
 
     # Detecting if animated axis is a DataPattern, if true changing the input given to the function
     for ax_obj in self.get_axes():
@@ -61,19 +62,19 @@ def plot_2D_Data_Animated(
     marge = (
         y_max - y_min
     ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
-    param_dict["y_min"] = np.nanmin(result[self.symbol]) - abs(marge)
-    param_dict["y_max"] = np.nanmax(result[self.symbol]) + abs(marge)
-    param_dict["is_show_fig"] = False
+    plot_options["y_min"] = np.nanmin(result[self.symbol]) - abs(marge)
+    plot_options["y_max"] = np.nanmax(result[self.symbol]) + abs(marge)
+    plot_options["is_show_fig"] = False
 
     # Getting the name of the gif
-    save_path = param_dict["save_path"].replace(".png", ".gif")
-    param_dict["save_path"] = None
+    save_path = plot_options["save_path"].replace(".png", ".gif")
+    plot_options["save_path"] = None
     while value_min < value_max:
         # plotting image
         self.plot_2D_Data(
             *param_list,
             animated_axis + "=" + str(value_min) + animated_axis_unit,
-            **param_dict
+            **plot_options
         )
         # Getting the figure generated with plot_2D_DATA
         fig = plt.gcf()
