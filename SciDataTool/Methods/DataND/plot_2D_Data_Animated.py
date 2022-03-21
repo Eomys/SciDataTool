@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import imageio
+from ...GUI.DDataPlotter.DDataPlotter import PARAM_3D
 
 
 def plot_2D_Data_Animated(
@@ -20,6 +21,11 @@ def plot_2D_Data_Animated(
     # Relative import of DataPattern to prevent circular import
     module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
     DataPattern = getattr(module, "DataPattern")
+
+    # Making sure that we have the right argument for a plot2D
+    for param in PARAM_3D:
+        if param in param_dict:
+            del param_dict[param]
 
     # Detecting if animated axis is a DataPattern, if true changing the input given to the function
     for ax_obj in self.get_axes():

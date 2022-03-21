@@ -71,6 +71,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         is_auto_refresh=False,
         frozen_type=0,
         plot_arg_dict=dict(),
+        save_path="",
     ):
         """Initialize the UI according to the input given by the user
 
@@ -134,6 +135,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             z_max=z_max,
             frozen_type=frozen_type,
             is_quiver=is_quiver,
+            plot_arg_dict=plot_arg_dict,
+            save_path=save_path,
         )
 
         # Building the interaction with the UI itself

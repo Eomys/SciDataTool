@@ -65,6 +65,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         self.default_file_path = None  # Path to export in csv
         self.param_dict = dict()  # Dict with param for animation to animation
+        self.save_path = save_gui_path  # Path to directory where animation are stored
 
         self.is_test = False  # Used in test to disable showing the animation
         self.gif_path_list = list()  # List of path to the gifs created (used in test)
@@ -134,7 +135,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             if wid.axis_name == animated_axis.split("[")[0]:
                 self.l_loading = wid.l_loading
 
-        gif = join(save_gui_path, gif_name + str_format)
+        gif = join(self.save_path, gif_name + str_format)
         self.gif_path_list.append(gif)
         if not isfile(gif):
             # Creating a QThread associated to the worker saving the gif
@@ -183,7 +184,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         # Adding a second QLabel with the path to the animation
         path_to_file_label = QLabel(self)
-        path_to_file_label.setText("Gif stored at : " + gif)
+        path_to_file_label.setText("Gif stored at: " + self.save_path)
         layout.addWidget(path_to_file_label)
 
         # Setting size of the widget showing the animation to the size of the gif + the label for the path
@@ -368,6 +369,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         frozen_type=0,
         is_keep_config=False,
         is_quiver=False,
+        plot_arg_dict=dict(),
+        save_path="",
     ):
         """Method that use the info given by DDataPlotter to setup the widget
 
@@ -389,9 +392,16 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             Minimum value for Z axis (or Y if only one axe)
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
+        plot_arg_dict : dict
+            Dictionnary with arguments that must be given to the plot (used for animated plot)
+        save_path : str
+           path to the folder where the animation are stored
         """
-        # Recovering the object that we want to show
+        # Recovering the object that we want to show and how we want to show it
         self.data = data
+        self.param_dict = plot_arg_dict
+        if save_path != "":
+            self.save_path = save_path
 
         # Dynamic import to avoid import loop
         VectorField = import_class("SciDataTool.Classes", "VectorField")
