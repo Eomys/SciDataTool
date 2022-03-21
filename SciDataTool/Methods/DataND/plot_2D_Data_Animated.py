@@ -17,6 +17,24 @@ def plot_2D_Data_Animated(
     fps: int
         frames displayed per second
     """
+    # Relative import of DataPattern to prevent circular import
+    module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+    DataPattern = getattr(module, "DataPattern")
+
+    # Detecting if animated axis is a DataPattern, if true changing the input given to the function
+    for ax_obj in self.get_axes():
+        if ax_obj.name == animated_axis.split("[")[0]:
+            animated_axis_obj = ax_obj
+            break
+
+    if isinstance(animated_axis_obj, DataPattern):
+        # Removing one_period as it is not available with a DataPattern
+        animated_axis_unit = "{" + animated_axis.split("{")[1]
+        animated_axis = animated_axis.split("[")[0] + animated_axis_unit
+
+        # Modifying the input of the gif to have one image per slice displayed for 1s
+        nb_frames = len(animated_axis_obj.unique_indices)
+        fps = 1
 
     # The list of images used to build the gif
     images = list()
@@ -26,7 +44,7 @@ def plot_2D_Data_Animated(
         result = self.get_along(animated_axis, *param_list)
 
     animated_axis_unit = "{" + animated_axis.split("{")[1]
-    animated_axis = animated_axis.split("[")[0]
+    animated_axis = animated_axis.split("{")[0].split("[")[0]
 
     value_max = np.nanmax(result[animated_axis])
     value_min = np.nanmin(result[animated_axis])
