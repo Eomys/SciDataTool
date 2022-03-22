@@ -22,6 +22,7 @@ from numpy import (
     insert,
     nanmin as np_min,
     linspace,
+    argmin,
     log10,
     nan,
 )
@@ -296,40 +297,45 @@ def plot_2D_Data(
                 xticklabels = None
                 xticks = None
         else:
-            is_display = True
-            if axis.is_pattern and len(axis.values) == 1:
-                is_display = False
-            if is_display:
-                if axis.corr_unit == "SI":
-                    if axis.name in unit_dict:
-                        axis_unit = unit_dict[axis.name]
-                    else:
-                        axis_unit = axis.unit
-                elif axis.corr_unit in norm_dict and axis.corr_unit != "Hz":
-                    axis_unit = norm_dict[axis.corr_unit]
+            if axis.corr_unit == "SI":
+                if axis.name in unit_dict:
+                    axis_unit = unit_dict[axis.name]
                 else:
-                    axis_unit = axis.corr_unit
+                    axis_unit = axis.unit
+            elif axis.corr_unit in norm_dict and axis.corr_unit != "Hz":
+                axis_unit = norm_dict[axis.corr_unit]
+            else:
+                axis_unit = axis.corr_unit
 
-                if isinstance(result_0[axis.name], str):
-                    title2 += name + "=" + result_0[axis.name]
+            if isinstance(result_0[axis.name], str):
+                title2 += name + "=" + result_0[axis.name]
+            else:
+                if isinstance(result_0[axis.name][0], str):
+                    axis_str = result_0[axis.name][0]
                 else:
-                    if isinstance(result_0[axis.name][0], str):
-                        axis_str = result_0[axis.name][0]
+                    if result_0[axis.name][0] > 10:
+                        fmt = "{:.5g}"
                     else:
-                        if result_0[axis.name][0] > 10:
-                            fmt = "{:.5g}"
-                        else:
-                            fmt = "{:.3g}"
-                        axis_str = array2string(
-                            result_0[axis.name], formatter={"float_kind": fmt.format}
-                        ).replace(" ", ", ")
+                        fmt = "{:.3g}"
+                    axis_str = array2string(
+                        result_0[axis.name], formatter={"float_kind": fmt.format}
+                    ).replace(" ", ", ")
 
-                    if len(result_0[axis.name]) == 1:
-                        axis_str = axis_str.strip("[]")
+                if len(result_0[axis.name]) == 1:
+                    axis_str = axis_str.strip("[]")
 
-                    title2 += (
-                        name + "=" + axis_str.rstrip(", ") + " [" + axis_unit + "], "
-                    )
+                index = None
+                if axis.is_pattern and len(axis.values) == 1:
+                    for axis_obj in self.get_axes():
+                        if axis_obj.name == axis.name:
+                            axis_values = axis_obj.get_values()
+                            index = argmin(abs(axis_values - axis.values[0]))
+
+                title2 += name + "=" + axis_str.rstrip(", ") + " [" + axis_unit + "]"
+                if index is not None:
+                    title2 += " (slice " + str(index + 1) + "), "
+                else:
+                    title2 += ", "
 
     # Title part 3 containing axes that are here but not involved in requested axes
     title3 = ""
