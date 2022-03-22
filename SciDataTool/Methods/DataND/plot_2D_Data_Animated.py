@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import numpy as np
+from numpy import arange, nanmax, nanmin, frombuffer
 import imageio
 from ...GUI.DDataPlotter.DDataPlotter import PARAM_3D
 
@@ -35,16 +35,10 @@ def plot_2D_Data_Animated(
             break
 
     if isinstance(animated_axis_obj, DataPattern):
-        # Removing one_period as it is not available with a DataPattern
+        # Removing "[one_period]" as it is not available with a DataPattern
         animated_axis_unit = "{" + animated_axis.split("{")[1]
         animated_axis = animated_axis.split("[")[0] + animated_axis_unit
 
-        # Modifying the input of the gif to have one image per slice displayed for 1s
-        nb_frames = len(animated_axis_obj.unique_indices)
-        fps = 1
-
-    # The list of images used to build the gif
-    images = list()
     if "freqs" in param_list or "wavenumber" in param_list:
         result = self.get_magnitude_along(animated_axis, *param_list)
     else:
@@ -53,37 +47,47 @@ def plot_2D_Data_Animated(
     animated_axis_unit = "{" + animated_axis.split("{")[1]
     animated_axis = animated_axis.split("{")[0].split("[")[0]
 
-    value_max = np.nanmax(result[animated_axis])
-    value_min = np.nanmin(result[animated_axis])
-    variation_step = (value_max - value_min) / nb_frames
+    # Creating a list of frames that will need to create the animation
+    if isinstance(animated_axis_obj, DataPattern):
+        frames_list = animated_axis_obj.get_values()
+        fps = 1
+    else:
+        value_max = nanmax(result[animated_axis])
+        value_min = nanmin(result[animated_axis])
+        variation_step = (value_max - value_min) / nb_frames
 
-    y_max = np.nanmax(result[self.symbol])
-    y_min = np.nanmin(result[self.symbol])
+        frames_list = arange(start=value_min, stop=value_max, step=variation_step)
+
+    # Setting the options of the plot
+    y_max = nanmax(result[self.symbol])
+    y_min = nanmin(result[self.symbol])
     marge = (
         y_max - y_min
     ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
-    plot_options["y_min"] = np.nanmin(result[self.symbol]) - abs(marge)
-    plot_options["y_max"] = np.nanmax(result[self.symbol]) + abs(marge)
+    plot_options["y_min"] = nanmin(result[self.symbol]) - abs(marge)
+    plot_options["y_max"] = nanmax(result[self.symbol]) + abs(marge)
     plot_options["is_show_fig"] = False
 
     # Getting the name of the gif
     save_path = plot_options["save_path"].replace(".png", ".gif")
     plot_options["save_path"] = None
-    while value_min < value_max:
+
+    images = list()  # List of images used to build the gif
+    for val in frames_list:
         # plotting image
         self.plot_2D_Data(
             *param_list,
-            animated_axis + "=" + str(value_min) + animated_axis_unit,
+            animated_axis + "=" + str(val) + animated_axis_unit,
             **plot_options
         )
         # Getting the figure generated with plot_2D_DATA
         fig = plt.gcf()
         fig.canvas.draw()
-        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
+        image = frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
         images.append(image)
-        value_min += variation_step
-    # Creating the gif
-    plt.close(fig)
+
+        # Creating the gif
+        plt.close(fig)
 
     imageio.mimsave(save_path, images, format="GIF-PIL", fps=fps)
