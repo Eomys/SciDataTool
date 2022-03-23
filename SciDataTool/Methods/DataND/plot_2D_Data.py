@@ -305,7 +305,7 @@ def plot_2D_Data(
             elif axis.corr_unit in norm_dict and axis.corr_unit != "Hz":
                 axis_unit = norm_dict[axis.corr_unit]
             else:
-                axis_unit = axis.corr_unit
+                axis_unit = axis.unit
 
             if isinstance(result_0[axis.name], str):
                 title2 += name + "=" + result_0[axis.name]
