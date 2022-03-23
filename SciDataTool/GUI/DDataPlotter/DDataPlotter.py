@@ -72,6 +72,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         frozen_type=0,
         plot_arg_dict=dict(),
         save_path="",
+        logger=None,
     ):
         """Initialize the UI according to the input given by the user
 
@@ -137,6 +138,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             is_quiver=is_quiver,
             plot_arg_dict=plot_arg_dict,
             save_path=save_path,
+            logger=logger,
         )
 
         # Building the interaction with the UI itself

@@ -69,6 +69,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         self.is_test = False  # Used in test to disable showing the animation
         self.gif_path_list = list()  # List of path to the gifs created (used in test)
+        self.logger = None
 
         # Storing each animation as a list with a QMovie, a QLabel and the path to the gif inside gif_widget_list
         self.gif_widget_list = list()
@@ -144,6 +145,12 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             idx += 1
 
         self.gif_path_list.append(gif)
+
+        # Indicating the path to the .gif in the console
+        if self.logger is not None:
+            self.logger.info("Gif stored at: " + gif)
+        else:
+            print("Gif stored at: " + gif)
 
         if not isfile(gif):
             # Creating a QThread associated to the worker saving the gif
@@ -363,6 +370,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         is_quiver=False,
         plot_arg_dict=dict(),
         save_path="",
+        logger=None,
     ):
         """Method that use the info given by DDataPlotter to setup the widget
 
@@ -394,6 +402,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.param_dict = plot_arg_dict.copy()
         if save_path != "":
             self.save_path = save_path
+
+        self.logger = logger
 
         # Dynamic import to avoid import loop
         VectorField = import_class("SciDataTool.Classes", "VectorField")
