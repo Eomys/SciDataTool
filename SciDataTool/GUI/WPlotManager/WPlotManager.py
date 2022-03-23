@@ -189,23 +189,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         layout.addWidget(new_animation_label)
 
-        # Adding a second QLabel with the path to the animation
-        path_to_file_label = QLabel(self)
-        path_to_file_label.setText("Gif stored at: " + self.save_path)
-        layout.addWidget(path_to_file_label)
-
-        # Setting size of the widget showing the animation to the size of the gif + the label for the path
-        widget_width = max(
-            [
-                new_gif_widget.currentImage().size().width(),
-                path_to_file_label.size().width(),
-            ]
-        )
-        widget_height = (
-            new_gif_widget.currentImage().size().height()
-            + path_to_file_label.size().height()
-        )
-        widget.setFixedSize(widget_width, widget_height)
+        # Setting size of the widget showing the animation to the size of the gif
+        widget.setFixedSize(new_gif_widget.currentImage().size())
 
         # Setting the rest of the widget and showing it
         widget.closeEvent = lambda ev: self.close_gif(ev, new_animation_label)

@@ -22,11 +22,11 @@ class TestGUI(object):
         Slice = DataPattern(
             name="z",
             unit="m",
-            values=[-1, 0],
+            values=[-1, -0.5],
             is_step=True,
-            values_whole=[-1, 0, 0, 1],
-            rebuild_indices=[0, 0, 1, 1],
-            unique_indices=[0, 0, 1, 1],
+            values_whole=[-1, -0.5, 0.5, 1],
+            rebuild_indices=[0, 1, 1, 0],
+            unique_indices=[0, 1, 1, 0],
         )
 
         f = 50
