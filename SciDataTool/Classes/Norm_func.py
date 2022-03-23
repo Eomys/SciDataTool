@@ -26,7 +26,6 @@ from os.path import isfile
 from ._check import CheckTypeError
 import numpy as np
 import random
-from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -144,7 +143,7 @@ class Norm_func(Normalization):
         Norm_func_dict = super(Norm_func, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs
+            **kwargs,
         )
         if self._function_str is not None:
             Norm_func_dict["function"] = self._function_str
@@ -155,7 +154,7 @@ class Norm_func(Normalization):
             if self.function is not None:
                 self.get_logger().warning(
                     "Norm_func.as_dict(): "
-                    + "Function self.function is not serializable "
+                    + f"Function {self.function.__name__} is not serializable "
                     + "and will be converted to None."
                 )
         # The class name is added to the dict for deserialisation purpose
@@ -199,7 +198,7 @@ class Norm_func(Normalization):
     function = property(
         fget=_get_function,
         fset=_set_function,
-        doc=u"""function to apply
+        doc="""function to apply
 
         :Type: function
         """,

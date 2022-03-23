@@ -1,7 +1,9 @@
 Variable name,Unit,Description (EN),Size,Type,Default value,Minimum value,Maximum value,,Package,Inherit,Methods,Constante Name,Constante Value,Description classe,Classe fille
-name,,Name of the vector field,,str,,,,,,,filter_spectral_leakage,VERSION,1,Class for 2D or 3D vector fields (time or frequency domain),
-symbol,,Symbol of the vector field,,str,,,,,,,freq_to_time,,,,
-components,,Dict of the components,,{SciDataTool.Classes.DataND},-1,,,,,,get_axes,,,,
+name,,Name of the vector field,,str,,,,,,,change_periodicity,VERSION,1,Class for 2D or 3D vector fields (time or frequency domain),
+symbol,,Symbol of the vector field,,str,,,,,,,change_referential,,,,
+components,,Dict of the components,,{SciDataTool.Classes.DataND},-1,,,,,,filter_spectral_leakage,,,,
+,,,,,,,,,,,freq_to_time,,,,
+,,,,,,,,,,,get_axes,,,,
 ,,,,,,,,,,,get_harm_rphiz_along,,,,
 ,,,,,,,,,,,get_harm_xyz_along,,,,
 ,,,,,,,,,,,get_mag_rphiz_along,,,,
