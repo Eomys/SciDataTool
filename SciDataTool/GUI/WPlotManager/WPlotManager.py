@@ -136,7 +136,15 @@ class WPlotManager(Ui_WPlotManager, QWidget):
                 self.l_loading = wid.l_loading
 
         gif = join(self.save_path, gif_name + str_format)
+
+        # Using an index to make sure that we are generating a new gif everytime
+        idx = 1
+        while gif in self.gif_path_list:
+            gif = gif.split(".")[0].split("(")[0] + "(" + str(idx) + ")" + str_format
+            idx += 1
+
         self.gif_path_list.append(gif)
+
         if not isfile(gif):
             # Creating a QThread associated to the worker saving the gif
             self.th = QThread(parent=self)
