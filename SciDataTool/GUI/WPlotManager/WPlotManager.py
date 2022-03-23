@@ -162,7 +162,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.th.finished.connect(self.th.quit)
             self.th.start()
 
-            # self.enable_config_when_generating_gif(False)
             # Showing "Generating..." under the animate button
             self.l_loading.setHidden(False)
         else:
