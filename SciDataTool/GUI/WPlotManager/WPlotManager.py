@@ -129,7 +129,10 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             operations_name = ""
 
         # Recovering the name of the gif (changing name for animated axis)
-        gif_name = self.get_file_name(is_gif=True, animated_axis=animated_axis)
+        if self.default_file_path is None:
+            gif_name = self.get_file_name(is_gif=True, animated_axis=animated_axis)
+        else:
+            gif_name = self.default_file_path
 
         # Recovering "Generating label" from the WSliceOperator with the axis that we want to animate
         for wid in self.w_axis_manager.w_slice_op:
@@ -274,7 +277,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
                     param_list[idx_ax] = ax.split("=")[0] + "=animated"
 
         data_unit = "[" + self.w_range.get_field_selected()["unit"] + "]"
-        file_name = self.data.symbol + data_unit + "_" + "_".join(param_list)
+        file_name = self.data.name + data_unit  # + "_" + "_".join(param_list)
         file_name = file_name.replace("{", "[").replace("}", "]").replace(".", ",")
 
         return file_name
@@ -296,7 +299,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             file_name = self.get_file_name()
             default_file_path = file_name + ".csv"
         else:
-            default_file_path = self.default_file_path
+            default_file_path = self.default_file_path + ".csv"
 
         # Opening a dialog window to select the directory where the file will be saved if we are not testing
         if save_file_path == False:
