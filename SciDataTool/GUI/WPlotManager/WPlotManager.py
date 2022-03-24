@@ -155,27 +155,25 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         else:
             print("Gif stored at: " + gif)
 
-        if not isfile(gif):
-            # Creating a QThread associated to the worker saving the gif
-            self.th = QThread(parent=self)
-            self.worker = SaveGifWorker(
-                widget=self, gif=gif, plot_input=plot_input, is_3D=is_3D
-            )
-            self.worker.moveToThread(self.th)
+        # Generating a new animation each time
+        # Creating a QThread associated to the worker saving the gif
+        self.th = QThread(parent=self)
+        self.worker = SaveGifWorker(
+            widget=self, gif=gif, plot_input=plot_input, is_3D=is_3D
+        )
+        self.worker.moveToThread(self.th)
 
-            # Connecting the end of generation of GIF to display, end thread and killing process
-            self.worker.gif_available.connect(self.th.finished)
-            self.worker.gif_available.connect(lambda: self.worker.kill_worker())
-            self.worker.gif_available.connect(lambda: self.display_gif(gif))
+        # Connecting the end of generation of GIF to display, end thread and killing process
+        self.worker.gif_available.connect(self.th.finished)
+        self.worker.gif_available.connect(lambda: self.worker.kill_worker())
+        self.worker.gif_available.connect(lambda: self.display_gif(gif))
 
-            self.th.started.connect(self.worker.run)
-            self.th.finished.connect(self.th.quit)
-            self.th.start()
+        self.th.started.connect(self.worker.run)
+        self.th.finished.connect(self.th.quit)
+        self.th.start()
 
-            # Showing "Generating..." under the animate button
-            self.l_loading.setHidden(False)
-        else:
-            self.display_gif(gif)
+        # Showing "Generating..." under the animate button
+        self.l_loading.setHidden(False)
 
     def display_gif(self, gif):
         "Method that create a display an animation and store it inside gif_widget_list"
