@@ -89,6 +89,10 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         string
             name of the current action selected
         """
+        # Relative import of DataPattern to prevent circular import
+        module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+        DataPattern = getattr(module, "DataPattern")
+
         # Recovering the action selected by the user
         action_type = self.c_operation.currentText().split(" over")[0]
 
@@ -96,7 +100,12 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         if action_type == "slice":
             # slice_index = self.slider.value()
             # action = "[" + str(slice_index) + "]"
-            action = "=" + str(self.lf_value.value())
+
+            if isinstance(self.axis, DataPattern):
+                # When working with DataPattern we must use index to give the exact value
+                action = "[" + str(self.slider.value()) + "]"
+            else:
+                action = "=" + str(self.lf_value.value())
             return self.axis_name + action + "{" + self.unit + "}", self.is_animate
 
         elif action_type == "slice (fft)":

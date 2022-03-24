@@ -382,8 +382,7 @@ def plot_3D_Data(
                 if axis.is_pattern and len(axis.values) == 1:
                     for axis_obj in self.get_axes():
                         if axis_obj.name == axis.name:
-                            axis_values = axis_obj.get_values()
-                            index = argmin(abs(axis_values - axis.values[0]))
+                            index = axis.indices[0]
 
                 title2 += axis.name + "=" + axis_str
                 if index is not None:
