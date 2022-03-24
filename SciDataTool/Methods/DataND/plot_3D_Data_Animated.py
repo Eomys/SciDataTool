@@ -51,6 +51,9 @@ def plot_3D_Data_Animated(
     # Creating a list of frames that will need to create the animation
     if isinstance(animated_axis_obj, DataPattern):
         frames_list = animated_axis_obj.get_values()
+        frames_list = [
+            "[" + str(idx_frame) + "]" for idx_frame in range(len(frames_list))
+        ]
         fps = 1
     else:
         value_max = nanmax(result[animated_axis])
@@ -58,6 +61,7 @@ def plot_3D_Data_Animated(
         variation_step = (value_max - value_min) / nb_frames
 
         frames_list = arange(start=value_min, stop=value_max, step=variation_step)
+        frames_list = ["=" + str(frame) for frame in frames_list]
 
     plot_options["is_show_fig"] = False
 
@@ -69,9 +73,7 @@ def plot_3D_Data_Animated(
     for val in frames_list:
         # plotting image
         self.plot_3D_Data(
-            *param_list,
-            animated_axis + "=" + str(val) + animated_axis_unit,
-            **plot_options
+            *param_list, animated_axis + val + animated_axis_unit, **plot_options
         )
         # Getting the figure generated with plot_2D_DATA
         fig = plt.gcf()
