@@ -599,6 +599,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         plot_arg_dict=dict(),
         is_keep_config=False,
         frozen_type=0,
+        save_path="",
+        logger=None,
     ):
         """Method to set the DDataPlotter with information given
         self : DDataPlotter
@@ -628,7 +630,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             axes_request_list=axes_request_list,
             is_keep_config=is_keep_config,
             frozen_type=frozen_type,
+            plot_arg_dict=plot_arg_dict,
             is_quiver=is_quiver,
+            save_path=save_path,
+            logger=logger,
         )
 
     def showEvent(self, ev):
