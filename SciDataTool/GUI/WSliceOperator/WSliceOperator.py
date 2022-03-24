@@ -55,6 +55,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.current_dialog = None
         self.indices = None
         self.is_animate = False  # boolean to define if an animation must on this axis (must be on slice)
+        self.is_pattern = False  # Detecting if the axis is a DataPattern (important for handling of slice + slider + lf_value)
 
         self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
@@ -89,9 +90,6 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         string
             name of the current action selected
         """
-        # Relative import of DataPattern to prevent circular import
-        module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
-        DataPattern = getattr(module, "DataPattern")
 
         # Recovering the action selected by the user
         action_type = self.c_operation.currentText().split(" over")[0]
@@ -101,11 +99,12 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             # slice_index = self.slider.value()
             # action = "[" + str(slice_index) + "]"
 
-            if isinstance(self.axis, DataPattern):
+            if self.is_pattern:
                 # When working with DataPattern we must use index to give the exact value
                 action = "[" + str(self.slider.value()) + "]"
             else:
                 action = "=" + str(self.lf_value.value())
+
             return self.axis_name + action + "{" + self.unit + "}", self.is_animate
 
         elif action_type == "slice (fft)":
@@ -270,13 +269,18 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
                 else:  # already wavenumber of freqs case
                     self.axis_value = self.axis.get_values()
 
-            # Setting the initial value of the floatEdit to the minimum inside the axis
-            self.lf_value.setValue(min(self.axis_value))
-
             # Setting the axis unit
             if name in unit_dict:
                 self.unit = unit_dict[name]
-            self.in_unit.setText("[" + self.unit + "]")
+
+            if self.is_pattern:
+                # Setting the initial value of the floatEdit to the minimum slice (=1)
+                self.lf_value.setValue(1)
+                self.in_unit.setText("[-]")
+            else:
+                # Setting the initial value of the floatEdit to the minimum inside the axis
+                self.lf_value.setValue(min(self.axis_value))
+                self.in_unit.setText("[" + self.unit + "]")
 
             # Setting the slider by giving the number of index according to the size of the axis
             self.slider.setMinimum(0)
@@ -293,6 +297,15 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             string with the name of the axis that should set the WSliceOperator widget
         """
         self.axis = axis
+
+        # Relative import of DataPattern to prevent circular import
+        module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+        DataPattern = getattr(module, "DataPattern")
+
+        # Detecting if the axis is a DataPattern (important for handling of slice + slider + lf_value)
+        if isinstance(self.axis, DataPattern):
+            self.is_pattern = True
+
         if axis_request is not None:
             axis_request.corr_unit = axis_request.unit
             axis_request.get_axis(axis, True)
@@ -344,7 +357,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
         self.lf_value.blockSignals(True)
 
-        self.lf_value.setValue(self.axis_value[self.slider.value()])
+        if self.is_pattern:
+            # When working with DataPattern, we have to work with the exact value given
+            self.lf_value.setValue(self.slider.value() + 1)
+        else:
+            self.lf_value.setValue(self.axis_value[self.slider.value()])
 
         self.lf_value.blockSignals(False)
         if is_refresh:
