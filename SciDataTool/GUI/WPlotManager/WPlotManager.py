@@ -14,7 +14,7 @@ from os.path import dirname, basename, join, isfile
 from Tests import save_gui_path
 from SciDataTool.Functions.Load.import_class import import_class
 from SciDataTool.GUI.Tools.SaveGifWorker import SaveGifWorker
-
+import matplotlib.pyplot as plt
 
 from SciDataTool.GUI.WPlotManager.Ui_WPlotManager import Ui_WPlotManager
 
@@ -116,19 +116,28 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         str_format = ".gif"
 
-        # Building string of the operation selected for the name of the gif
-        if len(operations_selected) > 0:
-            operations_name = " for "
-            for ope in operations_selected:
-                operations_name += (
-                    ope.replace("{", " ").replace("}", " ").replace(".", ",")
-                )
+        if is_3D and len(plt.gcf().axes) == 2:
+            # If we are animating a 3D plot, then we must keep the axes limit
+            fig = plt.gcf()
 
-            operations_name = operations_name[:-1]
-        else:
-            operations_name = ""
+            self.param_dict["x_min"] = fig.axes[0].get_xlim()[0]
+            self.param_dict["x_max"] = fig.axes[0].get_xlim()[1]
+            self.param_dict["y_min"] = fig.axes[0].get_ylim()[0]
+            self.param_dict["y_max"] = fig.axes[0].get_ylim()[1]
 
-        # Recovering the name of the gif (changing name for animated axis)
+        # # Building string of the operation selected for the name of the gif
+        # if len(operations_selected) > 0:
+        #     operations_name = " for "
+        #     for ope in operations_selected:
+        #         operations_name += (
+        #             ope.replace("{", " ").replace("}", " ").replace(".", ",")
+        #         )
+
+        #     operations_name = operations_name[:-1]
+        # else:
+        #     operations_name = ""
+
+        # Recovering the name of the gif if not already given
         if self.default_file_path is None:
             gif_name = self.get_file_name()
         else:
