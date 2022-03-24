@@ -139,7 +139,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             if wid.axis_name == animated_axis.split("[")[0]:
                 self.l_loading = wid.l_loading
 
-        gif = join(self.save_path, gif_name + str_format)
+        gif = self.save_path + "/" + gif_name + str_format
+        gif = gif.replace("\\", "/")
 
         # Using an index to make sure that we are generating a new gif everytime
         idx = 1
@@ -202,7 +203,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         # Setting the rest of the widget and showing it
         widget.closeEvent = lambda ev: self.close_gif(ev, new_animation_label)
-        widget.setWindowTitle(gif.split("\\")[-1].replace(".gif", ""))
+        widget.setWindowTitle(gif.split("/")[-1].replace(".gif", ""))
         widget.setLayout(layout)
         if not self.is_test:
             widget.show()
