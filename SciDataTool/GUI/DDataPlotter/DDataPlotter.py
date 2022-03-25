@@ -600,14 +600,16 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                                         + "{"
                                         + axis_selected.split("{")[1]
                                     )
+                if output_range["min"] is not None:
+                    plot_arg_dict_3D["z_min"] = output_range["min"]
+                if output_range["max"] is not None:
+                    plot_arg_dict_3D["z_max"] = output_range["max"]
                 self.data.plot_3D_Data(
                     *[*axes_selected, *data_selection],
                     **plot_arg_dict_3D,
                     unit=output_range["unit"],
                     fig=self.fig,
                     ax=self.ax,
-                    z_min=output_range["min"],
-                    z_max=output_range["max"],
                     is_switch_axes=not_in_order,
                 )
 
