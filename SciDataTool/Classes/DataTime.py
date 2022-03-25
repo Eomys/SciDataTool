@@ -25,11 +25,6 @@ try:
 except ImportError as error:
     to_datadual = error
 
-try:
-    from ..Methods.DataTime.change_periodicity import change_periodicity
-except ImportError as error:
-    change_periodicity = error
-
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
@@ -63,18 +58,6 @@ class DataTime(DataND):
         )
     else:
         to_datadual = to_datadual
-    # cf Methods.DataTime.change_periodicity
-    if isinstance(change_periodicity, ImportError):
-        change_periodicity = property(
-            fget=lambda x: raise_(
-                ImportError(
-                    "Can't use DataTime method change_periodicity: "
-                    + str(change_periodicity)
-                )
-            )
-        )
-    else:
-        change_periodicity = change_periodicity
     # save and copy methods are available in all object
     save = save
     copy = copy

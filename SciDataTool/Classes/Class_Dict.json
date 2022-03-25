@@ -530,8 +530,7 @@
         "is_internal": false,
         "methods": [
             "time_to_freq",
-            "to_datadual",
-            "change_periodicity"
+            "to_datadual"
         ],
         "mother": "DataND",
         "name": "DataTime",
