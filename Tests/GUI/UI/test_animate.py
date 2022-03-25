@@ -66,7 +66,8 @@ class TestGUI(object):
         # Selection WSliceOperator + emitting signal to generate animation
         w_slice_angle = self.UI.w_plot_manager.w_axis_manager.w_slice_op[0]
         assert w_slice_angle.axis_name == "angle"
-        w_slice_angle.b_animate.clicked.emit()
+        w_slice_angle.is_animate = True
+        w_slice_angle.generateAnimation.emit()
         sleep(30)
 
         path_to_gif = self.UI.w_plot_manager.gif_path_list.pop(-1)
@@ -87,10 +88,11 @@ class TestGUI(object):
         # Selection WSliceOperator + emitting signal to generate animation
         w_slice_angle = self.UI.w_plot_manager.w_axis_manager.w_slice_op[0]
         assert w_slice_angle.axis_name == "angle"
-        w_slice_angle.b_animate.clicked.emit()
+        w_slice_angle.is_animate = True
+        w_slice_angle.generateAnimation.emit()
         sleep(30)
 
-        path_to_file_a = self.UI.w_plot_manager.gif_path_list.pop(-1)
+        path_to_file_a = self.UI.w_plot_manager.gif_path_list[-1]
 
         # Making sure that the gif are saved at the right place
         assert isfile(path_to_file_a) == True
@@ -98,10 +100,11 @@ class TestGUI(object):
         # Selection WSliceOperator + emitting signal to generate animation
         w_slice_z = self.UI.w_plot_manager.w_axis_manager.w_slice_op[1]
         assert w_slice_z.axis_name == "z"
-        w_slice_z.b_animate.clicked.emit()
+        w_slice_z.is_animate = True
+        w_slice_z.generateAnimation.emit()
         sleep(30)
 
-        path_to_file_z = self.UI.w_plot_manager.gif_path_list.pop(-1)
+        path_to_file_z = self.UI.w_plot_manager.gif_path_list[-1]
 
         # Making sure that the gif are saved at the right place
         assert isfile(path_to_file_z) == True
@@ -123,7 +126,8 @@ class TestGUI(object):
         # Selection WSliceOperator + emitting signal to generate animation
         w_slice_angle = self.UI.w_plot_manager.w_axis_manager.w_slice_op[0]
         assert w_slice_angle.axis_name == "z"
-        w_slice_angle.b_animate.clicked.emit()
+        w_slice_angle.is_animate = True
+        w_slice_angle.generateAnimation.emit()
         sleep(60)
 
         path_to_file = self.UI.w_plot_manager.gif_path_list.pop(-1)

@@ -35,12 +35,7 @@ class TestGUI(object):
         )
 
         file_name = (
-            (
-                self.UI.w_plot_manager.data.symbol
-                + data_unit
-                + "_"
-                + "_".join(param_list)
-            )
+            (self.UI.w_plot_manager.data.name)
             .replace("{", "[")
             .replace("}", "]")
             .replace(".", ",")
