@@ -7,6 +7,7 @@ from SciDataTool.Functions.Plot import axes_dict, fft_dict, ifft_dict, unit_dict
 from SciDataTool.Classes.Data import Data
 from numpy import where
 from numpy import argmin, abs as np_abs
+from os.path import join, abspath, dirname
 
 type_extraction_dict = {
     "max": "=max",
@@ -61,10 +62,10 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.lf_value.editingFinished.connect(self.update_slider)
         self.b_action.clicked.connect(self.open_filter)
-        self.b_animate.clicked.connect(self.gen_animate)
+        self.b_animate.mousePressEvent = self.gen_animate
         self.l_loading.setHidden(True)
 
-    def gen_animate(self):
+    def gen_animate(self, e):
         """Methods called after clicking on animate button that emit a signal to generate a gif on the axis selected and display it
         Parameters
         ----------

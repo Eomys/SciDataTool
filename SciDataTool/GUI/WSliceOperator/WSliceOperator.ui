@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>334</width>
-    <height>158</height>
+    <width>375</width>
+    <height>166</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,14 +86,41 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="ButtonLabel" name="b_animate">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../Resources/SDT.qrc">:/images/images/icon/play-32px.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item row="4" column="0">
-    <widget class="QPushButton" name="b_animate">
-     <property name="text">
-      <string>Animate</string>
-     </property>
-    </widget>
    </item>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -192,7 +219,14 @@
    <extends>QLineEdit</extends>
    <header>SciDataTool.GUI/Tools/FloatEdit.h</header>
   </customwidget>
+  <customwidget>
+   <class>ButtonLabel</class>
+   <extends>QLabel</extends>
+   <header>SciDataTool.GUI/Tools/ButtonLabel.h</header>
+  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../Resources/SDT.qrc"/>
+ </resources>
  <connections/>
 </ui>

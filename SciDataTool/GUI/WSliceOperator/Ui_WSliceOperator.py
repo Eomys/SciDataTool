@@ -10,13 +10,16 @@ from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
 from SciDataTool.GUI.Tools.FloatEdit import FloatEdit
+from SciDataTool.GUI.Tools.ButtonLabel import ButtonLabel
+
+from SciDataTool.GUI.Resources import SDT_rc
 
 
 class Ui_WSliceOperator(object):
     def setupUi(self, WSliceOperator):
         if not WSliceOperator.objectName():
             WSliceOperator.setObjectName(u"WSliceOperator")
-        WSliceOperator.resize(334, 158)
+        WSliceOperator.resize(375, 166)
         self.gridLayout = QGridLayout(WSliceOperator)
         self.gridLayout.setObjectName(u"gridLayout")
         self.b_action = QPushButton(WSliceOperator)
@@ -61,12 +64,22 @@ class Ui_WSliceOperator(object):
 
         self.horizontalLayout_2.addWidget(self.slider)
 
-        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
-
-        self.b_animate = QPushButton(WSliceOperator)
+        self.b_animate = ButtonLabel(WSliceOperator)
         self.b_animate.setObjectName(u"b_animate")
+        sizePolicy3 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.b_animate.sizePolicy().hasHeightForWidth())
+        self.b_animate.setSizePolicy(sizePolicy3)
+        self.b_animate.setMinimumSize(QSize(20, 20))
+        self.b_animate.setMaximumSize(QSize(20, 20))
+        self.b_animate.setFrameShadow(QFrame.Sunken)
+        self.b_animate.setPixmap(QPixmap(u":/images/images/icon/play-32px.png"))
+        self.b_animate.setScaledContents(True)
 
-        self.gridLayout.addWidget(self.b_animate, 4, 0, 1, 1)
+        self.horizontalLayout_2.addWidget(self.b_animate)
+
+        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
@@ -119,9 +132,7 @@ class Ui_WSliceOperator(object):
             QCoreApplication.translate("WSliceOperator", u"0.314", None)
         )
         self.in_unit.setText(QCoreApplication.translate("WSliceOperator", u"[m]", None))
-        self.b_animate.setText(
-            QCoreApplication.translate("WSliceOperator", u"Animate", None)
-        )
+        self.b_animate.setText("")
         self.in_name.setText(
             QCoreApplication.translate("WSliceOperator", u"angle", None)
         )

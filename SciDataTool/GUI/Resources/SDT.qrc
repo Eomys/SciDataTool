@@ -1,4 +1,5 @@
 <RCC>
   <qresource prefix="/images">
+    <file>images/icon/play-32px.png</file>
   </qresource>
 </RCC>
