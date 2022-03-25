@@ -100,6 +100,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             Dictionnary with arguments that must be given to the plot
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
+        save_path : str
+            path to the folder where the animations are saved
+        logger : logger
+            logger used to print path to animation (if None using print instead)
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
 
         # Build the interface according to the .ui file
@@ -572,6 +578,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         frozen_type=0,
         save_path="",
         logger=None,
+        path_to_image=None,
     ):
         """Method to set the DDataPlotter with information given
         self : DDataPlotter
@@ -584,6 +591,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             Dictionnary with arguments that must be given to the plot
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
+        save_path : str
+            path to the folder where the animations are saved
+        logger : logger
+            logger used to print path to animation (if None using print instead)
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
 
         self.plot_arg_dict = plot_arg_dict
@@ -605,6 +618,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             is_quiver=is_quiver,
             save_path=save_path,
             logger=logger,
+            path_to_image=path_to_image,
         )
 
     def showEvent(self, ev):

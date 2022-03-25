@@ -268,6 +268,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
         # Setting path to recover the image for the animate button
         self.path_to_image = path_to_image

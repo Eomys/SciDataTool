@@ -85,6 +85,89 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.w_axis_manager.generateAnimation.connect(self.gen_animate)
         self.w_range.refreshNeeded.connect(self.auto_update)
 
+    def auto_update(self):
+        """Method that update range before sending the signal to update the plot. The auto-refresh policy will be handled in the DDataPlotter
+        Parameters
+        ----------
+        self : WPlotManager
+            a WPlotManager object
+
+        """
+        self.updatePlot.emit()
+
+    def close_gif(self, ev, animation_label_closed):
+        """Stops the gif and closes the pop up running"""
+
+        for idx in range(len(self.gif_widget_list)):
+
+            animation_label = self.gif_widget_list[idx][1]
+
+            if animation_label == animation_label_closed:
+                gif_widget = self.gif_widget_list[idx][0]
+                widget = self.gif_widget_list[idx][3]
+                break
+
+        # Stopping the animation and resetting the gif widget (QMovie)
+        gif_widget.stop()
+        gif_widget.setParent(None)
+        gif_widget = None
+        # Closing and resetting to None the windows that pops up to show animation
+        animation_label.close()
+        animation_label.setParent(None)
+        animation_label = None
+
+        # Closing the widget containing the animation
+        widget.close()
+        widget.setParent(None)
+        widget = None
+
+        # Removing the animation from the list
+        self.gif_widget_list.pop(idx)
+
+    def close_all_gif(self):
+        """Method used to close all the gif currently running. Only used in test for now"""
+
+        for _, _, _, widget in self.gif_widget_list:
+            widget.close()
+
+    def display_gif(self, gif):
+        "Method that create a display an animation and store it inside gif_widget_list"
+
+        # Creating widget and layout that will contain the animation and its path
+        widget = QWidget()
+        layout = QVBoxLayout()
+
+        # Adding the animation (QMovie inside a QLabel) inside the widget
+        new_gif_widget = QMovie(gif, QByteArray(), self)
+        new_gif_widget.setCacheMode(QMovie.CacheAll)
+        new_gif_widget.setSpeed(100)
+        # set up the movie screen on a label
+        new_animation_label = QLabel(self, Qt.Window)
+
+        # expand and center the label
+        new_animation_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        new_animation_label.setAlignment(Qt.AlignCenter)
+        new_animation_label.setMovie(new_gif_widget)
+        new_gif_widget.start()
+
+        layout.addWidget(new_animation_label)
+
+        # Setting size of the widget showing the animation to the size of the gif
+        widget.setFixedSize(new_gif_widget.currentImage().size())
+
+        # Setting the rest of the widget and showing it
+        widget.closeEvent = lambda ev: self.close_gif(ev, new_animation_label)
+        widget.setWindowTitle(gif.split("/")[-1].replace(".gif", ""))
+        widget.setLayout(layout)
+        if not self.is_test:
+            widget.show()
+
+        # Hiding the "Generating..." label
+        self.l_loading.setHidden(True)
+
+        # Adding the animation to the list
+        self.gif_widget_list.append([new_gif_widget, new_animation_label, gif, widget])
+
     def gen_animate(self):
         """Methods called after clicking on animate button to generate a gif on the axis selected and display it
         Parameters
@@ -133,18 +216,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.param_dict["z_min"] = fig.axes[1].dataLim.extents[0]
             self.param_dict["z_max"] = fig.axes[1].dataLim.extents[-1]
 
-        # # Building string of the operation selected for the name of the gif
-        # if len(operations_selected) > 0:
-        #     operations_name = " for "
-        #     for ope in operations_selected:
-        #         operations_name += (
-        #             ope.replace("{", " ").replace("}", " ").replace(".", ",")
-        #         )
-
-        #     operations_name = operations_name[:-1]
-        # else:
-        #     operations_name = ""
-
         # Recovering the name of the gif if not already given
         if self.default_file_path is None:
             gif_name = self.get_file_name()
@@ -192,89 +263,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         # Showing "Generating..." under the animate button
         self.l_loading.setHidden(False)
-
-    def display_gif(self, gif):
-        "Method that create a display an animation and store it inside gif_widget_list"
-
-        # Creating widget and layout that will contain the animation and its path
-        widget = QWidget()
-        layout = QVBoxLayout()
-
-        # Adding the animation (QMovie inside a QLabel) inside the widget
-        new_gif_widget = QMovie(gif, QByteArray(), self)
-        new_gif_widget.setCacheMode(QMovie.CacheAll)
-        new_gif_widget.setSpeed(100)
-        # set up the movie screen on a label
-        new_animation_label = QLabel(self, Qt.Window)
-
-        # expand and center the label
-        new_animation_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        new_animation_label.setAlignment(Qt.AlignCenter)
-        new_animation_label.setMovie(new_gif_widget)
-        new_gif_widget.start()
-
-        layout.addWidget(new_animation_label)
-
-        # Setting size of the widget showing the animation to the size of the gif
-        widget.setFixedSize(new_gif_widget.currentImage().size())
-
-        # Setting the rest of the widget and showing it
-        widget.closeEvent = lambda ev: self.close_gif(ev, new_animation_label)
-        widget.setWindowTitle(gif.split("/")[-1].replace(".gif", ""))
-        widget.setLayout(layout)
-        if not self.is_test:
-            widget.show()
-
-        # Hiding the "Generating..." label
-        self.l_loading.setHidden(True)
-
-        # Adding the animation to the list
-        self.gif_widget_list.append([new_gif_widget, new_animation_label, gif, widget])
-
-    def close_gif(self, ev, animation_label_closed):
-        """Stops the gif and closes the pop up running"""
-
-        for idx in range(len(self.gif_widget_list)):
-
-            animation_label = self.gif_widget_list[idx][1]
-
-            if animation_label == animation_label_closed:
-                gif_widget = self.gif_widget_list[idx][0]
-                widget = self.gif_widget_list[idx][3]
-                break
-
-        # Stopping the animation and resetting the gif widget (QMovie)
-        gif_widget.stop()
-        gif_widget.setParent(None)
-        gif_widget = None
-        # Closing and resetting to None the windows that pops up to show animation
-        animation_label.close()
-        animation_label.setParent(None)
-        animation_label = None
-
-        # Closing the widget containing the animation
-        widget.close()
-        widget.setParent(None)
-        widget = None
-
-        # Removing the animation from the list
-        self.gif_widget_list.pop(idx)
-
-    def close_all_gif(self):
-        """Method used to close all the gif currently running. Only used in test for now"""
-
-        for _, _, _, widget in self.gif_widget_list:
-            widget.close()
-
-    def auto_update(self):
-        """Method that update range before sending the signal to update the plot. The auto-refresh policy will be handled in the DDataPlotter
-        Parameters
-        ----------
-        self : WPlotManager
-            a WPlotManager object
-
-        """
-        self.updatePlot.emit()
 
     def get_file_name(self):
         """Method that create the name of the file with the name of the field selected"""
@@ -401,7 +389,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         plot_arg_dict : dict
             Dictionnary with arguments that must be given to the plot (used for animated plot)
         save_path : str
-           path to the folder where the animation are stored
+            path to the folder where the animations are saved
+        logger : logger
+            logger used to print path to animation (if None using print instead)
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
         # Recovering the object that we want to show and how we want to show it
         self.data = data

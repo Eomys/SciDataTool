@@ -47,6 +47,8 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             a WSliceOperator object
         parent : QWidget
             The parent QWidget
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
 
         # Build the interface according to the .ui file
