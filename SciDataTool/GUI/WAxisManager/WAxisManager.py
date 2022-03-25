@@ -235,7 +235,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         ]:
             action_selected = self.w_axis_1.get_current_action_name()
             self.w_axis_2.set_action(action_selected)
-            self.gen_slice_op()
+
         elif axis_changed == "axis 2" and "FFT" in [
             self.w_axis_2.c_action.itemText(i)
             for i in range(self.w_axis_2.c_action.count())
@@ -243,6 +243,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             action_selected = self.w_axis_2.get_current_action_name()
             self.w_axis_1.set_action(action_selected)
             self.gen_slice_op()
+
+        self.gen_slice_op()
 
     def set_axis_widgets(
         self,
