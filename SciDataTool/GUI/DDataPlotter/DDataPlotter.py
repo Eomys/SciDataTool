@@ -553,6 +553,17 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         component_list=component_list,
                     )
                 else:
+                    if "axis_data" in plot_arg_dict_2D:
+                        for axis_name in plot_arg_dict_2D["axis_data"]:
+                            for i, axis_selected in enumerate(axes_selected):
+                                if axis_name in axis_selected:
+                                    if "axis_data" not in axis_selected:
+                                        axes_selected[i] = (
+                                            axis_selected.split("{")[0]
+                                            + "=axis_data"
+                                            + "{"
+                                            + axis_selected.split("{")[1]
+                                        )
                     self.data.plot_2D_Data(
                         *[*axes_selected, *data_selection],
                         **plot_arg_dict_2D,
@@ -570,6 +581,17 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         del plot_arg_dict_3D[param]
                 if "is_2D_view" not in self.plot_arg_dict:
                     self.plot_arg_dict["is_2D_view"] = True
+                if "axis_data" in plot_arg_dict_3D:
+                    for axis_name in plot_arg_dict_3D["axis_data"]:
+                        for i, axis_selected in enumerate(axes_selected):
+                            if axis_name in axis_selected:
+                                if "axis_data" not in axis_selected:
+                                    axes_selected[i] = (
+                                        axis_selected.split("{")[0]
+                                        + "=axis_data"
+                                        + "{"
+                                        + axis_selected.split("{")[1]
+                                    )
                 self.data.plot_3D_Data(
                     *[*axes_selected, *data_selection],
                     **plot_arg_dict_3D,

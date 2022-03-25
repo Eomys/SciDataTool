@@ -186,7 +186,9 @@ def plot_3D_Data(
                 is_flat=True,
             )
     else:
-        result = self.get_along(*arg_list_along, unit=unit, is_norm=is_norm)
+        result = self.get_along(
+            *arg_list_along, axis_data=axis_data, unit=unit, is_norm=is_norm
+        )
 
     if type_plot == "scatter" and not is_fft:
         is_fft = True

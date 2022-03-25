@@ -493,9 +493,11 @@ def plot_2D_Data(
             if arg_list_ovl[i] == 0:
                 arg_list_ovl[i] = arg
         if is_fft or "dB" in unit:
-            result = self.get_magnitude_along(*arg_list_ovl, unit=unit)
+            result = self.get_magnitude_along(
+                *arg_list_ovl, unit=unit, axis_data=axis_data
+            )
         else:
-            result = self.get_along(*arg_list_ovl, unit=unit)
+            result = self.get_along(*arg_list_ovl, unit=unit, axis_data=axis_data)
         Y_overall = result[self.symbol]
         # in string case not overlay, Xdatas is a linspace
         if (
