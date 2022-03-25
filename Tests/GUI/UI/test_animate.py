@@ -14,45 +14,45 @@ class TestGUI(object):
     @classmethod
     def setup_class(cls):
         """Run at the begining of every test to setup the gui"""
-        # if not QtWidgets.QApplication.instance():
-        #     cls.app = QtWidgets.QApplication(sys.argv)
-        # else:
-        #     cls.app = QtWidgets.QApplication.instance()
+        if not QtWidgets.QApplication.instance():
+            cls.app = QtWidgets.QApplication(sys.argv)
+        else:
+            cls.app = QtWidgets.QApplication.instance()
 
-        Slice = DataPattern(
-            name="z",
-            unit="m",
-            values=[-1, -0.5],
-            is_step=True,
-            values_whole=[-1, -0.5, 0.5, 1],
-            rebuild_indices=[0, 1, 1, 0],
-            unique_indices=[0, 1, 1, 0],
-        )
+        # Slice = DataPattern(
+        #     name="z",
+        #     unit="m",
+        #     values=[-1, -0.5],
+        #     is_step=True,
+        #     values_whole=[-1, -0.5, 0.5, 1],
+        #     rebuild_indices=[0, 1, 1, 0],
+        #     unique_indices=[0, 1, 1, 0],
+        # )
 
-        f = 50
-        Nt_tot = 16
-        Na_tot = 20
+        # f = 50
+        # Nt_tot = 16
+        # Na_tot = 20
 
-        Time = DataLinspace(
-            name="time", unit="s", initial=0, final=1 / (2 * f), number=Nt_tot
-        )
-        Angle = DataLinspace(
-            name="angle", unit="rad", initial=0, final=2 * pi, number=Na_tot
-        )
-        Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3)
+        # Time = DataLinspace(
+        #     name="time", unit="s", initial=0, final=1 / (2 * f), number=Nt_tot
+        # )
+        # Angle = DataLinspace(
+        #     name="angle", unit="rad", initial=0, final=2 * pi, number=Na_tot
+        # )
+        # Z = DataLinspace(name="z", unit="m", initial=-1, final=1, number=3)
 
-        field = random((Nt_tot, Na_tot, 2))
+        # field = random((Nt_tot, Na_tot, 2))
 
-        Field = DataTime(
-            name="Airgap flux density",
-            symbol="B_r",
-            unit="T",
-            axes=[Time, Angle, Slice],
-            values=field,
-        )
+        # Field = DataTime(
+        #     name="Airgap flux density",
+        #     symbol="B_r",
+        #     unit="T",
+        #     axes=[Time, Angle, Slice],
+        #     values=field,
+        # )
 
         cls.Field = Field
-        cls.UI = cls.Field.plot(is_show_fig=True, is_create_appli=True)
+        cls.UI = cls.Field.plot(is_show_fig=False, is_create_appli=False)
 
     @classmethod
     def teardown_class(cls):
