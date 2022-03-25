@@ -22,7 +22,6 @@ except ImportError as error:
 
 
 from ._check import InitUnKnowClassError
-from .Normalization import Normalization
 
 
 class Data(FrozenClass):

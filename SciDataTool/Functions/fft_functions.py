@@ -353,9 +353,14 @@ def comp_ifftn(values, axes_list, is_real=True):
             if axis.input_data is not None and len(axis.input_data) > 1:
                 if not is_uniform(axis.input_data):
                     # Data is at least non uniform in "space"
+                    corr_values = (
+                        axis.corr_values
+                        if axis.name == "time"
+                        else axis.corr_values / (2 * pi)
+                    )
                     axes_dict_non_uniform[axis.index] = [
                         axis.input_data,
-                        axis.corr_values,
+                        corr_values,
                     ]
                     # Keep only interpolation data
                     axis.values = axis.input_data

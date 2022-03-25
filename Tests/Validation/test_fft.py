@@ -860,6 +860,32 @@ def test_fft2_anti_period_random():
 
 
 @pytest.mark.validation
+def test_fft2_interp():
+    f = 50
+    time = np.linspace(0, 1 / (2 * f), 10, endpoint=False)
+    Time = Data1D(name="time", unit="s", values=time, symmetries={"antiperiod": 4})
+    angle = np.linspace(0, 2 * np.pi / 4, 20, endpoint=False)
+    Angle = Data1D(name="angle", unit="rad", values=angle, symmetries={"period": 4})
+
+    field = np.random.random((10, 20))
+
+    Field = DataTime(
+        name="field",
+        symbol="X",
+        axes=[Time, Angle],
+        values=field,
+        unit="m",
+    )
+
+    Field_FT = Field.time_to_freq()
+    angle_interp = np.linspace(0, 2 * np.pi, 50, endpoint=False)
+    result = Field_FT.get_along(
+        "angle=axis_data", "time", axis_data={"angle": angle_interp}
+    )
+    assert result["X"].shape == (40, 50)
+
+
+@pytest.mark.validation
 def test_fft1d_non_uniform(per_a=2, is_apera=True, is_add_zero_freq=True):
     """check non uniform fft1d
     TODO: solve bug for a single frequency vector"""
@@ -936,5 +962,6 @@ def test_fft1d_non_uniform(per_a=2, is_apera=True, is_add_zero_freq=True):
 
 if __name__ == "__main__":
     # test_ifft2d_period()
-    test_fft1d_non_uniform(is_add_zero_freq=True)
-    test_fft1d_non_uniform(is_add_zero_freq=False)
+    # test_fft1d_non_uniform(is_add_zero_freq=True)
+    # test_fft1d_non_uniform(is_add_zero_freq=False)
+    test_fft2_interp()

@@ -66,6 +66,11 @@ except ImportError as error:
     _set_values = error
 
 try:
+    from ..Methods.DataND.change_referential import change_referential
+except ImportError as error:
+    change_referential = error
+
+try:
     from ..Methods.DataND.compare_along import compare_along
 except ImportError as error:
     compare_along = error
@@ -158,7 +163,6 @@ except ImportError as error:
 
 from numpy import array, array_equal
 from ._check import InitUnKnowClassError
-from .Normalization import Normalization
 
 
 class DataND(Data):
@@ -270,6 +274,18 @@ class DataND(Data):
         )
     else:
         _set_values = _set_values
+    # cf Methods.DataND.change_referential
+    if isinstance(change_referential, ImportError):
+        change_referential = property(
+            fget=lambda x: raise_(
+                ImportError(
+                    "Can't use DataND method change_referential: "
+                    + str(change_referential)
+                )
+            )
+        )
+    else:
+        change_referential = change_referential
     # cf Methods.DataND.compare_along
     if isinstance(compare_along, ImportError):
         compare_along = property(
