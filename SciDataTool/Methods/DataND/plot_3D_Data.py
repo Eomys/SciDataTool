@@ -63,6 +63,7 @@ def plot_3D_Data(
     annotation_delim=None,
     marker_color="k",
     is_shading_flat=None,
+    is_hide_annotation=False,
 ):
     """Plots a field as a function of two axes
 
@@ -551,6 +552,7 @@ def plot_3D_Data(
                 annotations=annotations,
                 annotation_threshold=annotation_threshold,
                 marker_color=marker_color,
+                is_hide_annotation=is_hide_annotation,
             )
         else:
             plot_3D(

@@ -216,6 +216,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 for child in self.ax.get_children()
                 if isinstance(child, Annotation)
             ]
+            is_annot = True
             X_str = None
             if (
                 ind is not None
@@ -225,6 +226,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             ):
                 if annotations[ind[0]]._x == x:
                     X_str = annotations[ind[0]]._text
+                    is_annot = False
             else:
                 # Use ticklabels
                 try:
@@ -329,6 +331,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     Z_str = format(z, ".4g")
 
                 label += sep + zlabel + " = " + Z_str + " " + zunit
+
+            # Add hidden annotations
+            if annotations != [] and not annotations[0]._visible and is_annot:
+                for annotation in annotations:
+                    if annotation._x == x and annotation._y == y:
+                        label += sep + annotation._text
 
             # Remove latex marks for top right corner
             if sep == ", ":
