@@ -1,4 +1,5 @@
 from PySide2.QtWidgets import QWidget
+from PySide2.QtGui import QPixmap
 
 from SciDataTool.GUI.WSliceOperator.Ui_WSliceOperator import Ui_WSliceOperator
 from SciDataTool.GUI.WFilter.WFilter import WFilter
@@ -37,7 +38,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
     refreshNeeded = Signal()
     generateAnimation = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, path_to_image=None):
         """Initialize the GUI according to info given by the WAxisManager widget
 
         Parameters
@@ -58,6 +59,13 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.is_animate = False  # boolean to define if an animation must on this axis (must be on slice)
         self.is_pattern = False  # Detecting if the axis is a DataPattern (important for handling of slice + slider + lf_value)
 
+        # Setting path to recover the image for the animate button
+        if path_to_image is None:
+            self.path_to_image = u":/images/images/icon/play-32px.png"
+        else:
+            self.path_to_image = path_to_image + "/images/icon/play-32px.png"
+
+        self.b_animate.setPixmap(QPixmap(self.path_to_image))
         self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.lf_value.editingFinished.connect(self.update_slider)

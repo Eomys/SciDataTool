@@ -112,9 +112,6 @@
        <property name="text">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap resource="../Resources/SDT.qrc">:/images/images/icon/play-32px.png</pixmap>
-       </property>
        <property name="scaledContents">
         <bool>true</bool>
        </property>

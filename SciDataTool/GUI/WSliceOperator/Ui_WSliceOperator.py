@@ -74,7 +74,6 @@ class Ui_WSliceOperator(object):
         self.b_animate.setMinimumSize(QSize(20, 20))
         self.b_animate.setMaximumSize(QSize(20, 20))
         self.b_animate.setFrameShadow(QFrame.Sunken)
-        self.b_animate.setPixmap(QPixmap(u":/images/images/icon/play-32px.png"))
         self.b_animate.setScaledContents(True)
 
         self.horizontalLayout_2.addWidget(self.b_animate)

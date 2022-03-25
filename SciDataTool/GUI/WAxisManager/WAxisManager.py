@@ -45,6 +45,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.setupUi(self)
 
         self.axes_list = list()
+        self.path_to_image = None
 
         # Managing the signal emitted by the WAxisSelector widgets
         self.w_axis_1.axisChanged.connect(self.axis_1_updated)
@@ -123,7 +124,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_slice_op = list()
 
             for axis in axes_gen:
-                temp = WSliceOperator(self.g_data_extract)
+                temp = WSliceOperator(
+                    self.g_data_extract, path_to_image=self.path_to_image
+                )
                 temp.setObjectName(axis)
                 for i, ax in enumerate(self.axes_list):
                     if (
@@ -252,6 +255,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_request_list,
         frozen_type=0,
         is_keep_config=False,
+        path_to_image=None,
     ):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
@@ -265,6 +269,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
         """
+        # Setting path to recover the image for the animate button
+        self.path_to_image = path_to_image
+
         if is_keep_config:  # Only update slider
             for wid in self.w_slice_op:
                 if hasattr(wid, "axis_value"):

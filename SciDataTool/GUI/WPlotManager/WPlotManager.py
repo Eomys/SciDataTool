@@ -67,6 +67,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.default_file_path = None  # Path to export in csv
         self.param_dict = dict()  # Dict with param for animation to animation
         self.save_path = save_gui_path  # Path to directory where animation are stored
+        self.path_to_image = None  # Path to recover the image for the animate button
 
         self.is_test = False  # Used in test to disable showing the animation
         self.gif_path_list = list()  # List of path to the gifs created (used in test)
@@ -375,6 +376,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         plot_arg_dict=dict(),
         save_path="",
         logger=None,
+        path_to_image=None,
     ):
         """Method that use the info given by DDataPlotter to setup the widget
 
@@ -408,6 +410,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.save_path = save_path
 
         self.logger = logger
+        self.path_to_image = path_to_image
 
         # Dynamic import to avoid import loop
         VectorField = import_class("SciDataTool.Classes", "VectorField")
@@ -438,6 +441,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             axes_request_list,
             frozen_type,
             is_keep_config=is_keep_config,
+            path_to_image=self.path_to_image,
         )
         self.update_range(
             unit=unit,

@@ -74,6 +74,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         plot_arg_dict=dict(),
         save_path="",
         logger=None,
+        path_to_image=None,
     ):
         """Initialize the UI according to the input given by the user
 
@@ -140,6 +141,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             plot_arg_dict=plot_arg_dict,
             save_path=save_path,
             logger=logger,
+            path_to_image=path_to_image,
         )
 
         # Building the interaction with the UI itself
