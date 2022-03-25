@@ -12,8 +12,9 @@ from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
 from matplotlib.text import Annotation
 from numpy import array
-from SciDataTool.Functions.Plot import ifft_dict, fft_dict
+from SciDataTool.Functions.is_axes_in_order import is_axes_in_order
 from SciDataTool.Functions.Plot import TEXT_BOX
+
 
 SYMBOL_DICT = {
     "time": "t",
@@ -486,42 +487,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         ] = self.w_plot_manager.get_plot_info()
 
         # Checking if the axes are following the order inside the data object
-        axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
-        axes_name = [ax.name for ax in self.data.get_axes()]
         not_in_order = False
 
         if len(axes_selected) == 2:
-            if (
-                axes_selected_parsed[0].name in axes_name
-                and axes_selected_parsed[1].name in axes_name
-            ):
-                if axes_name.index(axes_selected_parsed[0].name) > axes_name.index(
-                    axes_selected_parsed[1].name
-                ):
-                    not_in_order = True
-                    axes_selected = [axes_selected[1], axes_selected[0]]
-
-            elif (
-                axes_selected_parsed[0].name in ifft_dict
-                and axes_selected_parsed[1].name in ifft_dict
-            ):
-                if axes_name.index(
-                    ifft_dict[axes_selected_parsed[0].name]
-                ) > axes_name.index(ifft_dict[axes_selected_parsed[1].name]):
-
-                    not_in_order = True
-                    axes_selected = [axes_selected[1], axes_selected[0]]
-
-            elif (
-                axes_selected_parsed[0].name in fft_dict
-                and axes_selected_parsed[1].name in fft_dict
-            ):
-                if axes_name.index(
-                    fft_dict[axes_selected_parsed[0].name]
-                ) > axes_name.index(fft_dict[axes_selected_parsed[1].name]):
-
-                    not_in_order = True
-                    axes_selected = [axes_selected[1], axes_selected[0]]
+            not_in_order, axes_selected = is_axes_in_order(axes_selected, self.data)
 
         if not None in data_selection:
             if len(axes_selected) == 1:

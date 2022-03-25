@@ -13,6 +13,7 @@ from PySide2.QtWidgets import (
 from os.path import dirname, basename, join, isfile
 from Tests import save_gui_path
 from SciDataTool.Functions.Load.import_class import import_class
+from SciDataTool.Functions.is_axes_in_order import is_axes_in_order
 from SciDataTool.GUI.Tools.SaveGifWorker import SaveGifWorker
 import matplotlib.pyplot as plt
 
@@ -100,6 +101,10 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         is_3D = len(axes_selected) == 2
 
+        if is_3D:
+            not_in_order, axes_selected = is_axes_in_order(axes_selected, self.data)
+            self.param_dict["is_switch_axes"] = not_in_order
+
         # Recovering the axis to animate (operation axis with "to_animate")
         for idx_ope in range(len(operations_selected)):
             ope = operations_selected[idx_ope]
@@ -124,6 +129,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.param_dict["x_max"] = fig.axes[0].get_xlim()[1]
             self.param_dict["y_min"] = fig.axes[0].get_ylim()[0]
             self.param_dict["y_max"] = fig.axes[0].get_ylim()[1]
+            self.param_dict["z_min"] = fig.axes[1].dataLim.extents[0]
+            self.param_dict["z_max"] = fig.axes[1].dataLim.extents[-1]
 
         # # Building string of the operation selected for the name of the gif
         # if len(operations_selected) > 0:
