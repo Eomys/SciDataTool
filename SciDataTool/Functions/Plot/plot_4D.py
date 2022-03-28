@@ -49,6 +49,7 @@ def plot_4D(
     grid_xlw=None,
     grid_ylw=None,
     marker_color="k",
+    is_hide_annotation=False,
 ):
     """Plots a 4D graph
 
@@ -216,6 +217,7 @@ def plot_4D(
                         (Xdata[i], Ydata[i]),
                         rotation=45,
                         family=font_name,
+                        visible=not is_hide_annotation,
                     )
 
     elif type_plot == "scatterX":

@@ -203,6 +203,7 @@ def get_axis(self, axis, is_real):
                 "integrate_local",
                 "derivate",
                 "antiderivate",
+                "axis_data",
             ]:
                 values = rebuild_symmetries_axis(values, axis.symmetries)
         # Interpolate axis with input data

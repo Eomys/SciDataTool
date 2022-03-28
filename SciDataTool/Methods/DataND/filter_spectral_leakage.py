@@ -168,7 +168,9 @@ def filter_spectral_leakage(
             )
 
         # Copy other axes
-        if "angle" in [axis.name for axis in self.axes]:
+        if "angle" in [axis.name for axis in self.axes] or "wavenumber" in [
+            axis.name for axis in self.axes
+        ]:
             n = 2
         else:
             n = 1

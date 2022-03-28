@@ -112,10 +112,13 @@ def read_input_strings(args, axis_data):
         elif "axis_data" in axis_str:
             elems = axis_str.split("=axis_data")
             name = elems[0]
-            extension = "axis_data"
-            try:
-                input_data = axis_data[name]
-            except Exception:
+            if name in axis_data:
+                if axis_data[name] is not None:
+                    extension = "axis_data"
+                    input_data = axis_data[name]
+                else:
+                    extension = "whole"
+            else:
                 raise AxisError("No axis_data provided")
         # Detect above
         elif ">" in axis_str:
