@@ -242,11 +242,19 @@ def plot_3D(
             cmap=colormap,
             picker=10,
         )
-        im.set_data(Xdata, Ydata, Zdata.T)
+        if Zdata.shape[0] == Xdata.size:
+            im.set_data(Xdata, Ydata, Zdata.T)
+        else:
+            # Enabling transposition
+            im.set_data(Xdata, Ydata, Zdata)
         im.set_clim(z_min, z_max)
         ax.images.append(im)
         if is_contour:
-            ax.contour(Xdata, Ydata, Zdata.T, colors="black", linewidths=0.8)
+            if Zdata.shape[0] == Xdata.size:
+                ax.contour(Xdata, Ydata, Zdata.T, colors="black", linewidths=0.8)
+            else:
+                # Enabling transposition
+                ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8)
         clb = fig.colorbar(im, ax=ax, format=clb_format)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)

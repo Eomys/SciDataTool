@@ -21,7 +21,6 @@ except ImportError as error:
     normalize = error
 
 
-from numpy import isnan
 from ._check import InitUnKnowClassError
 
 

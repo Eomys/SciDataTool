@@ -41,9 +41,7 @@ except ImportError as error:
     get_periodicity = error
 
 
-from numpy import isnan
 from ._check import InitUnKnowClassError
-from .Normalization import Normalization
 
 
 class DataLinspace(Data):
@@ -239,32 +237,11 @@ class DataLinspace(Data):
 
         # Check the properties inherited from Data
         diff_list.extend(super(DataLinspace, self).compare(other, name=name))
-        if (
-            other._initial is not None
-            and self._initial is not None
-            and isnan(other._initial)
-            and isnan(self._initial)
-        ):
-            pass
-        elif other._initial != self._initial:
+        if other._initial != self._initial:
             diff_list.append(name + ".initial")
-        if (
-            other._final is not None
-            and self._final is not None
-            and isnan(other._final)
-            and isnan(self._final)
-        ):
-            pass
-        elif other._final != self._final:
+        if other._final != self._final:
             diff_list.append(name + ".final")
-        if (
-            other._step is not None
-            and self._step is not None
-            and isnan(other._step)
-            and isnan(self._step)
-        ):
-            pass
-        elif other._step != self._step:
+        if other._step != self._step:
             diff_list.append(name + ".step")
         if other._number != self._number:
             diff_list.append(name + ".number")

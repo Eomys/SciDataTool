@@ -362,6 +362,7 @@
             "_interpolate",
             "_rebuild_symmetries",
             "_set_values",
+            "change_referential",
             "compare_along",
             "compare_magnitude_along",
             "compare_phase_along",
@@ -898,6 +899,8 @@
         "desc": "Class for 2D or 3D vector fields (time or frequency domain)",
         "is_internal": false,
         "methods": [
+            "change_periodicity",
+            "change_referential",
             "filter_spectral_leakage",
             "freq_to_time",
             "get_axes",

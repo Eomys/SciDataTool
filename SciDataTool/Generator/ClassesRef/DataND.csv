@@ -9,6 +9,7 @@ is_real,,To indicate if the signal is real (use only positive frequencies),,bool
 ,,,,,,,,,,,_interpolate,,,,
 ,,,,,,,,,,,_rebuild_symmetries,,,,
 ,,,,,,,,,,,_set_values,,,,
+,,,,,,,,,,,change_referential,,,,
 ,,,,,,,,,,,compare_along,,,,
 ,,,,,,,,,,,compare_magnitude_along,,,,
 ,,,,,,,,,,,compare_phase_along,,,,
