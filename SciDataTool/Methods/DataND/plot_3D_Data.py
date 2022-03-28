@@ -17,6 +17,8 @@ from numpy import (
     linspace,
     log10,
     array,
+    ceil,
+    floor,
 )
 
 
@@ -224,12 +226,18 @@ def plot_3D_Data(
             if is_fft:
                 z_min = 0
             else:
-                z_min = np_min(Zdata)
+                if "dB" in unit:
+                    z_min = floor(np_min(Zdata))
+                else:
+                    z_min = np_min(Zdata)
         if z_max is None:
             z_max = np_max(Zdata)
     else:
         if z_min is None and z_max is None:
-            z_max = np_max(Zdata)
+            if "dB" in unit:
+                z_max = ceil(np_max(Zdata))
+            else:
+                z_max = np_max(Zdata)
         if z_max is None:
             z_max = z_min + z_range
         if z_min is None:
