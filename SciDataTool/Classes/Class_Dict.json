@@ -379,7 +379,8 @@
             "plot",
             "plot_2D_Data",
             "plot_2D_Data_Animated",
-            "plot_3D_Data"
+            "plot_3D_Data",
+            "plot_3D_Data_Animated"
         ],
         "mother": "Data",
         "name": "DataND",

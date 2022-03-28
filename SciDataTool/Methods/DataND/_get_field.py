@@ -20,6 +20,7 @@ def _get_field(self, axes_list):
     for axis_requested in axes_list:
         # Rebuild symmetries when needed
         axis_symmetries = self.axes[axis_requested.index].symmetries
+
         if axis_requested.is_pattern and (
             axis_requested.transform == "fft"
             or axis_requested.extension
@@ -35,7 +36,8 @@ def _get_field(self, axes_list):
                 "derivate",
                 "antiderivate",
             ]
-            and axis_requested.is_pattern
+            or axis_requested.indices not in [None, []]
+            and max(axis_requested.indices) >= values.shape[axis_requested.index]
         ):
             # DataPattern case where all values are requested
             values = take(values, axis_requested.rebuild_indices, axis_requested.index)

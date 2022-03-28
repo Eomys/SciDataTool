@@ -87,7 +87,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 axis_unit_selected += "[]"
 
         if self.norm is not None:  # Add normalization
-            axis_unit_selected += "->" + self.norm
+            axis_unit_selected += "{" + self.norm + "}"
 
         elif axis_unit_selected != "None":  # adding unit
             axis_unit_selected += "{" + self.c_unit.currentText() + "}"

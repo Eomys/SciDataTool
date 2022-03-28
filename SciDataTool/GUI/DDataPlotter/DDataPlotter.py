@@ -12,8 +12,9 @@ from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
 from matplotlib.text import Annotation
 from numpy import array
-from SciDataTool.Functions.Plot import ifft_dict, fft_dict
+from SciDataTool.Functions.is_axes_in_order import is_axes_in_order
 from SciDataTool.Functions.Plot import TEXT_BOX
+
 
 SYMBOL_DICT = {
     "time": "t",
@@ -71,6 +72,9 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         is_auto_refresh=False,
         frozen_type=0,
         plot_arg_dict=dict(),
+        save_path="",
+        logger=None,
+        path_to_image=None,
     ):
         """Initialize the UI according to the input given by the user
 
@@ -96,6 +100,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             Dictionnary with arguments that must be given to the plot
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
+        save_path : str
+            path to the folder where the animations are saved
+        logger : logger
+            logger used to print path to animation (if None using print instead)
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
 
         # Build the interface according to the .ui file
@@ -134,6 +144,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             z_max=z_max,
             frozen_type=frozen_type,
             is_quiver=is_quiver,
+            plot_arg_dict=plot_arg_dict,
+            save_path=save_path,
+            logger=logger,
+            path_to_image=path_to_image,
         )
 
         # Building the interaction with the UI itself
@@ -489,42 +503,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         ] = self.w_plot_manager.get_plot_info()
 
         # Checking if the axes are following the order inside the data object
-        axes_selected_parsed = parser.read_input_strings(axes_selected, axis_data=None)
-        axes_name = [ax.name for ax in self.data.get_axes()]
         not_in_order = False
 
         if len(axes_selected) == 2:
-            if (
-                axes_selected_parsed[0].name in axes_name
-                and axes_selected_parsed[1].name in axes_name
-            ):
-                if axes_name.index(axes_selected_parsed[0].name) > axes_name.index(
-                    axes_selected_parsed[1].name
-                ):
-                    not_in_order = True
-                    axes_selected = [axes_selected[1], axes_selected[0]]
-
-            elif (
-                axes_selected_parsed[0].name in ifft_dict
-                and axes_selected_parsed[1].name in ifft_dict
-            ):
-                if axes_name.index(
-                    ifft_dict[axes_selected_parsed[0].name]
-                ) > axes_name.index(ifft_dict[axes_selected_parsed[1].name]):
-
-                    not_in_order = True
-                    axes_selected = [axes_selected[1], axes_selected[0]]
-
-            elif (
-                axes_selected_parsed[0].name in fft_dict
-                and axes_selected_parsed[1].name in fft_dict
-            ):
-                if axes_name.index(
-                    fft_dict[axes_selected_parsed[0].name]
-                ) > axes_name.index(fft_dict[axes_selected_parsed[1].name]):
-
-                    not_in_order = True
-                    axes_selected = [axes_selected[1], axes_selected[0]]
+            not_in_order, axes_selected = is_axes_in_order(axes_selected, self.data)
 
         if not None in data_selection:
             if len(axes_selected) == 1:
@@ -626,6 +608,9 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         plot_arg_dict=dict(),
         is_keep_config=False,
         frozen_type=0,
+        save_path="",
+        logger=None,
+        path_to_image=None,
     ):
         """Method to set the DDataPlotter with information given
         self : DDataPlotter
@@ -638,6 +623,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             Dictionnary with arguments that must be given to the plot
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
+        save_path : str
+            path to the folder where the animations are saved
+        logger : logger
+            logger used to print path to animation (if None using print instead)
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
 
         self.plot_arg_dict = plot_arg_dict
@@ -655,7 +646,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             axes_request_list=axes_request_list,
             is_keep_config=is_keep_config,
             frozen_type=frozen_type,
+            plot_arg_dict=plot_arg_dict,
             is_quiver=is_quiver,
+            save_path=save_path,
+            logger=logger,
+            path_to_image=path_to_image,
         )
 
     def showEvent(self, ev):

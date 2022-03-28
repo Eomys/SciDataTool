@@ -10,3 +10,8 @@ def update_cb_enable(combobox):
         combobox.setEnabled(False)
     else:
         combobox.setEnabled(True)
+
+
+from os.path import dirname, abspath, join
+
+DATA_DIR = join(abspath(dirname(__file__)), "Results")

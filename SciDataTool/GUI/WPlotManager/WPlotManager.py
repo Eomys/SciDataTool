@@ -1,9 +1,22 @@
-from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox
-from os.path import dirname, basename
-from SciDataTool.Functions.Load.import_class import import_class
-
-
+from PySide2.QtWidgets import QWidget, QFileDialog, QMessageBox, QVBoxLayout
 from PySide2.QtCore import Signal
+from PySide2.QtCore import QByteArray, Qt
+from PySide2.QtCore import QThread
+from PySide2.QtGui import QMovie
+from PySide2.QtWidgets import (
+    QFileDialog,
+    QLabel,
+    QSizePolicy,
+    QMessageBox,
+)
+
+from os.path import dirname, basename, join, isfile
+from Tests import save_gui_path
+from SciDataTool.Functions.Load.import_class import import_class
+from SciDataTool.Functions.is_axes_in_order import is_axes_in_order
+from SciDataTool.GUI.Tools.SaveGifWorker import SaveGifWorker
+import matplotlib.pyplot as plt
+
 from SciDataTool.GUI.WPlotManager.Ui_WPlotManager import Ui_WPlotManager
 
 SYMBOL_DICT = {
@@ -51,9 +64,17 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         QWidget.__init__(self, parent=parent)
         self.setupUi(self)
 
-        self.b_animate.hide()  # Hide until connected to action
+        self.default_file_path = None  # Path to export in csv
+        self.param_dict = dict()  # Dict with param for animation to animation
+        self.save_path = save_gui_path  # Path to directory where animation are stored
+        self.path_to_image = None  # Path to recover the image for the animate button
 
-        self.default_file_path = None
+        self.is_test = False  # Used in test to disable showing the animation
+        self.gif_path_list = list()  # List of path to the gifs created (used in test)
+        self.logger = None
+
+        # Storing each animation as a list with a QMovie, a QLabel and the path to the gif inside gif_widget_list
+        self.gif_widget_list = list()
 
         # Building the interaction with the UI and the UI itself
         self.w_axis_manager.refreshRange.connect(self.update_range)
@@ -61,6 +82,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         # Linking the signals for the autoRefresh
         self.w_axis_manager.refreshNeeded.connect(self.auto_update)
+        self.w_axis_manager.generateAnimation.connect(self.gen_animate)
         self.w_range.refreshNeeded.connect(self.auto_update)
 
     def auto_update(self):
@@ -73,16 +95,181 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         """
         self.updatePlot.emit()
 
-    def get_file_name(self):
-        param_list = [
-            *self.w_axis_manager.get_axes_selected(),
-            *self.w_axis_manager.get_operation_selected(),
-        ]
-        if None in param_list:
-            param_list.remove(None)
+    def close_gif(self, ev, animation_label_closed):
+        """Stops the gif and closes the pop up running"""
 
-        file_name = self.data.symbol + "_" + "_".join(param_list)
-        file_name = file_name.replace("{", "").replace("}", "").replace(".", ",")
+        for idx in range(len(self.gif_widget_list)):
+
+            animation_label = self.gif_widget_list[idx][1]
+
+            if animation_label == animation_label_closed:
+                gif_widget = self.gif_widget_list[idx][0]
+                widget = self.gif_widget_list[idx][3]
+                break
+
+        # Stopping the animation and resetting the gif widget (QMovie)
+        gif_widget.stop()
+        gif_widget.setParent(None)
+        gif_widget = None
+        # Closing and resetting to None the windows that pops up to show animation
+        animation_label.close()
+        animation_label.setParent(None)
+        animation_label = None
+
+        # Closing the widget containing the animation
+        widget.close()
+        widget.setParent(None)
+        widget = None
+
+        # Removing the animation from the list
+        self.gif_widget_list.pop(idx)
+
+    def close_all_gif(self):
+        """Method used to close all the gif currently running. Only used in test for now"""
+
+        for _, _, _, widget in self.gif_widget_list:
+            widget.close()
+
+    def display_gif(self, gif):
+        "Method that create a display an animation and store it inside gif_widget_list"
+
+        # Creating widget and layout that will contain the animation and its path
+        widget = QWidget()
+        layout = QVBoxLayout()
+
+        # Adding the animation (QMovie inside a QLabel) inside the widget
+        new_gif_widget = QMovie(gif, QByteArray(), self)
+        new_gif_widget.setCacheMode(QMovie.CacheAll)
+        new_gif_widget.setSpeed(100)
+        # set up the movie screen on a label
+        new_animation_label = QLabel(self, Qt.Window)
+
+        # expand and center the label
+        new_animation_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        new_animation_label.setAlignment(Qt.AlignCenter)
+        new_animation_label.setMovie(new_gif_widget)
+        new_gif_widget.start()
+
+        layout.addWidget(new_animation_label)
+
+        # Setting size of the widget showing the animation to the size of the gif
+        widget.setFixedSize(new_gif_widget.currentImage().size())
+
+        # Setting the rest of the widget and showing it
+        widget.closeEvent = lambda ev: self.close_gif(ev, new_animation_label)
+        widget.setWindowTitle(gif.split("/")[-1].replace(".gif", ""))
+        widget.setLayout(layout)
+        if not self.is_test:
+            widget.show()
+
+        # Hiding the "Generating..." label
+        self.l_loading.setHidden(True)
+
+        # Adding the animation to the list
+        self.gif_widget_list.append([new_gif_widget, new_animation_label, gif, widget])
+
+    def gen_animate(self):
+        """Methods called after clicking on animate button to generate a gif on the axis selected and display it
+        Parameters
+        ----------
+        self : WPlotManager
+            a WPlotManager object
+
+        Output
+        ---------
+        None
+        """
+        # Recovering axes and operations selected
+        axes_selected = self.w_axis_manager.get_axes_selected()
+        operations_selected = self.w_axis_manager.get_operation_selected()
+
+        is_3D = len(axes_selected) == 2
+
+        if is_3D:
+            not_in_order, axes_selected = is_axes_in_order(axes_selected, self.data)
+            self.param_dict["is_switch_axes"] = not_in_order
+
+        # Recovering the axis to animate (operation axis with "to_animate")
+        for idx_ope in range(len(operations_selected)):
+            ope = operations_selected[idx_ope]
+            if "to_animate" in ope:
+                animated_axis = ope.split("to_animate")[0]
+                idx_animate = idx_ope
+
+        operations_selected.pop(idx_animate)
+
+        # Gathering the other axes and operations selected
+        plot_input = [animated_axis]
+        plot_input.extend(axes_selected)
+        plot_input.extend(operations_selected)
+
+        str_format = ".gif"
+
+        if is_3D and len(plt.gcf().axes) == 2:
+            # If we are animating a 3D plot, then we must keep the axes limit
+            fig = plt.gcf()
+
+            self.param_dict["x_min"] = fig.axes[0].get_xlim()[0]
+            self.param_dict["x_max"] = fig.axes[0].get_xlim()[1]
+            self.param_dict["y_min"] = fig.axes[0].get_ylim()[0]
+            self.param_dict["y_max"] = fig.axes[0].get_ylim()[1]
+            self.param_dict["z_min"] = fig.axes[1].dataLim.extents[0]
+            self.param_dict["z_max"] = fig.axes[1].dataLim.extents[-1]
+
+        # Recovering the name of the gif if not already given
+        if self.default_file_path is None:
+            gif_name = self.get_file_name()
+        else:
+            gif_name = self.default_file_path
+
+        # Recovering "Generating label" from the WSliceOperator with the axis that we want to animate
+        for wid in self.w_axis_manager.w_slice_op:
+            if wid.axis_name == animated_axis.split("[")[0]:
+                self.l_loading = wid.l_loading
+
+        gif = self.save_path + "/" + gif_name + str_format
+        gif = gif.replace("\\", "/")
+
+        # Using an index to make sure that we are generating a new gif everytime
+        idx = 1
+        while gif in self.gif_path_list:
+            gif = gif.split(".")[0].split("(")[0] + "(" + str(idx) + ")" + str_format
+            idx += 1
+
+        self.gif_path_list.append(gif)
+
+        # Indicating the path to the .gif in the console
+        if self.logger is not None:
+            self.logger.info("Gif stored at: " + gif)
+        else:
+            print("Gif stored at: " + gif)
+
+        # Generating a new animation each time
+        # Creating a QThread associated to the worker saving the gif
+        self.th = QThread(parent=self)
+        self.worker = SaveGifWorker(
+            widget=self, gif=gif, plot_input=plot_input, is_3D=is_3D
+        )
+        self.worker.moveToThread(self.th)
+
+        # Connecting the end of generation of GIF to display, end thread and killing process
+        self.worker.gif_available.connect(self.th.finished)
+        self.worker.gif_available.connect(lambda: self.worker.kill_worker())
+        self.worker.gif_available.connect(lambda: self.display_gif(gif))
+
+        self.th.started.connect(self.worker.run)
+        self.th.finished.connect(self.th.quit)
+        self.th.start()
+
+        # Showing "Generating..." under the animate button
+        self.l_loading.setHidden(False)
+
+    def get_file_name(self):
+        """Method that create the name of the file with the name of the field selected"""
+
+        file_name = self.data.name
+        file_name = file_name.replace("{", "[").replace("}", "]").replace(".", ",")
+
         return file_name
 
     def export(self, save_file_path=False):
@@ -102,7 +289,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             file_name = self.get_file_name()
             default_file_path = file_name + ".csv"
         else:
-            default_file_path = self.default_file_path
+            default_file_path = self.default_file_path + ".csv"
 
         # Opening a dialog window to select the directory where the file will be saved if we are not testing
         if save_file_path == False:
@@ -174,6 +361,10 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         frozen_type=0,
         is_keep_config=False,
         is_quiver=False,
+        plot_arg_dict=dict(),
+        save_path="",
+        logger=None,
+        path_to_image=None,
     ):
         """Method that use the info given by DDataPlotter to setup the widget
 
@@ -195,9 +386,23 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             Minimum value for Z axis (or Y if only one axe)
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
+        plot_arg_dict : dict
+            Dictionnary with arguments that must be given to the plot (used for animated plot)
+        save_path : str
+            path to the folder where the animations are saved
+        logger : logger
+            logger used to print path to animation (if None using print instead)
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
-        # Recovering the object that we want to show
+        # Recovering the object that we want to show and how we want to show it
         self.data = data
+        self.param_dict = plot_arg_dict.copy()
+        if save_path != "":
+            self.save_path = save_path
+
+        self.logger = logger
+        self.path_to_image = path_to_image
 
         # Dynamic import to avoid import loop
         VectorField = import_class("SciDataTool.Classes", "VectorField")
@@ -228,6 +433,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             axes_request_list,
             frozen_type,
             is_keep_config=is_keep_config,
+            path_to_image=self.path_to_image,
         )
         self.update_range(
             unit=unit,

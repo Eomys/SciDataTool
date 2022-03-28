@@ -27,6 +27,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
     refreshNeeded = Signal()
     refreshRange = Signal()
+    generateAnimation = Signal()
 
     def __init__(self, parent=None):
         """Initializing the widget by hiding/showing widget and connecting buttons
@@ -44,6 +45,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self.setupUi(self)
 
         self.axes_list = list()
+        self.path_to_image = None
 
         # Managing the signal emitted by the WAxisSelector widgets
         self.w_axis_1.axisChanged.connect(self.axis_1_updated)
@@ -122,7 +124,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_slice_op = list()
 
             for axis in axes_gen:
-                temp = WSliceOperator(self.g_data_extract)
+                temp = WSliceOperator(
+                    self.g_data_extract, path_to_image=self.path_to_image
+                )
                 temp.setObjectName(axis)
                 for i, ax in enumerate(self.axes_list):
                     if (
@@ -144,6 +148,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                         else:
                             temp.update(ax)
                 temp.refreshNeeded.connect(self.update_needed)
+                temp.generateAnimation.connect(self.gen_animate)
                 self.w_slice_op.append(temp)
                 self.lay_data_extract.addWidget(temp)
 
@@ -151,6 +156,20 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_slice_op = list()
             self.g_data_extract.hide()
         self.update_needed()
+
+    def gen_animate(self):
+        """Methods called after clicking on animate button to generate a gif on the axis selected and display it
+        Parameters
+        ----------
+        self : WAxisManager
+            a WAxisManager object
+
+        Output
+        ---------
+        None
+        """
+
+        self.generateAnimation.emit()
 
     def get_axes_selected(self):
         """Method that return the axes chosen by the user and their unit as a string
@@ -188,8 +207,21 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         string
             name of the operation and its axis
         """
+        operations_selected = list()
 
-        return [wid.get_operation_selected() for wid in self.w_slice_op]
+        for wid in self.w_slice_op:
+            ope_selected, is_animate = wid.get_operation_selected()
+
+            if is_animate == True:
+
+                axis = ope_selected.split("=")[0]
+                unit = "{" + ope_selected.split("{")[1]
+                operations_selected.append(axis + "[oneperiod]" + unit + "to_animate")
+                wid.is_animate = False
+            else:
+                operations_selected.append(ope_selected)
+
+        return operations_selected
 
     def fft_sync(self, axis_changed):
         """Method that will check the action chosen and that update the other action combobox to have the same action.
@@ -206,7 +238,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         ]:
             action_selected = self.w_axis_1.get_current_action_name()
             self.w_axis_2.set_action(action_selected)
-            self.gen_slice_op()
+
         elif axis_changed == "axis 2" and "FFT" in [
             self.w_axis_2.c_action.itemText(i)
             for i in range(self.w_axis_2.c_action.count())
@@ -215,12 +247,15 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_axis_1.set_action(action_selected)
             self.gen_slice_op()
 
+        self.gen_slice_op()
+
     def set_axis_widgets(
         self,
         data,
         axes_request_list,
         frozen_type=0,
         is_keep_config=False,
+        path_to_image=None,
     ):
         """Method used to set the axes of the Axes group box as well as setting the widgets of the DataSelection groupbox
         Parameters
@@ -233,7 +268,12 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
+        # Setting path to recover the image for the animate button
+        self.path_to_image = path_to_image
+
         if is_keep_config:  # Only update slider
             for wid in self.w_slice_op:
                 if hasattr(wid, "axis_value"):

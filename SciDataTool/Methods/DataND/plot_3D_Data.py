@@ -19,6 +19,7 @@ from numpy import (
     array,
     ceil,
     floor,
+    argmin,
 )
 
 
@@ -342,9 +343,23 @@ def plot_3D_Data(
                     flat_indices.append(axes_names.index(axis.name))
 
     title2 = "for "
-    for axis in axes_list[2:]:
-        is_display = True
-        if axis.is_pattern and len(axis.values) == 1:
+    for axis in axes_list:
+        if not (
+            axis.extension
+            in [
+                "whole",
+                "interval",
+                "oneperiod",
+                "antiperiod",
+                "smallestperiod",
+                "axis_data",
+                "list",
+            ]
+            and len(axis.values) > 1
+            or (len(axis.values) == 1 and len(axes_list) == 1)
+        ):
+            is_display = True
+        else:
             is_display = False
         if is_display:
             if axis.unit == "SI":
@@ -371,10 +386,20 @@ def plot_3D_Data(
                     .replace("]", "")
                     + " ["
                     + axis_unit
-                    + "], "
+                    + "]"
                 )
 
-            title2 += axis.name + "=" + axis_str
+                index = None
+                if axis.is_pattern and len(axis.values) == 1:
+                    for axis_obj in self.get_axes():
+                        if axis_obj.name == axis.name:
+                            index = axis.indices[0]
+
+                title2 += axis.name + "=" + axis_str
+                if index is not None:
+                    title2 += " (slice " + str(index + 1) + "), "
+                else:
+                    title2 += ", "
 
     title3 = ""
     for axis_name in axes_dict_other:

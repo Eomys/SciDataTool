@@ -143,27 +143,28 @@ class TestGUI(object):
 
                 operation = wid.c_operation.currentText()
                 if operation == "slice":
-                    assert (
-                        wid.get_operation_selected()
-                        == wid.axis.name
+                    assert wid.get_operation_selected() == (
+                        wid.axis.name
                         + "="
                         + str(wid.lf_value.value())
                         + "{"
                         + wid.unit
-                        + "}"
+                        + "}",
+                        False,
                     )
                 elif operation == "slice (fft)":
-                    assert wid.get_operation_selected() == fft_dict[
-                        wid.axis.name
-                    ] + "=" + str(wid.lf_value.value())
+                    assert wid.get_operation_selected() == (
+                        fft_dict[wid.axis.name] + "=" + str(wid.lf_value.value()),
+                        None,
+                    )
                 elif operation.split(" ")[0] in type_extraction_dict:
-                    assert (
-                        wid.get_operation_selected()
-                        == wid.axis.name
+                    assert wid.get_operation_selected() == (
+                        wid.axis.name
                         + type_extraction_dict[operation.split(" ")[0]]
                         + "{"
                         + wid.unit
-                        + "}"
+                        + "}",
+                        None,
                     )
                 else:
                     assert wid.get_operation_selected() == None
@@ -182,7 +183,7 @@ class TestGUI(object):
                     index = 5
                     wid.slider.setValue(index)
                     action = parser.read_input_strings(
-                        [wid.get_operation_selected()], axis_data=None
+                        [wid.get_operation_selected()[0]], axis_data=None
                     )
                     assert action[0].input_data[0] == wid.lf_value.value()
 
@@ -190,7 +191,7 @@ class TestGUI(object):
                     wid.lf_value.setValue(wid.axis.initial)
                     wid.update_slider()
                     action = parser.read_input_strings(
-                        [wid.get_operation_selected()], axis_data=None
+                        [wid.get_operation_selected()[0]], axis_data=None
                     )
                     assert action[0].input_data[0] == wid.lf_value.value()
 

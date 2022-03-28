@@ -30,10 +30,14 @@ class TestGUI(object):
             *self.UI.w_plot_manager.w_axis_manager.get_operation_selected(),
         ]
 
+        data_unit = (
+            "[" + self.UI.w_plot_manager.w_range.get_field_selected()["unit"] + "]"
+        )
+
         file_name = (
-            (self.UI.w_plot_manager.data.symbol + "_" + "_".join(param_list))
-            .replace("{", "")
-            .replace("}", "")
+            (self.UI.w_plot_manager.data.name)
+            .replace("{", "[")
+            .replace("}", "]")
             .replace(".", ",")
         ) + ".csv"
 

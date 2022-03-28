@@ -1,4 +1,5 @@
 from PySide2.QtWidgets import QWidget
+from PySide2.QtGui import QPixmap
 
 from SciDataTool.GUI.WSliceOperator.Ui_WSliceOperator import Ui_WSliceOperator
 from SciDataTool.GUI.WFilter.WFilter import WFilter
@@ -7,6 +8,7 @@ from SciDataTool.Functions.Plot import axes_dict, fft_dict, ifft_dict, unit_dict
 from SciDataTool.Classes.Data import Data
 from numpy import where
 from numpy import argmin, abs as np_abs
+from os.path import join, abspath, dirname
 
 type_extraction_dict = {
     "max": "=max",
@@ -34,8 +36,9 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
     """Widget to define how to handle the 'non-plot' axis"""
 
     refreshNeeded = Signal()
+    generateAnimation = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, path_to_image=None):
         """Initialize the GUI according to info given by the WAxisManager widget
 
         Parameters
@@ -44,6 +47,8 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             a WSliceOperator object
         parent : QWidget
             The parent QWidget
+        path_to_image : str
+            path to the folder where the image for the animation button is saved
         """
 
         # Build the interface according to the .ui file
@@ -53,11 +58,36 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.axis = Data
         self.current_dialog = None
         self.indices = None
+        self.is_animate = False  # boolean to define if an animation must on this axis (must be on slice)
+        self.is_pattern = False  # Detecting if the axis is a DataPattern (important for handling of slice + slider + lf_value)
 
+        # Setting path to recover the image for the animate button
+        if path_to_image is None:
+            self.path_to_image = u":/images/images/icon/play-32px.png"
+        else:
+            self.path_to_image = path_to_image + "/images/icon/play-32px.png"
+
+        self.b_animate.setPixmap(QPixmap(self.path_to_image))
         self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.lf_value.editingFinished.connect(self.update_slider)
         self.b_action.clicked.connect(self.open_filter)
+        self.b_animate.mousePressEvent = self.gen_animate
+        self.l_loading.setHidden(True)
+
+    def gen_animate(self, e):
+        """Methods called after clicking on animate button that emit a signal to generate a gif on the axis selected and display it
+        Parameters
+        ----------
+        self : WSliceOperator
+            a WSliceOperator object
+
+        Output
+        ---------
+        None
+        """
+        self.is_animate = True
+        self.generateAnimation.emit()
 
     def get_operation_selected(self):
         """Method that return a string of the action selected by the user on the axis of the widget.
@@ -71,6 +101,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         string
             name of the current action selected
         """
+
         # Recovering the action selected by the user
         action_type = self.c_operation.currentText().split(" over")[0]
 
@@ -78,27 +109,33 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         if action_type == "slice":
             # slice_index = self.slider.value()
             # action = "[" + str(slice_index) + "]"
-            action = "=" + str(self.lf_value.value())
-            return self.axis_name + action + "{" + self.unit + "}"
+
+            if self.is_pattern:
+                # When working with DataPattern we must use index to give the exact value
+                action = "[" + str(self.slider.value()) + "]"
+            else:
+                action = "=" + str(self.lf_value.value())
+
+            return self.axis_name + action + "{" + self.unit + "}", self.is_animate
 
         elif action_type == "slice (fft)":
             # slice_index = self.slider.value()
             # action = "[" + str(slice_index) + "]"
             action = "=" + str(self.lf_value.value())
             if self.axis_name in fft_dict:
-                return fft_dict[self.axis_name] + action
+                return fft_dict[self.axis_name] + action, None
 
         elif action_type == "overlay":
             if self.indices is None:
-                return self.axis_name + "[]"
+                return self.axis_name + "[]", None
             else:
-                return self.axis_name + str(self.indices)
+                return self.axis_name + str(self.indices), None
 
         elif action_type in type_extraction_dict:
             action = type_extraction_dict[action_type]
-            return self.axis_name + action + "{" + self.unit + "}"
+            return self.axis_name + action + "{" + self.unit + "}", None
         else:
-            return None
+            return None, None
 
     def get_name(self):
         """Method that return the name of the axis of the WSliceOperator
@@ -243,13 +280,18 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
                 else:  # already wavenumber of freqs case
                     self.axis_value = self.axis.get_values()
 
-            # Setting the initial value of the floatEdit to the minimum inside the axis
-            self.lf_value.setValue(min(self.axis_value))
-
             # Setting the axis unit
             if name in unit_dict:
                 self.unit = unit_dict[name]
-            self.in_unit.setText("[" + self.unit + "]")
+
+            if self.is_pattern:
+                # Setting the initial value of the floatEdit to the minimum slice (=1)
+                self.lf_value.setValue(1)
+                self.in_unit.setText("[-]")
+            else:
+                # Setting the initial value of the floatEdit to the minimum inside the axis
+                self.lf_value.setValue(min(self.axis_value))
+                self.in_unit.setText("[" + self.unit + "]")
 
             # Setting the slider by giving the number of index according to the size of the axis
             self.slider.setMinimum(0)
@@ -266,6 +308,15 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             string with the name of the axis that should set the WSliceOperator widget
         """
         self.axis = axis
+
+        # Relative import of DataPattern to prevent circular import
+        module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
+        DataPattern = getattr(module, "DataPattern")
+
+        # Detecting if the axis is a DataPattern (important for handling of slice + slider + lf_value)
+        if isinstance(self.axis, DataPattern):
+            self.is_pattern = True
+
         if axis_request is not None:
             axis_request.corr_unit = axis_request.unit
             axis_request.get_axis(axis, True)
@@ -317,7 +368,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
         self.lf_value.blockSignals(True)
 
-        self.lf_value.setValue(self.axis_value[self.slider.value()])
+        if self.is_pattern:
+            # When working with DataPattern, we have to work with the exact value given
+            self.lf_value.setValue(self.slider.value() + 1)
+        else:
+            self.lf_value.setValue(self.axis_value[self.slider.value()])
 
         self.lf_value.blockSignals(False)
         if is_refresh:
@@ -339,6 +394,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.show()
             self.in_unit.show()
             self.slider.show()
+            self.b_animate.show()
             self.b_action.hide()
             self.refreshNeeded.emit()
         # If the operation selected is overlay then we show the related button
@@ -346,6 +402,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.hide()
             self.in_unit.hide()
             self.slider.hide()
+            self.b_animate.hide()
             self.b_action.show()
             self.b_action.setText("Overlay")
             self.refreshNeeded.emit()
@@ -353,6 +410,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.hide()
             self.in_unit.hide()
             self.slider.hide()
+            self.b_animate.hide()
             self.b_action.hide()
             self.refreshNeeded.emit()
 

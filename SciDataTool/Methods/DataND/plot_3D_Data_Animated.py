@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 from numpy import arange, nanmax, nanmin, frombuffer
 import imageio
-from ...GUI.DDataPlotter.DDataPlotter import PARAM_3D
+from ...GUI.DDataPlotter.DDataPlotter import PARAM_2D
 
 
-def plot_2D_Data_Animated(
+def plot_3D_Data_Animated(
     self, animated_axis, *param_list, nb_frames=50, fps=10, **param_dict
 ):
     """Gen
@@ -18,13 +18,14 @@ def plot_2D_Data_Animated(
     fps: int
         frames displayed per second
     """
+
     # Relative import of DataPattern to prevent circular import
     module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
     DataPattern = getattr(module, "DataPattern")
 
     # Making sure that we have the right argument for a plot2D
     plot_options = param_dict.copy()
-    for param in PARAM_3D:
+    for param in PARAM_2D:
         if param in plot_options:
             del plot_options[param]
 
@@ -35,7 +36,7 @@ def plot_2D_Data_Animated(
             break
 
     if isinstance(animated_axis_obj, DataPattern):
-        # Removing "[one_period]" as it is not available with a DataPattern
+        # Removing one_period as it is not available with a DataPattern
         animated_axis_unit = "{" + animated_axis.split("{")[1]
         animated_axis = animated_axis.split("[")[0] + animated_axis_unit
 
@@ -62,14 +63,6 @@ def plot_2D_Data_Animated(
         frames_list = arange(start=value_min, stop=value_max, step=variation_step)
         frames_list = ["=" + str(frame) for frame in frames_list]
 
-    # Setting the options of the plot
-    y_max = nanmax(result[self.symbol])
-    y_min = nanmin(result[self.symbol])
-    marge = (
-        y_max - y_min
-    ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
-    plot_options["y_min"] = nanmin(result[self.symbol]) - abs(marge)
-    plot_options["y_max"] = nanmax(result[self.symbol]) + abs(marge)
     plot_options["is_show_fig"] = False
 
     # Getting the name of the gif
@@ -79,7 +72,7 @@ def plot_2D_Data_Animated(
     images = list()  # List of images used to build the gif
     for val in frames_list:
         # plotting image
-        self.plot_2D_Data(
+        self.plot_3D_Data(
             *param_list, animated_axis + val + animated_axis_unit, **plot_options
         )
         # Getting the figure generated with plot_2D_DATA
