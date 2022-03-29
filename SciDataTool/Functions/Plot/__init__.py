@@ -12,7 +12,7 @@ unit_dict = {
     "frequency": "Hz",
     "revolution": "",
     "order": "",
-    "cr_band": "Bark",
+    "Critical band rate": "Bark",
     "speed": "rpm",
     "Rotation speed": "rpm",
     "modes": "",
@@ -24,6 +24,7 @@ axis_norm_dict = {
     "freqs": ["elec_order", "mech_order"],
     "wavenumber": ["space_order"],
     "z": ["x L"],
+    "Critical band rate": ["Hz"],
 }
 
 norm_name_dict = {
@@ -34,6 +35,7 @@ norm_name_dict = {
     "angle_rotor": "Rotor mechanical angle",
     "tooth_id": "Stator tooth number",
     "x L": "x L",
+    "Hz": "Hz",
 }
 
 norm_dict = {
