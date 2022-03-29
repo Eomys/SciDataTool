@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from numpy import arange, nanmax, nanmin, frombuffer
 import imageio
 from ...GUI.DDataPlotter.DDataPlotter import PARAM_3D
+from SciDataTool.Functions.Plot import fft_dict, ifft_dict
 
 
 def plot_2D_Data_Animated(
@@ -30,7 +31,13 @@ def plot_2D_Data_Animated(
 
     # Detecting if animated axis is a DataPattern, if true changing the input given to the function
     for ax_obj in self.get_axes():
-        if ax_obj.name == animated_axis.split("[")[0]:
+        if (
+            ax_obj.name == animated_axis.split("[")[0]
+            or animated_axis.split("[")[0] in fft_dict
+            and fft_dict[animated_axis.split("[")[0]] == ax_obj.name
+            or animated_axis.split("[")[0] in ifft_dict
+            and ifft_dict[animated_axis.split("[")[0]] == ax_obj.name
+        ):
             animated_axis_obj = ax_obj
             break
 

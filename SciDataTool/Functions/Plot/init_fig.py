@@ -128,4 +128,4 @@ def copy_fig(fig):
     fig_dock = pickle.load(buf)
     for i, ax in enumerate(fig_dock.axes):
         axes = ax
-    return fig_dock
+    return fig_dock, axes

@@ -148,6 +148,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             save_path=save_path,
             logger=logger,
             path_to_image=path_to_image,
+            main_widget=self,
         )
 
         # Building the interaction with the UI itself
@@ -290,7 +291,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     ylabel = latex(SYMBOL_DICT[axes_selected_parsed[1].name.lower()])
                 else:
                     ylabel = latex(axes_selected_parsed[1].name)
-                yunit = "[" + latex(axes_selected_parsed[1].unit) + "]"
+                yunit = "[" + axes_selected_parsed[1].unit + "]"
 
             else:
                 if self.data.name.lower() in SYMBOL_DICT:
