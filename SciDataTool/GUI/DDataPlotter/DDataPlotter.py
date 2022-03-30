@@ -230,6 +230,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 for child in self.ax.get_children()
                 if isinstance(child, Annotation)
             ]
+            is_annot = True
             X_str = None
             if (
                 ind is not None
@@ -239,6 +240,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             ):
                 if annotations[ind[0]]._x == x:
                     X_str = annotations[ind[0]]._text
+                    is_annot = False
             else:
                 # Use ticklabels
                 try:
@@ -343,6 +345,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     Z_str = format(z, ".4g")
 
                 label += sep + zlabel + " = " + Z_str + " " + zunit
+
+            # Add hidden annotations
+            if annotations != [] and not annotations[0]._visible and is_annot:
+                for annotation in annotations:
+                    if annotation._x == x and annotation._y == y:
+                        label += sep + annotation._text
 
             # Remove latex marks for top right corner
             if sep == ", ":
@@ -535,6 +543,17 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         component_list=component_list,
                     )
                 else:
+                    if "axis_data" in plot_arg_dict_2D:
+                        for axis_name in plot_arg_dict_2D["axis_data"]:
+                            for i, axis_selected in enumerate(axes_selected):
+                                if axis_name in axis_selected:
+                                    if "axis_data" not in axis_selected:
+                                        axes_selected[i] = (
+                                            axis_selected.split("{")[0]
+                                            + "=axis_data"
+                                            + "{"
+                                            + axis_selected.split("{")[1]
+                                        )
                     self.data.plot_2D_Data(
                         *[*axes_selected, *data_selection],
                         **plot_arg_dict_2D,
@@ -552,14 +571,27 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         del plot_arg_dict_3D[param]
                 if "is_2D_view" not in self.plot_arg_dict:
                     self.plot_arg_dict["is_2D_view"] = True
+                if "axis_data" in plot_arg_dict_3D:
+                    for axis_name in plot_arg_dict_3D["axis_data"]:
+                        for i, axis_selected in enumerate(axes_selected):
+                            if axis_name in axis_selected:
+                                if "axis_data" not in axis_selected:
+                                    axes_selected[i] = (
+                                        axis_selected.split("{")[0]
+                                        + "=axis_data"
+                                        + "{"
+                                        + axis_selected.split("{")[1]
+                                    )
+                if output_range["min"] is not None:
+                    plot_arg_dict_3D["z_min"] = output_range["min"]
+                if output_range["max"] is not None:
+                    plot_arg_dict_3D["z_max"] = output_range["max"]
                 self.data.plot_3D_Data(
                     *[*axes_selected, *data_selection],
                     **plot_arg_dict_3D,
                     unit=output_range["unit"],
                     fig=self.fig,
                     ax=self.ax,
-                    z_min=output_range["min"],
-                    z_max=output_range["max"],
                     is_switch_axes=not_in_order,
                 )
 

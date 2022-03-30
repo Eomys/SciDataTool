@@ -17,6 +17,8 @@ from numpy import (
     linspace,
     log10,
     array,
+    ceil,
+    floor,
     argmin,
 )
 
@@ -64,6 +66,7 @@ def plot_3D_Data(
     annotation_delim=None,
     marker_color="k",
     is_shading_flat=None,
+    is_hide_annotation=False,
 ):
     """Plots a field as a function of two axes
 
@@ -187,7 +190,9 @@ def plot_3D_Data(
                 is_flat=True,
             )
     else:
-        result = self.get_along(*arg_list_along, unit=unit, is_norm=is_norm)
+        result = self.get_along(
+            *arg_list_along, axis_data=axis_data, unit=unit, is_norm=is_norm
+        )
 
     if type_plot == "scatter" and not is_fft:
         is_fft = True
@@ -222,12 +227,18 @@ def plot_3D_Data(
             if is_fft:
                 z_min = 0
             else:
-                z_min = np_min(Zdata)
+                if "dB" in unit:
+                    z_min = floor(np_min(Zdata))
+                else:
+                    z_min = np_min(Zdata)
         if z_max is None:
             z_max = np_max(Zdata)
     else:
         if z_min is None and z_max is None:
-            z_max = np_max(Zdata)
+            if "dB" in unit:
+                z_max = ceil(np_max(Zdata))
+            else:
+                z_max = np_max(Zdata)
         if z_max is None:
             z_max = z_min + z_range
         if z_min is None:
@@ -574,6 +585,7 @@ def plot_3D_Data(
                 annotations=annotations,
                 annotation_threshold=annotation_threshold,
                 marker_color=marker_color,
+                is_hide_annotation=is_hide_annotation,
             )
         else:
             plot_3D(

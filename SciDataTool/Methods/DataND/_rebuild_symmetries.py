@@ -73,7 +73,7 @@ def _rebuild_symmetries(
             # Ignore symmetries if non uniform ifft was used
             elif (
                 axis.transform == "ifft"
-                and len(axis.values) != len(axis.corr_values)
+                # and len(axis.values) != len(axis.corr_values)
                 and len(axis.values) == values.shape[axis.index]
             ):
                 is_smallestperiod = True
