@@ -6,7 +6,7 @@ from matplotlib.backends.backend_qt5agg import (
     FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar,
 )
-from SciDataTool.Functions.Plot.init_fig import init_fig
+from SciDataTool.Functions.Plot.init_fig import init_fig, copy_fig
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
@@ -533,6 +533,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         if plot_arg_dict_2D["is_smallestperiod"]:
                             angle_str = "angle[smallestperiod]"
                         del plot_arg_dict_2D["is_smallestperiod"]
+                    if "fig" in plot_arg_dict_2D:
+                        del plot_arg_dict_2D["fig"]
                     self.data_orig.plot_2D_Data(
                         *[*[angle_str], *data_selection],
                         **plot_arg_dict_2D,
@@ -587,6 +589,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     plot_arg_dict_3D["z_min"] = output_range["min"]
                 if output_range["max"] is not None:
                     plot_arg_dict_3D["z_max"] = output_range["max"]
+                if "is_switch_axes" in plot_arg_dict_3D:
+                    del plot_arg_dict_3D["is_switch_axes"]
                 self.data.plot_3D_Data(
                     *[*axes_selected, *data_selection],
                     **plot_arg_dict_3D,
