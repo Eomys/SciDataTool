@@ -394,8 +394,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.show()
             self.in_unit.show()
             self.slider.show()
-            self.b_animate.show()
             self.b_action.hide()
+            if extraction_selected == "slice":
+                self.b_animate.show()
+            else:
+                self.b_animate.hide()
             self.refreshNeeded.emit()
         # If the operation selected is overlay then we show the related button
         elif extraction_selected == "overlay":
