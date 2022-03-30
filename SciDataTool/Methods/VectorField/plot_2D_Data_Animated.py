@@ -1,10 +1,7 @@
-from copy import deepcopy
+from copy import copy
 import numpy as np
 import imageio
-import pickle
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-from copy import deepcopy
 from SciDataTool.Functions.Plot.init_fig import init_fig, copy_fig
 
 
@@ -145,16 +142,14 @@ def plot_2D_Data_Animated(
 
         # Getting the name of the gif
         save_path_gif = save_path.replace(".png", ".gif")
-        # Copy_fig make a deep copy so that there is no overlaping
-        fig.axes[0].format_coord = None
-        deepcopy_fig, deepcopy_ax = copy_fig(fig)
-        fig.set_canvas(FigureCanvasQTAgg(fig))
-        ax = fig.axes[0]
+        # Copy_fig make a deep copy so that the machine plot is conserved
+        deepcopy_fig = copy_fig(fig)
 
         # To avoid rescale between 1st and 2nd frame of the gif (there is probably a more efficient way to do it)
         fig.canvas.draw()
         image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+        images.append(image)
 
         # Params settings
         save_path = None
@@ -233,17 +228,27 @@ def plot_2D_Data_Animated(
                 ax.set_title("")
                 ax.get_legend().remove()
 
-            fig = plt.gcf()
+            # fig = plt.gcf()
             fig.canvas.draw()
             image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
             image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
             images.append(image)
 
             # Fig and ax reset to default for background
-            canvas = fig.canvas
-            fig, ax = copy_fig(deepcopy_fig)
-            fig.set_canvas(canvas)
-            # While conidtion incrementation
+            fig, ax, _, _ = init_fig()
+            deepcopy_ax = deepcopy_fig.axes[0]
+            for patch in deepcopy_ax.patches:
+                patch_cpy = copy(patch)
+                patch_cpy.axes = None
+                patch_cpy.figure = None
+                patch_cpy.set_transform(ax.transData)
+                ax.add_patch(patch_cpy)
+            ax.set_xlim(deepcopy_ax.get_xlim())
+            ax.set_ylim(deepcopy_ax.get_ylim())
+            ax.set_xlabel(deepcopy_ax.get_xlabel())
+            ax.set_ylabel(deepcopy_ax.get_ylabel())
+            ax.set_title(deepcopy_ax.get_title())
+            # While condition incrementation
             value_min += variation_step
 
         # Creating the gif

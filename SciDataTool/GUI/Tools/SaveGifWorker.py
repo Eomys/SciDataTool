@@ -30,13 +30,20 @@ def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D)
             if param_dict["is_smallestperiod"]:
                 angle_str = "angle[smallestperiod]"
             del param_dict["is_smallestperiod"]
+        if "fig" in param_dict:
+            fig = param_dict["fig"]
+            ax = fig.get_axes()[0]
+            del param_dict["fig"]
+        else:
+            fig = None
+            ax = None
         main_widget.data_orig.plot_2D_Data_Animated(
             animated_axis,
             *[*[angle_str], *data_selection],
             **param_dict,
             unit=output_range["unit"],
-            fig=main_widget.fig,
-            ax=main_widget.ax,
+            fig=fig,
+            ax=ax,
             y_min=output_range["min"],
             y_max=output_range["max"],
             component_list=component_list,
