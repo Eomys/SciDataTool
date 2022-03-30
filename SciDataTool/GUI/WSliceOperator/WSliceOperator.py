@@ -63,7 +63,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
         # Setting path to recover the image for the animate button
         if path_to_image is None:
-            self.path_to_image = u":/images/images/icon/play-32px.png"
+            self.path_to_image = ":/images/images/icon/play-32px.png"
         else:
             self.path_to_image = path_to_image + "/images/icon/play-32px.png"
 

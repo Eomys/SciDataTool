@@ -13,12 +13,12 @@ from PySide2.QtWidgets import *
 class Ui_WAxisSelector(object):
     def setupUi(self, WAxisSelector):
         if not WAxisSelector.objectName():
-            WAxisSelector.setObjectName(u"WAxisSelector")
+            WAxisSelector.setObjectName("WAxisSelector")
         WAxisSelector.resize(152, 160)
         self.verticalLayout = QVBoxLayout(WAxisSelector)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setObjectName("verticalLayout")
         self.in_name = QLabel(WAxisSelector)
-        self.in_name.setObjectName(u"in_name")
+        self.in_name.setObjectName("in_name")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -31,7 +31,7 @@ class Ui_WAxisSelector(object):
         self.verticalLayout.addWidget(self.in_name)
 
         self.c_axis = QComboBox(WAxisSelector)
-        self.c_axis.setObjectName(u"c_axis")
+        self.c_axis.setObjectName("c_axis")
         sizePolicy.setHeightForWidth(self.c_axis.sizePolicy().hasHeightForWidth())
         self.c_axis.setSizePolicy(sizePolicy)
         self.c_axis.setMinimumSize(QSize(0, 0))
@@ -43,7 +43,7 @@ class Ui_WAxisSelector(object):
         self.c_action.addItem("")
         self.c_action.addItem("")
         self.c_action.addItem("")
-        self.c_action.setObjectName(u"c_action")
+        self.c_action.setObjectName("c_action")
         sizePolicy.setHeightForWidth(self.c_action.sizePolicy().hasHeightForWidth())
         self.c_action.setSizePolicy(sizePolicy)
         self.c_action.setMinimumSize(QSize(0, 0))
@@ -52,7 +52,7 @@ class Ui_WAxisSelector(object):
         self.verticalLayout.addWidget(self.c_action)
 
         self.c_unit = QComboBox(WAxisSelector)
-        self.c_unit.setObjectName(u"c_unit")
+        self.c_unit.setObjectName("c_unit")
         sizePolicy.setHeightForWidth(self.c_unit.sizePolicy().hasHeightForWidth())
         self.c_unit.setSizePolicy(sizePolicy)
         self.c_unit.setMinimumSize(QSize(0, 0))
@@ -61,7 +61,7 @@ class Ui_WAxisSelector(object):
         self.verticalLayout.addWidget(self.c_unit)
 
         self.b_filter = QPushButton(WAxisSelector)
-        self.b_filter.setObjectName(u"b_filter")
+        self.b_filter.setObjectName("b_filter")
         sizePolicy.setHeightForWidth(self.b_filter.sizePolicy().hasHeightForWidth())
         self.b_filter.setSizePolicy(sizePolicy)
         self.b_filter.setMinimumSize(QSize(0, 0))
@@ -77,19 +77,19 @@ class Ui_WAxisSelector(object):
 
     def retranslateUi(self, WAxisSelector):
         WAxisSelector.setWindowTitle("")
-        self.in_name.setText(QCoreApplication.translate("WAxisSelector", u"X", None))
+        self.in_name.setText(QCoreApplication.translate("WAxisSelector", "X", None))
         self.c_action.setItemText(
-            0, QCoreApplication.translate("WAxisSelector", u"None", None)
+            0, QCoreApplication.translate("WAxisSelector", "None", None)
         )
         self.c_action.setItemText(
-            1, QCoreApplication.translate("WAxisSelector", u"FFT", None)
+            1, QCoreApplication.translate("WAxisSelector", "FFT", None)
         )
         self.c_action.setItemText(
-            2, QCoreApplication.translate("WAxisSelector", u"Filter", None)
+            2, QCoreApplication.translate("WAxisSelector", "Filter", None)
         )
 
         self.b_filter.setText(
-            QCoreApplication.translate("WAxisSelector", u"Filter", None)
+            QCoreApplication.translate("WAxisSelector", "Filter", None)
         )
 
     # retranslateUi

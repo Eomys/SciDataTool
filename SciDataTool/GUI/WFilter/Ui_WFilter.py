@@ -15,25 +15,25 @@ from SciDataTool.GUI.Tools.CheckBox import CheckBox
 class Ui_WFilter(object):
     def setupUi(self, WFilter):
         if not WFilter.objectName():
-            WFilter.setObjectName(u"WFilter")
+            WFilter.setObjectName("WFilter")
         WFilter.resize(831, 644)
         WFilter.setMinimumSize(QSize(630, 470))
         WFilter.setMaximumSize(QSize(16777215, 16777215))
         self.gridLayout = QGridLayout(WFilter)
-        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setObjectName("gridLayout")
         self.tab_indices = QTableView(WFilter)
-        self.tab_indices.setObjectName(u"tab_indices")
+        self.tab_indices.setObjectName("tab_indices")
 
         self.gridLayout.addWidget(self.tab_indices, 0, 0, 1, 1)
 
         self.cb_all = CheckBox(WFilter)
-        self.cb_all.setObjectName(u"cb_all")
+        self.cb_all.setObjectName("cb_all")
         self.cb_all.setTristate(True)
 
         self.gridLayout.addWidget(self.cb_all, 1, 0, 1, 1)
 
         self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.horizontalSpacer = QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum
         )
@@ -41,12 +41,12 @@ class Ui_WFilter(object):
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
         self.b_Ok = QPushButton(WFilter)
-        self.b_Ok.setObjectName(u"b_Ok")
+        self.b_Ok.setObjectName("b_Ok")
 
         self.horizontalLayout.addWidget(self.b_Ok)
 
         self.b_cancel = QPushButton(WFilter)
-        self.b_cancel.setObjectName(u"b_cancel")
+        self.b_cancel.setObjectName("b_cancel")
 
         self.horizontalLayout.addWidget(self.b_cancel)
 
@@ -59,11 +59,11 @@ class Ui_WFilter(object):
     # setupUi
 
     def retranslateUi(self, WFilter):
-        WFilter.setWindowTitle(QCoreApplication.translate("WFilter", u"WFilter", None))
+        WFilter.setWindowTitle(QCoreApplication.translate("WFilter", "WFilter", None))
         self.cb_all.setText(
-            QCoreApplication.translate("WFilter", u"Select/Deselect all", None)
+            QCoreApplication.translate("WFilter", "Select/Deselect all", None)
         )
-        self.b_Ok.setText(QCoreApplication.translate("WFilter", u"Ok", None))
-        self.b_cancel.setText(QCoreApplication.translate("WFilter", u"Cancel", None))
+        self.b_Ok.setText(QCoreApplication.translate("WFilter", "Ok", None))
+        self.b_cancel.setText(QCoreApplication.translate("WFilter", "Cancel", None))
 
     # retranslateUi
