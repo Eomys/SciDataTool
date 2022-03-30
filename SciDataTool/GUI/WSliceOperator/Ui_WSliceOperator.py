@@ -19,7 +19,7 @@ class Ui_WSliceOperator(object):
     def setupUi(self, WSliceOperator):
         if not WSliceOperator.objectName():
             WSliceOperator.setObjectName("WSliceOperator")
-        WSliceOperator.resize(375, 166)
+        WSliceOperator.resize(375, 133)
         self.gridLayout = QGridLayout(WSliceOperator)
         self.gridLayout.setObjectName("gridLayout")
         self.b_action = QPushButton(WSliceOperator)
@@ -29,7 +29,7 @@ class Ui_WSliceOperator(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.b_action.sizePolicy().hasHeightForWidth())
         self.b_action.setSizePolicy(sizePolicy)
-        self.b_action.setMinimumSize(QSize(0, 20))
+        self.b_action.setMinimumSize(QSize(0, 30))
 
         self.gridLayout.addWidget(self.b_action, 2, 0, 1, 1)
 
