@@ -6,7 +6,8 @@ from matplotlib.backends.backend_qt5agg import (
     FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar,
 )
-from SciDataTool.Functions.Plot.init_fig import init_fig, copy_fig
+from SciDataTool.Functions.Plot.init_fig import init_fig
+import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
@@ -534,6 +535,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                             angle_str = "angle[smallestperiod]"
                         del plot_arg_dict_2D["is_smallestperiod"]
                     if "fig" in plot_arg_dict_2D:
+                        # plt.rcParams.update(
+                        #     {
+                        #         "font.family": plot_arg_dict_2D["fig"]
+                        #         .texts[0]
+                        #         ._fontproperties._family[0],
+                        #     }
+                        # )
                         del plot_arg_dict_2D["fig"]
                     self.data_orig.plot_2D_Data(
                         *[*[angle_str], *data_selection],

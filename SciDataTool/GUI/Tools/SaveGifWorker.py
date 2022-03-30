@@ -4,6 +4,8 @@ import multiprocessing
 from SciDataTool.GUI.Tools.GifHandler import GifHandler
 from logging.handlers import QueueListener
 
+from pytest import param
+
 
 def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D):
 
@@ -37,6 +39,8 @@ def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D)
         else:
             fig = None
             ax = None
+        if "colormap" in param_dict:
+            del param_dict["colormap"]
         main_widget.data_orig.plot_2D_Data_Animated(
             animated_axis,
             *[*[angle_str], *data_selection],

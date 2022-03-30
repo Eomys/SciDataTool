@@ -142,14 +142,9 @@ def plot_2D_Data_Animated(
 
         # Getting the name of the gif
         save_path_gif = save_path.replace(".png", ".gif")
+        fig.suptitle(None)
         # Copy_fig make a deep copy so that the machine plot is conserved
         deepcopy_fig = copy_fig(fig)
-
-        # To avoid rescale between 1st and 2nd frame of the gif (there is probably a more efficient way to do it)
-        fig.canvas.draw()
-        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
-        image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-        images.append(image)
 
         # Params settings
         save_path = None
@@ -228,7 +223,6 @@ def plot_2D_Data_Animated(
                 ax.set_title("")
                 ax.get_legend().remove()
 
-            # fig = plt.gcf()
             fig.canvas.draw()
             image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
             image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
@@ -248,6 +242,7 @@ def plot_2D_Data_Animated(
             ax.set_xlabel(deepcopy_ax.get_xlabel())
             ax.set_ylabel(deepcopy_ax.get_ylabel())
             ax.set_title(deepcopy_ax.get_title())
+            fig.suptitle(None)
             # While condition incrementation
             value_min += variation_step
 
