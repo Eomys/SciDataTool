@@ -273,6 +273,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         """
         # Setting path to recover the image for the animate button
         self.path_to_image = path_to_image
+        self.w_axis_1.path_to_image = self.path_to_image
+        self.w_axis_2.path_to_image = self.path_to_image
 
         if is_keep_config:  # Only update slider
             for wid in self.w_slice_op:

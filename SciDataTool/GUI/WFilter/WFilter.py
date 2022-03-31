@@ -8,8 +8,8 @@ from PySide2.QtWidgets import (
     QHeaderView,
 )
 from PySide2.QtCore import Qt, QEvent, QPoint, QRect
-from PySide2.QtGui import QStandardItemModel, QStandardItem
-from PySide2.QtCore import Signal, QSortFilterProxyModel
+from PySide2.QtGui import QStandardItemModel, QStandardItem, QPixmap, QIcon
+from PySide2.QtCore import Signal, QSortFilterProxyModel, QSize
 
 from numpy import array
 
@@ -26,7 +26,7 @@ class WFilter(Ui_WFilter, QWidget):
 
     refreshNeeded = Signal()
 
-    def __init__(self, axis, indices=None, is_overlay=True, parent=None):
+    def __init__(self, axis, indices=None, parent=None, path_to_image=None):
         """Linking the button with their method + initializing the arguments used
 
         Parameters
@@ -44,6 +44,7 @@ class WFilter(Ui_WFilter, QWidget):
         self.axis = axis
         self.indices = indices
         self.axis_values = self.axis.get_values()
+        self.path_to_image = path_to_image
         self.init_table()
 
         if self.axis.name in axes_dict:
@@ -136,7 +137,10 @@ class WFilter(Ui_WFilter, QWidget):
             self.tab_indices.setModel(data_model)
 
             self.tab_indices.setItemDelegateForColumn(
-                len(filter_list) - 1, CheckBoxDelegate(self, data_model, self.indices)
+                len(filter_list) - 1,
+                CheckBoxDelegate(
+                    self, data_model, self.indices, self.path_to_image, self
+                ),
             )
 
         else:
@@ -152,7 +156,10 @@ class WFilter(Ui_WFilter, QWidget):
             self.tab_indices.setModel(data_model)
 
             self.tab_indices.setItemDelegateForColumn(
-                1, CheckBoxDelegate(self, data_model, self.indices)
+                1,
+                CheckBoxDelegate(
+                    self, data_model, self.indices, self.path_to_image, self
+                ),
             )
 
         if self.indices is None or len(self.indices) == len(self.axis_values):
@@ -255,9 +262,11 @@ class CheckBoxDelegate(QStyledItemDelegate):
     cell of the column to which it's applied
     """
 
-    def __init__(self, parent, model, indices=None):
+    def __init__(self, parent, model, indices=None, path_to_image=None, widget=None):
         QStyledItemDelegate.__init__(self, parent)
         self.model = model
+        self.widget = widget
+        self.path_to_image = path_to_image
         # Check all boxes at initialization
         if indices is None:
             indices = [i for i in range(self.model.rowCount(None))]
@@ -282,6 +291,22 @@ class CheckBoxDelegate(QStyledItemDelegate):
 
         checked = index.data().checkState().__bool__()
         check_box_style_option = QStyleOptionButton()
+        check_box_style_option.rect = self.getCheckBoxRect(option)
+        if self.path_to_image is not None:
+            icon = QIcon()
+            icon.addPixmap(
+                QPixmap(self.path_to_image + "/images/icon/checkbox-1-checked.png"),
+                QIcon.Normal,
+                QIcon.On,
+            )
+            icon.addPixmap(
+                QPixmap(self.path_to_image + "/images/icon/checkbox-1-unchecked.png"),
+                QIcon.Normal,
+                QIcon.Off,
+            )
+            check_box_style_option.iconSize = QSize(16, 16)
+            check_box_style_option.icon = icon
+            check_box_style_option.features = QStyleOptionButton.Flat
 
         if (index.flags() & Qt.ItemIsEditable) > 0:
             check_box_style_option.state |= QStyle.State_Enabled
@@ -293,12 +318,10 @@ class CheckBoxDelegate(QStyledItemDelegate):
         else:
             check_box_style_option.state |= QStyle.State_Off
 
-        check_box_style_option.rect = self.getCheckBoxRect(option)
-
-        check_box_style_option.state |= QStyle.State_Enabled
+        # check_box_style_option.state |= QStyle.State_Enabled
 
         QApplication.style().drawControl(
-            QStyle.CE_CheckBox, check_box_style_option, painter
+            QStyle.CE_PushButton, check_box_style_option, painter
         )
 
     def editorEvent(self, event, model, option, index):
