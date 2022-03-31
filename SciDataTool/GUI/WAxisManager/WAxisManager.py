@@ -417,7 +417,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             list of the inputs from the user to set the DataSelection (auto-plot)
         """
         for wid in self.w_slice_op:
-            wid.set_operation(user_input_list[self.w_slice_op.index(wid)])
+            if self.w_slice_op.index(wid) < len(user_input_list):
+                wid.set_operation(user_input_list[self.w_slice_op.index(wid)])
 
     def update_needed(self):
         """Method that emits a signal (refreshNeeded) that will be used to automaticaly update the plot inside the GUI.
