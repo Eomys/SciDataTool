@@ -13,12 +13,12 @@ from PySide2.QtWidgets import *
 class Ui_WVectorSelector(object):
     def setupUi(self, WVectorSelector):
         if not WVectorSelector.objectName():
-            WVectorSelector.setObjectName(u"WVectorSelector")
+            WVectorSelector.setObjectName("WVectorSelector")
         WVectorSelector.resize(218, 122)
         self.verticalLayout_2 = QVBoxLayout(WVectorSelector)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.g_vector_comp = QGroupBox(WVectorSelector)
-        self.g_vector_comp.setObjectName(u"g_vector_comp")
+        self.g_vector_comp.setObjectName("g_vector_comp")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -29,9 +29,9 @@ class Ui_WVectorSelector(object):
         self.g_vector_comp.setMinimumSize(QSize(0, 0))
         self.g_vector_comp.setMaximumSize(QSize(16777215, 16777215))
         self.gridLayout = QGridLayout(self.g_vector_comp)
-        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setObjectName("gridLayout")
         self.in_component = QLabel(self.g_vector_comp)
-        self.in_component.setObjectName(u"in_component")
+        self.in_component.setObjectName("in_component")
         self.in_component.setMinimumSize(QSize(0, 21))
 
         self.gridLayout.addWidget(self.in_component, 0, 0, 1, 1)
@@ -43,7 +43,7 @@ class Ui_WVectorSelector(object):
         self.c_component.addItem("")
         self.c_component.addItem("")
         self.c_component.addItem("")
-        self.c_component.setObjectName(u"c_component")
+        self.c_component.setObjectName("c_component")
         sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
@@ -59,7 +59,7 @@ class Ui_WVectorSelector(object):
         self.gridLayout.addWidget(self.c_component, 0, 1, 1, 1)
 
         self.in_referential = QLabel(self.g_vector_comp)
-        self.in_referential.setObjectName(u"in_referential")
+        self.in_referential.setObjectName("in_referential")
         self.in_referential.setEnabled(True)
         self.in_referential.setMinimumSize(QSize(0, 21))
 
@@ -68,7 +68,7 @@ class Ui_WVectorSelector(object):
         self.c_referential = QComboBox(self.g_vector_comp)
         self.c_referential.addItem("")
         self.c_referential.addItem("")
-        self.c_referential.setObjectName(u"c_referential")
+        self.c_referential.setObjectName("c_referential")
         self.c_referential.setEnabled(True)
         sizePolicy1.setHeightForWidth(
             self.c_referential.sizePolicy().hasHeightForWidth()
@@ -88,39 +88,39 @@ class Ui_WVectorSelector(object):
 
     def retranslateUi(self, WVectorSelector):
         WVectorSelector.setWindowTitle(
-            QCoreApplication.translate("WVectorSelector", u"WVectorSelector", None)
+            QCoreApplication.translate("WVectorSelector", "WVectorSelector", None)
         )
         self.g_vector_comp.setTitle("")
         self.in_component.setText(
-            QCoreApplication.translate("WVectorSelector", u"Component", None)
+            QCoreApplication.translate("WVectorSelector", "Component", None)
         )
         self.c_component.setItemText(
-            0, QCoreApplication.translate("WVectorSelector", u"radial", None)
+            0, QCoreApplication.translate("WVectorSelector", "radial", None)
         )
         self.c_component.setItemText(
-            1, QCoreApplication.translate("WVectorSelector", u"tangential", None)
+            1, QCoreApplication.translate("WVectorSelector", "tangential", None)
         )
         self.c_component.setItemText(
-            2, QCoreApplication.translate("WVectorSelector", u"axial", None)
+            2, QCoreApplication.translate("WVectorSelector", "axial", None)
         )
         self.c_component.setItemText(
-            3, QCoreApplication.translate("WVectorSelector", u"comp_x", None)
+            3, QCoreApplication.translate("WVectorSelector", "comp_x", None)
         )
         self.c_component.setItemText(
-            4, QCoreApplication.translate("WVectorSelector", u"comp_y", None)
+            4, QCoreApplication.translate("WVectorSelector", "comp_y", None)
         )
         self.c_component.setItemText(
-            5, QCoreApplication.translate("WVectorSelector", u"comp_z", None)
+            5, QCoreApplication.translate("WVectorSelector", "comp_z", None)
         )
 
         self.in_referential.setText(
-            QCoreApplication.translate("WVectorSelector", u"Referential", None)
+            QCoreApplication.translate("WVectorSelector", "Referential", None)
         )
         self.c_referential.setItemText(
-            0, QCoreApplication.translate("WVectorSelector", u"xyz", None)
+            0, QCoreApplication.translate("WVectorSelector", "xyz", None)
         )
         self.c_referential.setItemText(
-            1, QCoreApplication.translate("WVectorSelector", u"radphiz", None)
+            1, QCoreApplication.translate("WVectorSelector", "radphiz", None)
         )
 
     # retranslateUi

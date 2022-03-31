@@ -15,9 +15,9 @@ from SciDataTool.GUI.WPlotManager.WPlotManager import WPlotManager
 class Ui_DDataPlotter(object):
     def setupUi(self, DDataPlotter):
         if not DDataPlotter.objectName():
-            DDataPlotter.setObjectName(u"DDataPlotter")
+            DDataPlotter.setObjectName("DDataPlotter")
         DDataPlotter.setEnabled(True)
-        DDataPlotter.resize(1242, 875)
+        DDataPlotter.resize(1246, 884)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -25,11 +25,11 @@ class Ui_DDataPlotter(object):
         DDataPlotter.setSizePolicy(sizePolicy)
         DDataPlotter.setCursor(QCursor(Qt.ArrowCursor))
         self.gridLayout = QGridLayout(DDataPlotter)
-        self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.is_auto_refresh = QCheckBox(DDataPlotter)
-        self.is_auto_refresh.setObjectName(u"is_auto_refresh")
+        self.is_auto_refresh.setObjectName("is_auto_refresh")
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
@@ -44,7 +44,7 @@ class Ui_DDataPlotter(object):
         self.horizontalLayout_2.addWidget(self.is_auto_refresh)
 
         self.b_refresh = QPushButton(DDataPlotter)
-        self.b_refresh.setObjectName(u"b_refresh")
+        self.b_refresh.setObjectName("b_refresh")
         self.b_refresh.setEnabled(True)
         sizePolicy1.setHeightForWidth(self.b_refresh.sizePolicy().hasHeightForWidth())
         self.b_refresh.setSizePolicy(sizePolicy1)
@@ -57,23 +57,24 @@ class Ui_DDataPlotter(object):
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 1, 1, 1)
 
         self.w_scroll = QScrollArea(DDataPlotter)
-        self.w_scroll.setObjectName(u"w_scroll")
+        self.w_scroll.setObjectName("w_scroll")
         sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.w_scroll.sizePolicy().hasHeightForWidth())
         self.w_scroll.setSizePolicy(sizePolicy2)
-        self.w_scroll.setMinimumSize(QSize(350, 0))
+        self.w_scroll.setMinimumSize(QSize(200, 0))
+        self.w_scroll.setMaximumSize(QSize(400, 16777215))
         self.w_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.w_scroll.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
-        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 604, 814))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 398, 823))
         self.lay_scroll = QVBoxLayout(self.scrollAreaWidgetContents)
-        self.lay_scroll.setObjectName(u"lay_scroll")
+        self.lay_scroll.setObjectName("lay_scroll")
         self.lay_scroll.setContentsMargins(0, 0, 0, 0)
         self.w_plot_manager = WPlotManager(self.scrollAreaWidgetContents)
-        self.w_plot_manager.setObjectName(u"w_plot_manager")
+        self.w_plot_manager.setObjectName("w_plot_manager")
         sizePolicy1.setHeightForWidth(
             self.w_plot_manager.sizePolicy().hasHeightForWidth()
         )
@@ -87,7 +88,7 @@ class Ui_DDataPlotter(object):
         self.gridLayout.addWidget(self.w_scroll, 0, 1, 1, 1)
 
         self.plot_layout = QVBoxLayout()
-        self.plot_layout.setObjectName(u"plot_layout")
+        self.plot_layout.setObjectName("plot_layout")
 
         self.gridLayout.addLayout(self.plot_layout, 0, 0, 2, 1)
 
@@ -99,13 +100,13 @@ class Ui_DDataPlotter(object):
 
     def retranslateUi(self, DDataPlotter):
         DDataPlotter.setWindowTitle(
-            QCoreApplication.translate("DDataPlotter", u"Data Plot", None)
+            QCoreApplication.translate("DDataPlotter", "Data Plot", None)
         )
         self.is_auto_refresh.setText(
-            QCoreApplication.translate("DDataPlotter", u"Auto Refresh", None)
+            QCoreApplication.translate("DDataPlotter", "Auto Refresh", None)
         )
         self.b_refresh.setText(
-            QCoreApplication.translate("DDataPlotter", u"Refresh", None)
+            QCoreApplication.translate("DDataPlotter", "Refresh", None)
         )
 
     # retranslateUi

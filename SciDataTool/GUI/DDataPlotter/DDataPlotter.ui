@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1242</width>
-    <height>875</height>
+    <width>1246</width>
+    <height>884</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -99,8 +99,14 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>350</width>
+       <width>200</width>
        <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>400</width>
+       <height>16777215</height>
       </size>
      </property>
      <property name="horizontalScrollBarPolicy">
@@ -114,8 +120,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>604</width>
-        <height>814</height>
+        <width>398</width>
+        <height>823</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="lay_scroll">
