@@ -218,10 +218,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.param_dict["z_max"] = fig.axes[1].dataLim.extents[-1]
 
         # Recovering the name of the gif if not already given
-        if self.default_file_path is None:
-            gif_name = self.get_file_name()
-        else:
-            gif_name = self.default_file_path
+        # if self.default_file_path is None:
+        gif_name = self.get_file_name()
 
         # Recovering "Generating label" from the WSliceOperator with the axis that we want to animate
         for wid in self.w_axis_manager.w_slice_op:
