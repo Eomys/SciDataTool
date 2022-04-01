@@ -652,6 +652,7 @@ def plot_2D_Data(
         # Force curve plot if type_plot not specified
         if type_plot is None:
             type_plot = "curve"
+        annot = None
         # Hidden annotations
         if annotations is not None:
             annot = list()
