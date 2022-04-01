@@ -55,6 +55,7 @@ def plot_2D(
     width=0.005,
     symbol=".",
     is_indlabels=False,
+    annotations=None,
 ):
     """Plots a 2D graph (curve, bargraph or barchart) comparing fields in Ydatas
 
@@ -203,6 +204,15 @@ def plot_2D(
                 )
             else:
                 ax.set_xticklabels(xticklabels, rotation=90)
+        if annotations is not None:
+            for txt in annotations:
+                ax.annotate(
+                    txt,
+                    (Xdatas[i_Xdatas[i]][0], Ydatas[i][0]),
+                    rotation=45,
+                    family=font_name,
+                    visible=False,
+                )
     elif type_plot == "bargraph":
         positions = range(-ndatas + 1, ndatas, 2)
         if x_max is not None:

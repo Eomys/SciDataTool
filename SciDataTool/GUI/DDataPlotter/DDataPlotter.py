@@ -243,7 +243,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 if annotations[ind[0]]._x == x:
                     X_str = annotations[ind[0]]._text
                     is_annot = False
-            else:
+            if is_annot:
                 # Use ticklabels
                 try:
                     x_float = float(self.ax.get_xticklabels()[-1]._text)
@@ -366,6 +366,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             plot_obj = event.artist
             Z = None
             legend = None
+            annot = None
             if isinstance(plot_obj, Line2D):
                 ind = event.ind
                 xdata = plot_obj.get_xdata()
@@ -376,6 +377,18 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     legend = self.ax.get_legend_handles_labels()[1][
                         self.ax.lines.index(plot_obj)
                     ]
+                    annotations = [
+                        child
+                        for child in self.ax.get_children()
+                        if isinstance(child, Annotation)
+                    ]
+                    if (
+                        annotations != []
+                        and self.ax.lines.index(plot_obj) in range(len(annotations))
+                        and not annotations[self.ax.lines.index(plot_obj)]._visible
+                        and "Overall" not in legend
+                    ):
+                        annot = annotations[self.ax.lines.index(plot_obj)]._text
             elif isinstance(plot_obj, PathCollection):
                 ind = event.ind
                 X = plot_obj.get_offsets().data[ind][0][0]
@@ -414,6 +427,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 label = format_coord(X, Y, Z, sep="\n", ind=ind)
                 if legend is not None:
                     label = legend + "\n" + label
+                if annot is not None:
+                    label += "\n" + annot
                 if label != "":
                     if self.text is None:
                         # Create label in box and black cross
