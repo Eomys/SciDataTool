@@ -273,6 +273,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         """
         # Setting path to recover the image for the animate button
         self.path_to_image = path_to_image
+        self.w_axis_1.path_to_image = self.path_to_image
+        self.w_axis_2.path_to_image = self.path_to_image
 
         if is_keep_config:  # Only update slider
             for wid in self.w_slice_op:
@@ -415,7 +417,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             list of the inputs from the user to set the DataSelection (auto-plot)
         """
         for wid in self.w_slice_op:
-            wid.set_operation(user_input_list[self.w_slice_op.index(wid)])
+            if self.w_slice_op.index(wid) < len(user_input_list):
+                wid.set_operation(user_input_list[self.w_slice_op.index(wid)])
 
     def update_needed(self):
         """Method that emits a signal (refreshNeeded) that will be used to automaticaly update the plot inside the GUI.

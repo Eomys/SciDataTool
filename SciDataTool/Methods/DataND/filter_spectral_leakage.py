@@ -163,7 +163,7 @@ def filter_spectral_leakage(
                     unit="dimless",
                     values=result["wavenumber"],
                     normalizations=axes_list[1].normalizations,
-                    symmetries=axes_list[1].symmetries,
+                    symmetries=dict(),
                 )
             )
 

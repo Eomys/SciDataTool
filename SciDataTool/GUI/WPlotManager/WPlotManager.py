@@ -68,6 +68,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.param_dict = dict()  # Dict with param for animation to animation
         self.save_path = save_gui_path  # Path to directory where animation are stored
         self.path_to_image = None  # Path to recover the image for the animate button
+        self.main_widget = None
 
         self.is_test = False  # Used in test to disable showing the animation
         self.gif_path_list = list()  # List of path to the gifs created (used in test)
@@ -217,10 +218,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.param_dict["z_max"] = fig.axes[1].dataLim.extents[-1]
 
         # Recovering the name of the gif if not already given
-        if self.default_file_path is None:
-            gif_name = self.get_file_name()
-        else:
-            gif_name = self.default_file_path
+        # if self.default_file_path is None:
+        gif_name = self.get_file_name()
 
         # Recovering "Generating label" from the WSliceOperator with the axis that we want to animate
         for wid in self.w_axis_manager.w_slice_op:
@@ -248,7 +247,12 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         # Creating a QThread associated to the worker saving the gif
         self.th = QThread(parent=self)
         self.worker = SaveGifWorker(
-            widget=self, gif=gif, plot_input=plot_input, is_3D=is_3D
+            widget=self,
+            main_widget=self.main_widget,
+            gif=gif,
+            plot_input=plot_input,
+            data_selection=operations_selected,
+            is_3D=is_3D,
         )
         self.worker.moveToThread(self.th)
 
@@ -365,6 +369,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         save_path="",
         logger=None,
         path_to_image=None,
+        main_widget=None,
     ):
         """Method that use the info given by DDataPlotter to setup the widget
 
@@ -395,6 +400,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         path_to_image : str
             path to the folder where the image for the animation button is saved
         """
+        self.main_widget = main_widget
         # Recovering the object that we want to show and how we want to show it
         self.data = data
         self.param_dict = plot_arg_dict.copy()

@@ -1,3 +1,4 @@
+from copy import copy
 import numpy as np
 import imageio
 import matplotlib.pyplot as plt
@@ -43,8 +44,13 @@ def plot_2D_Data_Animated(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
+    scale_units="x",
     scale=None,
     width=0.005,
+    phase=0,
+    is_show_legend=True,
+    is_outside_legend=False,
+    is_frame_legend=True,
     is_plot_only=False,
 ):
     """Plots a field as a function of time
@@ -127,21 +133,18 @@ def plot_2D_Data_Animated(
         images = list()
 
         # definition of the step along animated axis
-        result = self.get_rphiz_along(animated_axis + "[smallestperiod]")
-        animated_values = result[animated_axis]
+        result = self.get_rphiz_along(animated_axis)
+        animated_axis_name = animated_axis.split("[")[0]
+        animated_values = result[animated_axis_name]
         value_max = np.nanmax(animated_values)
         value_min = np.nanmin(animated_values)
         variation_step = (value_max - value_min) / nb_frames
 
         # Getting the name of the gif
         save_path_gif = save_path.replace(".png", ".gif")
-        # Copy_fig make a deep copy so that there is no overlaping
+        fig.suptitle(None)
+        # Copy_fig make a deep copy so that the machine plot is conserved
         deepcopy_fig = copy_fig(fig)
-
-        # To avoid rescale between 1st and 2nd frame of the gif (there is probably a more efficient way to do it)
-        fig.canvas.draw()
-        image = np.frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
-        image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 
         # Params settings
         save_path = None
@@ -158,16 +161,16 @@ def plot_2D_Data_Animated(
 
             # or directly select an instant/element in the animated axis
             else:
-                if animated_axis in arg_list:
+                if animated_axis_name in arg_list:
                     arg_listx = list(arg_list)
-                    ind_ax = arg_listx.index(animated_axis)
+                    ind_ax = arg_listx.index(animated_axis_name)
                     arg_listx.pop(ind_ax)
-                    arg_list0 = (animated_axis + "=" + str(value_min),) + tuple(
+                    arg_list0 = (animated_axis_name + "=" + str(value_min),) + tuple(
                         arg_listx
                     )
                     phase = 0
                 else:
-                    arg_list0 = (animated_axis + "=" + str(value_min),) + arg_list
+                    arg_list0 = (animated_axis_name + "=" + str(value_min),) + arg_list
                     phase = 0
 
             # Call to plot_2D_Data of VectorField class, which manage the quiver case
@@ -209,6 +212,10 @@ def plot_2D_Data_Animated(
                 scale=scale,
                 width=width,
                 phase=phase,
+                scale_units=scale_units,
+                is_show_legend=is_show_legend,
+                is_outside_legend=is_outside_legend,
+                is_frame_legend=is_frame_legend,
             )
 
             if is_plot_only:
@@ -222,9 +229,21 @@ def plot_2D_Data_Animated(
             images.append(image)
 
             # Fig and ax reset to default for background
-            fig = copy_fig(deepcopy_fig)
-            ax = fig.axes[0]
-            # While conidtion incrementation
+            fig, ax, _, _ = init_fig()
+            deepcopy_ax = deepcopy_fig.axes[0]
+            for patch in deepcopy_ax.patches:
+                patch_cpy = copy(patch)
+                patch_cpy.axes = None
+                patch_cpy.figure = None
+                patch_cpy.set_transform(ax.transData)
+                ax.add_patch(patch_cpy)
+            ax.set_xlim(deepcopy_ax.get_xlim())
+            ax.set_ylim(deepcopy_ax.get_ylim())
+            ax.set_xlabel(deepcopy_ax.get_xlabel())
+            ax.set_ylabel(deepcopy_ax.get_ylabel())
+            ax.set_title(deepcopy_ax.get_title())
+            fig.suptitle(None)
+            # While condition incrementation
             value_min += variation_step
 
         # Creating the gif

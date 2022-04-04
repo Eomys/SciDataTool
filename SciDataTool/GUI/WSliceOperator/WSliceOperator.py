@@ -60,14 +60,15 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.indices = None
         self.is_animate = False  # boolean to define if an animation must on this axis (must be on slice)
         self.is_pattern = False  # Detecting if the axis is a DataPattern (important for handling of slice + slider + lf_value)
+        self.path_to_image = path_to_image
 
         # Setting path to recover the image for the animate button
-        if path_to_image is None:
-            self.path_to_image = ":/images/images/icon/play-32px.png"
+        if self.path_to_image is None:
+            path_to_image = ":/images/images/icon/play-32px.png"
         else:
-            self.path_to_image = path_to_image + "/images/icon/play-32px.png"
+            path_to_image = self.path_to_image + "/images/icon/play-32px.png"
 
-        self.b_animate.setPixmap(QPixmap(self.path_to_image))
+        self.b_animate.setPixmap(QPixmap(path_to_image))
         self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.lf_value.editingFinished.connect(self.update_slider)
@@ -154,7 +155,9 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.current_dialog.setParent(None)
             self.current_dialog = None
 
-        self.current_dialog = WFilter(self.axis, self.indices)
+        self.current_dialog = WFilter(
+            self.axis, self.indices, path_to_image=self.path_to_image
+        )
         self.current_dialog.refreshNeeded.connect(self.update_indices)
         self.current_dialog.show()
 
@@ -394,8 +397,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.show()
             self.in_unit.show()
             self.slider.show()
-            self.b_animate.show()
             self.b_action.hide()
+            if extraction_selected == "slice":
+                self.b_animate.show()
+            else:
+                self.b_animate.hide()
             self.refreshNeeded.emit()
         # If the operation selected is overlay then we show the related button
         elif extraction_selected == "overlay":

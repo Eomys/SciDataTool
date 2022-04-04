@@ -22,7 +22,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
     axisChanged = Signal()
     actionChanged = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, path_to_image=None):
         """Initialize the arguments, linking the buttons and setting up the UI
 
         Parameters
@@ -41,6 +41,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.axes_list = list()  # List of the different axes of the DataND object
         self.norm_list = None  # List of available normalizations for each axis
         self.indices = None
+        self.path_to_image = path_to_image
 
         self.axis_selected = "None"  # Name of the axis selected (time, angle...)
         self.norm = None  # Name of the unit of the axis (s,m...)
@@ -135,7 +136,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             ax for ax in self.axes_list_obj if ax.name == self.axis_selected
         ][0]
 
-        self.current_dialog = WFilter(axis_selected_obj, self.indices, is_overlay=False)
+        self.current_dialog = WFilter(
+            axis_selected_obj,
+            self.indices,
+            path_to_image=self.path_to_image,
+        )
         self.current_dialog.refreshNeeded.connect(self.update_indices)
         self.current_dialog.show()
 
@@ -205,7 +210,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         # Step 2 : Recovering the unit and setting the combobox according to it
         unit_name = axis.unit
-        if unit_name in unit_dict:
+        if self.c_unit.findText(unit_name) != -1:
+            self.c_unit.setCurrentIndex(self.c_unit.findText(unit_name))
+        elif unit_name in unit_dict:
             self.c_unit.setCurrentIndex(self.c_unit.findText(unit_dict[unit_name]))
         elif unit_name in norm_name_dict:
             self.c_unit.setCurrentIndex(self.c_unit.findText(norm_name_dict[unit_name]))

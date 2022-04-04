@@ -1,4 +1,3 @@
-from operator import is_
 from SciDataTool.Functions.Plot.plot_2D import plot_2D
 from SciDataTool.Functions.Plot import (
     unit_dict,
@@ -23,6 +22,8 @@ from numpy import (
     nanmin as np_min,
     linspace,
     argmin,
+    argmax,
+    take,
     log10,
     nan,
 )
@@ -70,6 +71,7 @@ def plot_2D_Data(
     is_outside_legend=False,
     is_frame_legend=True,
     is_indlabels=False,
+    annotations=None,
 ):
     """Plots a field as a function of time
 
@@ -650,6 +652,40 @@ def plot_2D_Data(
         # Force curve plot if type_plot not specified
         if type_plot is None:
             type_plot = "curve"
+        annot = None
+        # Hidden annotations
+        if annotations is not None:
+            annot = list()
+            axis_along = self.get_axes(annotations[0])[0]
+            axis_op = self.get_axes(annotations[1])[0]
+            operation = annotations[2]
+            arg_list_new = []
+            if self.unit == "W":
+                op = "=sum"
+            else:
+                op = "=rss"
+            for axis in self.get_axes():
+                if axis.name not in [axis_along.name, axis_op.name]:
+                    arg_list_new.append(axis.name + op)
+                else:
+                    arg_list_new.append(axis.name)
+            data2 = self.get_data_along(*arg_list_new, unit=unit)
+            arg_list_new = []
+            for arg in arg_list_along:
+                if axis_along.name in arg or axis_op.name in arg:
+                    arg_list_new.append(arg.replace("=sum", ""))
+            result = self.get_magnitude_along(*arg_list_new)
+            for ii in range(len(result[annotations[0]])):
+                if operation == "max":
+                    index = argmax(take(result[self.symbol], ii, axis=0))
+                    annot.append(
+                        "main "
+                        + annotations[1].rstrip("s")
+                        + ": "
+                        + axis_op.get_values()[index]
+                    )
+            if len(overall_axes) != 0:
+                annot.insert(0, "Overall")
 
         plot_2D(
             Xdatas,
@@ -686,4 +722,5 @@ def plot_2D_Data(
             is_outside_legend=is_outside_legend,
             is_frame_legend=is_frame_legend,
             is_indlabels=is_indlabels,
+            annotations=annot,
         )

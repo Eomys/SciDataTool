@@ -72,6 +72,8 @@ def export_along(
             axis.unit = unit_dict[axis.name]
         if len(results[axis.name]) == 1:
             slices += axis.name + "=" + str(results[axis.name][0])
+        elif isinstance(results[axis.name], str):
+            slices += axis.name + "=" + results[axis.name]
         else:
             axes_list_new.append(axis)
     for axis in results["axes_dict_other"]:
