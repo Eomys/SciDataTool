@@ -41,6 +41,7 @@ PARAM_3D = [
     "colormap",
     "annotation_delim",
     "marker_color",
+    "z_range",
 ]
 
 PARAM_2D = [

@@ -69,14 +69,17 @@ def plot_2D_Data_Animated(
         frames_list = arange(start=value_min, stop=value_max, step=variation_step)
         frames_list = ["=" + str(frame) for frame in frames_list]
 
-    # Setting the options of the plot
-    y_max = nanmax(result[self.symbol])
-    y_min = nanmin(result[self.symbol])
-    marge = (
-        y_max - y_min
-    ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
-    plot_options["y_min"] = nanmin(result[self.symbol]) - abs(marge)
-    plot_options["y_max"] = nanmax(result[self.symbol]) + abs(marge)
+    # detecting if we are animating a regular plot (=> computing limit for y) or a "fft" plot (=> limit already set)
+    if plot_options["y_min"] == None or plot_options["y_max"] == None:
+        # Setting the options of the plot
+        y_max = nanmax(result[self.symbol])
+        y_min = nanmin(result[self.symbol])
+        marge = (
+            y_max - y_min
+        ) * 0.05  # 5% of the height of plot to add to the border top/bottom of gif
+        plot_options["y_min"] = nanmin(result[self.symbol]) - abs(marge)
+        plot_options["y_max"] = nanmax(result[self.symbol]) + abs(marge)
+
     plot_options["is_show_fig"] = False
 
     # Getting the name of the gif

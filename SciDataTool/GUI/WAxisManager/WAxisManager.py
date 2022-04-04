@@ -115,7 +115,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         # Step 2 : Removing the items that are in the layout currently
         for i in reversed(range(self.lay_data_extract.count())):
-            self.lay_data_extract.takeAt(i).widget().setParent(None)
+            widget_to_del = self.lay_data_extract.takeAt(i).widget()
+            widget_to_del.deleteLater()
 
         # Step 3 : For each axis available, adding a WSliceOperator widget inside the layout
         # If there are no slice to do (two axis available and selected before) then we hide the groupBox
@@ -238,6 +239,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         ]:
             action_selected = self.w_axis_1.get_current_action_name()
             self.w_axis_2.set_action(action_selected)
+            self.gen_slice_op()
 
         elif axis_changed == "axis 2" and "FFT" in [
             self.w_axis_2.c_action.itemText(i)
@@ -246,8 +248,6 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             action_selected = self.w_axis_2.get_current_action_name()
             self.w_axis_1.set_action(action_selected)
             self.gen_slice_op()
-
-        self.gen_slice_op()
 
     def set_axis_widgets(
         self,

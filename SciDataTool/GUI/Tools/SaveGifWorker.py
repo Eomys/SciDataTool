@@ -11,7 +11,7 @@ def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D)
 
     animated_axis = plot_input.pop(0)
 
-    param_dict = main_widget.plot_arg_dict.copy()
+    param_dict = widget.param_dict.copy()
 
     param_dict["save_path"] = gif
 
@@ -23,6 +23,7 @@ def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D)
     ] = widget.get_plot_info()
 
     if "type_plot" in param_dict and param_dict["type_plot"] == "quiver":
+        param_dict = main_widget.plot_arg_dict.copy()
         if widget.w_vect_selector.get_component_selected() != "all":
             component_list = [widget.w_vect_selector.get_component_selected()]
         else:
@@ -54,17 +55,16 @@ def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D)
         )
 
     else:
+
+        param_dict["unit"] = output_range["unit"]
+
         if "component_list" in param_dict:
             param_dict.pop("component_list")
 
         if is_3D:
-            widget.data.plot_3D_Data_Animated(
-                animated_axis, *plot_input, *data_selection, **param_dict
-            )
+            widget.data.plot_3D_Data_Animated(animated_axis, *plot_input, **param_dict)
         else:
-            widget.data.plot_2D_Data_Animated(
-                animated_axis, *plot_input, *data_selection, **param_dict
-            )
+            widget.data.plot_2D_Data_Animated(animated_axis, *plot_input, **param_dict)
     queue.put("gif generated")
 
 
