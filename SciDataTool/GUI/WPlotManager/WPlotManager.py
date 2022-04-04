@@ -217,6 +217,29 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             self.param_dict["z_min"] = fig.axes[1].dataLim.extents[0]
             self.param_dict["z_max"] = fig.axes[1].dataLim.extents[-1]
 
+        elif not is_3D:
+
+            if (
+                len(axes_selected) == 1
+                and axes_selected[0].split("{")[0]
+                in [
+                    "freqs",
+                    "wavenumber",
+                ]
+                and len(plt.gcf().axes) == 1
+            ):
+                # if we are animating an FFT plot then we set the limit according to the current figure
+                fig = plt.gcf()
+                self.param_dict["x_min"] = fig.axes[0].get_xlim()[0]
+                self.param_dict["x_max"] = fig.axes[0].get_xlim()[1]
+                self.param_dict["y_min"] = fig.axes[0].get_ylim()[0]
+                self.param_dict["y_max"] = fig.axes[0].get_ylim()[1]
+
+            else:
+                # if we animate a regular 2D plot then we set the limit on y-axis later
+                self.param_dict["y_min"] = None
+                self.param_dict["y_max"] = None
+
         # Recovering the name of the gif if not already given
         # if self.default_file_path is None:
         gif_name = self.get_file_name()
