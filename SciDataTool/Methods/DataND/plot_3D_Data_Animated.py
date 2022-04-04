@@ -23,7 +23,7 @@ def plot_3D_Data_Animated(
     module = __import__("SciDataTool.Classes.DataPattern", fromlist=["DataPattern"])
     DataPattern = getattr(module, "DataPattern")
 
-    # Making sure that we have the right argument for a plot2D
+    # Making sure that we have the right argument for a plot3D
     plot_options = param_dict.copy()
     for param in PARAM_2D:
         if param in plot_options:
