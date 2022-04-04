@@ -71,10 +71,16 @@ def get_data_along(self, *args, unit="SI", is_norm=False, axis_data=[]):
                         axis_values = results[axis_name]
                         ax_unit = rev_axes_dict[axis_name][2]
             # Update symmetries
-            if "smallestperiod" in args[index] or args[index] in [
-                "freqs",
-                "wavenumber",
-            ]:
+            if (
+                "smallestperiod" in args[index]
+                or args[index]
+                in [
+                    "freqs",
+                    "wavenumber",
+                ]
+                or "antiderivate" in args[index]
+                or "derivate" in args[index]
+            ):
                 symmetries = self.axes[index].symmetries.copy()
             else:
                 symmetries = dict()
