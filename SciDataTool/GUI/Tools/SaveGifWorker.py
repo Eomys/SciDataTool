@@ -55,6 +55,9 @@ def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D)
         )
 
     else:
+
+        param_dict["unit"] = output_range["unit"]
+
         if "component_list" in param_dict:
             param_dict.pop("component_list")
 
