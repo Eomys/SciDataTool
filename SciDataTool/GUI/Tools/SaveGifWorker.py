@@ -62,13 +62,9 @@ def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D)
             param_dict.pop("component_list")
 
         if is_3D:
-            widget.data.plot_3D_Data_Animated(
-                animated_axis, *plot_input, *data_selection, **param_dict
-            )
+            widget.data.plot_3D_Data_Animated(animated_axis, *plot_input, **param_dict)
         else:
-            widget.data.plot_2D_Data_Animated(
-                animated_axis, *plot_input, *data_selection, **param_dict
-            )
+            widget.data.plot_2D_Data_Animated(animated_axis, *plot_input, **param_dict)
     queue.put("gif generated")
 
 
