@@ -674,7 +674,7 @@ def plot_2D_Data(
             for arg in arg_list_along:
                 if axis_along.name in arg or axis_op.name in arg:
                     arg_list_new.append(arg.replace("=sum", ""))
-            result = self.get_magnitude_along(*arg_list_new)
+            result = data2.get_magnitude_along(*arg_list_new)
             for ii in range(len(result[annotations[0]])):
                 if operation == "max":
                     index = argmax(take(result[self.symbol], ii, axis=0))
