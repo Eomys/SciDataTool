@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 /Tests/Results
+/Tests/logtest.txt
 .idea/
 Internal/
 _Internal/
