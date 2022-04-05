@@ -206,6 +206,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         str_format = ".gif"
 
+        # Updating the figure to make sure that we are recovering the limit of the right figure
+        self.update_plot_forced()
+
         if is_3D and len(plt.gcf().axes) == 2:
             # If we are animating a 3D plot, then we must keep the axes limit
             fig = plt.gcf()
