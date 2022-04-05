@@ -56,7 +56,11 @@ def get_magnitude_along(
                         index_freq = i
             if index_freq is None:  # No sum on freqs axis -> can extract directly
                 return self.get_magnitude_along(
-                    *args, unit=unit, is_squeeze=is_squeeze, is_sum=False
+                    *args,
+                    axis_data=axis_data,
+                    unit=unit,
+                    is_squeeze=is_squeeze,
+                    is_sum=False,
                 )
             else:
                 data = self.get_data_along(
@@ -64,6 +68,7 @@ def get_magnitude_along(
                 )  # Extract first along freqs axis
                 return data.get_magnitude_along(
                     *[args[index_freq]],
+                    axis_data=axis_data,
                     unit=unit,
                     is_squeeze=is_squeeze,
                     is_sum=False,
@@ -98,7 +103,11 @@ def get_magnitude_along(
                             index_speed = i
             elif unit == "dB" or "A-weight" in self.normalizations:
                 self.get_magnitude_along(
-                    *args, unit=unit, is_squeeze=is_squeeze, is_sum=False
+                    *args,
+                    axis_data=axis_data,
+                    unit=unit,
+                    is_squeeze=is_squeeze,
+                    is_sum=False,
                 )
             else:
                 raise AxisError(
@@ -108,7 +117,11 @@ def get_magnitude_along(
                 index_speed is None and index_order is None
             ):  # No sum on freqs axis -> can extract directly
                 return self.get_magnitude_along(
-                    *args, unit=unit, is_squeeze=is_squeeze, is_sum=False
+                    *args,
+                    axis_data=axis_data,
+                    unit=unit,
+                    is_squeeze=is_squeeze,
+                    is_sum=False,
                 )
             elif index_speed is None:  # Sum on order axis
                 data = self.get_data_along(
@@ -116,6 +129,7 @@ def get_magnitude_along(
                 )  # Extract first along order axis
                 return data.get_magnitude_along(
                     *[arg_speed, args[index_order]],
+                    axis_data=axis_data,
                     unit=unit,
                     is_squeeze=is_squeeze,
                     is_sum=False,
@@ -127,6 +141,7 @@ def get_magnitude_along(
                 )  # Extract first along speed axis
                 return data.get_magnitude_along(
                     *args,
+                    axis_data=axis_data,
                     unit=unit,
                     is_squeeze=is_squeeze,
                     is_sum=False,
@@ -138,6 +153,7 @@ def get_magnitude_along(
                 )  # Extract first along speed and order axes
                 return data.get_magnitude_along(
                     *[args[index_speed], args[index_order]],
+                    axis_data=axis_data,
                     unit=unit,
                     is_squeeze=is_squeeze,
                     is_sum=False,
