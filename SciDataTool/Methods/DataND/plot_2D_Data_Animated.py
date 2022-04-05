@@ -47,9 +47,11 @@ def plot_2D_Data_Animated(
         animated_axis = animated_axis.split("[")[0] + animated_axis_unit
 
     if "freqs" in param_list or "wavenumber" in param_list:
-        result = self.get_magnitude_along(animated_axis, *param_list)
+        result = self.get_magnitude_along(
+            animated_axis, *param_list, unit=param_dict["unit"]
+        )
     else:
-        result = self.get_along(animated_axis, *param_list)
+        result = self.get_along(animated_axis, *param_list, unit=param_dict["unit"])
 
     animated_axis_unit = "{" + animated_axis.split("{")[1]
     animated_axis = animated_axis.split("{")[0].split("[")[0]
