@@ -230,9 +230,9 @@ def comp_fftn(values, axes_list, is_real=True):
                     axis.values = axis.input_data
                     axis.input_data = None
                     continue
-            if axis.input_data is not None:
+            if axis.input_data is not None and len(axis.input_data) > 1:
                 if not isin(
-                    around(axis.input_data, decimals=3), around(axis.values, decimals=3)
+                    around(axis.input_data, decimals=5), around(axis.values, decimals=5)
                 ).all():
                     is_non_uniform = True
                     # Convert wavenumbers to frequencies if needed
