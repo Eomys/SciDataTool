@@ -24,6 +24,7 @@ def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D)
 
     if "type_plot" in param_dict and param_dict["type_plot"] == "quiver":
         param_dict = main_widget.plot_arg_dict.copy()
+        param_dict["save_path"] = gif
         if widget.w_vect_selector.get_component_selected() != "all":
             component_list = [widget.w_vect_selector.get_component_selected()]
         else:
