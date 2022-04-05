@@ -242,7 +242,10 @@ class WPlotManager(Ui_WPlotManager, QWidget):
                 self.param_dict["y_max"] = None
 
         # Recovering the suptitle of the figure and adding to the animation
-        suptitle_ref = fig._suptitle._text
+        if fig._suptitle is not None:
+            suptitle_ref = fig._suptitle._text
+        else:
+            suptitle_ref = ""
 
         # Recovering the name of the gif if not already given
         # if self.default_file_path is None:
