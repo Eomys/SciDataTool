@@ -154,7 +154,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         layout.addWidget(new_animation_label)
 
         # Setting size of the widget showing the animation to the size of the gif
-        widget.setFixedSize(new_gif_widget.currentImage().size())
+        widget.resize(new_gif_widget.currentImage().size())
 
         # Setting the rest of the widget and showing it
         widget.closeEvent = lambda ev: self.close_gif(ev, new_animation_label)
@@ -206,9 +206,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         str_format = ".gif"
 
+        # Updating the figure to make sure that we are recovering the limit of the right figure
+        self.update_plot_forced()
+        fig = plt.gcf()
         if is_3D and len(plt.gcf().axes) == 2:
             # If we are animating a 3D plot, then we must keep the axes limit
-            fig = plt.gcf()
 
             self.param_dict["x_min"] = fig.axes[0].get_xlim()[0]
             self.param_dict["x_max"] = fig.axes[0].get_xlim()[1]
@@ -229,7 +231,6 @@ class WPlotManager(Ui_WPlotManager, QWidget):
                 and len(plt.gcf().axes) == 1
             ):
                 # if we are animating an FFT plot then we set the limit according to the current figure
-                fig = plt.gcf()
                 self.param_dict["x_min"] = fig.axes[0].get_xlim()[0]
                 self.param_dict["x_max"] = fig.axes[0].get_xlim()[1]
                 self.param_dict["y_min"] = fig.axes[0].get_ylim()[0]
@@ -239,6 +240,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
                 # if we animate a regular 2D plot then we set the limit on y-axis later
                 self.param_dict["y_min"] = None
                 self.param_dict["y_max"] = None
+
+        # Recovering the suptitle of the figure and adding to the animation
+        suptitle_ref = fig._suptitle._text
 
         # Recovering the name of the gif if not already given
         # if self.default_file_path is None:
@@ -276,6 +280,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             plot_input=plot_input,
             data_selection=operations_selected,
             is_3D=is_3D,
+            suptitle_ref=suptitle_ref,
         )
         self.worker.moveToThread(self.th)
 

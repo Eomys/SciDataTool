@@ -6,7 +6,7 @@ from SciDataTool.Functions.Plot import fft_dict, ifft_dict
 
 
 def plot_2D_Data_Animated(
-    self, animated_axis, *param_list, nb_frames=50, fps=10, **param_dict
+    self, animated_axis, suptitle_ref, *param_list, nb_frames=50, fps=10, **param_dict
 ):
     """Gen
 
@@ -47,9 +47,11 @@ def plot_2D_Data_Animated(
         animated_axis = animated_axis.split("[")[0] + animated_axis_unit
 
     if "freqs" in param_list or "wavenumber" in param_list:
-        result = self.get_magnitude_along(animated_axis, *param_list)
+        result = self.get_magnitude_along(
+            animated_axis, *param_list, unit=param_dict["unit"]
+        )
     else:
-        result = self.get_along(animated_axis, *param_list)
+        result = self.get_along(animated_axis, *param_list, unit=param_dict["unit"])
 
     animated_axis_unit = "{" + animated_axis.split("{")[1]
     animated_axis = animated_axis.split("{")[0].split("[")[0]
@@ -94,6 +96,11 @@ def plot_2D_Data_Animated(
         )
         # Getting the figure generated with plot_2D_DATA
         fig = plt.gcf()
+
+        # Adding the suptitle of the figure if there is one
+        if suptitle_ref != "":
+            fig.suptitle(suptitle_ref)
+
         fig.canvas.draw()
         image = frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))

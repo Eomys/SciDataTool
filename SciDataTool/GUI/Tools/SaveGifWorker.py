@@ -7,7 +7,9 @@ from logging.handlers import QueueListener
 from pytest import param
 
 
-def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D):
+def save_gif(
+    queue, widget, main_widget, gif, plot_input, data_selection, is_3D, suptitle_ref
+):
 
     animated_axis = plot_input.pop(0)
 
@@ -63,9 +65,13 @@ def save_gif(queue, widget, main_widget, gif, plot_input, data_selection, is_3D)
             param_dict.pop("component_list")
 
         if is_3D:
-            widget.data.plot_3D_Data_Animated(animated_axis, *plot_input, **param_dict)
+            widget.data.plot_3D_Data_Animated(
+                animated_axis, suptitle_ref, *plot_input, **param_dict
+            )
         else:
-            widget.data.plot_2D_Data_Animated(animated_axis, *plot_input, **param_dict)
+            widget.data.plot_2D_Data_Animated(
+                animated_axis, suptitle_ref, *plot_input, **param_dict
+            )
     queue.put("gif generated")
 
 
@@ -82,6 +88,7 @@ class SaveGifWorker(QObject):
         plot_input=list(),
         data_selection=list(),
         is_3D=False,
+        suptitle_ref="",
     ):
         super().__init__()
         self.widget = widget
@@ -90,6 +97,7 @@ class SaveGifWorker(QObject):
         self.plot_input = plot_input
         self.data_selection = data_selection
         self.is_3D = is_3D
+        self.suptitle_ref = suptitle_ref
         self.queue = multiprocessing.Queue()
         # used to check if the is finished
         self.queue_handler = GifHandler(parent=self)
@@ -109,6 +117,7 @@ class SaveGifWorker(QObject):
                 self.plot_input,
                 self.data_selection,
                 self.is_3D,
+                self.suptitle_ref,
             ),
         )
         self.p.daemon = True
