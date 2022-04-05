@@ -19,6 +19,7 @@ def plot(
     is_create_appli=True,
     frozen_type=0,
     plot_arg_dict=dict(),
+    path_to_image=None,
 ):
     """Plot the Data object in the GUI
 
@@ -67,6 +68,7 @@ def plot(
         is_auto_refresh=is_auto_refresh,
         plot_arg_dict=plot_arg_dict,
         frozen_type=frozen_type,
+        path_to_image=path_to_image,
     )
 
     if is_show_fig:
