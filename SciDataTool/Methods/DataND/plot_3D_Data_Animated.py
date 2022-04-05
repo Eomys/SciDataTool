@@ -5,7 +5,7 @@ from ...GUI.DDataPlotter.DDataPlotter import PARAM_2D
 
 
 def plot_3D_Data_Animated(
-    self, animated_axis, *param_list, nb_frames=50, fps=10, **param_dict
+    self, animated_axis, suptitle_ref, *param_list, nb_frames=50, fps=10, **param_dict
 ):
     """Gen
 
@@ -77,6 +77,11 @@ def plot_3D_Data_Animated(
         )
         # Getting the figure generated with plot_2D_DATA
         fig = plt.gcf()
+
+        # Adding the suptitle of the figure if there is one
+        if suptitle_ref != "":
+            fig.suptitle(suptitle_ref)
+
         fig.canvas.draw()
         image = frombuffer(fig.canvas.tostring_rgb(), dtype="uint8")
         image = image.reshape(fig.canvas.get_width_height()[::-1] + (3,))
