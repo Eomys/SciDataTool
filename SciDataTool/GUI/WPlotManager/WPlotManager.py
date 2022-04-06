@@ -11,7 +11,6 @@ from PySide2.QtWidgets import (
 )
 
 from os.path import dirname, basename, join, isfile
-from Tests import save_gui_path
 from SciDataTool.Functions.Load.import_class import import_class
 from SciDataTool.Functions.is_axes_in_order import is_axes_in_order
 from SciDataTool.GUI.Tools.SaveGifWorker import SaveGifWorker
@@ -66,7 +65,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         self.default_file_path = None  # Path to export in csv
         self.param_dict = dict()  # Dict with param for animation to animation
-        self.save_path = save_gui_path  # Path to directory where animation are stored
+        module = __import__("SciDataTool")
+        DATA_DIR = getattr(module, "DATA_DIR")
+        self.save_path = DATA_DIR  # Path to directory where animation are stored
         self.path_to_image = None  # Path to recover the image for the animate button
         self.main_widget = None
 

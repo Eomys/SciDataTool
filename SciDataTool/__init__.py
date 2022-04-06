@@ -1,3 +1,5 @@
+from os.path import join, abspath, dirname, isdir
+
 from SciDataTool.Classes.Data import Data
 from SciDataTool.Classes.Data1D import Data1D
 from SciDataTool.Classes.DataFreq import DataFreq
@@ -13,5 +15,7 @@ from SciDataTool.Classes.Norm_func import Norm_func
 from SciDataTool.Classes.Norm_vector import Norm_vector
 from SciDataTool.Classes.Norm_indices import Norm_indices
 from SciDataTool.Classes.Norm_ref import Norm_ref
+
+DATA_DIR = abspath(join(dirname(__file__), "Data"))
 
 __version__ = "2.3.5"
