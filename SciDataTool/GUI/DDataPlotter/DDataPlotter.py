@@ -1,3 +1,4 @@
+from json import tool
 from PySide2.QtWidgets import QWidget
 from SciDataTool.Functions import parser
 from PySide2.QtCore import Qt
@@ -215,9 +216,20 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             text_box = TEXT_BOX
         # Set plot layout
         self.canvas = FigureCanvas(fig)
-        self.toolbar = NavigationToolbar(self.canvas, self)
+        if self.toolbar is None:
+            toolbar = NavigationToolbar(self.canvas, self)
+        else:
+            toolbar = NavigationToolbar(self.canvas, self)
+            action_names = [action.text() for action in self.toolbar.actions()]
+            for action in toolbar.actions():
+                if action.text() in action_names:
+                    action.setIcon(
+                        self.toolbar.actions()[action_names.index(action.text())].icon()
+                    )
+                else:
+                    toolbar.removeAction(action)
 
-        self.plot_layout.addWidget(self.toolbar)
+        self.plot_layout.addWidget(toolbar)
         self.plot_layout.addWidget(self.canvas)
 
         self.text = None
@@ -507,6 +519,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 widgetToRemove.deleteLater()
 
         if self.fig.get_axes():
+            if len(self.fig.canvas.toolbar.actions()) == 11:
+                self.toolbar = None
+            else:
+                self.toolbar = self.fig.canvas.toolbar
             self.fig.clear()
 
         (self.fig, self.ax, _, _) = init_fig()
