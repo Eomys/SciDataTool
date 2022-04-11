@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from SciDataTool.GUI.WDataRange.Ui_WDataRange import Ui_WDataRange
 from PySide2.QtCore import Signal
 from SciDataTool.Functions import parser
+from SciDataTool.GUI import update_cb_enable
 
 
 class WDataRange(Ui_WDataRange, QWidget):
@@ -111,6 +112,7 @@ class WDataRange(Ui_WDataRange, QWidget):
             if unit == "dBA" and self.c_unit.count() > 1:  # Also adding dB
                 self.c_unit.insertItem(1, "dB")
             self.c_unit.setCurrentIndex(0)
+            update_cb_enable(self.c_unit)
         # else:
         #     self.set_unit(data)
         self.lf_min.clear()
@@ -153,6 +155,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         # # Updating the unit combobox
         self.c_unit.clear()
         self.c_unit.addItem(field.unit)
+        update_cb_enable(self.c_unit)
         self.unit = field.unit
 
     def update_unit(self):

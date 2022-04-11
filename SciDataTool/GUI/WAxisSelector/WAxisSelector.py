@@ -434,6 +434,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             action = ["None"]
         self.c_action.clear()
         self.c_action.addItems(action)
+        update_cb_enable(self.c_action)
         self.c_action.blockSignals(False)
 
         self.c_action.view().setMinimumWidth(max([len(ac) for ac in action]) * 6)
