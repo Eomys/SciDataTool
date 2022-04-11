@@ -210,6 +210,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         # Step 2 : Recovering the unit and setting the combobox according to it
         unit_name = axis.unit
+        self.c_unit.blockSignals(True)
         if self.c_unit.findText(unit_name) != -1:
             self.c_unit.setCurrentIndex(self.c_unit.findText(unit_name))
         elif unit_name in unit_dict:
@@ -220,6 +221,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.c_unit.setCurrentIndex(0)
         else:
             self.c_unit.setCurrentIndex(self.c_unit.findText(unit_name))
+        self.c_unit.blockSignals(False)
+        self.set_unit()
 
         self.blockSignals(False)
 
@@ -314,10 +317,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             name of the new action"""
 
         action_list = [self.c_action.itemText(i) for i in range(self.c_action.count())]
-        self.blockSignals(True)
+        self.c_action.blockSignals(True)
         if action in action_list and action != "Filter":
             self.c_action.setCurrentIndex(action_list.index(action))
-        self.blockSignals(False)
+        self.c_action.blockSignals(False)
 
     def set_unit(self):
         """Method that update the unit comboxbox according to the axis selected in the other combobox.
@@ -383,10 +386,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self.set_name(axis_name)
         self.set_axis_options(axes_list)
         self.update_axis()
-        self.c_action.setCurrentIndex(0)
         self.set_unit()
 
-    def update_axis(self, is_refresh=True):
+    def update_axis(self, text=None, is_refresh=True):
         """Method called when an axis is changed that change axis_selected, the units available and the action combobox.
         It will also emit a signal used in WAxisManager.
         Parameters
@@ -394,8 +396,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         self : WAxisSelector
             a WAxisSelector object
         """
-
-        self.c_action.setCurrentIndex(0)
+        self.c_action.blockSignals(True)
+        if is_refresh:
+            self.c_action.setCurrentIndex(0)
 
         if self.c_axis.currentText() == "None":
             self.c_action.setDisabled(True)
@@ -411,7 +414,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         else:
             self.axis_selected = self.c_axis.currentText()
 
-        self.set_unit()
+        if not is_refresh:
+            self.set_unit()
 
         # Updating the action combobox
         # Handling specific case to disable certain parts of the GUI
@@ -420,7 +424,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         else:
             self.c_action.setDisabled(False)
 
-        self.c_action.blockSignals(True)
         if self.axis_selected in fft_dict:
             action = ["None", "FFT"]
         elif (

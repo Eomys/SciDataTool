@@ -239,7 +239,56 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         ]:
             action_selected = self.w_axis_1.get_current_action_name()
             self.w_axis_2.set_action(action_selected)
+            if action_selected == "FFT":
+                if self.w_axis_2.axis_selected in fft_dict:
+                    if self.w_axis_2.axis_selected in self.w_axis_2.axes_list:
+                        self.w_axis_2.axes_list[
+                            self.w_axis_2.axes_list.index(self.w_axis_2.axis_selected)
+                        ] = fft_dict[self.w_axis_2.axis_selected]
+                        self.w_axis_2.axis_selected = fft_dict[
+                            self.w_axis_2.axis_selected
+                        ]
+                    else:
+                        self.w_axis_2.axis_selected = fft_dict[
+                            self.w_axis_2.axis_selected
+                        ]
+                elif self.w_axis_2.axis_selected in ifft_dict:
+                    if (
+                        self.w_axis_2.axis_selected not in self.w_axis_2.axes_list
+                        and ifft_dict[self.w_axis_2.axis_selected]
+                        in self.w_axis_2.axes_list
+                    ):
+                        self.w_axis_2.axes_list[
+                            self.w_axis_2.axes_list.index(
+                                ifft_dict[self.w_axis_2.axis_selected]
+                            )
+                        ] = self.w_axis_2.axis_selected
+            else:
+                if self.w_axis_2.axis_selected in ifft_dict:
+                    if self.w_axis_2.axis_selected in self.w_axis_2.axes_list:
+                        self.w_axis_2.axes_list[
+                            self.w_axis_2.axes_list.index(self.w_axis_2.axis_selected)
+                        ] = ifft_dict[self.w_axis_2.axis_selected]
+                        self.w_axis_2.axis_selected = ifft_dict[
+                            self.w_axis_2.axis_selected
+                        ]
+                    else:
+                        self.w_axis_2.axis_selected = ifft_dict[
+                            self.w_axis_2.axis_selected
+                        ]
+                elif self.w_axis_2.axis_selected in fft_dict:
+                    if (
+                        self.w_axis_2.axis_selected not in self.w_axis_2.axes_list
+                        and fft_dict[self.w_axis_2.axis_selected]
+                        in self.w_axis_2.axes_list
+                    ):
+                        self.w_axis_2.axes_list[
+                            self.w_axis_2.axes_list.index(
+                                fft_dict[self.w_axis_2.axis_selected]
+                            )
+                        ] = self.w_axis_2.axis_selected
             self.gen_slice_op()
+            self.w_axis_2.set_unit()
 
         elif axis_changed == "axis 2" and "FFT" in [
             self.w_axis_2.c_action.itemText(i)
@@ -247,7 +296,56 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         ]:
             action_selected = self.w_axis_2.get_current_action_name()
             self.w_axis_1.set_action(action_selected)
+            if action_selected == "FFT":
+                if self.w_axis_1.axis_selected in fft_dict:
+                    if self.w_axis_1.axis_selected in self.w_axis_1.axes_list:
+                        self.w_axis_1.axes_list[
+                            self.w_axis_1.axes_list.index(self.w_axis_1.axis_selected)
+                        ] = fft_dict[self.w_axis_1.axis_selected]
+                        self.w_axis_1.axis_selected = fft_dict[
+                            self.w_axis_1.axis_selected
+                        ]
+                    else:
+                        self.w_axis_1.axis_selected = fft_dict[
+                            self.w_axis_1.axis_selected
+                        ]
+                elif self.w_axis_1.axis_selected in ifft_dict:
+                    if (
+                        self.w_axis_1.axis_selected not in self.w_axis_1.axes_list
+                        and ifft_dict[self.w_axis_1.axis_selected]
+                        in self.w_axis_1.axes_list
+                    ):
+                        self.w_axis_1.axes_list[
+                            self.w_axis_1.axes_list.index(
+                                ifft_dict[self.w_axis_1.axis_selected]
+                            )
+                        ] = self.w_axis_1.axis_selected
+            else:
+                if self.w_axis_1.axis_selected in ifft_dict:
+                    if self.w_axis_1.axis_selected in self.w_axis_1.axes_list:
+                        self.w_axis_1.axes_list[
+                            self.w_axis_1.axes_list.index(self.w_axis_1.axis_selected)
+                        ] = ifft_dict[self.w_axis_1.axis_selected]
+                        self.w_axis_1.axis_selected = ifft_dict[
+                            self.w_axis_1.axis_selected
+                        ]
+                    else:
+                        self.w_axis_1.axis_selected = ifft_dict[
+                            self.w_axis_1.axis_selected
+                        ]
+                elif self.w_axis_1.axis_selected in fft_dict:
+                    if (
+                        self.w_axis_1.axis_selected not in self.w_axis_1.axes_list
+                        and fft_dict[self.w_axis_1.axis_selected]
+                        in self.w_axis_1.axes_list
+                    ):
+                        self.w_axis_1.axes_list[
+                            self.w_axis_1.axes_list.index(
+                                fft_dict[self.w_axis_1.axis_selected]
+                            )
+                        ] = self.w_axis_1.axis_selected
             self.gen_slice_op()
+            self.w_axis_1.set_unit()
 
     def set_axis_widgets(
         self,
