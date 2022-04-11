@@ -439,6 +439,14 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         self.c_action.view().setMinimumWidth(max([len(ac) for ac in action]) * 6)
 
+        if "Filter" in action:
+            self.b_filter.show()
+        else:
+            sp_retain = self.b_filter.sizePolicy()
+            sp_retain.setRetainSizeWhenHidden(True)
+            self.b_filter.setSizePolicy(sp_retain)
+            self.b_filter.hide()
+
         # Emitting the signals
         if is_refresh:
             self.refreshNeeded.emit()
