@@ -71,6 +71,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.b_animate.setPixmap(QPixmap(path_to_image))
         self.c_operation.currentTextChanged.connect(self.update_layout)
         self.slider.valueChanged.connect(self.update_floatEdit)
+        self.slider.sliderReleased.connect(self.update_plot)
         self.lf_value.editingFinished.connect(self.update_slider)
         self.b_action.clicked.connect(self.open_filter)
         self.b_animate.mousePressEvent = self.gen_animate
@@ -360,7 +361,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.b_action.setText("Overlay")
         self.c_operation.blockSignals(False)
 
-    def update_floatEdit(self, is_refresh=True):
+    def update_floatEdit(self):
         """Method that set the value of the floatEdit according to the value returned by the slider
         and the axis sent by WAxisManager.
         Parameters
@@ -378,8 +379,26 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.lf_value.setValue(self.axis_value[self.slider.value()])
 
         self.lf_value.blockSignals(False)
-        if is_refresh:
-            self.refreshNeeded.emit()
+
+    def update_plot(self):
+        """Method that set the value of the floatEdit according to the value returned by the slider
+        and the axis sent by WAxisManager.
+        Parameters
+        ----------
+        self : WSliceOperator
+            a WSliceOperator object
+        """
+
+        self.lf_value.blockSignals(True)
+
+        if self.is_pattern:
+            # When working with DataPattern, we have to work with the exact value given
+            self.lf_value.setValue(self.slider.value() + 1)
+        else:
+            self.lf_value.setValue(self.axis_value[self.slider.value()])
+
+        self.lf_value.blockSignals(False)
+        self.refreshNeeded.emit()
 
     def update_layout(self):
         """Method that update the layout of the WSliceOperator according to the extraction chosen

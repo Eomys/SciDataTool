@@ -377,7 +377,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         if is_keep_config:  # Only update slider
             for wid in self.w_slice_op:
                 if hasattr(wid, "axis_value"):
-                    wid.update_floatEdit(is_refresh=False)
+                    wid.update_floatEdit()
             axes_list = data.get_axes()
 
         else:
