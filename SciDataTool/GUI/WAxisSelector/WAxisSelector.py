@@ -337,6 +337,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.c_unit.clear()
             self.c_unit.setDisabled(True)
         else:
+            unit_index = self.c_unit.currentIndex()
             self.c_unit.setDisabled(False)
             self.c_unit.clear()
 
@@ -363,7 +364,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 self.c_unit.setCurrentIndex(idx_unit)
                 if len(self.c_unit.currentText()) > cb_width:
                     cb_width = len(self.c_unit.currentText())
-            self.c_unit.setCurrentIndex(0)
+            self.c_unit.setCurrentIndex(unit_index)
 
             self.c_unit.view().setMinimumWidth(cb_width * 8)
 
