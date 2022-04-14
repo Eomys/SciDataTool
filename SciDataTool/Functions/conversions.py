@@ -633,12 +633,16 @@ def pol2cart(field_r, field_phi, phi):
     sin_phi = sin(phi)
 
     dim_array = ones((1, field_r.ndim), int).ravel()
-    dim_array[1] = -1
+    if len(dim_array) > 1:
+        dim_array[1] = -1
 
-    # Reshape b with dim_array and perform elementwise multiplication with
-    # broadcasting along the singleton dimensions for the final output
-    cos_phi_reshaped = cos_phi.reshape(dim_array)
-    sin_phi_reshaped = sin_phi.reshape(dim_array)
+        # Reshape b with dim_array and perform elementwise multiplication with
+        # broadcasting along the singleton dimensions for the final output
+        cos_phi_reshaped = cos_phi.reshape(dim_array)
+        sin_phi_reshaped = sin_phi.reshape(dim_array)
+    else:
+        cos_phi_reshaped = cos_phi
+        sin_phi_reshaped = sin_phi
 
     field_x = field_r * cos_phi_reshaped - field_phi * sin_phi_reshaped
     field_y = field_r * sin_phi_reshaped + field_phi * cos_phi_reshaped
