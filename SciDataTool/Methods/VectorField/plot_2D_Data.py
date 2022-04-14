@@ -215,14 +215,15 @@ def plot_2D_Data(
 
         title2 = " for "
         if "time" in result:
-            title2 += (
-                "time="
-                + array2string(
+            if isinstance(result["time"], str):
+                time_str = result["time"]
+            else:
+                time_str = array2string(
                     result["time"], formatter={"float_kind": "{:.3g}".format}
                 )
-                .replace(" ", ", ")
-                .replace("[", "")
-                .replace("]", "")
+            title2 += (
+                "time="
+                + time_str.replace(" ", ", ").replace("[", "").replace("]", "")
                 + "[s]"
             )
         elif "freqs" in result:
