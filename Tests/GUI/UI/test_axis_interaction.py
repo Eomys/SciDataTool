@@ -128,8 +128,7 @@ class TestGUI(object):
 
                 unit_list = list()
                 for index_unit in range(axis_1.c_unit.count()):
-                    axis_1.c_unit.setCurrentIndex(index_unit)
-                    unit_list.append(axis_1.c_unit.currentText())
+                    unit_list.append(axis_1.c_unit.itemText(index_unit))
 
                 if isinstance(unit_dict[axis_1.get_axis_selected()], list):
                     assert unit_list == unit_dict[axis_1.get_axis_selected()]
