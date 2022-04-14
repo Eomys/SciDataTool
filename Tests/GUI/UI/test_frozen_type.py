@@ -102,7 +102,6 @@ class TestGUI(object):
             assert not self.UI.w_plot_manager.w_axis_manager.w_axis_2.c_axis.isEnabled()
 
             for w_op in self.UI.w_plot_manager.w_axis_manager.w_slice_op:
-                assert not w_op.b_action.isEnabled()
                 assert not w_op.c_operation.isEnabled()
                 assert not w_op.lf_value.isEnabled()
                 assert not w_op.slider.isEnabled()

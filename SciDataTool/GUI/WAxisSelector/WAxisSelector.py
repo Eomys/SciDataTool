@@ -163,7 +163,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             axis_to_remove = ifft_dict[axis_to_remove]
 
         if axis_to_remove in self.axes_list:
-            axes_list = self.axes_list[:]  # Getting the axes available
+            axes_list = self.axes_list.copy()  # Getting the axes available
             axes_list.remove(axis_to_remove)  # Removing the axis selected
 
             # Building the new ComboBox
@@ -180,10 +180,10 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                     self.c_axis.addItem(ax)
 
             update_cb_enable(self.c_axis)
-            self.c_axis.blockSignals(False)
             self.c_axis.setCurrentIndex(index)
+            self.c_axis.blockSignals(False)
 
-            self.update_axis(is_refresh=False)
+            self.update_axis(is_refresh=True)
 
     def set_axis(self, axis):
         """Method that will set the comboboxes to have the axis given as an input when calling the plot method (auto-plot).
@@ -458,7 +458,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         # Emitting the signals
         if is_refresh:
-            self.refreshNeeded.emit()
             self.axisChanged.emit()
 
     def update_action(self):

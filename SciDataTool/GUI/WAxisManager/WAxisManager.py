@@ -66,11 +66,15 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self : WAxisManager
             a WAxisManager object
         """
+        self.blockSignals(True)
         # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
         self.fft_sync("axis 1")
 
         # Recovering the axis selected by the user removing it from the the second axis combobox
         self.w_axis_2.remove_axis(self.w_axis_1.get_axis_selected())
+        self.gen_slice_op(is_refresh=False)
+        self.blockSignals(False)
+        self.refreshNeeded.emit()
 
     def axis_2_updated(self):
         """Method that make sure that when axis 2 is selected (None->?) it has the same fft/ifft combobox selected as axis1
@@ -81,9 +85,12 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
         """
         # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
+        self.blockSignals(True)
         self.fft_sync("axis 1")
+        self.blockSignals(False)
+        self.refreshNeeded.emit()
 
-    def gen_slice_op(self, axes_request_list=None):
+    def gen_slice_op(self, axes_request_list=None, is_refresh=True):
         """Method that gen the right WDataExtrator widget according to the axis selected by the user in the UI
         Parameters
         ----------
@@ -156,7 +163,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         else:
             self.w_slice_op = list()
             self.g_data_extract.hide()
-        self.update_needed()
+        if is_refresh:
+            self.update_needed()
 
     def gen_animate(self):
         """Methods called after clicking on animate button to generate a gif on the axis selected and display it
@@ -233,10 +241,10 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             a WAxisManager object
 
         """
-        if axis_changed == "axis 1" and "FFT" in [
-            self.w_axis_1.c_action.itemText(i)
-            for i in range(self.w_axis_1.c_action.count())
-        ]:
+        if axis_changed == "axis 1":  # and "FFT" in [
+            #     self.w_axis_1.c_action.itemText(i)
+            #     for i in range(self.w_axis_1.c_action.count())
+            # ]:
             action_selected = self.w_axis_1.get_current_action_name()
             self.w_axis_2.set_action(action_selected)
             if action_selected == "FFT":
@@ -287,14 +295,16 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                                 fft_dict[self.w_axis_2.axis_selected]
                             )
                         ] = self.w_axis_2.axis_selected
-            self.gen_slice_op()
-            self.w_axis_1.set_unit()
-            self.w_axis_2.set_unit()
+                # Make sure that all axes are reset to ifft
+                for i, axis in enumerate(self.w_axis_1.axes_list):
+                    if axis in ifft_dict:
+                        self.w_axis_1.axes_list[i] = ifft_dict[axis]
+            self.gen_slice_op(is_refresh=False)
 
-        elif axis_changed == "axis 2" and "FFT" in [
-            self.w_axis_2.c_action.itemText(i)
-            for i in range(self.w_axis_2.c_action.count())
-        ]:
+        elif axis_changed == "axis 2":  # and "FFT" in [
+            #     self.w_axis_2.c_action.itemText(i)
+            #     for i in range(self.w_axis_2.c_action.count())
+            # ]:
             action_selected = self.w_axis_2.get_current_action_name()
             self.w_axis_1.set_action(action_selected)
             if action_selected == "FFT":
@@ -345,9 +355,13 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                                 fft_dict[self.w_axis_1.axis_selected]
                             )
                         ] = self.w_axis_1.axis_selected
-            self.gen_slice_op()
-            self.w_axis_1.set_unit()
-            self.w_axis_2.set_unit()
+                # Make sure that all axes are reset to ifft
+                for i, axis in enumerate(self.w_axis_2.axes_list):
+                    if axis in ifft_dict:
+                        self.w_axis_2.axes_list[i] = ifft_dict[axis]
+            self.gen_slice_op(is_refresh=False)
+        self.w_axis_1.set_unit()
+        self.w_axis_2.set_unit()
 
     def set_axis_widgets(
         self,
