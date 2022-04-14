@@ -168,6 +168,9 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
             # Building the new ComboBox
             self.c_axis.blockSignals(True)
+            index = 0
+            if self.c_axis.currentText() != "None":
+                index = self.c_axis.currentIndex()
             self.c_axis.clear()
 
             for ax in axes_list:
@@ -178,6 +181,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
             update_cb_enable(self.c_axis)
             self.c_axis.blockSignals(False)
+            self.c_axis.setCurrentIndex(index)
 
             self.update_axis(is_refresh=False)
 
@@ -211,6 +215,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         # Step 2 : Recovering the unit and setting the combobox according to it
         unit_name = axis.unit
         self.c_unit.blockSignals(True)
+        self.set_unit()
         if self.c_unit.findText(unit_name) != -1:
             self.c_unit.setCurrentIndex(self.c_unit.findText(unit_name))
         elif unit_name in unit_dict:
@@ -222,7 +227,6 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
         else:
             self.c_unit.setCurrentIndex(self.c_unit.findText(unit_name))
         self.c_unit.blockSignals(False)
-        self.set_unit()
 
         self.blockSignals(False)
 
@@ -364,7 +368,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 self.c_unit.setCurrentIndex(idx_unit)
                 if len(self.c_unit.currentText()) > cb_width:
                     cb_width = len(self.c_unit.currentText())
-            self.c_unit.setCurrentIndex(unit_index)
+            if unit_index != -1:
+                self.c_unit.setCurrentIndex(unit_index)
 
             self.c_unit.view().setMinimumWidth(cb_width * 8)
 

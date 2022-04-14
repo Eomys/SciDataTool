@@ -288,6 +288,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                             )
                         ] = self.w_axis_2.axis_selected
             self.gen_slice_op()
+            self.w_axis_1.set_unit()
             self.w_axis_2.set_unit()
 
         elif axis_changed == "axis 2" and "FFT" in [
@@ -346,6 +347,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                         ] = self.w_axis_1.axis_selected
             self.gen_slice_op()
             self.w_axis_1.set_unit()
+            self.w_axis_2.set_unit()
 
     def set_axis_widgets(
         self,
@@ -365,7 +367,8 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         axes_request_list:
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         frozen_type : int
-            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them, 3 to freeze both axes and operations, 4 to freeze fft
+            0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them,
+            3 to freeze both axes and operations, 4 to freeze fft, 5 to only allow switch
         path_to_image : str
             path to the folder where the image for the animation button is saved
         """
@@ -483,7 +486,6 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
             # Freezing the operations
             for w_slice in self.w_slice_op:
-                w_slice.b_action.setDisabled(True)
                 w_slice.c_operation.setDisabled(True)
                 w_slice.lf_value.setDisabled(True)
                 w_slice.slider.setDisabled(True)
@@ -497,6 +499,18 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                 axes_list[1].name in ifft_dict or axes_list[0].name in fft_dict
             ):
                 self.w_axis_2.c_action.setDisabled(True)
+
+        elif frozen_type == 5:
+            # Freezing the axes
+            self.w_axis_1.c_action.setDisabled(True)
+            self.w_axis_2.c_action.setDisabled(True)
+
+            # Freezing the operations
+            for w_slice in self.w_slice_op:
+                w_slice.b_action.setDisabled(True)
+                w_slice.c_operation.setDisabled(True)
+                w_slice.lf_value.setDisabled(True)
+                w_slice.slider.setDisabled(True)
 
         if len(axes_list) == 1:
             self.w_axis_2.hide()
