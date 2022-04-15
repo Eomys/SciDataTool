@@ -118,24 +118,21 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             else:
                 action = "=" + str(self.lf_value.value())
 
-            return self.axis_name + action + "{" + self.unit + "}", self.is_animate
+            return self.get_name() + action + "{" + self.unit + "}", self.is_animate
 
         elif action_type == "slice (fft)":
-            # slice_index = self.slider.value()
-            # action = "[" + str(slice_index) + "]"
             action = "=" + str(self.lf_value.value())
-            if self.axis_name in fft_dict:
-                return fft_dict[self.axis_name] + action, None
+            return self.get_name() + action, None
 
         elif action_type == "overlay":
             if self.indices is None:
-                return self.axis_name + "[]", None
+                return self.get_name() + "[]", None
             else:
-                return self.axis_name + str(self.indices), None
+                return self.get_name() + str(self.indices), None
 
         elif action_type in type_extraction_dict:
             action = type_extraction_dict[action_type]
-            return self.axis_name + action + "{" + self.unit + "}", None
+            return self.get_name() + action, None
         else:
             return None, None
 
@@ -424,6 +421,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.refreshNeeded.emit()
         # If the operation selected is overlay then we show the related button
         elif extraction_selected == "overlay":
+            if self.axis_name in ifft_dict:
+                name = ifft_dict[self.axis_name]
+            else:
+                name = self.axis_name
+            self.set_name(name)
             self.lf_value.hide()
             self.in_unit.hide()
             self.slider.hide()
@@ -432,6 +434,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.b_action.setText("Overlay")
             self.refreshNeeded.emit()
         else:
+            if self.axis_name in ifft_dict:
+                name = ifft_dict[self.axis_name]
+            else:
+                name = self.axis_name
+            self.set_name(name)
             self.lf_value.hide()
             self.in_unit.hide()
             self.slider.hide()

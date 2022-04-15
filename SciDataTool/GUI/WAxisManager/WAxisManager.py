@@ -467,7 +467,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                     self.w_axis_2.set_axis(axes_list[1])
 
                 # Making sure that we have the same fft/ifft selected for both axis
-                self.axis_2_updated()
+                # self.axis_2_updated()
 
                 # Generating DataSelection with the input of user if they are given or by default (like in a manual plot)
                 if len(slices_op_list) != 0:

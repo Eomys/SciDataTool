@@ -112,7 +112,7 @@ def plot_3D(
         is_show_fig = True if fig is None else False
 
     # Set if figure is 3D
-    if type_plot not in ["pcolor", "pcolormesh", "scatter"]:
+    if type_plot not in ["pcolor", "pcolormesh", "scatter", "scatterX"]:
         is_3d = True
     else:
         is_3d = False
