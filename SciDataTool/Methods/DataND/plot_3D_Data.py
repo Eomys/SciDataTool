@@ -372,22 +372,25 @@ def plot_3D_Data(
             if isinstance(result[axis.name], str):
                 axis_str = result[axis.name]
             else:
-                if result[axis.name][0] > 10:
-                    fmt = "{:.5g}"
+                if isinstance(result[axis.name][0], str):
+                    axis_str = result[axis.name][0]
                 else:
-                    fmt = "{:.3g}"
-                axis_str = (
-                    array2string(
-                        result[axis.name],
-                        formatter={"float_kind": fmt.format},
+                    if result[axis.name][0] > 10:
+                        fmt = "{:.5g}"
+                    else:
+                        fmt = "{:.3g}"
+                    axis_str = (
+                        array2string(
+                            result[axis.name],
+                            formatter={"float_kind": fmt.format},
+                        )
+                        .replace(" ", ", ")
+                        .replace("[", "")
+                        .replace("]", "")
+                        + " ["
+                        + axis_unit
+                        + "]"
                     )
-                    .replace(" ", ", ")
-                    .replace("[", "")
-                    .replace("]", "")
-                    + " ["
-                    + axis_unit
-                    + "]"
-                )
 
                 index = None
                 if axis.is_pattern and len(axis.values) == 1:
