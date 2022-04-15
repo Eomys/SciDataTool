@@ -326,7 +326,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
             self.c_action.setCurrentIndex(action_list.index(action))
         self.c_action.blockSignals(False)
 
-    def set_unit(self):
+    def set_unit(self, is_refresh=True):
         """Method that update the unit comboxbox according to the axis selected in the other combobox.
            We can also give the axis selected and put its units inside the combobox
         Parameters
@@ -375,7 +375,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
         update_cb_enable(self.c_unit)
         self.c_unit.blockSignals(False)
-        self.update_unit()
+        self.update_unit(is_refresh=is_refresh)
 
     def update(self, axes_list, axis_name="X"):
         """Method used to update the widget by calling the other method for the label, the axes and the units
@@ -502,12 +502,11 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 self.axes_list.remove(fft_dict[self.axis_selected])
 
         # Now that the quantiy has been updated according to the action, we can set the units and emit the signals
-        self.set_unit()
+        self.set_unit(is_refresh=False)
 
-        self.refreshNeeded.emit()
         self.actionChanged.emit()
 
-    def update_unit(self):
+    def update_unit(self, is_refresh=True):
         """Method called when a new unit is selected so that we can update self.norm
         Parameters
         ----------
@@ -524,5 +523,5 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 is_match = True
         if not is_match:
             self.norm = None
-
-        self.refreshNeeded.emit()
+        if is_refresh:
+            self.refreshNeeded.emit()
