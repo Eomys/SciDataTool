@@ -159,11 +159,7 @@ class TestGUI(object):
                     )
                 elif operation.split(" ")[0] in type_extraction_dict:
                     assert wid.get_operation_selected() == (
-                        wid.axis.name
-                        + type_extraction_dict[operation.split(" ")[0]]
-                        + "{"
-                        + wid.unit
-                        + "}",
+                        wid.axis.name + type_extraction_dict[operation.split(" ")[0]],
                         None,
                     )
                 else:
