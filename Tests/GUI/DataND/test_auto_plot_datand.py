@@ -304,7 +304,7 @@ class TestGUI(object):
                         )
 
                 # Checking the units
-                if actions_given[i].unit == "SI":
+                if actions_given[i].unit == "SI" and actions_sent[i].unit != "SI":
                     assert (
                         # If the unit is not given, then we make sure that the unit by default is selected
                         actions_sent[i].unit
