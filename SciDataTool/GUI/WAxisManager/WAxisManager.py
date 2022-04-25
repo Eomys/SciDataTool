@@ -84,7 +84,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         self : WAxisManager
             a WAxisManager object
         """
-        # Making sure that when axis 1 is updated, axis 1 and 2 are both on "None" for the action combobox
+        # Making sure that when axis 2 is updated, axis 1 and 2 are both on "None" for the action combobox
         self.blockSignals(True)
         self.fft_sync("axis 2", is_refresh=False)
         self.blockSignals(False)
