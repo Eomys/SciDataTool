@@ -381,8 +381,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             Z = None
             legend = None
             annot = None
-            if isinstance(plot_obj, Line2D):
+            if hasattr(event, "ind"):
                 ind = event.ind
+            else:
+                ind = None
+            if isinstance(plot_obj, Line2D):
                 xdata = plot_obj.get_xdata()
                 ydata = plot_obj.get_ydata()
                 X = xdata[ind][0]  # X position of the click
@@ -404,7 +407,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     ):
                         annot = annotations[self.ax.lines.index(plot_obj)]._text
             elif isinstance(plot_obj, PathCollection):
-                ind = event.ind
                 X = plot_obj.get_offsets().data[ind][0][0]
                 Y = plot_obj.get_offsets().data[ind][0][1]
                 if plot_obj.get_array() is not None:
@@ -413,7 +415,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 X = plot_obj.get_x() + plot_obj.get_width() / 2
                 Y = plot_obj.get_height()
             elif isinstance(plot_obj, QuadMesh):
-                ind = event.ind
                 if plot_obj._coordinates.shape[0] > 2:
                     # pcolormesh case
                     l = ind[0] // plot_obj._coordinates.shape[1]
