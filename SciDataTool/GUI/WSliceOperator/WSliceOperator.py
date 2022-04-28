@@ -457,9 +457,13 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
         self.slider.blockSignals(True)
         # We set the value of the slider to the index closest to the value given
-        index = argmin(np_abs(self.axis_value - self.lf_value.value()))
-        self.slider.setValue(index)
+        if self.is_pattern:
+            # When working with DataPattern, we have to work with the exact value given
+            self.slider.setValue(self.lf_value.value() - 1)
+        else:
+            index = argmin(np_abs(self.axis_value - self.lf_value.value()))
+            self.slider.setValue(index)
         # We update the value of floatEdit to the index selected
-        self.lf_value.setValue(self.axis_value[index])
+        # self.lf_value.setValue(self.axis_value[index])
         self.slider.blockSignals(False)
         self.refreshNeeded.emit()
