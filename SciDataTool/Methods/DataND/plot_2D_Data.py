@@ -522,6 +522,10 @@ def plot_2D_Data(
         new_color_list.insert(0, "#000000")
         legends.insert(0, "Overall")
 
+    # Deactivate legend if only one item
+    if type_plot == "point":
+        legends = []
+
     if "dB" in unit:  # Replace <=0 by nans
         for ydata in Ydatas:
             ydata[ydata <= 0] = nan
