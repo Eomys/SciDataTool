@@ -655,37 +655,40 @@ def plot_2D_Data(
         annot = None
         # Hidden annotations
         if annotations is not None:
-            annot = list()
-            axis_along = self.get_axes(annotations[0])[0]
-            axis_op = self.get_axes(annotations[1])[0]
-            operation = annotations[2]
-            arg_list_new = []
-            if self.unit == "W":
-                op = "=sum"
-            else:
-                op = "=rss"
-            for axis in self.get_axes():
-                if axis.name not in [axis_along.name, axis_op.name]:
-                    arg_list_new.append(axis.name + op)
+            try:
+                annot = list()
+                axis_along = self.get_axes(annotations[0])[0]
+                axis_op = self.get_axes(annotations[1])[0]
+                operation = annotations[2]
+                arg_list_new = []
+                if self.unit == "W":
+                    op = "=sum"
                 else:
-                    arg_list_new.append(axis.name)
-            data2 = self.get_data_along(*arg_list_new, unit=unit)
-            arg_list_new = []
-            for arg in arg_list_along:
-                if axis_along.name in arg or axis_op.name in arg:
-                    arg_list_new.append(arg.replace("=sum", ""))
-            result = data2.get_magnitude_along(*arg_list_new)
-            for ii in range(len(result[annotations[0]])):
-                if operation == "max":
-                    index = argmax(take(result[self.symbol], ii, axis=0))
-                    annot.append(
-                        "main "
-                        + annotations[1].rstrip("s")
-                        + ": "
-                        + axis_op.get_values()[index]
-                    )
-            if len(overall_axes) != 0:
-                annot.insert(0, "Overall")
+                    op = "=rss"
+                for axis in self.get_axes():
+                    if axis.name not in [axis_along.name, axis_op.name]:
+                        arg_list_new.append(axis.name + op)
+                    else:
+                        arg_list_new.append(axis.name)
+                data2 = self.get_data_along(*arg_list_new, unit=unit)
+                arg_list_new = []
+                for arg in arg_list_along:
+                    if axis_along.name in arg or axis_op.name in arg:
+                        arg_list_new.append(arg.replace("=sum", ""))
+                result = data2.get_magnitude_along(*arg_list_new)
+                for ii in range(len(result[annotations[0]])):
+                    if operation == "max":
+                        index = argmax(take(result[self.symbol], ii, axis=0))
+                        annot.append(
+                            "main "
+                            + annotations[1].rstrip("s")
+                            + ": "
+                            + axis_op.get_values()[index]
+                        )
+                if len(overall_axes) != 0:
+                    annot.insert(0, "Overall")
+            except Exception:
+                pass
 
         plot_2D(
             Xdatas,
