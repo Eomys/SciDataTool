@@ -1,7 +1,7 @@
 from SciDataTool.Functions import AxisError, NormError, UnitError
 from SciDataTool.Functions.conversions import convert, to_dB, to_dBA, to_noct
 from SciDataTool.Functions.fix_axes_order import fix_axes_order
-from numpy import apply_along_axis, add
+from numpy import apply_along_axis, add, take
 
 
 def get_magnitude_along(
@@ -88,17 +88,17 @@ def get_magnitude_along(
             if is_match == 2:
                 for i, arg in enumerate(args):
                     if "speed" in arg:
-                        if arg != arg_speed:
+                        if arg.split("{")[0] != arg_speed:
                             new_args[i] = arg_speed
                             index_speed = i
                     elif "order" in arg:
-                        if arg != "order":
+                        if arg.split("{")[0] != "order":
                             new_args[i] = "order"
                             index_order = i
             elif is_match == 1:
                 for i, arg in enumerate(args):
                     if "speed" in arg:
-                        if arg != arg_speed:
+                        if arg.split("{")[0] != arg_speed:
                             new_args[i] = arg_speed
                             index_speed = i
             elif unit == "dB" or "A-weight" in self.normalizations:
@@ -198,8 +198,21 @@ def get_magnitude_along(
                 ref_value *= self.normalizations["ref"].ref
             if "A-weight" in self.normalizations:
                 values = to_dB(values, self.unit, ref_value)
+                # Extract requested indices from A-weight
+                axes_list = return_dict["axes_list"]
+                index_list = []
+                for ii, axis in enumerate(axes_list):
+                    if axis.indices not in [None, []]:
+                        index_list.append(ii)
+                A_weight = self.normalizations["A-weight"].vector
+                for index in index_list:
+                    A_weight = take(
+                        A_weight,
+                        axes_list[index].indices,
+                        axis=index,
+                    )
                 # Flatten to apply A-weighting
-                A_weight = self.normalizations["A-weight"].vector.ravel("C")
+                A_weight = A_weight.ravel("C")
                 shape = values.shape
                 values = values.reshape(
                     A_weight.shape
