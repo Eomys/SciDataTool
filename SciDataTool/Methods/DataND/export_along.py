@@ -153,7 +153,7 @@ def export_along(
                     )
                     second_line = format_matrix(
                         np.insert(
-                            results[axes_list_new[1].name].astype("str"),
+                            results[axes_list_new[1].name].astype("<U64"),
                             0,
                             A2_cell,
                         ),
