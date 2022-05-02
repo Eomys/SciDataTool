@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from numpy import arange, nanmax, nanmin, frombuffer
 import imageio
 from ...GUI.DDataPlotter.DDataPlotter import PARAM_2D
+from ...Functions.Plot import ifft_dict
 
 
 def plot_3D_Data_Animated(
@@ -31,9 +32,14 @@ def plot_3D_Data_Animated(
 
     # Detecting if animated axis is a DataPattern, if true changing the input given to the function
     for ax_obj in self.get_axes():
-        if ax_obj.name == animated_axis.split("[")[0]:
-            animated_axis_obj = ax_obj
-            break
+        if ax_obj.name in ifft_dict:
+            if ifft_dict[ax_obj.name] == animated_axis.split("[")[0]:
+                animated_axis_obj = ax_obj
+                break
+        else:
+            if ax_obj.name == animated_axis.split("[")[0]:
+                animated_axis_obj = ax_obj
+                break
 
     if isinstance(animated_axis_obj, DataPattern):
         # Removing one_period as it is not available with a DataPattern

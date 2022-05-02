@@ -16,6 +16,7 @@ unit_dict = {
     "speed": "rpm",
     "Rotation speed": "rpm",
     "modes": "",
+    "designs": "",
 }
 
 axis_norm_dict = {

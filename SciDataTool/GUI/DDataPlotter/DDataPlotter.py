@@ -439,6 +439,8 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             x_min, x_max = self.ax.get_xlim()
             dx = (x_max - x_min) / 50
             if X is not None and Y is not None:
+                if isinstance(X, str):
+                    X = ind
                 label = format_coord(X, Y, Z, sep="\n", ind=ind)
                 if legend is not None:
                     label = legend + "\n" + label
