@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Data.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Data
@@ -21,6 +21,7 @@ except ImportError as error:
     _set_normalizations = error
 
 
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -123,7 +124,7 @@ class Data(FrozenClass):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -132,11 +133,33 @@ class Data(FrozenClass):
             return ["type(" + name + ")"]
         diff_list = list()
         if other._symbol != self._symbol:
-            diff_list.append(name + ".symbol")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._symbol)
+                    + ", other="
+                    + str(other._symbol)
+                    + ")"
+                )
+                diff_list.append(name + ".symbol" + val_str)
+            else:
+                diff_list.append(name + ".symbol")
         if other._name != self._name:
-            diff_list.append(name + ".name")
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._name) + ", other=" + str(other._name) + ")"
+                )
+                diff_list.append(name + ".name" + val_str)
+            else:
+                diff_list.append(name + ".name")
         if other._unit != self._unit:
-            diff_list.append(name + ".unit")
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._unit) + ", other=" + str(other._unit) + ")"
+                )
+                diff_list.append(name + ".unit" + val_str)
+            else:
+                diff_list.append(name + ".unit")
         if (other.normalizations is None and self.normalizations is not None) or (
             other.normalizations is not None and self.normalizations is None
         ):
@@ -149,7 +172,10 @@ class Data(FrozenClass):
             for key in self.normalizations:
                 diff_list.extend(
                     self.normalizations[key].compare(
-                        other.normalizations[key], name=name + ".normalizations"
+                        other.normalizations[key],
+                        name=name + ".normalizations[" + str(key) + "]",
+                        ignore_list=ignore_list,
+                        is_add_value=is_add_value,
                     )
                 )
         # Filter ignore differences

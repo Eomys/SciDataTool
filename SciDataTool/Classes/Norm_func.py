@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Norm_func.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Norm_func
@@ -26,6 +26,7 @@ from os.path import isfile
 from ._check import CheckTypeError
 import numpy as np
 import random
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -101,7 +102,7 @@ class Norm_func(Normalization):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -111,7 +112,11 @@ class Norm_func(Normalization):
         diff_list = list()
 
         # Check the properties inherited from Normalization
-        diff_list.extend(super(Norm_func, self).compare(other, name=name))
+        diff_list.extend(
+            super(Norm_func, self).compare(
+                other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
+            )
+        )
         if other._function_str != self._function_str:
             diff_list.append(name + ".function")
         # Filter ignore differences
@@ -143,7 +148,7 @@ class Norm_func(Normalization):
         Norm_func_dict = super(Norm_func, self).as_dict(
             type_handle_ndarray=type_handle_ndarray,
             keep_function=keep_function,
-            **kwargs,
+            **kwargs
         )
         if self._function_str is not None:
             Norm_func_dict["function"] = self._function_str
@@ -154,7 +159,7 @@ class Norm_func(Normalization):
             if self.function is not None:
                 self.get_logger().warning(
                     "Norm_func.as_dict(): "
-                    + f"Function {self.function.__name__} is not serializable "
+                    + "Function self.function is not serializable "
                     + "and will be converted to None."
                 )
         # The class name is added to the dict for deserialisation purpose
@@ -183,7 +188,7 @@ class Norm_func(Normalization):
             self._function_func = eval(value)
         elif isinstance(value, str) and isfile(value) and value[-3:] == ".py":
             self._function_str = value
-            f = open(value, "r")
+            f = open(value, "r", encoding="utf-8-sig")
             exec(f.read(), globals())
             self._function_func = eval(basename(value[:-3]))
         elif callable(value):
@@ -198,7 +203,7 @@ class Norm_func(Normalization):
     function = property(
         fget=_get_function,
         fset=_set_function,
-        doc="""function to apply
+        doc=u"""function to apply
 
         :Type: function
         """,

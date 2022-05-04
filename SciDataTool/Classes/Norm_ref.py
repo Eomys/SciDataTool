@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Norm_ref.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Norm_ref
@@ -21,6 +21,7 @@ except ImportError as error:
     normalize = error
 
 
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -91,7 +92,7 @@ class Norm_ref(Normalization):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -101,9 +102,26 @@ class Norm_ref(Normalization):
         diff_list = list()
 
         # Check the properties inherited from Normalization
-        diff_list.extend(super(Norm_ref, self).compare(other, name=name))
-        if other._ref != self._ref:
-            diff_list.append(name + ".ref")
+        diff_list.extend(
+            super(Norm_ref, self).compare(
+                other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
+            )
+        )
+        if (
+            other._ref is not None
+            and self._ref is not None
+            and isnan(other._ref)
+            and isnan(self._ref)
+        ):
+            pass
+        elif other._ref != self._ref:
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._ref) + ", other=" + str(other._ref) + ")"
+                )
+                diff_list.append(name + ".ref" + val_str)
+            else:
+                diff_list.append(name + ".ref")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/DataPattern.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataPattern
@@ -32,6 +32,7 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -215,7 +216,7 @@ class DataPattern(Data):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -225,23 +226,87 @@ class DataPattern(Data):
         diff_list = list()
 
         # Check the properties inherited from Data
-        diff_list.extend(super(DataPattern, self).compare(other, name=name))
+        diff_list.extend(
+            super(DataPattern, self).compare(
+                other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
+            )
+        )
         if other._rebuild_indices != self._rebuild_indices:
-            diff_list.append(name + ".rebuild_indices")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._rebuild_indices)
+                    + ", other="
+                    + str(other._rebuild_indices)
+                    + ")"
+                )
+                diff_list.append(name + ".rebuild_indices" + val_str)
+            else:
+                diff_list.append(name + ".rebuild_indices")
         if other._unique_indices != self._unique_indices:
-            diff_list.append(name + ".unique_indices")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._unique_indices)
+                    + ", other="
+                    + str(other._unique_indices)
+                    + ")"
+                )
+                diff_list.append(name + ".unique_indices" + val_str)
+            else:
+                diff_list.append(name + ".unique_indices")
         if other._is_step != self._is_step:
-            diff_list.append(name + ".is_step")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_step)
+                    + ", other="
+                    + str(other._is_step)
+                    + ")"
+                )
+                diff_list.append(name + ".is_step" + val_str)
+            else:
+                diff_list.append(name + ".is_step")
         if not array_equal(other.values, self.values):
             diff_list.append(name + ".values")
         if other._is_components != self._is_components:
-            diff_list.append(name + ".is_components")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_components)
+                    + ", other="
+                    + str(other._is_components)
+                    + ")"
+                )
+                diff_list.append(name + ".is_components" + val_str)
+            else:
+                diff_list.append(name + ".is_components")
         if other._symmetries != self._symmetries:
-            diff_list.append(name + ".symmetries")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._symmetries)
+                    + ", other="
+                    + str(other._symmetries)
+                    + ")"
+                )
+                diff_list.append(name + ".symmetries" + val_str)
+            else:
+                diff_list.append(name + ".symmetries")
         if not array_equal(other.values_whole, self.values_whole):
             diff_list.append(name + ".values_whole")
         if other._is_overlay != self._is_overlay:
-            diff_list.append(name + ".is_overlay")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_overlay)
+                    + ", other="
+                    + str(other._is_overlay)
+                    + ")"
+                )
+                diff_list.append(name + ".is_overlay" + val_str)
+            else:
+                diff_list.append(name + ".is_overlay")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list

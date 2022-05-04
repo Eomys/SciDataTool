@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/VectorField.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//VectorField
@@ -111,6 +111,7 @@ except ImportError as error:
     to_rphiz = error
 
 
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -396,7 +397,7 @@ class VectorField(FrozenClass):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -405,9 +406,25 @@ class VectorField(FrozenClass):
             return ["type(" + name + ")"]
         diff_list = list()
         if other._name != self._name:
-            diff_list.append(name + ".name")
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._name) + ", other=" + str(other._name) + ")"
+                )
+                diff_list.append(name + ".name" + val_str)
+            else:
+                diff_list.append(name + ".name")
         if other._symbol != self._symbol:
-            diff_list.append(name + ".symbol")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._symbol)
+                    + ", other="
+                    + str(other._symbol)
+                    + ")"
+                )
+                diff_list.append(name + ".symbol" + val_str)
+            else:
+                diff_list.append(name + ".symbol")
         if (other.components is None and self.components is not None) or (
             other.components is not None and self.components is None
         ):
@@ -420,7 +437,10 @@ class VectorField(FrozenClass):
             for key in self.components:
                 diff_list.extend(
                     self.components[key].compare(
-                        other.components[key], name=name + ".components"
+                        other.components[key],
+                        name=name + ".components[" + str(key) + "]",
+                        ignore_list=ignore_list,
+                        is_add_value=is_add_value,
                     )
                 )
         # Filter ignore differences
@@ -524,6 +544,15 @@ class VectorField(FrozenClass):
         """setter of components"""
         if type(value) is dict:
             for key, obj in value.items():
+                if isinstance(obj, str):  # Load from file
+                    try:
+                        obj = load_init_dict(obj)[1]
+                    except Exception as e:
+                        self.get_logger().error(
+                            "Error while loading " + obj + ", setting None instead"
+                        )
+                        obj = None
+                        value[key] = None
                 if type(obj) is dict:
                     class_obj = import_class(
                         "SciDataTool.Classes", obj.get("__class__"), "components"

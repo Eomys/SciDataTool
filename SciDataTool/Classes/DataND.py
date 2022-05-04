@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/DataND.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataND
@@ -162,6 +162,7 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -579,7 +580,7 @@ class DataND(Data):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -589,7 +590,11 @@ class DataND(Data):
         diff_list = list()
 
         # Check the properties inherited from Data
-        diff_list.extend(super(DataND, self).compare(other, name=name))
+        diff_list.extend(
+            super(DataND, self).compare(
+                other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
+            )
+        )
         if (other.axes is None and self.axes is not None) or (
             other.axes is not None and self.axes is None
         ):
@@ -602,15 +607,38 @@ class DataND(Data):
             for ii in range(len(other.axes)):
                 diff_list.extend(
                     self.axes[ii].compare(
-                        other.axes[ii], name=name + ".axes[" + str(ii) + "]"
+                        other.axes[ii],
+                        name=name + ".axes[" + str(ii) + "]",
+                        ignore_list=ignore_list,
+                        is_add_value=is_add_value,
                     )
                 )
         if other._FTparameters != self._FTparameters:
-            diff_list.append(name + ".FTparameters")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._FTparameters)
+                    + ", other="
+                    + str(other._FTparameters)
+                    + ")"
+                )
+                diff_list.append(name + ".FTparameters" + val_str)
+            else:
+                diff_list.append(name + ".FTparameters")
         if not array_equal(other.values, self.values):
             diff_list.append(name + ".values")
         if other._is_real != self._is_real:
-            diff_list.append(name + ".is_real")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_real)
+                    + ", other="
+                    + str(other._is_real)
+                    + ")"
+                )
+                diff_list.append(name + ".is_real" + val_str)
+            else:
+                diff_list.append(name + ".is_real")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
@@ -708,6 +736,15 @@ class DataND(Data):
         """setter of axes"""
         if type(value) is list:
             for ii, obj in enumerate(value):
+                if isinstance(obj, str):  # Load from file
+                    try:
+                        obj = load_init_dict(obj)[1]
+                    except Exception as e:
+                        self.get_logger().error(
+                            "Error while loading " + obj + ", setting None instead"
+                        )
+                        obj = None
+                        value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
                         "SciDataTool.Classes", obj.get("__class__"), "axes"
