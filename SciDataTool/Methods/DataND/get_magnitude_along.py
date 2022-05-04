@@ -202,7 +202,7 @@ def get_magnitude_along(
                 axes_list = return_dict["axes_list"]
                 index_list = []
                 for ii, axis in enumerate(axes_list):
-                    if axis.indices not in [None, []]:
+                    if axis.indices is not None and len(axis.indices) > 1:
                         index_list.append(ii)
                 A_weight = self.normalizations["A-weight"].vector
                 for index in index_list:
