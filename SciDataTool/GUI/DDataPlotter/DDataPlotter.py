@@ -571,13 +571,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                             angle_str = "angle[smallestperiod]"
                         del plot_arg_dict_2D["is_smallestperiod"]
                     if "fig" in plot_arg_dict_2D:
-                        # plt.rcParams.update(
-                        #     {
-                        #         "font.family": plot_arg_dict_2D["fig"]
-                        #         .texts[0]
-                        #         ._fontproperties._family[0],
-                        #     }
-                        # )
                         del plot_arg_dict_2D["fig"]
                     self.data_orig.plot_2D_Data(
                         *[*[angle_str], *data_selection],
@@ -601,6 +594,15 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                                             + "{"
                                             + axis_selected.split("{")[1]
                                         )
+                    if "title" in plot_arg_dict_2D and "[" in data_selection[-1]:
+                        axis_cont = data_selection[-1].split("[")[0]
+                        index = int(data_selection[-1].split("[")[1].split("]")[0])
+                        plot_arg_dict_2D["title"] += (
+                            " for "
+                            + axis_cont.rstrip("s")
+                            + " "
+                            + self.data.get_axes(axis_cont)[0].values[index]
+                        )
                     self.data.plot_2D_Data(
                         *[*axes_selected, *data_selection],
                         **plot_arg_dict_2D,

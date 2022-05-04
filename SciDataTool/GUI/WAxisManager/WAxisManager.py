@@ -502,11 +502,19 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_axis_2.c_axis.setDisabled(True)
             self.w_axis_2.c_action.setDisabled(True)
 
-            # Freezing the operations
+            # Freezing the operations (allowing only slice and requested ope)
             for w_slice in self.w_slice_op:
-                w_slice.c_operation.setDisabled(True)
-                w_slice.lf_value.setDisabled(True)
-                w_slice.slider.setDisabled(True)
+                current_ope = w_slice.c_operation.currentText()
+                if current_ope != "slice":
+                    w_slice.c_operation.blockSignals(True)
+                    w_slice.c_operation.clear()
+                    w_slice.c_operation.addItems(["slice", current_ope])
+                    w_slice.c_operation.setCurrentIndex(1)
+                    w_slice.c_operation.blockSignals(False)
+                else:
+                    w_slice.c_operation.setDisabled(True)
+                # w_slice.lf_value.setDisabled(True)
+                # w_slice.slider.setDisabled(True)
 
         elif frozen_type == 4:
             self.w_axis_1.c_axis.setDisabled(True)
