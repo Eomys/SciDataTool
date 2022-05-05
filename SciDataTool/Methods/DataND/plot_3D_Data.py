@@ -649,6 +649,8 @@ def plot_3D_Data(
                     y_min -= 0.5
                     y_max -= 0.5
                 Ydata, Xdata = meshgrid(Ydata, Xdata)
+            if type_plot == "pcolor":
+                Zdata = Zdata.T
             plot_3D(
                 Xdata,
                 Ydata,
