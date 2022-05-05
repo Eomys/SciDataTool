@@ -594,7 +594,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                                             + "{"
                                             + axis_selected.split("{")[1]
                                         )
-                    if "title" in plot_arg_dict_2D and "[" in data_selection[-1]:
+                    if (
+                        "title" in plot_arg_dict_2D
+                        and "[" in data_selection[-1]
+                        and len(data_selection[-1].split("[")[1].split("]")[0]) == 1
+                    ):
                         axis_cont = data_selection[-1].split("[")[0]
                         index = int(data_selection[-1].split("[")[1].split("]")[0])
                         plot_arg_dict_2D["title"] += (
