@@ -84,6 +84,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         # Linking the signals for the autoRefresh
         self.w_axis_manager.refreshNeeded.connect(self.auto_update)
+        self.w_axis_manager.refreshForced.connect(self.update_plot_forced)
         self.w_axis_manager.generateAnimation.connect(self.gen_animate)
         self.w_range.refreshNeeded.connect(self.auto_update)
 

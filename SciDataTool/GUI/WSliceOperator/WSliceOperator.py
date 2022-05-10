@@ -36,6 +36,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
     """Widget to define how to handle the 'non-plot' axis"""
 
     refreshNeeded = Signal()
+    refreshForced = Signal()
     generateAnimation = Signal()
 
     def __init__(self, parent=None, path_to_image=None):
@@ -162,7 +163,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
     def update_indices(self):
         self.indices = self.current_dialog.indices
-        self.refreshNeeded.emit()
+        self.refreshForced.emit()
 
     def set_name(self, name):
         """Method that set the name of the axis of the WSliceOperator

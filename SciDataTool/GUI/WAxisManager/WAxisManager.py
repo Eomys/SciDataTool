@@ -26,6 +26,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
     """Widget that will handle the selection of the axis as well as generating WDataExtractor"""
 
     refreshNeeded = Signal()
+    refreshForced = Signal()
     refreshRange = Signal()
     generateAnimation = Signal()
 
@@ -57,6 +58,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         self.w_axis_1.refreshNeeded.connect(self.update_needed)
         self.w_axis_2.refreshNeeded.connect(self.update_needed)
+
+        self.w_axis_1.refreshForced.connect(self.update_forced)
+        self.w_axis_2.refreshForced.connect(self.update_forced)
 
     def axis_1_updated(self):
         """Method that remove the axis selected in w_axis_1 from w_axis_2 and call the method that generates
@@ -156,6 +160,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                         else:
                             temp.update(ax)
                 temp.refreshNeeded.connect(self.update_needed)
+                temp.refreshForced.connect(self.update_forced)
                 temp.generateAnimation.connect(self.gen_animate)
                 self.w_slice_op.append(temp)
                 self.lay_data_extract.addWidget(temp)
@@ -398,7 +403,14 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         if is_keep_config:  # Only update slider
             for wid in self.w_slice_op:
                 if hasattr(wid, "axis_value"):
+                    wid.slider.blockSignals(True)
+                    axis = data.get_axes(wid.axis.name)[0]
+                    wid.axis = axis
+                    index = wid.slider.value()
+                    wid.set_slider_floatedit()
+                    wid.slider.setValue(index)
                     wid.update_floatEdit()
+                    wid.slider.blockSignals(False)
             axes_list = data.get_axes()
 
         else:
@@ -570,3 +582,16 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         self.refreshRange.emit()
         self.refreshNeeded.emit()
+
+    def update_forced(self):
+        """Method that emits a signal (refreshNeeded) that will be used to automaticaly update the plot inside the GUI.
+        This signal is triggered by other signals comming from WSliceOperator or WAxisSelector.
+        refreshRange is a different signal that we use to update the values of min and max inside w_range
+        Parameters
+        ----------
+        self : WAxisManager
+            a WAxisManager object
+        """
+
+        self.refreshRange.emit()
+        self.refreshForced.emit()
