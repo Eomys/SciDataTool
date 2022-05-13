@@ -672,7 +672,10 @@ def plot_2D_Data(
                 arg_list_new = []
                 for arg in arg_list_along:
                     if axis_along.name in arg or axis_op.name in arg:
-                        arg_list_new.append(arg.replace("=sum", ""))
+                        if "[" in arg:
+                            arg_list_new.append(arg.split("[")[0])
+                        else:
+                            arg_list_new.append(arg.replace("=sum", ""))
                 result = data2.get_magnitude_along(*arg_list_new)
                 for ii in range(len(result[annotations[0]])):
                     if operation == "max":
@@ -683,6 +686,12 @@ def plot_2D_Data(
                             + ": "
                             + axis_op.get_values()[index]
                         )
+                # Keep only requested indices
+                annot = array(annot)[
+                    axes_list[
+                        [axis.name for axis in axes_list].index(annotations[0])
+                    ].indices
+                ].tolist()
                 if len(overall_axes) != 0:
                     annot.insert(0, "Overall")
             except Exception:
