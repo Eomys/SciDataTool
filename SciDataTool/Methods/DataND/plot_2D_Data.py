@@ -481,10 +481,7 @@ def plot_2D_Data(
 
     # Overall computation
     if overall_axes != []:
-        if self.unit == "W":
-            op = "=sum"
-        else:
-            op = "=rss"
+        op = "=sum"
         arg_list_ovl = [0 for i in range(len(arg_list))]
         # Add sum to overall_axes
         for axis in overall_axes:
@@ -665,10 +662,7 @@ def plot_2D_Data(
                 axis_op = self.get_axes(annotations[1])[0]
                 operation = annotations[2]
                 arg_list_new = []
-                if self.unit == "W":
-                    op = "=sum"
-                else:
-                    op = "=rss"
+                op = "=sum"
                 for axis in self.get_axes():
                     if axis.name not in [axis_along.name, axis_op.name]:
                         arg_list_new.append(axis.name + op)
