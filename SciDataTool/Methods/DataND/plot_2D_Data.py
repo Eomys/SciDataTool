@@ -409,7 +409,7 @@ def plot_2D_Data(
                             + " "
                             + axis.name
                             + "="
-                            + axis.values.tolist()[j]
+                            + axis.values.tolist()[j].replace(";", "")
                             + " "
                             + axis_unit
                             if isinstance(axis.values.tolist()[j], str)

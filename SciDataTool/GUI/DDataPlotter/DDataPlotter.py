@@ -393,7 +393,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 if self.ax.get_legend_handles_labels()[1] != []:
                     legend = self.ax.get_legend_handles_labels()[1][
                         self.ax.lines.index(plot_obj)
-                    ]
+                    ].lstrip(" ")
                     annotations = [
                         child
                         for child in self.ax.get_children()
