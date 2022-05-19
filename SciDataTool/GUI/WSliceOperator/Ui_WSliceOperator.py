@@ -102,8 +102,8 @@ class Ui_WSliceOperator(object):
 
         self.b_action = QPushButton(WSliceOperator)
         self.b_action.setObjectName(u"b_action")
-        sizePolicy.setHeightForWidth(self.b_action.sizePolicy().hasHeightForWidth())
-        self.b_action.setSizePolicy(sizePolicy)
+        sizePolicy3.setHeightForWidth(self.b_action.sizePolicy().hasHeightForWidth())
+        self.b_action.setSizePolicy(sizePolicy3)
         self.b_action.setMinimumSize(QSize(0, 30))
 
         self.gridLayout.addWidget(self.b_action, 2, 1, 1, 1)
