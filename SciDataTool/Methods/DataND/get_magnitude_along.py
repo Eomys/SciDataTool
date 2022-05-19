@@ -124,11 +124,13 @@ def get_magnitude_along(
                     is_sum=False,
                 )
             elif index_speed is None:  # Sum on order axis
+                if "[" in args[-1]:
+                    new_args[-1] = args[-1].split("[")[0]
                 data = self.get_data_along(
                     *new_args, axis_data=axis_data, unit=unit
                 )  # Extract first along order axis
                 return data.get_magnitude_along(
-                    *[arg_speed, args[index_order]],
+                    *[arg_speed, args[index_order]] + args[2:],
                     axis_data=axis_data,
                     unit=unit,
                     is_squeeze=is_squeeze,
@@ -202,7 +204,11 @@ def get_magnitude_along(
                 axes_list = return_dict["axes_list"]
                 index_list = []
                 for ii, axis in enumerate(axes_list):
-                    if axis.indices is not None and len(axis.indices) > 1:
+                    if (
+                        axis.indices is not None
+                        and len(axis.indices) > 1
+                        and len(axis.indices) < len(axis.values)
+                    ):
                         index_list.append(ii)
                 A_weight = self.normalizations["A-weight"].vector
                 for index in index_list:

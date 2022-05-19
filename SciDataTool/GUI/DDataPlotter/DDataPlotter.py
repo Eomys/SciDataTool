@@ -103,7 +103,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             Dictionnary with arguments that must be given to the plot
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them,
-            3 to freeze both axes and operations, 4 to freeze fft, 5 to only allow switch
+            3 to freeze both axes and operations, 4 to freeze fft, 5 to only allow switch, 6 to only allow overlay button
         save_path : str
             path to the folder where the animations are saved
         logger : logger
@@ -267,18 +267,21 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         if ticklabel._x == x:
                             X_str = ticklabel._text
                             break
-            if "mathdefault" in self.ax.get_yticklabels()[-1]._text:
-                Y_str = format(y, ".4g")
-            else:
-                try:
-                    y_float = float(self.ax.get_yticklabels()[-1]._text)
+            if self.ax.get_yticklabels() != []:
+                if "mathdefault" in self.ax.get_yticklabels()[-1]._text:
                     Y_str = format(y, ".4g")
-                except:
-                    Y_str = None
-                    for ticklabel in self.ax.get_yticklabels():
-                        if ticklabel._y == y:
-                            Y_str = ticklabel._text
-                            break
+                else:
+                    try:
+                        y_float = float(self.ax.get_yticklabels()[-1]._text)
+                        Y_str = format(y, ".4g")
+                    except:
+                        Y_str = None
+                        for ticklabel in self.ax.get_yticklabels():
+                            if ticklabel._y == y:
+                                Y_str = ticklabel._text
+                                break
+            else:
+                Y_str = y
             if X_str is None or Y_str is None:
                 return ""
 

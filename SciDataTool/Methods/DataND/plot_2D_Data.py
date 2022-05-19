@@ -21,11 +21,14 @@ from numpy import (
     insert,
     nanmin as np_min,
     linspace,
-    argmin,
+    argsort,
     argmax,
     take,
     log10,
     nan,
+    sum as np_sum,
+    sqrt,
+    zeros,
 )
 
 
@@ -36,6 +39,7 @@ def plot_2D_Data(
     is_norm=False,
     unit="SI",
     overall_axes=[],
+    contribution_axis=None,
     data_list=[],
     legend_list=[],
     color_list=None,
@@ -388,7 +392,7 @@ def plot_2D_Data(
     for i, d in enumerate(data_list2):
         is_overlay = False
         for axis in axes_list:
-            if axis.extension == "list":
+            if axis.extension == "list" and len(axis.values) > 1:
                 is_overlay = True
                 if linestyles is None:
                     linestyles = ["dashed"]
@@ -518,6 +522,72 @@ def plot_2D_Data(
         new_color_list = new_color_list.copy()
         new_color_list.insert(0, "#000000")
         legends.insert(0, "Overall")
+
+    # Contribution computation
+    if contribution_axis is not None:
+        contribution_name = contribution_axis.split("[")[0]
+        selection = contribution_axis.split("[")[1].rstrip("]").split(",")
+        contrib_axis = self.get_axes(contribution_name)[0]
+        type_plot = "stack"
+        OVL = Y_overall
+        arg_list_new = [axis.name for axis in self.get_axes()]
+        sum_index = ["sum" in arg for arg in arg_list_along].index(True)
+        contrib_index = None
+        if contribution_name in [axis.name for axis in axes_list]:
+            contrib_index = [axis.name for axis in axes_list].index(contribution_name)
+        contrib_array = zeros((contrib_axis.get_length(), len(Y_overall)))
+        for i in range(contrib_axis.get_length()):
+            arg_list_new = [
+                axis.name
+                if axis.name != contribution_name
+                else contribution_name + "[" + str(i) + "]"
+                for axis in self.get_axes()
+            ]
+            if unit == "dBA":
+                symbol = "ASWL"
+                name = "Sound Power Level"
+                contrib = self.get_magnitude_along(*arg_list_new, unit="W")[self.symbol]
+                A_weighting = (
+                    self.get_magnitude_along(*arg_list_new, unit="dBA")[self.symbol]
+                    - self.get_magnitude_along(*arg_list_new, unit="dB")[self.symbol]
+                )
+                upper_sum = np_sum(
+                    10 ** (0.1 * A_weighting)
+                    * contrib
+                    / self.normalizations["ref"].ref,
+                    axis=sum_index,
+                )
+            cont = upper_sum / (10 ** (0.1 * OVL))
+            contrib_array[i, :] = cont * OVL
+        # Remove small contributions
+        Iloads = where(sqrt(np_sum(contrib_array ** 2, 1)) > 1e-2)[0]
+        # Sort in decreasing order
+        Isort = argsort(-sqrt(np_sum(contrib_array[Iloads, :] ** 2, 1)))
+        Ydatas = [Ydatas[0]]
+        legends = ["100% (overall " + symbol + ")"]
+        new_color_list = [new_color_list[0]]
+        for i in range(len(Isort)):
+            if (
+                contrib_index is not None
+                and axes_list[contrib_index].indices is not None
+                and "all" in selection
+            ):
+                if Isort[i] in axes_list[contrib_index].indices:
+                    Ydatas.append(contrib_array[Isort[i], :])
+                    legends.append(contrib_axis.values[Isort[i]])
+                    new_color_list.append(color_list[i])
+            elif "all" in selection or all(
+                [s in contrib_axis.values[Isort[i]] for s in selection]
+            ):
+                Ydatas.append(contrib_array[Isort[i], :])
+                legends.append(contrib_axis.values[Isort[i]])
+                new_color_list.append(color_list[i])
+        if "all" not in selection:
+            title = " ".join(selection).capitalize()
+        else:
+            title = axes_dict[contribution_name].capitalize()
+        ylabel = title + " linear contribution to " + symbol + " [%]"
+        title += " linear contribution to " + name
 
     # Deactivate legend if only one item
     if type_plot == "point":
