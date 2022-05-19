@@ -11,7 +11,7 @@ from PySide2.QtCore import Qt, QEvent, QPoint, QRect
 from PySide2.QtGui import QStandardItemModel, QStandardItem, QPixmap, QIcon
 from PySide2.QtCore import Signal, QSortFilterProxyModel, QSize
 
-from numpy import array
+from numpy import array, argsort
 
 from SciDataTool.GUI.WFilter.Ui_WFilter import Ui_WFilter
 from SciDataTool.Functions.Plot import axes_dict
@@ -194,6 +194,7 @@ class WFilter(Ui_WFilter, QWidget):
 
         # Get checked indices
         indices = []
+        indices_ordered = []
         for i in range(self.tab_indices.model().rowCount()):
             # Get checked indices
             if (
@@ -211,6 +212,10 @@ class WFilter(Ui_WFilter, QWidget):
                     .mapToSource(self.tab_indices.model().index(i, 0))
                     .row()
                 )
+                indices_ordered.append(self.tab_indices.model().index(i, 0).row())
+        # Keep same order as in table
+        sort_idx = argsort(indices_ordered)
+        indices = array(indices)[sort_idx].tolist()
         if indices != self.indices:
             self.indices = indices
             self.refreshNeeded.emit()

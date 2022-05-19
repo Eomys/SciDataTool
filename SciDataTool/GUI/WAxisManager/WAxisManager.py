@@ -26,6 +26,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
     """Widget that will handle the selection of the axis as well as generating WDataExtractor"""
 
     refreshNeeded = Signal()
+    refreshForced = Signal()
     refreshRange = Signal()
     generateAnimation = Signal()
 
@@ -57,6 +58,9 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         self.w_axis_1.refreshNeeded.connect(self.update_needed)
         self.w_axis_2.refreshNeeded.connect(self.update_needed)
+
+        self.w_axis_1.refreshForced.connect(self.update_forced)
+        self.w_axis_2.refreshForced.connect(self.update_forced)
 
     def axis_1_updated(self):
         """Method that remove the axis selected in w_axis_1 from w_axis_2 and call the method that generates
@@ -156,6 +160,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                         else:
                             temp.update(ax)
                 temp.refreshNeeded.connect(self.update_needed)
+                temp.refreshForced.connect(self.update_forced)
                 temp.generateAnimation.connect(self.gen_animate)
                 self.w_slice_op.append(temp)
                 self.lay_data_extract.addWidget(temp)
@@ -386,7 +391,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             list of RequestedAxis which are the info given for the autoplot (for the axes and DataSelection)
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them,
-            3 to freeze both axes and operations, 4 to freeze fft, 5 to only allow switch
+            3 to freeze both axes and operations, 4 to freeze fft, 5 to only allow switch, 6 to only allow overlay button
         path_to_image : str
             path to the folder where the image for the animation button is saved
         """
@@ -398,7 +403,14 @@ class WAxisManager(Ui_WAxisManager, QWidget):
         if is_keep_config:  # Only update slider
             for wid in self.w_slice_op:
                 if hasattr(wid, "axis_value"):
+                    wid.slider.blockSignals(True)
+                    axis = data.get_axes(wid.axis.name)[0]
+                    wid.axis = axis
+                    index = wid.slider.value()
+                    wid.set_slider_floatedit()
+                    wid.slider.setValue(index)
                     wid.update_floatEdit()
+                    wid.slider.blockSignals(False)
             axes_list = data.get_axes()
 
         else:
@@ -502,11 +514,19 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             self.w_axis_2.c_axis.setDisabled(True)
             self.w_axis_2.c_action.setDisabled(True)
 
-            # Freezing the operations
+            # Freezing the operations (allowing only slice and requested ope)
             for w_slice in self.w_slice_op:
-                w_slice.c_operation.setDisabled(True)
-                w_slice.lf_value.setDisabled(True)
-                w_slice.slider.setDisabled(True)
+                current_ope = w_slice.c_operation.currentText()
+                if current_ope not in ["slice", "overlay"]:
+                    w_slice.c_operation.blockSignals(True)
+                    w_slice.c_operation.clear()
+                    w_slice.c_operation.addItems(["slice", current_ope])
+                    w_slice.c_operation.setCurrentIndex(1)
+                    w_slice.c_operation.blockSignals(False)
+                else:
+                    w_slice.c_operation.setDisabled(True)
+                # w_slice.lf_value.setDisabled(True)
+                # w_slice.slider.setDisabled(True)
 
         elif frozen_type == 4:
             self.w_axis_1.c_axis.setDisabled(True)
@@ -526,6 +546,19 @@ class WAxisManager(Ui_WAxisManager, QWidget):
             # Freezing the operations
             for w_slice in self.w_slice_op:
                 w_slice.b_action.setDisabled(True)
+                w_slice.c_operation.setDisabled(True)
+                w_slice.lf_value.setDisabled(True)
+                w_slice.slider.setDisabled(True)
+
+        elif frozen_type == 6:
+            # Freezing the axes
+            self.w_axis_1.c_axis.setDisabled(True)
+            self.w_axis_1.c_action.setDisabled(True)
+            self.w_axis_2.c_axis.setDisabled(True)
+            self.w_axis_2.c_action.setDisabled(True)
+
+            # Freezing the operations
+            for w_slice in self.w_slice_op:
                 w_slice.c_operation.setDisabled(True)
                 w_slice.lf_value.setDisabled(True)
                 w_slice.slider.setDisabled(True)
@@ -562,3 +595,16 @@ class WAxisManager(Ui_WAxisManager, QWidget):
 
         self.refreshRange.emit()
         self.refreshNeeded.emit()
+
+    def update_forced(self):
+        """Method that emits a signal (refreshNeeded) that will be used to automaticaly update the plot inside the GUI.
+        This signal is triggered by other signals comming from WSliceOperator or WAxisSelector.
+        refreshRange is a different signal that we use to update the values of min and max inside w_range
+        Parameters
+        ----------
+        self : WAxisManager
+            a WAxisManager object
+        """
+
+        self.refreshRange.emit()
+        self.refreshForced.emit()

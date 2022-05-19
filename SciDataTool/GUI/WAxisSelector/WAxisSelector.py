@@ -19,6 +19,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
     """Widget to select the axis to plot"""
 
     refreshNeeded = Signal()
+    refreshForced = Signal()
     axisChanged = Signal()
     actionChanged = Signal()
 
@@ -146,7 +147,7 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
 
     def update_indices(self):
         self.indices = self.current_dialog.indices
-        self.refreshNeeded.emit()
+        self.refreshForced.emit()
 
     def remove_axis(self, axis_to_remove):
         """Method that remove a given axis from the axis ComboBox.
@@ -369,6 +370,8 @@ class WAxisSelector(Ui_WAxisSelector, QWidget):
                 if len(self.c_unit.currentText()) > cb_width:
                     cb_width = len(self.c_unit.currentText())
             if unit_index != -1:
+                if unit_index >= self.c_unit.count():
+                    unit_index = 0
                 self.c_unit.setCurrentIndex(unit_index)
 
             self.c_unit.view().setMinimumWidth(cb_width * 8)

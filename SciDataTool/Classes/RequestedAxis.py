@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/RequestedAxis.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//RequestedAxis
@@ -22,6 +22,7 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -236,7 +237,7 @@ class RequestedAxis(FrozenClass):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -245,39 +246,153 @@ class RequestedAxis(FrozenClass):
             return ["type(" + name + ")"]
         diff_list = list()
         if other._name != self._name:
-            diff_list.append(name + ".name")
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._name) + ", other=" + str(other._name) + ")"
+                )
+                diff_list.append(name + ".name" + val_str)
+            else:
+                diff_list.append(name + ".name")
         if other._corr_name != self._corr_name:
-            diff_list.append(name + ".corr_name")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._corr_name)
+                    + ", other="
+                    + str(other._corr_name)
+                    + ")"
+                )
+                diff_list.append(name + ".corr_name" + val_str)
+            else:
+                diff_list.append(name + ".corr_name")
         if other._unit != self._unit:
-            diff_list.append(name + ".unit")
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._unit) + ", other=" + str(other._unit) + ")"
+                )
+                diff_list.append(name + ".unit" + val_str)
+            else:
+                diff_list.append(name + ".unit")
         if other._corr_unit != self._corr_unit:
-            diff_list.append(name + ".corr_unit")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._corr_unit)
+                    + ", other="
+                    + str(other._corr_unit)
+                    + ")"
+                )
+                diff_list.append(name + ".corr_unit" + val_str)
+            else:
+                diff_list.append(name + ".corr_unit")
         if other._extension != self._extension:
-            diff_list.append(name + ".extension")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._extension)
+                    + ", other="
+                    + str(other._extension)
+                    + ")"
+                )
+                diff_list.append(name + ".extension" + val_str)
+            else:
+                diff_list.append(name + ".extension")
         if not array_equal(other.values, self.values):
             diff_list.append(name + ".values")
         if other._indices != self._indices:
-            diff_list.append(name + ".indices")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._indices)
+                    + ", other="
+                    + str(other._indices)
+                    + ")"
+                )
+                diff_list.append(name + ".indices" + val_str)
+            else:
+                diff_list.append(name + ".indices")
         if not array_equal(other.input_data, self.input_data):
             diff_list.append(name + ".input_data")
         if other._operation != self._operation:
-            diff_list.append(name + ".operation")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._operation)
+                    + ", other="
+                    + str(other._operation)
+                    + ")"
+                )
+                diff_list.append(name + ".operation" + val_str)
+            else:
+                diff_list.append(name + ".operation")
         if other._index != self._index:
-            diff_list.append(name + ".index")
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._index) + ", other=" + str(other._index) + ")"
+                )
+                diff_list.append(name + ".index" + val_str)
+            else:
+                diff_list.append(name + ".index")
         if other._transform != self._transform:
-            diff_list.append(name + ".transform")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._transform)
+                    + ", other="
+                    + str(other._transform)
+                    + ")"
+                )
+                diff_list.append(name + ".transform" + val_str)
+            else:
+                diff_list.append(name + ".transform")
         if other._is_pattern != self._is_pattern:
-            diff_list.append(name + ".is_pattern")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_pattern)
+                    + ", other="
+                    + str(other._is_pattern)
+                    + ")"
+                )
+                diff_list.append(name + ".is_pattern" + val_str)
+            else:
+                diff_list.append(name + ".is_pattern")
         if not array_equal(other.rebuild_indices, self.rebuild_indices):
             diff_list.append(name + ".rebuild_indices")
         if other._is_step != self._is_step:
-            diff_list.append(name + ".is_step")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_step)
+                    + ", other="
+                    + str(other._is_step)
+                    + ")"
+                )
+                diff_list.append(name + ".is_step" + val_str)
+            else:
+                diff_list.append(name + ".is_step")
         if other._noct != self._noct:
-            diff_list.append(name + ".noct")
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._noct) + ", other=" + str(other._noct) + ")"
+                )
+                diff_list.append(name + ".noct" + val_str)
+            else:
+                diff_list.append(name + ".noct")
         if not array_equal(other.corr_values, self.corr_values):
             diff_list.append(name + ".corr_values")
         if other._is_components != self._is_components:
-            diff_list.append(name + ".is_components")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_components)
+                    + ", other="
+                    + str(other._is_components)
+                    + ")"
+                )
+                diff_list.append(name + ".is_components" + val_str)
+            else:
+                diff_list.append(name + ".is_components")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list

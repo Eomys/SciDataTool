@@ -36,6 +36,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
     """Widget to define how to handle the 'non-plot' axis"""
 
     refreshNeeded = Signal()
+    refreshForced = Signal()
     generateAnimation = Signal()
 
     def __init__(self, parent=None, path_to_image=None):
@@ -60,6 +61,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.indices = None
         self.is_animate = False  # boolean to define if an animation must on this axis (must be on slice)
         self.is_pattern = False  # Detecting if the axis is a DataPattern (important for handling of slice + slider + lf_value)
+        self.is_components = False
         self.path_to_image = path_to_image
 
         # Setting path to recover the image for the animate button
@@ -69,9 +71,12 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             path_to_image = self.path_to_image + "/images/icon/play-32px.png"
 
         self.b_animate.setPixmap(QPixmap(path_to_image))
+        self.is_sliderpressed = False
         self.c_operation.currentTextChanged.connect(self.update_layout)
+        self.slider.sliderPressed.connect(self.set_sliderpressed)
+        self.slider.sliderReleased.connect(self.set_sliderreleased)
         self.slider.valueChanged.connect(self.update_floatEdit)
-        self.slider.sliderReleased.connect(self.update_plot)
+        self.slider.valueChanged.connect(self.update_plot)
         self.lf_value.editingFinished.connect(self.update_slider)
         self.b_action.clicked.connect(self.open_filter)
         self.b_animate.mousePressEvent = self.gen_animate
@@ -112,7 +117,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             # slice_index = self.slider.value()
             # action = "[" + str(slice_index) + "]"
 
-            if self.is_pattern:
+            if self.is_pattern or self.is_components:
                 # When working with DataPattern we must use index to give the exact value
                 action = "[" + str(self.slider.value()) + "]"
             else:
@@ -161,7 +166,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
 
     def update_indices(self):
         self.indices = self.current_dialog.indices
-        self.refreshNeeded.emit()
+        self.refreshForced.emit()
 
     def set_name(self, name):
         """Method that set the name of the axis of the WSliceOperator
@@ -242,7 +247,12 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self : WSliceOperator
             a WSliceOperator object
         """
-        if not self.axis.is_components:
+        if self.axis.is_components:
+            self.is_components = True
+            if self.c_operation.currentText() == "slice":
+                self.axis_value = self.axis.values
+            name = self.axis.name
+        else:
             # Converting the axis from rad to degree if the axis is angle as we do slice in degrees
             # Recovering the value from the axis as well
             if self.c_operation.currentText() == "slice":
@@ -281,23 +291,27 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
                 else:  # already wavenumber of freqs case
                     self.axis_value = self.axis.get_values()
 
-            # Setting the axis unit
-            if name in unit_dict:
-                self.unit = unit_dict[name]
+        # Setting the axis unit
+        if name in unit_dict:
+            self.unit = unit_dict[name]
 
-            if self.is_pattern:
-                # Setting the initial value of the floatEdit to the minimum slice (=1)
-                self.lf_value.setValue(1)
-                self.in_unit.setText("[-]")
-            else:
-                # Setting the initial value of the floatEdit to the minimum inside the axis
-                self.lf_value.setValue(min(self.axis_value))
-                self.in_unit.setText("[" + self.unit + "]")
+        if self.is_pattern:
+            # Setting the initial value of the floatEdit to the minimum slice (=1)
+            self.lf_value.setValue(1)
+            self.in_unit.setText("[-]")
+        elif self.is_components:
+            self.lf_value.hide()
+            self.b_animate.hide()
+            self.in_unit.setText(self.axis_value[0])
+        else:
+            # Setting the initial value of the floatEdit to the minimum inside the axis
+            self.lf_value.setValue(min(self.axis_value))
+            self.in_unit.setText("[" + self.unit + "]")
 
-            # Setting the slider by giving the number of index according to the size of the axis
-            self.slider.setMinimum(0)
-            self.slider.setMaximum(len(self.axis_value) - 1)
-            self.slider.setValue(0)
+        # Setting the slider by giving the number of index according to the size of the axis
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(len(self.axis_value) - 1)
+        self.slider.setValue(0)
 
     def update(self, axis, axis_request=None):
         """Method that will update the WSliceOperator widget according to the axis given to it
@@ -372,6 +386,8 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         if self.is_pattern:
             # When working with DataPattern, we have to work with the exact value given
             self.lf_value.setValue(self.slider.value() + 1)
+        elif self.is_components:
+            self.in_unit.setText(self.axis_value[self.slider.value()])
         else:
             self.lf_value.setValue(self.axis_value[self.slider.value()])
 
@@ -385,17 +401,20 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self : WSliceOperator
             a WSliceOperator object
         """
+        if not self.is_sliderpressed:
 
-        self.lf_value.blockSignals(True)
+            self.lf_value.blockSignals(True)
 
-        if self.is_pattern:
-            # When working with DataPattern, we have to work with the exact value given
-            self.lf_value.setValue(self.slider.value() + 1)
-        else:
-            self.lf_value.setValue(self.axis_value[self.slider.value()])
+            if self.is_pattern:
+                # When working with DataPattern, we have to work with the exact value given
+                self.lf_value.setValue(self.slider.value() + 1)
+            elif self.is_components:
+                self.in_unit.setText(self.axis_value[self.slider.value()])
+            else:
+                self.lf_value.setValue(self.axis_value[self.slider.value()])
 
-        self.lf_value.blockSignals(False)
-        self.refreshNeeded.emit()
+            self.lf_value.blockSignals(False)
+            self.refreshNeeded.emit()
 
     def update_layout(self):
         """Method that update the layout of the WSliceOperator according to the extraction chosen
@@ -410,11 +429,12 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         # If the operation selected is a slice, then we show the slider and the floatEdit
         if extraction_selected == "slice" or extraction_selected == "slice (fft)":
             self.set_slider_floatedit()
-            self.lf_value.show()
+            if not self.is_components:
+                self.lf_value.show()
             self.in_unit.show()
             self.slider.show()
             self.b_action.hide()
-            if extraction_selected == "slice":
+            if extraction_selected == "slice" and not self.is_components:
                 self.b_animate.show()
             else:
                 self.b_animate.hide()
@@ -467,3 +487,10 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         # self.lf_value.setValue(self.axis_value[index])
         self.slider.blockSignals(False)
         self.refreshNeeded.emit()
+
+    def set_sliderpressed(self):
+        self.is_sliderpressed = True
+
+    def set_sliderreleased(self):
+        self.is_sliderpressed = False
+        self.update_plot()

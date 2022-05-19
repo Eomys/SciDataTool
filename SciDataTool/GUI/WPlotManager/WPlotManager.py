@@ -88,6 +88,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         # Linking the signals for the autoRefresh
         self.w_axis_manager.refreshNeeded.connect(self.auto_update)
+        self.w_axis_manager.refreshForced.connect(self.update_plot_forced)
         self.w_axis_manager.generateAnimation.connect(self.gen_animate)
         self.w_range.refreshNeeded.connect(self.auto_update)
 
@@ -429,7 +430,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             Minimum value for Z axis (or Y if only one axe)
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them,
-            3 to freeze both axes and operations, 4 to freeze fft, 5 to only allow switch
+            3 to freeze both axes and operations, 4 to freeze fft, 5 to only allow switch, 6 to only allow overlay button
         plot_arg_dict : dict
             Dictionnary with arguments that must be given to the plot (used for animated plot)
         save_path : str

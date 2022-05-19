@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Norm_affine.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Norm_affine
@@ -21,6 +21,7 @@ except ImportError as error:
     normalize = error
 
 
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -97,7 +98,7 @@ class Norm_affine(Normalization):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -107,11 +108,45 @@ class Norm_affine(Normalization):
         diff_list = list()
 
         # Check the properties inherited from Normalization
-        diff_list.extend(super(Norm_affine, self).compare(other, name=name))
-        if other._slope != self._slope:
-            diff_list.append(name + ".slope")
-        if other._offset != self._offset:
-            diff_list.append(name + ".offset")
+        diff_list.extend(
+            super(Norm_affine, self).compare(
+                other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
+            )
+        )
+        if (
+            other._slope is not None
+            and self._slope is not None
+            and isnan(other._slope)
+            and isnan(self._slope)
+        ):
+            pass
+        elif other._slope != self._slope:
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._slope) + ", other=" + str(other._slope) + ")"
+                )
+                diff_list.append(name + ".slope" + val_str)
+            else:
+                diff_list.append(name + ".slope")
+        if (
+            other._offset is not None
+            and self._offset is not None
+            and isnan(other._offset)
+            and isnan(self._offset)
+        ):
+            pass
+        elif other._offset != self._offset:
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._offset)
+                    + ", other="
+                    + str(other._offset)
+                    + ")"
+                )
+                diff_list.append(name + ".offset" + val_str)
+            else:
+                diff_list.append(name + ".offset")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/DataDual.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataDual
@@ -27,6 +27,7 @@ except ImportError as error:
 
 
 from numpy import array, array_equal
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -176,7 +177,7 @@ class DataDual(DataND):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -186,7 +187,11 @@ class DataDual(DataND):
         diff_list = list()
 
         # Check the properties inherited from DataND
-        diff_list.extend(super(DataDual, self).compare(other, name=name))
+        diff_list.extend(
+            super(DataDual, self).compare(
+                other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
+            )
+        )
         if (other.axes_dt is None and self.axes_dt is not None) or (
             other.axes_dt is not None and self.axes_dt is None
         ):
@@ -199,7 +204,10 @@ class DataDual(DataND):
             for ii in range(len(other.axes_dt)):
                 diff_list.extend(
                     self.axes_dt[ii].compare(
-                        other.axes_dt[ii], name=name + ".axes_dt[" + str(ii) + "]"
+                        other.axes_dt[ii],
+                        name=name + ".axes_dt[" + str(ii) + "]",
+                        ignore_list=ignore_list,
+                        is_add_value=is_add_value,
                     )
                 )
         if not array_equal(other.values_dt, self.values_dt):
@@ -216,7 +224,10 @@ class DataDual(DataND):
             for ii in range(len(other.axes_df)):
                 diff_list.extend(
                     self.axes_df[ii].compare(
-                        other.axes_df[ii], name=name + ".axes_df[" + str(ii) + "]"
+                        other.axes_df[ii],
+                        name=name + ".axes_df[" + str(ii) + "]",
+                        ignore_list=ignore_list,
+                        is_add_value=is_add_value,
                     )
                 )
         if not array_equal(other.values_df, self.values_df):
@@ -342,6 +353,15 @@ class DataDual(DataND):
         """setter of axes_dt"""
         if type(value) is list:
             for ii, obj in enumerate(value):
+                if isinstance(obj, str):  # Load from file
+                    try:
+                        obj = load_init_dict(obj)[1]
+                    except Exception as e:
+                        self.get_logger().error(
+                            "Error while loading " + obj + ", setting None instead"
+                        )
+                        obj = None
+                        value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
                         "SciDataTool.Classes", obj.get("__class__"), "axes_dt"
@@ -400,6 +420,15 @@ class DataDual(DataND):
         """setter of axes_df"""
         if type(value) is list:
             for ii, obj in enumerate(value):
+                if isinstance(obj, str):  # Load from file
+                    try:
+                        obj = load_init_dict(obj)[1]
+                    except Exception as e:
+                        self.get_logger().error(
+                            "Error while loading " + obj + ", setting None instead"
+                        )
+                        obj = None
+                        value[ii] = None
                 if type(obj) is dict:
                     class_obj = import_class(
                         "SciDataTool.Classes", obj.get("__class__"), "axes_df"

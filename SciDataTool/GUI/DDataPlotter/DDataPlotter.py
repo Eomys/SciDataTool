@@ -103,7 +103,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             Dictionnary with arguments that must be given to the plot
         frozen_type : int
             0 to let the user modify the axis of the plot, 1 to let him switch them, 2 to not let him change them,
-            3 to freeze both axes and operations, 4 to freeze fft, 5 to only allow switch
+            3 to freeze both axes and operations, 4 to freeze fft, 5 to only allow switch, 6 to only allow overlay button
         save_path : str
             path to the folder where the animations are saved
         logger : logger
@@ -267,18 +267,21 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         if ticklabel._x == x:
                             X_str = ticklabel._text
                             break
-            if "mathdefault" in self.ax.get_yticklabels()[-1]._text:
-                Y_str = format(y, ".4g")
-            else:
-                try:
-                    y_float = float(self.ax.get_yticklabels()[-1]._text)
+            if self.ax.get_yticklabels() != []:
+                if "mathdefault" in self.ax.get_yticklabels()[-1]._text:
                     Y_str = format(y, ".4g")
-                except:
-                    Y_str = None
-                    for ticklabel in self.ax.get_yticklabels():
-                        if ticklabel._y == y:
-                            Y_str = ticklabel._text
-                            break
+                else:
+                    try:
+                        y_float = float(self.ax.get_yticklabels()[-1]._text)
+                        Y_str = format(y, ".4g")
+                    except:
+                        Y_str = None
+                        for ticklabel in self.ax.get_yticklabels():
+                            if ticklabel._y == y:
+                                Y_str = ticklabel._text
+                                break
+            else:
+                Y_str = y
             if X_str is None or Y_str is None:
                 return ""
 
@@ -393,7 +396,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 if self.ax.get_legend_handles_labels()[1] != []:
                     legend = self.ax.get_legend_handles_labels()[1][
                         self.ax.lines.index(plot_obj)
-                    ]
+                    ].lstrip(" ")
                     annotations = [
                         child
                         for child in self.ax.get_children()
@@ -571,13 +574,6 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                             angle_str = "angle[smallestperiod]"
                         del plot_arg_dict_2D["is_smallestperiod"]
                     if "fig" in plot_arg_dict_2D:
-                        # plt.rcParams.update(
-                        #     {
-                        #         "font.family": plot_arg_dict_2D["fig"]
-                        #         .texts[0]
-                        #         ._fontproperties._family[0],
-                        #     }
-                        # )
                         del plot_arg_dict_2D["fig"]
                     self.data_orig.plot_2D_Data(
                         *[*[angle_str], *data_selection],
@@ -601,6 +597,19 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                                             + "{"
                                             + axis_selected.split("{")[1]
                                         )
+                    if (
+                        "title" in plot_arg_dict_2D
+                        and "[" in data_selection[-1]
+                        and len(data_selection[-1].split("[")[1].split("]")[0]) == 1
+                    ):
+                        axis_cont = data_selection[-1].split("[")[0]
+                        index = int(data_selection[-1].split("[")[1].split("]")[0])
+                        plot_arg_dict_2D["title"] += (
+                            " for "
+                            + axis_cont.rstrip("s")
+                            + " "
+                            + self.data.get_axes(axis_cont)[0].values[index]
+                        )
                     self.data.plot_2D_Data(
                         *[*axes_selected, *data_selection],
                         **plot_arg_dict_2D,

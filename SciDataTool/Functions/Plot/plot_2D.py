@@ -413,6 +413,46 @@ def plot_2D(
         if xticks is None:
             plt.xticks([])
 
+    elif type_plot == "stack":
+        ax.plot(
+            Xdatas[i_Xdatas[0]],
+            Ydatas[0],
+            color=color_list[0],
+            label=legend_list[0],
+            linewidth=linewidth_list[0],
+            ls=linestyle_list[0],
+            picker=True,
+            pickradius=5,
+        )
+        if len(Ydatas) > 1:
+            ax.stackplot(
+                Xdatas[i_Xdatas[0]],
+                Ydatas[1:],
+                colors=color_list[1:],
+                labels=legend_list[1:],
+            )
+        if xticks is not None:
+            ax.xaxis.set_ticks(xticks)
+            plt.xticks(rotation=90, ha="center", va="top")
+        ax.yaxis.set_ticks([])
+        if xticklabels is not None:
+            if is_indlabels:
+                ax.set_xticklabels([i + 1 for i in range(len(xticklabels))], rotation=0)
+                ax.annotate(
+                    xticklabels, (Xdatas[i_Xdatas[i]], Ydatas[i]), visible=False
+                )
+            else:
+                ax.set_xticklabels(xticklabels, rotation=90)
+        if annotations is not None:
+            for txt in annotations:
+                ax.annotate(
+                    txt,
+                    (Xdatas[i_Xdatas[i]][0], Ydatas[i][0]),
+                    rotation=45,
+                    family=font_name,
+                    visible=False,
+                )
+
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
 

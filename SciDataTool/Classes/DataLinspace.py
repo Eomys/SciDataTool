@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/DataLinspace.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//DataLinspace
@@ -41,6 +41,7 @@ except ImportError as error:
     get_periodicity = error
 
 
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -226,7 +227,7 @@ class DataLinspace(Data):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -236,23 +237,120 @@ class DataLinspace(Data):
         diff_list = list()
 
         # Check the properties inherited from Data
-        diff_list.extend(super(DataLinspace, self).compare(other, name=name))
-        if other._initial != self._initial:
-            diff_list.append(name + ".initial")
-        if other._final != self._final:
-            diff_list.append(name + ".final")
-        if other._step != self._step:
-            diff_list.append(name + ".step")
+        diff_list.extend(
+            super(DataLinspace, self).compare(
+                other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
+            )
+        )
+        if (
+            other._initial is not None
+            and self._initial is not None
+            and isnan(other._initial)
+            and isnan(self._initial)
+        ):
+            pass
+        elif other._initial != self._initial:
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._initial)
+                    + ", other="
+                    + str(other._initial)
+                    + ")"
+                )
+                diff_list.append(name + ".initial" + val_str)
+            else:
+                diff_list.append(name + ".initial")
+        if (
+            other._final is not None
+            and self._final is not None
+            and isnan(other._final)
+            and isnan(self._final)
+        ):
+            pass
+        elif other._final != self._final:
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._final) + ", other=" + str(other._final) + ")"
+                )
+                diff_list.append(name + ".final" + val_str)
+            else:
+                diff_list.append(name + ".final")
+        if (
+            other._step is not None
+            and self._step is not None
+            and isnan(other._step)
+            and isnan(self._step)
+        ):
+            pass
+        elif other._step != self._step:
+            if is_add_value:
+                val_str = (
+                    " (self=" + str(self._step) + ", other=" + str(other._step) + ")"
+                )
+                diff_list.append(name + ".step" + val_str)
+            else:
+                diff_list.append(name + ".step")
         if other._number != self._number:
-            diff_list.append(name + ".number")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._number)
+                    + ", other="
+                    + str(other._number)
+                    + ")"
+                )
+                diff_list.append(name + ".number" + val_str)
+            else:
+                diff_list.append(name + ".number")
         if other._include_endpoint != self._include_endpoint:
-            diff_list.append(name + ".include_endpoint")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._include_endpoint)
+                    + ", other="
+                    + str(other._include_endpoint)
+                    + ")"
+                )
+                diff_list.append(name + ".include_endpoint" + val_str)
+            else:
+                diff_list.append(name + ".include_endpoint")
         if other._is_components != self._is_components:
-            diff_list.append(name + ".is_components")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_components)
+                    + ", other="
+                    + str(other._is_components)
+                    + ")"
+                )
+                diff_list.append(name + ".is_components" + val_str)
+            else:
+                diff_list.append(name + ".is_components")
         if other._symmetries != self._symmetries:
-            diff_list.append(name + ".symmetries")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._symmetries)
+                    + ", other="
+                    + str(other._symmetries)
+                    + ")"
+                )
+                diff_list.append(name + ".symmetries" + val_str)
+            else:
+                diff_list.append(name + ".symmetries")
         if other._is_overlay != self._is_overlay:
-            diff_list.append(name + ".is_overlay")
+            if is_add_value:
+                val_str = (
+                    " (self="
+                    + str(self._is_overlay)
+                    + ", other="
+                    + str(other._is_overlay)
+                    + ")"
+                )
+                diff_list.append(name + ".is_overlay" + val_str)
+            else:
+                diff_list.append(name + ".is_overlay")
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list

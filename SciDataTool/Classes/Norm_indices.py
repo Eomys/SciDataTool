@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # File generated according to Generator/ClassesRef/Norm_indices.csv
 # WARNING! All changes made in this file will be lost!
 """Method code available at https://github.com/Eomys/SciDataTool/tree/master/SciDataTool/Methods//Norm_indices
@@ -21,6 +21,7 @@ except ImportError as error:
     normalize = error
 
 
+from numpy import isnan
 from ._check import InitUnKnowClassError
 
 
@@ -87,7 +88,7 @@ class Norm_indices(Normalization):
             return False
         return True
 
-    def compare(self, other, name="self", ignore_list=None):
+    def compare(self, other, name="self", ignore_list=None, is_add_value=False):
         """Compare two objects and return list of differences"""
 
         if ignore_list is None:
@@ -97,7 +98,11 @@ class Norm_indices(Normalization):
         diff_list = list()
 
         # Check the properties inherited from Normalization
-        diff_list.extend(super(Norm_indices, self).compare(other, name=name))
+        diff_list.extend(
+            super(Norm_indices, self).compare(
+                other, name=name, ignore_list=ignore_list, is_add_value=is_add_value
+            )
+        )
         # Filter ignore differences
         diff_list = list(filter(lambda x: x not in ignore_list, diff_list))
         return diff_list
