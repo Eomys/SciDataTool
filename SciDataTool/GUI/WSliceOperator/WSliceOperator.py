@@ -71,9 +71,12 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             path_to_image = self.path_to_image + "/images/icon/play-32px.png"
 
         self.b_animate.setPixmap(QPixmap(path_to_image))
+        self.is_sliderpressed = False
         self.c_operation.currentTextChanged.connect(self.update_layout)
+        self.slider.sliderPressed.connect(self.set_sliderpressed)
+        self.slider.sliderReleased.connect(self.set_sliderreleased)
         self.slider.valueChanged.connect(self.update_floatEdit)
-        self.slider.sliderReleased.connect(self.update_plot)
+        self.slider.valueChanged.connect(self.update_plot)
         self.lf_value.editingFinished.connect(self.update_slider)
         self.b_action.clicked.connect(self.open_filter)
         self.b_animate.mousePressEvent = self.gen_animate
@@ -398,19 +401,20 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self : WSliceOperator
             a WSliceOperator object
         """
+        if not self.is_sliderpressed:
 
-        self.lf_value.blockSignals(True)
+            self.lf_value.blockSignals(True)
 
-        if self.is_pattern:
-            # When working with DataPattern, we have to work with the exact value given
-            self.lf_value.setValue(self.slider.value() + 1)
-        elif self.is_components:
-            self.in_unit.setText(self.axis_value[self.slider.value()])
-        else:
-            self.lf_value.setValue(self.axis_value[self.slider.value()])
+            if self.is_pattern:
+                # When working with DataPattern, we have to work with the exact value given
+                self.lf_value.setValue(self.slider.value() + 1)
+            elif self.is_components:
+                self.in_unit.setText(self.axis_value[self.slider.value()])
+            else:
+                self.lf_value.setValue(self.axis_value[self.slider.value()])
 
-        self.lf_value.blockSignals(False)
-        self.refreshNeeded.emit()
+            self.lf_value.blockSignals(False)
+            self.refreshNeeded.emit()
 
     def update_layout(self):
         """Method that update the layout of the WSliceOperator according to the extraction chosen
@@ -483,3 +487,10 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         # self.lf_value.setValue(self.axis_value[index])
         self.slider.blockSignals(False)
         self.refreshNeeded.emit()
+
+    def set_sliderpressed(self):
+        self.is_sliderpressed = True
+
+    def set_sliderreleased(self):
+        self.is_sliderpressed = False
+        self.update_plot()
