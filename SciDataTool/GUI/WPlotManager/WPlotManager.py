@@ -47,6 +47,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
     updatePlot = Signal()
     updatePlotForced = Signal()
+    gifDisplayed = Signal()
 
     def __init__(self, parent=None):
         """Initialize the widget by linking buttons to methods
@@ -74,6 +75,9 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.is_test = False  # Used in test to disable showing the animation
         self.gif_path_list = list()  # List of path to the gifs created (used in test)
         self.logger = None
+
+        # Initializing the thread that will be used for the animation
+        self.th = QThread(parent=self)
 
         # Storing each animation as a list with a QMovie, a QLabel and the path to the gif inside gif_widget_list
         self.gif_widget_list = list()
@@ -170,6 +174,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
 
         # Adding the animation to the list
         self.gif_widget_list.append([new_gif_widget, new_animation_label, gif, widget])
+
+        self.gifDisplayed.emit()
 
     def gen_animate(self):
         """Methods called after clicking on animate button to generate a gif on the axis selected and display it
