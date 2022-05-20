@@ -78,6 +78,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         self.slider.valueChanged.connect(self.update_floatEdit)
         self.slider.valueChanged.connect(self.update_plot)
         self.lf_value.editingFinished.connect(self.update_slider)
+        self.c_values.currentTextChanged.connect(self.update_plot)
         self.b_action.clicked.connect(self.open_filter)
         self.b_animate.mousePressEvent = self.gen_animate
         self.l_loading.setHidden(True)
@@ -117,9 +118,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             # slice_index = self.slider.value()
             # action = "[" + str(slice_index) + "]"
 
-            if self.is_pattern or self.is_components:
+            if self.is_pattern:
                 # When working with DataPattern we must use index to give the exact value
                 action = "[" + str(self.slider.value()) + "]"
+            elif not self.c_values.isHidden():
+                action = "[" + str(self.c_values.currentIndex()) + "]"
             else:
                 action = "=" + str(self.lf_value.value())
 
@@ -299,14 +302,19 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             # Setting the initial value of the floatEdit to the minimum slice (=1)
             self.lf_value.setValue(1)
             self.in_unit.setText("[-]")
+            self.c_values.hide()
         elif self.is_components:
             self.lf_value.hide()
             self.b_animate.hide()
-            self.in_unit.setText(self.axis_value[0])
+            self.in_unit.hide()
+            self.c_values.clear()
+            self.c_values.addItems(self.axis_value)
+            self.slider.hide()
         else:
             # Setting the initial value of the floatEdit to the minimum inside the axis
             self.lf_value.setValue(min(self.axis_value))
             self.in_unit.setText("[" + self.unit + "]")
+            self.c_values.hide()
 
         # Setting the slider by giving the number of index according to the size of the axis
         self.slider.setMinimum(0)
@@ -431,8 +439,11 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.set_slider_floatedit()
             if not self.is_components:
                 self.lf_value.show()
-            self.in_unit.show()
-            self.slider.show()
+                self.in_unit.show()
+                self.slider.show()
+                self.c_values.hide()
+            else:
+                self.c_values.show()
             self.b_action.hide()
             if extraction_selected == "slice" and not self.is_components:
                 self.b_animate.show()
@@ -452,6 +463,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.b_animate.hide()
             self.b_action.show()
             self.b_action.setText("Overlay")
+            self.c_values.hide()
             self.refreshNeeded.emit()
         else:
             if self.axis_name in ifft_dict:
@@ -464,6 +476,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
             self.slider.hide()
             self.b_animate.hide()
             self.b_action.hide()
+            self.c_values.hide()
             self.refreshNeeded.emit()
 
     def update_slider(self):

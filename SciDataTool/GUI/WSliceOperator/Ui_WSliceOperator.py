@@ -19,7 +19,7 @@ class Ui_WSliceOperator(object):
     def setupUi(self, WSliceOperator):
         if not WSliceOperator.objectName():
             WSliceOperator.setObjectName(u"WSliceOperator")
-        WSliceOperator.resize(375, 133)
+        WSliceOperator.resize(375, 160)
         self.gridLayout = QGridLayout(WSliceOperator)
         self.gridLayout.setObjectName(u"gridLayout")
         self.horizontalLayout = QHBoxLayout()
@@ -100,19 +100,35 @@ class Ui_WSliceOperator(object):
 
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 2)
 
+        self.c_values = QComboBox(WSliceOperator)
+        self.c_values.addItem("")
+        self.c_values.addItem("")
+        self.c_values.addItem("")
+        self.c_values.addItem("")
+        self.c_values.addItem("")
+        self.c_values.addItem("")
+        self.c_values.addItem("")
+        self.c_values.addItem("")
+        self.c_values.setObjectName(u"c_values")
+        sizePolicy.setHeightForWidth(self.c_values.sizePolicy().hasHeightForWidth())
+        self.c_values.setSizePolicy(sizePolicy)
+        self.c_values.setMinimumSize(QSize(0, 20))
+
+        self.gridLayout.addWidget(self.c_values, 2, 0, 1, 2)
+
         self.b_action = QPushButton(WSliceOperator)
         self.b_action.setObjectName(u"b_action")
         sizePolicy3.setHeightForWidth(self.b_action.sizePolicy().hasHeightForWidth())
         self.b_action.setSizePolicy(sizePolicy3)
         self.b_action.setMinimumSize(QSize(0, 30))
 
-        self.gridLayout.addWidget(self.b_action, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.b_action, 3, 1, 1, 1)
 
         self.l_loading = QLabel(WSliceOperator)
         self.l_loading.setObjectName(u"l_loading")
         self.l_loading.setEnabled(True)
 
-        self.gridLayout.addWidget(self.l_loading, 3, 0, 1, 1)
+        self.gridLayout.addWidget(self.l_loading, 4, 0, 1, 1)
 
         self.retranslateUi(WSliceOperator)
 
@@ -157,6 +173,31 @@ class Ui_WSliceOperator(object):
         )
         self.in_unit.setText(QCoreApplication.translate("WSliceOperator", u"[m]", None))
         self.b_animate.setText("")
+        self.c_values.setItemText(
+            0, QCoreApplication.translate("WSliceOperator", u"slice", None)
+        )
+        self.c_values.setItemText(
+            1, QCoreApplication.translate("WSliceOperator", u"slice (fft)", None)
+        )
+        self.c_values.setItemText(
+            2, QCoreApplication.translate("WSliceOperator", u"rms", None)
+        )
+        self.c_values.setItemText(
+            3, QCoreApplication.translate("WSliceOperator", u"rss", None)
+        )
+        self.c_values.setItemText(
+            4, QCoreApplication.translate("WSliceOperator", u"sum", None)
+        )
+        self.c_values.setItemText(
+            5, QCoreApplication.translate("WSliceOperator", u"mean", None)
+        )
+        self.c_values.setItemText(
+            6, QCoreApplication.translate("WSliceOperator", u"integrate", None)
+        )
+        self.c_values.setItemText(
+            7, QCoreApplication.translate("WSliceOperator", u"overlay/filter", None)
+        )
+
         self.b_action.setText(
             QCoreApplication.translate("WSliceOperator", u"Overlay", None)
         )
