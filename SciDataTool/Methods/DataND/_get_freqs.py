@@ -52,7 +52,7 @@ def _get_freqs(self):
             normalization = None
         speed = self.get_axes()[index_speed].get_values(normalization=normalization)
         order_strings = self.get_axes()[index_order].get_values().tolist()
-        orders = array([int(s.split(" ")[0].replace("H", "")) for s in order_strings])
+        orders = array([int(s.split(";")[0].replace("H", "")) for s in order_strings])
         os, so = meshgrid(orders, speed)
         freqs = so * 60 / os
 

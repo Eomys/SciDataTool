@@ -485,7 +485,10 @@ def plot_2D_Data(
 
     # Overall computation
     if overall_axes != []:
-        op = "=sum"
+        if self.unit == "W":
+            op = "=sum"
+        else:
+            op = "=rss"
         arg_list_ovl = [0 for i in range(len(arg_list))]
         # Add sum to overall_axes
         for axis in overall_axes:
@@ -530,37 +533,84 @@ def plot_2D_Data(
         contrib_axis = self.get_axes(contribution_name)[0]
         type_plot = "stack"
         OVL = Y_overall
-        arg_list_new = [axis.name for axis in self.get_axes()]
-        sum_index = ["sum" in arg for arg in arg_list_along].index(True)
+        if True in ["sum" in arg for arg in arg_list_along]:
+            sum_index = ["sum" in arg for arg in arg_list_along].index(True)
+        else:
+            sum_index = ["rss" in arg for arg in arg_list_along].index(True)
         contrib_index = None
         if contribution_name in [axis.name for axis in axes_list]:
             contrib_index = [axis.name for axis in axes_list].index(contribution_name)
         contrib_array = zeros((contrib_axis.get_length(), len(Y_overall)))
         for i in range(contrib_axis.get_length()):
-            arg_list_new = [
-                axis.name
-                if axis.name != contribution_name
-                else contribution_name + "[" + str(i) + "]"
-                for axis in self.get_axes()
-            ]
             if unit == "dBA":
-                symbol = "ASWL"
-                name = "Sound Power Level"
-                contrib = self.get_magnitude_along(*arg_list_new, unit="W")[self.symbol]
+                arg_list_new = [
+                    axis.name
+                    if axis.name != contribution_name
+                    else contribution_name + "[" + str(i) + "]"
+                    for axis in self.get_axes()
+                ]
+                contrib = self.get_magnitude_along(*arg_list_new, unit="SI")[
+                    self.symbol
+                ]
+                symbol = "AS" + self.symbol.capitalize() + "L"
+                name = "Sound " + self.name.lower().replace("acoustic ", "") + " Level"
                 A_weighting = (
                     self.get_magnitude_along(*arg_list_new, unit="dBA")[self.symbol]
                     - self.get_magnitude_along(*arg_list_new, unit="dB")[self.symbol]
                 )
-                upper_sum = np_sum(
-                    10 ** (0.1 * A_weighting)
-                    * contrib
-                    / self.normalizations["ref"].ref,
-                    axis=sum_index,
-                )
-            cont = upper_sum / (10 ** (0.1 * OVL))
+                if self.unit == "W":
+                    upper_sum = np_sum(
+                        10 ** (0.1 * A_weighting)
+                        * contrib
+                        / self.normalizations["ref"].ref,
+                        axis=sum_index,
+                    )
+                    cont = upper_sum / (10 ** (0.1 * OVL))
+                else:
+                    upper_sum = np_sum(
+                        10 ** (0.1 * A_weighting) * contrib ** 2, axis=sum_index
+                    )
+                    cont = upper_sum / (
+                        ((self.normalizations["ref"].ref ** 2) * 10 ** (0.1 * OVL))
+                    )
+            elif unit == "dB":
+                arg_list_new = [
+                    arg
+                    if contribution_name not in arg
+                    else contribution_name + "[" + str(i) + "]"
+                    for arg in arg_list_along
+                ]
+                contrib = self.get_magnitude_along(*arg_list_new, unit="SI")[
+                    self.symbol
+                ]
+                if "acoustic" in self.name.lower():
+                    symbol = "S" + self.symbol.capitalize() + "L"
+                    name = (
+                        "Sound " + self.name.lower().replace("acoustic ", "") + " Level"
+                    )
+                else:
+                    symbol = self.symbol
+                    name = self.name
+                if self.unit == "W":
+                    cont = contrib / (
+                        self.normalizations["ref"].ref * 10 ** (0.1 * OVL)
+                    )
+                else:
+                    cont = contrib ** 2 / (
+                        ((self.normalizations["ref"].ref ** 2) * 10 ** (0.1 * OVL))
+                    )
+            else:
+                symbol = self.symbol
+                name = self.name
+                if self.unit == "W":
+                    cont = Ydatas[i + 1] / OVL
+                else:
+                    cont = Ydatas[i + 1] ** 2 / OVL ** 2
             contrib_array[i, :] = cont * OVL
         # Remove small contributions
-        Iloads = where(sqrt(np_sum(contrib_array ** 2, 1)) > 1e-2)[0]
+        Iloads = where(
+            sqrt(np_sum(contrib_array ** 2, 1)) > self.normalizations["ref"].ref
+        )[0]
         # Sort in decreasing order
         Isort = argsort(-sqrt(np_sum(contrib_array[Iloads, :] ** 2, 1)))
         Ydatas = [Ydatas[0]]
@@ -732,7 +782,10 @@ def plot_2D_Data(
                 axis_op = self.get_axes(annotations[1])[0]
                 operation = annotations[2]
                 arg_list_new = []
-                op = "=sum"
+                if self.unit == "W":
+                    op = "=sum"
+                else:
+                    op = "=rss"
                 for axis in self.get_axes():
                     if axis.name not in [axis_along.name, axis_op.name]:
                         arg_list_new.append(axis.name + op)
