@@ -614,7 +614,7 @@ def plot_2D_Data(
         # Sort in decreasing order
         Isort = argsort(-sqrt(np_sum(contrib_array[Iloads, :] ** 2, 1)))
         Ydatas = [Ydatas[0]]
-        legends = ["100% (overall " + symbol + ")"]
+        legends = [r"100% (overall $" + symbol + "$)"]
         new_color_list = [new_color_list[0]]
         for i in range(len(Isort)):
             if (
@@ -636,7 +636,7 @@ def plot_2D_Data(
             title = " ".join(selection).capitalize()
         else:
             title = axes_dict[contribution_name].capitalize()
-        ylabel = title + " linear contribution to " + symbol + " [%]"
+        ylabel = title + " linear contribution to $" + symbol + "$ [%]"
         title += " linear contribution to " + name
 
     # Deactivate legend if only one item
