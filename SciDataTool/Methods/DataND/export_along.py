@@ -64,8 +64,12 @@ def export_along(
     else:
         if "is_norm" in plot_options:
             is_norm = plot_options["is_norm"]
+        else:
+            is_norm = False
         if "axis_data" in plot_options:
             axis_data = plot_options["axis_data"]
+        else:
+            axis_data = None
         is_fft = False
         for arg in args:
             if "freqs" in arg or "wavenumber" in arg:
