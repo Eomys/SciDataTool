@@ -607,7 +607,7 @@ def plot_2D_Data(
                     cont = Ydatas[i + 1] / OVL
                 else:
                     cont = Ydatas[i + 1] ** 2 / OVL ** 2
-            contrib_array[i, :] = cont
+            contrib_array[i, :] = cont * 100
         # Remove small contributions
         # Iloads = where(sqrt(np_sum(contrib_array ** 2, 1)) > 1e-2)[0]
         # Sort in decreasing order
@@ -622,13 +622,13 @@ def plot_2D_Data(
                 and "all" in selection
             ):
                 if Isort[i] in axes_list[contrib_index].indices:
-                    Ydatas.append(contrib_array[Isort[i], :] * OVL)
+                    Ydatas.append(contrib_array[Isort[i], :])
                     legends.append(contrib_axis.values[Isort[i]])
                     new_color_list.append(color_list[i % (len(color_list))])
             elif "all" in selection or all(
                 [s in contrib_axis.values[Isort[i]] for s in selection]
             ):
-                Ydatas.append(contrib_array[Isort[i], :] * OVL)
+                Ydatas.append(contrib_array[Isort[i], :])
                 legends.append(contrib_axis.values[Isort[i]])
                 new_color_list.append(color_list[i % (len(color_list))])
         if "all" not in selection:

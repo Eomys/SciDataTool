@@ -427,7 +427,7 @@ def plot_2D(
         if len(Ydatas) > 1:
             stacks = ax.stackplot(
                 Xdatas[i_Xdatas[0]],
-                Ydatas[1:],
+                Ydatas[1:] * Ydatas[0] / 100,
                 colors=color_list[1:],
                 labels=legend_list[1:],
             )

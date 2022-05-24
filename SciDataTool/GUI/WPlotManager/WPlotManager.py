@@ -314,6 +314,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         file_name = self.data.name
         file_name = file_name.replace("{", "[").replace("}", "]").replace(".", ",")
 
+        if "contribution_axis" in self.plot_arg_dict:
+            file_name += "_contribution"
+        elif "overall_axes" in self.plot_arg_dict:
+            file_name += "_order_tracking"
+
         return file_name
 
     def export(self, save_file_path=False):
