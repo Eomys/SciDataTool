@@ -48,6 +48,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
     updatePlot = Signal()
     updatePlotForced = Signal()
     gifDisplayed = Signal()
+    dataExported = Signal()
 
     def __init__(self, parent=None):
         """Initialize the widget by linking buttons to methods
@@ -71,6 +72,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.save_path = DATA_DIR  # Path to directory where animation are stored
         self.path_to_image = None  # Path to recover the image for the animate button
         self.main_widget = None
+        self.plot_arg_dict = {}
 
         self.is_test = False  # Used in test to disable showing the animation
         self.gif_path_list = list()  # List of path to the gifs created (used in test)
@@ -313,6 +315,11 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         file_name = self.data.name
         file_name = file_name.replace("{", "[").replace("}", "]").replace(".", ",")
 
+        if "contribution_axis" in self.plot_arg_dict:
+            file_name += "_contribution"
+        elif "overall_axes" in self.plot_arg_dict:
+            file_name += "_order_tracking"
+
         return file_name
 
     def export(self, save_file_path=False):
@@ -323,10 +330,12 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             a WPlotManager object
         """
         # Getting the inputs of the user to export the plot + for the name of the csv file
-        param_list = [
-            *self.w_axis_manager.get_axes_selected(),
-            *self.w_axis_manager.get_operation_selected(),
-        ]
+        [
+            data,
+            axes_selected,
+            data_selection,
+            output_range,
+        ] = self.get_plot_info()
 
         if self.default_file_path is None:
             file_name = self.get_file_name()
@@ -349,9 +358,15 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         if save_file_path not in ["", False]:
             save_path = dirname(save_file_path)
             file_name = basename(save_file_path).split(".")[0]
+            is_2D = True if len(axes_selected) == 1 else False
             try:
-                self.data.export_along(
-                    *param_list, save_path=save_path, file_name=file_name
+                data.export_along(
+                    *[*axes_selected, *data_selection],
+                    unit=output_range["unit"],
+                    save_path=save_path,
+                    file_name=file_name,
+                    is_2D=is_2D,
+                    plot_options=self.plot_arg_dict
                 )
             except Exception as e:
                 # Displaying the error inside  abox instead of the console
@@ -362,6 +377,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
                     self.tr("Error"),
                     err_msg,
                 )
+
+        self.dataExported.emit()
 
     def get_plot_info(self):
         """Method that gather all the information necessary to plot the new graph.

@@ -76,6 +76,7 @@ def plot_2D_Data(
     is_frame_legend=True,
     is_indlabels=False,
     annotations=None,
+    is_export=False,
 ):
     """Plots a field as a function of time
 
@@ -606,13 +607,11 @@ def plot_2D_Data(
                     cont = Ydatas[i + 1] / OVL
                 else:
                     cont = Ydatas[i + 1] ** 2 / OVL ** 2
-            contrib_array[i, :] = cont * OVL
+            contrib_array[i, :] = cont * 100
         # Remove small contributions
-        Iloads = where(
-            sqrt(np_sum(contrib_array ** 2, 1)) > self.normalizations["ref"].ref
-        )[0]
+        # Iloads = where(sqrt(np_sum(contrib_array ** 2, 1)) > 1e-2)[0]
         # Sort in decreasing order
-        Isort = argsort(-sqrt(np_sum(contrib_array[Iloads, :] ** 2, 1)))
+        Isort = argsort(-sqrt(np_sum(contrib_array ** 2, 1)), axis=0)
         Ydatas = [Ydatas[0]]
         legends = [r"100% (overall $" + symbol + "$)"]
         new_color_list = [new_color_list[0]]
@@ -625,13 +624,13 @@ def plot_2D_Data(
                 if Isort[i] in axes_list[contrib_index].indices:
                     Ydatas.append(contrib_array[Isort[i], :])
                     legends.append(contrib_axis.values[Isort[i]])
-                    new_color_list.append(color_list[i])
+                    new_color_list.append(color_list[i % (len(color_list))])
             elif "all" in selection or all(
                 [s in contrib_axis.values[Isort[i]] for s in selection]
             ):
                 Ydatas.append(contrib_array[Isort[i], :])
                 legends.append(contrib_axis.values[Isort[i]])
-                new_color_list.append(color_list[i])
+                new_color_list.append(color_list[i % (len(color_list))])
         if "all" not in selection:
             title = " ".join(selection).capitalize()
         else:
@@ -730,6 +729,8 @@ def plot_2D_Data(
                 # Deactivate the option
                 fund_harm = None
 
+        if is_export:
+            return Xdatas, Ydatas, title, xlabel, ylabel, legends
         plot_2D(
             Xdatas,
             Ydatas,
@@ -820,6 +821,8 @@ def plot_2D_Data(
             except Exception:
                 pass
 
+        if is_export:
+            return Xdatas, Ydatas, title, xlabel, ylabel, legends
         plot_2D(
             Xdatas,
             Ydatas,
