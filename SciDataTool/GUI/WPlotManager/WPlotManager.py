@@ -48,6 +48,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
     updatePlot = Signal()
     updatePlotForced = Signal()
     gifDisplayed = Signal()
+    dataExported = Signal()
 
     def __init__(self, parent=None):
         """Initialize the widget by linking buttons to methods
@@ -376,6 +377,8 @@ class WPlotManager(Ui_WPlotManager, QWidget):
                     self.tr("Error"),
                     err_msg,
                 )
+
+        self.dataExported.emit()
 
     def get_plot_info(self):
         """Method that gather all the information necessary to plot the new graph.
