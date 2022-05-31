@@ -57,7 +57,9 @@ def get_along(
                 axis.name = "angle"
     # Inverse fft
     if "ifft" in transforms:
-        values = comp_ifftn(values, axes_list, is_real=self.is_real)
+        values = comp_ifftn(
+            values, axes_list, is_real=self.is_real, axes_list=self.axes
+        )
     # Prepare fft in ifft/fft case
     if save_transforms is not None:
         for i, transform in enumerate(save_transforms):
