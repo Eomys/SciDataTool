@@ -799,7 +799,9 @@ def plot_2D_Data(
                         if "[" in arg:
                             arg_list_new.append(arg.split("[")[0])
                         else:
-                            arg_list_new.append(arg.replace("=sum", ""))
+                            arg_list_new.append(
+                                arg.replace("=sum", "").replace("=rss", "")
+                            )
                 result = data2.get_magnitude_along(*arg_list_new)
                 for ii in range(len(result[annotations[0]])):
                     if operation == "max":
