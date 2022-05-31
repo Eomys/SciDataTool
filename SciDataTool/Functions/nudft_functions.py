@@ -140,9 +140,14 @@ def is_uniform(vect_a, rtol=1e-05, atol=1e-8):
     minimum = np_min(vect_a)
     maximum = np_max(vect_a)
 
+    y_target = linspace(minimum, maximum, n)
+
+    if 0 not in y_target:
+        return False
+
     y = allclose(
         vect_a,
-        linspace(minimum, maximum, n),
+        y_target,
         rtol=rtol,
         atol=atol,
         equal_nan=False,
