@@ -392,10 +392,12 @@ def comp_ifftn(values, axes_requ_list, is_real=True, axes_list=[]):
                     )
                     if "period" in axis_obj.symmetries:
                         if axis.name != "time":
-                            freqs = freqs * axis_obj.symmetries["period"]
+                            freqs = [f * axis_obj.symmetries["period"] for f in freqs]
                     elif "antiperiod" in axis_obj.symmetries:
                         if axis.name != "time":
-                            freqs = freqs * axis_obj.symmetries["antiperiod"] / 2
+                            freqs = [
+                                f * axis_obj.symmetries["antiperiod"] / 2 for f in freqs
+                            ]
                     # If already one non uniform axis, use NUDFT
                     if (
                         axes_dict_non_uniform
