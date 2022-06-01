@@ -18,4 +18,4 @@ from SciDataTool.Classes.Norm_ref import Norm_ref
 
 DATA_DIR = abspath(join(dirname(__file__), "Data"))
 
-__version__ = "2.4.2"
+__version__ = "2.4.3"
