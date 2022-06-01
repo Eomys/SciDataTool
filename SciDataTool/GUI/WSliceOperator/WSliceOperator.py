@@ -252,8 +252,7 @@ class WSliceOperator(Ui_WSliceOperator, QWidget):
         """
         if self.axis.is_components:
             self.is_components = True
-            if self.c_operation.currentText() == "slice":
-                self.axis_value = self.axis.values
+            self.axis_value = self.axis.values
             name = self.axis.name
         else:
             # Converting the axis from rad to degree if the axis is angle as we do slice in degrees

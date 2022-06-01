@@ -103,8 +103,8 @@ class TestGUI(object):
 
             for w_op in self.UI.w_plot_manager.w_axis_manager.w_slice_op:
                 assert not w_op.c_operation.isEnabled()
-                assert not w_op.lf_value.isEnabled()
-                assert not w_op.slider.isEnabled()
+                assert w_op.lf_value.isEnabled()
+                assert w_op.slider.isEnabled()
 
 
 if __name__ == "__main__":

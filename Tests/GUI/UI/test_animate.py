@@ -10,6 +10,7 @@ from numpy.random import random
 from numpy import pi
 
 
+@pytest.mark.skip
 class TestGUI(object):
     @classmethod
     def setup_class(cls):

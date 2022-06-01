@@ -2,7 +2,7 @@ import pytest
 from PySide2 import QtWidgets
 import sys
 from numpy import ones
-from SciDataTool import DataTime, DataLinspace
+from SciDataTool import DataTime, DataLinspace, Data1D
 from numpy import pi
 
 
@@ -16,12 +16,10 @@ class TestGUI(object):
             cls.app = QtWidgets.QApplication.instance()
 
         X = DataLinspace(name="time", unit="s", initial=0, final=10, number=11)
-        Y = DataLinspace(
+        Y = Data1D(
             name="angle",
             unit="rad",
-            initial=0,
-            final=2 * pi,
-            number=21,
+            values=[str(2 * i * pi / 21) for i in range(21)],
             is_overlay=True,
             is_components=True,
         )
