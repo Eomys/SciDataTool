@@ -212,6 +212,6 @@ def test_filter_spectral_leakage_vectorfield():
 
 
 if __name__ == "__main__":
-    test_filter_spectral_leakage_1d()
-    test_filter_spectral_leakage_2d()
+    # test_filter_spectral_leakage_1d()
+    # test_filter_spectral_leakage_2d()
     test_filter_spectral_leakage_vectorfield()

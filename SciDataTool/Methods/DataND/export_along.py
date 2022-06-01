@@ -174,10 +174,11 @@ def export_along(
 
                     # Rest of file: first axis + matrix
                     if len(Ydatas) == 1:
-                        # Transpose if 1D array
-                        field = np.array(Ydatas[0]).T
+                        field = np.array(Ydatas[0])
                     else:
-                        field = np.array(Ydatas).T
+                        field = np.array(Ydatas)
+                    if field.shape[0] != len(Xdata[0]):
+                        field = field.T
                     matrix = format_matrix(
                         np.column_stack((np.array(Xdata[0]).T, field)).astype("str"),
                         CHAR_LIST,

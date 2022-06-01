@@ -19,8 +19,8 @@ def test_export_2D():
     Field.export_along("time", "angle{°}", save_path=save_validation_path)
     assert isfile(join(save_validation_path, "B_r_Data.csv"))
     Field.export_along(
-        "time=1",
         "angle{°}",
+        "time=1",
         save_path=save_validation_path,
         file_name="B_r_Data_sliced",
     )
@@ -46,14 +46,19 @@ def test_export_3D():
     )
 
     Field.export_along(
-        "time=1",
         "angle{°}",
+        "time=1",
         save_path=save_validation_path,
         file_name="B_r_Data3D_sliced",
     )
     assert isfile(join(save_validation_path, "B_r_Data3D_sliced.csv"))
     Field.export_along(
-        "time", "angle{°}", "z", save_path=save_validation_path, is_multiple_files=True
+        "time",
+        "angle{°}",
+        "z",
+        save_path=save_validation_path,
+        is_multiple_files=True,
+        is_2D=False,
     )
     assert isfile(join(save_validation_path, "B_r_Data_z0.0.csv"))
     assert isfile(join(save_validation_path, "B_r_Data_z1.0.csv"))
@@ -62,6 +67,7 @@ def test_export_3D():
         save_path=save_validation_path,
         is_multiple_files=True,
         file_name="B_r_withoutargs",
+        is_2D=False,
     )
     assert isfile(join(save_validation_path, "B_r_withoutargs_z0.0.csv"))
     assert isfile(join(save_validation_path, "B_r_withoutargs_z1.0.csv"))

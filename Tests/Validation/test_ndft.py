@@ -385,3 +385,7 @@ def test_non_uniform_time_1d():
         result_inudft["X"].real, f_1d(time_vect_non_unif), decimal=0
     )
     assert np.allclose(result_inudft["X"].real, f_1d(time_vect_non_unif), rtol=1e-1)
+
+
+if __name__ == "__main__":
+    test_nudft_2d()

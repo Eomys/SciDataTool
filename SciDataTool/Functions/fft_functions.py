@@ -383,32 +383,40 @@ def comp_ifftn(values, axes_requ_list, is_real=True, axes_list=[]):
                         axis_obj = axes_list[
                             [axis.name for axis in axes_list].index(axis.name)
                         ]
-                        operation = axis.name + "_to_" + fft_dict[axis.name]
                     else:
                         axis_obj = axes_list[
                             [axis.name for axis in axes_list].index(fft_dict[axis.name])
                         ]
-                        operation = None
-                    freqs = axis_obj.get_values(
-                        is_smallestperiod=True,
-                        operation=operation,
+                    freqs = comp_fft_freqs(
+                        axis.input_data, axis.name == "time", is_real
                     )
-                    if len(axis.corr_values) == 1 or (
-                        len(axis.corr_values) > 1
-                        and (
-                            not is_uniform(axis.corr_values)
-                            or (
-                                len(freqs) != len(axis.corr_values)
-                                and not isin(freqs, axis.corr_values).all()
-                            )
-                            or (
-                                len(freqs) == len(axis.corr_values)
-                                and not allclose(
-                                    freqs,
-                                    axis.corr_values,
-                                    rtol=1e-5,
-                                    atol=1e-8,
-                                    equal_nan=False,
+                    if "period" in axis_obj.symmetries:
+                        if axis.name != "time":
+                            freqs = freqs * axis_obj.symmetries["period"]
+                    elif "antiperiod" in axis_obj.symmetries:
+                        if axis.name != "time":
+                            freqs = freqs * axis_obj.symmetries["antiperiod"] / 2
+                    # If already one non uniform axis, use NUDFT
+                    if (
+                        axes_dict_non_uniform
+                        or len(axis.corr_values) == 1
+                        or (
+                            len(axis.corr_values) > 1
+                            and (
+                                not is_uniform(axis.corr_values)
+                                or (
+                                    len(freqs) != len(axis.corr_values)
+                                    and not isin(freqs, axis.corr_values).all()
+                                )
+                                or (
+                                    len(freqs) == len(axis.corr_values)
+                                    and not allclose(
+                                        freqs,
+                                        axis.corr_values,
+                                        rtol=1e-5,
+                                        atol=1e-8,
+                                        equal_nan=False,
+                                    )
                                 )
                             )
                         )

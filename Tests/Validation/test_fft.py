@@ -886,7 +886,7 @@ def test_fft2_interp():
 
 
 @pytest.mark.validation
-def test_fft1d_non_uniform(per_a=2, is_apera=True, is_add_zero_freq=True):
+def test_fft1d_non_uniform(per_a=2, is_apera=True, is_add_zero_freq=False):
     """check non uniform fft1d
     TODO: solve bug for a single frequency vector"""
     # %%
@@ -962,6 +962,6 @@ def test_fft1d_non_uniform(per_a=2, is_apera=True, is_add_zero_freq=True):
 
 if __name__ == "__main__":
     # test_ifft2d_period()
-    # test_fft1d_non_uniform(is_add_zero_freq=True)
+    test_fft1d_non_uniform(is_add_zero_freq=False)
     # test_fft1d_non_uniform(is_add_zero_freq=False)
-    test_fft2_interp()
+    # test_fft2_interp()
