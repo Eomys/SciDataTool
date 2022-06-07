@@ -631,12 +631,21 @@ def plot_2D_Data(
                 Ydatas.append(contrib_array[Isort[i], :])
                 legends.append(contrib_axis.values[Isort[i]])
                 new_color_list.append(color_list[i % (len(color_list))])
+        sel_str = ""
         if "all" not in selection:
+            if "stator" in selection:
+                sel_str += " applied to stator"
+            elif "rotor" in selection:
+                sel_str += " applied to rotor"
+            if "radial" in selection:
+                sel_str += " in radial direction"
+            elif "circ." in selection:
+                sel_str += " in circumferential direction"
             title = " ".join(selection).capitalize()
         else:
             title = axes_dict[contribution_name].capitalize()
-        ylabel = title + " linear contribution to $" + symbol + "$ [%]"
-        title += " linear contribution to " + name
+        ylabel = name + " contribution [%]"
+        title = "Contribution of magnetic Load Cases" + sel_str
 
     # Deactivate legend if only one item
     if type_plot == "point":
