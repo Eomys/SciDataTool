@@ -425,12 +425,29 @@ def plot_2D(
             pickradius=5,
         )
         if len(Ydatas) > 1:
-            ax.stackplot(
+            stacks = ax.stackplot(
                 Xdatas[i_Xdatas[0]],
-                Ydatas[1:],
+                Ydatas[1:] * Ydatas[0] / 100,
                 colors=color_list[1:],
                 labels=legend_list[1:],
             )
+            if (
+                len(
+                    [
+                        i
+                        for i, n in enumerate(color_list)
+                        if n in color_list[i + 1 :] and n not in color_list[:i]
+                    ]
+                )
+                > 0
+            ):
+                # Add hatches if color_list too small
+                hatches = ["", "//", "\\", "+"]
+                ncolors = [i for i, n in enumerate(color_list) if n in color_list[:i]][
+                    0
+                ] - 1
+                for ii, stack in enumerate(stacks):
+                    stack.set_hatch(hatches[ii // ncolors])
         if xticks is not None:
             ax.xaxis.set_ticks(xticks)
             plt.xticks(rotation=90, ha="center", va="top")

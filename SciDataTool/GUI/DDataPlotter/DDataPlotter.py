@@ -632,6 +632,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         y_min=output_range["min"],
                         y_max=output_range["max"],
                     )
+                self.w_plot_manager.plot_arg_dict = plot_arg_dict_2D
 
             elif len(axes_selected) == 2:
                 plot_arg_dict_3D = self.plot_arg_dict.copy()
@@ -665,6 +666,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     ax=self.ax,
                     is_switch_axes=not_in_order,
                 )
+                self.w_plot_manager.plot_arg_dict = plot_arg_dict_3D
 
         else:
             print("Operation not implemented yet, plot could not be updated")

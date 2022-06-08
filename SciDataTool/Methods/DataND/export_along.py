@@ -10,13 +10,13 @@ CHAR_LIST = ["$", "{", "}"]
 def export_along(
     self,
     *args,
+    is_2D=True,
     unit="SI",
-    is_norm=False,
-    axis_data=[],
     save_path=None,
     file_name=None,
     file_format="csv",
     is_multiple_files=False,
+    plot_options={}
 ):
     """Exports the sliced or interpolated version of the data, using conversions and symmetries if needed, in a file.
     Parameters
@@ -52,36 +52,56 @@ def export_along(
         args = tuple(arg_list)
 
     # Get requested data
-    is_fft = False
-    for arg in args:
-        if "freqs" in arg or "wavenumber" in arg:
-            is_fft = True
-    if is_fft:
-        results = self.get_magnitude_along(
-            *args, unit=unit, is_norm=is_norm, axis_data=axis_data
+    if is_2D:
+        Xdata, Ydatas, title, xlabel, ylabel, legends = self.plot_2D_Data(
+            *args, **plot_options, unit=unit, is_export=True
         )
-    else:
-        results = self.get_along(*args, unit=unit, is_norm=is_norm, axis_data=axis_data)
-    axes_list = results["axes_list"]
-
-    # Remove slice axes
-    axes_list_new = []
-    slices = ""
-    for axis in axes_list:
-        if axis.unit == "SI":
-            axis.unit = unit_dict[axis.name]
-        if len(results[axis.name]) == 1:
-            slices += axis.name + "=" + str(results[axis.name][0])
-        elif isinstance(results[axis.name], str):
-            slices += axis.name + "=" + results[axis.name]
+        axes_list_new = []
+        if "for " in title:
+            slices = title.split("for ")[1]
         else:
-            axes_list_new.append(axis)
-    for axis in results["axes_dict_other"]:
+            slices = ""
+    else:
+        if "is_norm" in plot_options:
+            is_norm = plot_options["is_norm"]
+        else:
+            is_norm = False
+        if "axis_data" in plot_options:
+            axis_data = plot_options["axis_data"]
+        else:
+            axis_data = None
+        is_fft = False
+        for arg in args:
+            if "freqs" in arg or "wavenumber" in arg:
+                is_fft = True
+        if is_fft:
+            results = self.get_magnitude_along(
+                *args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            )
+        else:
+            results = self.get_along(
+                *args, unit=unit, is_norm=is_norm, axis_data=axis_data
+            )
+        axes_list = results["axes_list"]
+
+        # Remove slice axes
+        axes_list_new = []
+        slices = ""
+        for axis in axes_list:
+            if axis.unit == "SI":
+                axis.unit = unit_dict[axis.name]
+            if len(results[axis.name]) == 1:
+                slices += axis.name + "=" + str(results[axis.name][0])
+            elif isinstance(results[axis.name], str):
+                slices += axis.name + "=" + results[axis.name]
+            else:
+                axes_list_new.append(axis)
+        for axis in results["axes_dict_other"]:
+            if slices != "":
+                slices = slices + ", "
+            slices += axis + "=" + str(results["axes_dict_other"][axis][0])
         if slices != "":
-            slices = slices + ", "
-        slices += axis + "=" + str(results["axes_dict_other"][axis][0])
-    if slices != "":
-        slices = "sliced at " + slices
+            slices = "sliced at " + slices
 
     # Default file_name
     if file_name is None:
@@ -90,14 +110,14 @@ def export_along(
     if file_format == "csv":
         # Write csv files
         # Format: first axis in column, second in row, third in file
-        if len(axes_list_new) == 3 and is_multiple_files:
+        if is_2D or len(axes_list_new) < 3:
+            nfiles = 1
+        elif len(axes_list_new) == 3 and is_multiple_files:
             nfiles = len(axes_list_new[2].values)
         elif len(axes_list_new) == 3:
             raise Exception(
                 "cannot export more than 2 dimensions in single csv file. Activate is_multiple_files to write in multiple csv files."
             )
-        elif len(axes_list_new) < 3:
-            nfiles = 1
         else:
             raise Exception("cannot export more than 3 dimensions in csv file")
 
@@ -135,48 +155,80 @@ def export_along(
                 meta_data = [self.symbol, self.name, "[" + unit + "]", slices_i]
                 csvWriter.writerow(meta_data)
 
-                # Second line: axes + second axis values
-                if len(axes_list_new) == 1:
-                    A2_cell = axes_list_new[0].name + "[" + axes_list_new[0].unit + "]"
-                    second_line = [A2_cell]
-                else:
-                    A2_cell = (
-                        axes_list_new[0].name
-                        + "["
-                        + axes_list_new[0].unit
-                        + "]"
-                        + "/"
-                        + axes_list_new[1].name
-                        + "["
-                        + axes_list_new[1].unit
-                        + "]"
-                    )
-                    second_line = format_matrix(
-                        np.insert(
-                            results[axes_list_new[1].name].astype("<U64"),
-                            0,
-                            A2_cell,
-                        ),
+                if is_2D:
+                    # Second line: axes + second axis values
+                    if len(Ydatas) > 1:
+                        A2_cell = xlabel + "/" + legends[-1].split("=")[0]
+                        second_line = format_matrix(
+                            np.insert(
+                                np.array(legends).astype("<U64"),
+                                0,
+                                A2_cell,
+                            ),
+                            CHAR_LIST,
+                        )
+                    else:
+                        A2_cell = xlabel
+                        second_line = [A2_cell]
+                    csvWriter.writerow(second_line)
+
+                    # Rest of file: first axis + matrix
+                    if len(Ydatas) == 1:
+                        # Transpose if 1D array
+                        field = np.array(Ydatas[0]).T
+                    else:
+                        field = np.array(Ydatas).T
+                    matrix = format_matrix(
+                        np.column_stack((np.array(Xdata[0]).T, field)).astype("str"),
                         CHAR_LIST,
                     )
-                csvWriter.writerow(second_line)
+                    csvWriter.writerows(matrix)
 
-                # Rest of file: first axis + matrix
-                if len(results[self.symbol].shape) == 1:
-                    # Transpose if 1D array
-                    field = results[self.symbol].T
-                elif nfiles > 1:
-                    # Slice third axis
-                    field = np.take(results[self.symbol], i, axis=2)
                 else:
-                    field = results[self.symbol]
-                matrix = format_matrix(
-                    np.column_stack((results[axes_list_new[0].name].T, field)).astype(
-                        "str"
-                    ),
-                    CHAR_LIST,
-                )
-                csvWriter.writerows(matrix)
+                    # Second line: axes + second axis values
+                    if len(axes_list_new) == 1:
+                        A2_cell = (
+                            axes_list_new[0].name + "[" + axes_list_new[0].unit + "]"
+                        )
+                        second_line = [A2_cell]
+                    else:
+                        A2_cell = (
+                            axes_list_new[0].name
+                            + "["
+                            + axes_list_new[0].unit
+                            + "]"
+                            + "/"
+                            + axes_list_new[1].name
+                            + "["
+                            + axes_list_new[1].unit
+                            + "]"
+                        )
+                        second_line = format_matrix(
+                            np.insert(
+                                results[axes_list_new[1].name].astype("<U64"),
+                                0,
+                                A2_cell,
+                            ),
+                            CHAR_LIST,
+                        )
+                    csvWriter.writerow(second_line)
+
+                    # Rest of file: first axis + matrix
+                    if len(results[self.symbol].shape) == 1:
+                        # Transpose if 1D array
+                        field = results[self.symbol].T
+                    elif nfiles > 1:
+                        # Slice third axis
+                        field = np.take(results[self.symbol], i, axis=2)
+                    else:
+                        field = results[self.symbol]
+                    matrix = format_matrix(
+                        np.column_stack(
+                            (results[axes_list_new[0].name].T, field)
+                        ).astype("str"),
+                        CHAR_LIST,
+                    )
+                    csvWriter.writerows(matrix)
 
     else:
         raise Exception("export format not supported")
