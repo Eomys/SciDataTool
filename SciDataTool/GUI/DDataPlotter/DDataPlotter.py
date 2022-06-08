@@ -13,7 +13,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
 from matplotlib.text import Annotation
-from numpy import array
+from numpy import array, allclose
 from SciDataTool.Functions.is_axes_in_order import is_axes_in_order
 from SciDataTool.Functions.Plot import TEXT_BOX
 
@@ -260,8 +260,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             if is_annot:
                 # Use ticklabels
                 try:
-                    x_float = float(self.ax.get_xticklabels()[-1]._text)
-                    X_str = format(x, ".4g")
+                    if self.ax.get_xticklabels()[-1]._text == "":
+                        X_str = format(x, ".4g")
+                    else:
+                        x_float = float(self.ax.get_xticklabels()[-1]._text)
+                        X_str = format(x, ".4g")
                 except:
                     for ticklabel in self.ax.get_xticklabels():
                         if ticklabel._x == x:
@@ -272,8 +275,11 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     Y_str = format(y, ".4g")
                 else:
                     try:
-                        y_float = float(self.ax.get_yticklabels()[-1]._text)
-                        Y_str = format(y, ".4g")
+                        if self.ax.get_yticklabels()[-1]._text == "":
+                            Y_str = format(y, ".4g")
+                        else:
+                            y_float = float(self.ax.get_yticklabels()[-1]._text)
+                            Y_str = format(y, ".4g")
                     except:
                         Y_str = None
                         for ticklabel in self.ax.get_yticklabels():
@@ -394,6 +400,13 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 X = xdata[ind][0]  # X position of the click
                 Y = ydata[ind][0]  # Y position of the click
                 if self.ax.get_legend_handles_labels()[1] != []:
+                    try:
+                        self.ax.lines.index(plot_obj) # Test validation mode
+                    except ValueError:
+                        for line in self.ax.lines:
+                            if allclose(ydata, line.get_ydata()):
+                                plot_obj = line
+                                break
                     legend = self.ax.get_legend_handles_labels()[1][
                         self.ax.lines.index(plot_obj)
                     ].lstrip(" ")
