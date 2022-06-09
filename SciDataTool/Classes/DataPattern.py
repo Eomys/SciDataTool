@@ -8,9 +8,9 @@ from os import linesep
 from sys import getsizeof
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
-from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
+from copy import deepcopy
 from .Data import Data
 
 # Import all class method
@@ -75,9 +75,8 @@ class DataPattern(Data):
         )
     else:
         has_period = has_period
-    # save and copy methods are available in all object
+    # generic save method is available in all object
     save = save
-    copy = copy
 
     def __init__(
         self,
@@ -393,6 +392,59 @@ class DataPattern(Data):
         # Overwrite the mother class name
         DataPattern_dict["__class__"] = "DataPattern"
         return DataPattern_dict
+
+    def copy(self):
+        """Creates a deepcopy of the object"""
+
+        # Handle deepcopy of all the properties
+        if self.rebuild_indices is None:
+            rebuild_indices_val = None
+        else:
+            rebuild_indices_val = self.rebuild_indices.copy()
+        if self.unique_indices is None:
+            unique_indices_val = None
+        else:
+            unique_indices_val = self.unique_indices.copy()
+        is_step_val = self.is_step
+        if self.values is None:
+            values_val = None
+        else:
+            values_val = self.values.copy()
+        is_components_val = self.is_components
+        if self.symmetries is None:
+            symmetries_val = None
+        else:
+            symmetries_val = self.symmetries.copy()
+        if self.values_whole is None:
+            values_whole_val = None
+        else:
+            values_whole_val = self.values_whole.copy()
+        is_overlay_val = self.is_overlay
+        symbol_val = self.symbol
+        name_val = self.name
+        unit_val = self.unit
+        if self.normalizations is None:
+            normalizations_val = None
+        else:
+            normalizations_val = dict()
+            for key, obj in self.normalizations.items():
+                normalizations_val[key] = obj.copy()
+        # Creates new object of the same type with the copied properties
+        obj_copy = type(self)(
+            rebuild_indices=rebuild_indices_val,
+            unique_indices=unique_indices_val,
+            is_step=is_step_val,
+            values=values_val,
+            is_components=is_components_val,
+            symmetries=symmetries_val,
+            values_whole=values_whole_val,
+            is_overlay=is_overlay_val,
+            symbol=symbol_val,
+            name=name_val,
+            unit=unit_val,
+            normalizations=normalizations_val,
+        )
+        return obj_copy
 
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""

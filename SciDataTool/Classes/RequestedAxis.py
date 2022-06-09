@@ -8,9 +8,9 @@ from os import linesep
 from sys import getsizeof
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
-from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
+from copy import deepcopy
 from ._frozen import FrozenClass
 
 # Import all class method
@@ -40,9 +40,8 @@ class RequestedAxis(FrozenClass):
         )
     else:
         get_axis = get_axis
-    # save and copy methods are available in all object
+    # generic save method is available in all object
     save = save
-    copy = copy
 
     def __init__(
         self,
@@ -504,6 +503,64 @@ class RequestedAxis(FrozenClass):
         # The class name is added to the dict for deserialisation purpose
         RequestedAxis_dict["__class__"] = "RequestedAxis"
         return RequestedAxis_dict
+
+    def copy(self):
+        """Creates a deepcopy of the object"""
+
+        # Handle deepcopy of all the properties
+        name_val = self.name
+        corr_name_val = self.corr_name
+        unit_val = self.unit
+        corr_unit_val = self.corr_unit
+        extension_val = self.extension
+        if self.values is None:
+            values_val = None
+        else:
+            values_val = self.values.copy()
+        if self.indices is None:
+            indices_val = None
+        else:
+            indices_val = self.indices.copy()
+        if self.input_data is None:
+            input_data_val = None
+        else:
+            input_data_val = self.input_data.copy()
+        operation_val = self.operation
+        index_val = self.index
+        transform_val = self.transform
+        is_pattern_val = self.is_pattern
+        if self.rebuild_indices is None:
+            rebuild_indices_val = None
+        else:
+            rebuild_indices_val = self.rebuild_indices.copy()
+        is_step_val = self.is_step
+        noct_val = self.noct
+        if self.corr_values is None:
+            corr_values_val = None
+        else:
+            corr_values_val = self.corr_values.copy()
+        is_components_val = self.is_components
+        # Creates new object of the same type with the copied properties
+        obj_copy = type(self)(
+            name=name_val,
+            corr_name=corr_name_val,
+            unit=unit_val,
+            corr_unit=corr_unit_val,
+            extension=extension_val,
+            values=values_val,
+            indices=indices_val,
+            input_data=input_data_val,
+            operation=operation_val,
+            index=index_val,
+            transform=transform_val,
+            is_pattern=is_pattern_val,
+            rebuild_indices=rebuild_indices_val,
+            is_step=is_step_val,
+            noct=noct_val,
+            corr_values=corr_values_val,
+            is_components=is_components_val,
+        )
+        return obj_copy
 
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""

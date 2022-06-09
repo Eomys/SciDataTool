@@ -8,9 +8,9 @@ from os import linesep
 from sys import getsizeof
 from ._check import check_var, raise_
 from ..Functions.save import save
-from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
+from copy import deepcopy
 from .Data import Data
 
 # Import all class method
@@ -108,9 +108,8 @@ class DataLinspace(Data):
         )
     else:
         get_periodicity = get_periodicity
-    # save and copy methods are available in all object
+    # generic save method is available in all object
     save = save
-    copy = copy
 
     def __init__(
         self,
@@ -405,6 +404,47 @@ class DataLinspace(Data):
         # Overwrite the mother class name
         DataLinspace_dict["__class__"] = "DataLinspace"
         return DataLinspace_dict
+
+    def copy(self):
+        """Creates a deepcopy of the object"""
+
+        # Handle deepcopy of all the properties
+        initial_val = self.initial
+        final_val = self.final
+        step_val = self.step
+        number_val = self.number
+        include_endpoint_val = self.include_endpoint
+        is_components_val = self.is_components
+        if self.symmetries is None:
+            symmetries_val = None
+        else:
+            symmetries_val = self.symmetries.copy()
+        is_overlay_val = self.is_overlay
+        symbol_val = self.symbol
+        name_val = self.name
+        unit_val = self.unit
+        if self.normalizations is None:
+            normalizations_val = None
+        else:
+            normalizations_val = dict()
+            for key, obj in self.normalizations.items():
+                normalizations_val[key] = obj.copy()
+        # Creates new object of the same type with the copied properties
+        obj_copy = type(self)(
+            initial=initial_val,
+            final=final_val,
+            step=step_val,
+            number=number_val,
+            include_endpoint=include_endpoint_val,
+            is_components=is_components_val,
+            symmetries=symmetries_val,
+            is_overlay=is_overlay_val,
+            symbol=symbol_val,
+            name=name_val,
+            unit=unit_val,
+            normalizations=normalizations_val,
+        )
+        return obj_copy
 
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""

@@ -8,9 +8,9 @@ from os import linesep
 from sys import getsizeof
 from ._check import check_var, raise_
 from ..Functions.save import save
-from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
+from copy import deepcopy
 from .Normalization import Normalization
 
 # Import all class method
@@ -44,9 +44,8 @@ class Norm_func(Normalization):
         )
     else:
         normalize = normalize
-    # save and copy methods are available in all object
+    # generic save method is available in all object
     save = save
-    copy = copy
 
     def __init__(self, function=None, unit="SI", init_dict=None, init_str=None):
         """Constructor of the class. Can be use in three ways :
@@ -152,7 +151,7 @@ class Norm_func(Normalization):
         )
         if self._function_str is not None:
             Norm_func_dict["function"] = self._function_str
-        elif "keep_function" in kwargs and kwargs["keep_function"]:
+        elif keep_function:
             Norm_func_dict["function"] = self.function
         else:
             Norm_func_dict["function"] = None
@@ -166,6 +165,19 @@ class Norm_func(Normalization):
         # Overwrite the mother class name
         Norm_func_dict["__class__"] = "Norm_func"
         return Norm_func_dict
+
+    def copy(self):
+        """Creates a deepcopy of the object"""
+
+        # Handle deepcopy of all the properties
+        if self._function_str is not None:
+            function_val = self._function_str
+        else:
+            function_val = self._function_func
+        unit_val = self.unit
+        # Creates new object of the same type with the copied properties
+        obj_copy = type(self)(function=function_val, unit=unit_val)
+        return obj_copy
 
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""

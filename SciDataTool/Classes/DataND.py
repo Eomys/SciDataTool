@@ -8,9 +8,9 @@ from os import linesep
 from sys import getsizeof
 from ._check import set_array, check_var, raise_
 from ..Functions.save import save
-from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
+from copy import deepcopy
 from .Data import Data
 
 # Import all class method
@@ -483,9 +483,8 @@ class DataND(Data):
         )
     else:
         plot_3D_Data_Animated = plot_3D_Data_Animated
-    # save and copy methods are available in all object
+    # generic save method is available in all object
     save = save
-    copy = copy
 
     def __init__(
         self,
@@ -713,6 +712,47 @@ class DataND(Data):
         # Overwrite the mother class name
         DataND_dict["__class__"] = "DataND"
         return DataND_dict
+
+    def copy(self):
+        """Creates a deepcopy of the object"""
+
+        # Handle deepcopy of all the properties
+        if self.axes is None:
+            axes_val = None
+        else:
+            axes_val = list()
+            for obj in self.axes:
+                axes_val.append(obj.copy())
+        if self.FTparameters is None:
+            FTparameters_val = None
+        else:
+            FTparameters_val = self.FTparameters.copy()
+        if self.values is None:
+            values_val = None
+        else:
+            values_val = self.values.copy()
+        is_real_val = self.is_real
+        symbol_val = self.symbol
+        name_val = self.name
+        unit_val = self.unit
+        if self.normalizations is None:
+            normalizations_val = None
+        else:
+            normalizations_val = dict()
+            for key, obj in self.normalizations.items():
+                normalizations_val[key] = obj.copy()
+        # Creates new object of the same type with the copied properties
+        obj_copy = type(self)(
+            axes=axes_val,
+            FTparameters=FTparameters_val,
+            values=values_val,
+            is_real=is_real_val,
+            symbol=symbol_val,
+            name=name_val,
+            unit=unit_val,
+            normalizations=normalizations_val,
+        )
+        return obj_copy
 
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""

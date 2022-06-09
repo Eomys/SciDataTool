@@ -8,9 +8,9 @@ from os import linesep
 from sys import getsizeof
 from ._check import check_var, raise_
 from ..Functions.save import save
-from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
+from copy import deepcopy
 from .Normalization import Normalization
 
 # Import all class method
@@ -39,9 +39,8 @@ class Norm_affine(Normalization):
         )
     else:
         normalize = normalize
-    # save and copy methods are available in all object
+    # generic save method is available in all object
     save = save
-    copy = copy
 
     def __init__(self, slope=1, offset=0, unit="SI", init_dict=None, init_str=None):
         """Constructor of the class. Can be use in three ways :
@@ -185,6 +184,17 @@ class Norm_affine(Normalization):
         # Overwrite the mother class name
         Norm_affine_dict["__class__"] = "Norm_affine"
         return Norm_affine_dict
+
+    def copy(self):
+        """Creates a deepcopy of the object"""
+
+        # Handle deepcopy of all the properties
+        slope_val = self.slope
+        offset_val = self.offset
+        unit_val = self.unit
+        # Creates new object of the same type with the copied properties
+        obj_copy = type(self)(slope=slope_val, offset=offset_val, unit=unit_val)
+        return obj_copy
 
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""

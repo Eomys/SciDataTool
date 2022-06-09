@@ -8,9 +8,9 @@ from os import linesep
 from sys import getsizeof
 from ._check import check_var, raise_
 from ..Functions.save import save
-from ..Functions.copy import copy
 from ..Functions.load import load_init_dict
 from ..Functions.Load.import_class import import_class
+from copy import deepcopy
 from ._frozen import FrozenClass
 
 # Import all class method
@@ -332,9 +332,8 @@ class VectorField(FrozenClass):
         )
     else:
         to_rphiz = to_rphiz
-    # save and copy methods are available in all object
+    # generic save method is available in all object
     save = save
-    copy = copy
 
     def __init__(
         self, name="", symbol="", components=-1, init_dict=None, init_str=None
@@ -488,6 +487,24 @@ class VectorField(FrozenClass):
         # The class name is added to the dict for deserialisation purpose
         VectorField_dict["__class__"] = "VectorField"
         return VectorField_dict
+
+    def copy(self):
+        """Creates a deepcopy of the object"""
+
+        # Handle deepcopy of all the properties
+        name_val = self.name
+        symbol_val = self.symbol
+        if self.components is None:
+            components_val = None
+        else:
+            components_val = dict()
+            for key, obj in self.components.items():
+                components_val[key] = obj.copy()
+        # Creates new object of the same type with the copied properties
+        obj_copy = type(self)(
+            name=name_val, symbol=symbol_val, components=components_val
+        )
+        return obj_copy
 
     def _set_None(self):
         """Set all the properties to None (except SciDataTool object)"""

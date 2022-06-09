@@ -26,6 +26,7 @@
         "path": "SciDataTool/Generator/ClassesRef/Data.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "Symbol of the variable (in latex syntax)",
                 "max": "",
                 "min": "",
@@ -35,6 +36,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Name of the physical quantity (to be used in plots)",
                 "max": "",
                 "min": "",
@@ -44,6 +46,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Unit of the physical quantity (to be used in plots)",
                 "max": "",
                 "min": "",
@@ -53,6 +56,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Normalizations available for the field and its axes",
                 "max": "",
                 "min": "",
@@ -89,6 +93,7 @@
         "path": "SciDataTool/Generator/ClassesRef/Data1D.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "List or ndarray of the axis values",
                 "max": "",
                 "min": "",
@@ -98,6 +103,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "True if the axis values are strings",
                 "max": "",
                 "min": "",
@@ -107,6 +113,7 @@
                 "value": false
             },
             {
+                "as_dict": "",
                 "desc": "Dictionary of the symmetries along each axis, used to reduce storage",
                 "max": "",
                 "min": "",
@@ -116,6 +123,7 @@
                 "value": {}
             },
             {
+                "as_dict": "",
                 "desc": "True if axis must be used to overlay curves in plots",
                 "max": "",
                 "min": "",
@@ -125,6 +133,7 @@
                 "value": false
             },
             {
+                "as_dict": "",
                 "desc": "Character used to separate attributes in string case (e.g. \"r=0, stator, radial\")",
                 "max": "",
                 "min": "",
@@ -134,6 +143,7 @@
                 "value": "None"
             },
             {
+                "as_dict": "",
                 "desc": "List of indices to use to sort axis",
                 "max": "",
                 "min": "",
@@ -143,6 +153,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "Dict of filter keys",
                 "max": "",
                 "min": "",
@@ -152,6 +163,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "List of characters to remove in filter table",
                 "max": "",
                 "min": "",
@@ -182,6 +194,7 @@
         "path": "SciDataTool/Generator/ClassesRef/DataDual.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "List of the Data1D objects corresponding to the axes in time/space domain",
                 "max": "",
                 "min": "",
@@ -191,6 +204,7 @@
                 "value": "None"
             },
             {
+                "as_dict": "",
                 "desc": "Values of the field in time/space domain",
                 "max": "",
                 "min": "",
@@ -200,6 +214,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "List of the Data1D objects corresponding to the axes in fourier domain",
                 "max": "",
                 "min": "",
@@ -209,6 +224,7 @@
                 "value": "None"
             },
             {
+                "as_dict": "",
                 "desc": "Values of the field in fourier domain",
                 "max": "",
                 "min": "",
@@ -264,6 +280,7 @@
         "path": "SciDataTool/Generator/ClassesRef/DataLinspace.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "First value",
                 "max": "",
                 "min": "",
@@ -273,6 +290,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "Last value",
                 "max": "",
                 "min": "",
@@ -282,6 +300,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "Step",
                 "max": "",
                 "min": "",
@@ -291,6 +310,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "Number of steps",
                 "max": "",
                 "min": "",
@@ -300,6 +320,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "True if the endpoint must be included",
                 "max": "",
                 "min": "",
@@ -309,6 +330,7 @@
                 "value": true
             },
             {
+                "as_dict": "",
                 "desc": "True if the axis values are strings",
                 "max": "",
                 "min": "",
@@ -318,6 +340,7 @@
                 "value": false
             },
             {
+                "as_dict": "",
                 "desc": "Dictionary of the symmetries along each axis, used to reduce storage",
                 "max": "",
                 "min": "",
@@ -327,6 +350,7 @@
                 "value": {}
             },
             {
+                "as_dict": "",
                 "desc": "True if axis must be used to overlay curves in plots",
                 "max": "",
                 "min": "",
@@ -388,6 +412,7 @@
         "path": "SciDataTool/Generator/ClassesRef/DataND.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "List of the Data1D objects corresponding to the axes",
                 "max": "",
                 "min": "",
@@ -397,6 +422,7 @@
                 "value": "None"
             },
             {
+                "as_dict": "",
                 "desc": "Tunable parameters for the Fourier Transforms",
                 "max": "",
                 "min": "",
@@ -406,6 +432,7 @@
                 "value": {}
             },
             {
+                "as_dict": "",
                 "desc": "Values of the field",
                 "max": "",
                 "min": "",
@@ -415,6 +442,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "To indicate if the signal is real (use only positive frequencies)",
                 "max": "",
                 "min": "",
@@ -446,6 +474,7 @@
         "path": "SciDataTool/Generator/ClassesRef/DataPattern.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "Indices to rebuild complete axis",
                 "max": "",
                 "min": "",
@@ -455,6 +484,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "Indices which were taken from complete axis",
                 "max": "",
                 "min": "",
@@ -464,6 +494,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "True if the axis is defined by step",
                 "max": "",
                 "min": "",
@@ -473,6 +504,7 @@
                 "value": true
             },
             {
+                "as_dict": "",
                 "desc": "List or ndarray of the axis values",
                 "max": "",
                 "min": "",
@@ -482,6 +514,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "True if the axis values are strings",
                 "max": "",
                 "min": "",
@@ -491,6 +524,7 @@
                 "value": false
             },
             {
+                "as_dict": "",
                 "desc": "Dictionary of the symmetries along each axis, used to reduce storage",
                 "max": "",
                 "min": "",
@@ -500,6 +534,7 @@
                 "value": {}
             },
             {
+                "as_dict": "",
                 "desc": "Complete axis",
                 "max": "",
                 "min": "",
@@ -509,6 +544,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "True if axis must be used to overlay curves in plots",
                 "max": "",
                 "min": "",
@@ -558,6 +594,7 @@
         "path": "SciDataTool/Generator/ClassesRef/Norm_affine.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "slope of the axis function",
                 "max": "",
                 "min": "",
@@ -567,6 +604,7 @@
                 "value": 1
             },
             {
+                "as_dict": "",
                 "desc": "offset of the axis function",
                 "max": "",
                 "min": "",
@@ -596,6 +634,7 @@
         "path": "SciDataTool/Generator/ClassesRef/Norm_func.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "function to apply",
                 "max": "",
                 "min": "",
@@ -644,6 +683,7 @@
         "path": "SciDataTool/Generator/ClassesRef/Norm_ref.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "reference value",
                 "max": "",
                 "min": "",
@@ -673,6 +713,7 @@
         "path": "SciDataTool/Generator/ClassesRef/Norm_vector.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "vector to replace axis values",
                 "max": "",
                 "min": "",
@@ -706,6 +747,7 @@
         "path": "SciDataTool/Generator/ClassesRef/Normalization.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "Normalization must be applied on axis values in this unit",
                 "max": "",
                 "min": "",
@@ -735,6 +777,7 @@
         "path": "SciDataTool/Generator/ClassesRef/RequestedAxis.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "Name requested in get_along command",
                 "max": "",
                 "min": "",
@@ -744,6 +787,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Corresponding axis if a transform is required",
                 "max": "",
                 "min": "",
@@ -753,6 +797,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Unit requested in get_along command",
                 "max": "",
                 "min": "",
@@ -762,6 +807,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Corresponding unit if a transform is required",
                 "max": "",
                 "min": "",
@@ -771,6 +817,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Extension of the requested axis (single or interval)",
                 "max": "",
                 "min": "",
@@ -780,6 +827,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Values of the axis",
                 "max": "",
                 "min": "",
@@ -789,6 +837,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "Indices of the axis",
                 "max": "",
                 "min": "",
@@ -798,6 +847,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "Input data to interpolate on",
                 "max": "",
                 "min": "",
@@ -807,6 +857,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "Operation to perform on the axis (coordinate change, etc)",
                 "max": "",
                 "min": "",
@@ -816,6 +867,7 @@
                 "value": "None"
             },
             {
+                "as_dict": "",
                 "desc": "Index of the axis in the axes list",
                 "max": "",
                 "min": "",
@@ -825,6 +877,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "Transform to perform on the axis (fft, ifft)",
                 "max": "",
                 "min": "",
@@ -834,6 +887,7 @@
                 "value": "None"
             },
             {
+                "as_dict": "",
                 "desc": "To indicate if the axis is a DataPattern",
                 "max": "",
                 "min": "",
@@ -843,6 +897,7 @@
                 "value": false
             },
             {
+                "as_dict": "",
                 "desc": "Indices to rebuild pattern",
                 "max": "",
                 "min": "",
@@ -852,6 +907,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "To indicate if the pattern axis is step (for interpolation)",
                 "max": "",
                 "min": "",
@@ -861,6 +917,7 @@
                 "value": false
             },
             {
+                "as_dict": "",
                 "desc": "To store 1/nth octave band",
                 "max": "",
                 "min": "",
@@ -870,6 +927,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "To store original axis values (useful in case of non uniform fft)",
                 "max": "",
                 "min": "",
@@ -879,6 +937,7 @@
                 "value": null
             },
             {
+                "as_dict": "",
                 "desc": "To indicate if the values are strings",
                 "max": "",
                 "min": "",
@@ -926,6 +985,7 @@
         "path": "SciDataTool/Generator/ClassesRef/VectorField.csv",
         "properties": [
             {
+                "as_dict": "",
                 "desc": "Name of the vector field",
                 "max": "",
                 "min": "",
@@ -935,6 +995,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Symbol of the vector field",
                 "max": "",
                 "min": "",
@@ -944,6 +1005,7 @@
                 "value": ""
             },
             {
+                "as_dict": "",
                 "desc": "Dict of the components",
                 "max": "",
                 "min": "",
