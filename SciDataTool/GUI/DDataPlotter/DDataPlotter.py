@@ -582,7 +582,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     and plot_arg_dict_2D["type_plot"] == "quiver"
                 ):
                     # Update reference values
-                    for comp in self.data_orig.components:
+                    for comp in self.data_orig.components.values():
                         if (
                             output_range["norm"] not in [None, ""]
                             and "ref" in comp.normalizations
