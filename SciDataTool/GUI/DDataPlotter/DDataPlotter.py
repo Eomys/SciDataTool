@@ -16,6 +16,7 @@ from matplotlib.text import Annotation
 from numpy import array, allclose
 from SciDataTool.Functions.is_axes_in_order import is_axes_in_order
 from SciDataTool.Functions.Plot import TEXT_BOX
+from SciDataTool.Classes.Norm_ref import Norm_ref
 
 
 SYMBOL_DICT = {
@@ -401,7 +402,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                 Y = ydata[ind][0]  # Y position of the click
                 if self.ax.get_legend_handles_labels()[1] != []:
                     try:
-                        self.ax.lines.index(plot_obj) # Test validation mode
+                        self.ax.lines.index(plot_obj)  # Test validation mode
                     except ValueError:
                         for line in self.ax.lines:
                             if allclose(ydata, line.get_ydata()):
@@ -556,6 +557,14 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
             output_range,
         ] = self.w_plot_manager.get_plot_info()
 
+        # Update reference value
+        if (
+            output_range["norm"] not in [None, ""]
+            and "ref" in self.data.normalizations
+            and isinstance(self.data.normalizations["ref"], Norm_ref)
+        ):
+            self.data.normalizations["ref"].ref = output_range["norm"]
+
         # Checking if the axes are following the order inside the data object
         not_in_order = False
 
@@ -572,6 +581,14 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     "type_plot" in plot_arg_dict_2D
                     and plot_arg_dict_2D["type_plot"] == "quiver"
                 ):
+                    # Update reference values
+                    for comp in self.data_orig.components:
+                        if (
+                            output_range["norm"] not in [None, ""]
+                            and "ref" in comp.normalizations
+                            and isinstance(comp.normalizations["ref"], Norm_ref)
+                        ):
+                            comp.normalizations["ref"].ref = output_range["norm"]
                     if (
                         self.w_plot_manager.w_vect_selector.get_component_selected()
                         != "all"

@@ -16,9 +16,9 @@ class Ui_WDataRange(object):
     def setupUi(self, WDataRange):
         if not WDataRange.objectName():
             WDataRange.setObjectName(u"WDataRange")
-        WDataRange.resize(300, 132)
-        self.verticalLayout = QVBoxLayout(WDataRange)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        WDataRange.resize(300, 163)
+        self.gridLayout_2 = QGridLayout(WDataRange)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.g_range = QGroupBox(WDataRange)
         self.g_range.setObjectName(u"g_range")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -72,7 +72,21 @@ class Ui_WDataRange(object):
 
         self.gridLayout.addWidget(self.lf_max, 2, 1, 1, 1)
 
-        self.verticalLayout.addWidget(self.g_range)
+        self.in_norm = QLabel(self.g_range)
+        self.in_norm.setObjectName(u"in_norm")
+
+        self.gridLayout.addWidget(self.in_norm, 3, 0, 1, 1)
+
+        self.lf_norm = FloatEdit(self.g_range)
+        self.lf_norm.setObjectName(u"lf_norm")
+        sizePolicy1.setHeightForWidth(self.lf_norm.sizePolicy().hasHeightForWidth())
+        self.lf_norm.setSizePolicy(sizePolicy1)
+        self.lf_norm.setMinimumSize(QSize(0, 20))
+        self.lf_norm.setMaximumSize(QSize(70, 16777215))
+
+        self.gridLayout.addWidget(self.lf_norm, 3, 1, 1, 1)
+
+        self.gridLayout_2.addWidget(self.g_range, 0, 0, 1, 1)
 
         self.retranslateUi(WDataRange)
 
@@ -88,5 +102,9 @@ class Ui_WDataRange(object):
         self.lf_min.setText(QCoreApplication.translate("WDataRange", u"0.314", None))
         self.in_max.setText(QCoreApplication.translate("WDataRange", u"max", None))
         self.lf_max.setText(QCoreApplication.translate("WDataRange", u"0.314", None))
+        self.in_norm.setText(
+            QCoreApplication.translate("WDataRange", u"reference value", None)
+        )
+        self.lf_norm.setText(QCoreApplication.translate("WDataRange", u"0.314", None))
 
     # retranslateUi

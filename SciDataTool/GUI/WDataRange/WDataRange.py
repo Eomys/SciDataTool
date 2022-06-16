@@ -5,6 +5,7 @@ from SciDataTool.GUI.WDataRange.Ui_WDataRange import Ui_WDataRange
 from PySide2.QtCore import Signal
 from SciDataTool.Functions import parser
 from SciDataTool.GUI import update_cb_enable
+from SciDataTool.Classes.Norm_ref import Norm_ref
 
 
 class WDataRange(Ui_WDataRange, QWidget):
@@ -33,6 +34,7 @@ class WDataRange(Ui_WDataRange, QWidget):
         self.c_unit.currentTextChanged.connect(self.update_unit)
         self.lf_min.editingFinished.connect(self.update_needed)
         self.lf_max.editingFinished.connect(self.update_needed)
+        self.lf_norm.editingFinished.connect(self.update_unit)
 
     def get_field_selected(self):
         """Method that will sent the parameters on the field selected by the user (unit and min/max)
@@ -50,6 +52,7 @@ class WDataRange(Ui_WDataRange, QWidget):
             "unit": self.c_unit.currentText(),
             "min": self.lf_min.value(),
             "max": self.lf_max.value(),
+            "norm": self.lf_norm.value(),
         }
 
     def set_min_max(self):
@@ -117,6 +120,16 @@ class WDataRange(Ui_WDataRange, QWidget):
         #     self.set_unit(data)
         self.lf_min.clear()
         self.lf_max.clear()
+        if "ref" in data.normalizations and isinstance(
+            data.normalizations["ref"], Norm_ref
+        ):
+            self.lf_norm.setValue(data.normalizations["ref"].ref)
+            self.in_norm.show()
+            self.lf_norm.show()
+        else:
+            self.lf_norm.clear()
+            self.in_norm.hide()
+            self.lf_norm.hide()
 
     def set_range_user_input(
         self,
