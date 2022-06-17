@@ -92,7 +92,8 @@ def change_referential_spectrum(
         # Multiply by two spectrum components which have f=0, r!=0
         jf0 = np.abs(freqs) < 1e-4
         jr = wavenumbers_circ != 0
-        spectrum[jf0, jr, :] = 2 * spectrum[jf0, jr, :]
+        if any(jf0) and any(jr):
+            spectrum[jf0, jr, :] = 2 * spectrum[jf0, jr, :]
 
     # Calculate spectrum amplitude in new referential by summing all contributions
     # which have the same orders and wavenumber for each slice
@@ -111,7 +112,7 @@ def change_referential_spectrum(
         # Store amplitudes at new frequency/wavenumber positions
         spectrum_new[Irf_un[:, 0], Irf_un[:, 1], k] = amp_new_k
 
-    if is_double_f0:
+    if is_double_f0 and any(jf0) and any(jr):
         # Divide by two spectrum components which have f=0, r!=0
         spectrum[jf0, jr, :] = spectrum[jf0, jr, :] / 2
 
