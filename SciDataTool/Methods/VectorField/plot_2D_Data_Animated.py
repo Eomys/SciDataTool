@@ -20,7 +20,7 @@ def plot_2D_Data_Animated(
     legend_list=[],
     color_list=None,
     linestyles=None,
-    linewidth_list=[2],
+    linewidth_list=[1.5],
     save_path=None,
     x_min=None,
     x_max=None,

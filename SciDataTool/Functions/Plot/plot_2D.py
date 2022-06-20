@@ -21,7 +21,7 @@ def plot_2D(
     legend_list=[""],
     color_list=None,
     linestyle_list=None,
-    linewidth_list=[2],
+    linewidth_list=[1.5],
     title="",
     xlabel="",
     ylabel="",
