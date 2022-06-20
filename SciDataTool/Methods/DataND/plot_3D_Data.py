@@ -67,6 +67,8 @@ def plot_3D_Data(
     marker_color="k",
     is_shading_flat=None,
     is_hide_annotation=False,
+    is_filter_x=True,
+    is_filter_y=True,
 ):
     """Plots a field as a function of two axes
 
@@ -458,13 +460,20 @@ def plot_3D_Data(
         indices_x = np_any(where(Zdata > threshold, True, False), axis=1)
         indices_y = np_any(where(Zdata > threshold, True, False), axis=0)
 
-        xticks = Xdata[indices_x]
+        if is_filter_x:
+            xticks = Xdata[indices_x]
+            if xticklabels is not None:
+                xticklabels = xticklabels[indices_x]
+        else:
+            xticks = Xdata
+        if is_filter_y:
+            yticks = Ydata[indices_y]
+            if yticklabels is not None:
+                yticklabels = yticklabels[indices_y]
+        else:
+            yticks = Ydata
+
         annotation_threshold = None
-        if xticklabels is not None:
-            xticklabels = xticklabels[indices_x]
-        yticks = Ydata[indices_y]
-        if yticklabels is not None:
-            yticklabels = yticklabels[indices_y]
         if annotations is not None:
             annotation_threshold = threshold
         if is_auto_range:
