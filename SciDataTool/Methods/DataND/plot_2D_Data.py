@@ -4,6 +4,7 @@ from SciDataTool.Functions.Plot import (
     norm_dict,
     axes_dict,
     fft_dict,
+    ifft_dict,
     COLORS,
 )
 from SciDataTool.Functions.Load.import_class import import_class
@@ -153,6 +154,15 @@ def plot_2D_Data(
 
     # Fix axes order
     arg_list_along = fix_axes_order([axis.name for axis in self.get_axes()], arg_list)
+
+    # If fft axes in data but axis not required, request ifft axis
+    for axis in self.get_axes():
+        if (
+            axis.name in ifft_dict
+            and axis.name not in axes_names
+            and ifft_dict[axis.name] not in axes_names
+        ):
+            arg_list_along.append(ifft_dict[axis.name] + "[0]")
 
     # In case of 1D fft, keep only positive wavenumbers
     for i, arg in enumerate(arg_list_along):
