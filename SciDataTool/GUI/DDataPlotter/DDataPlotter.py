@@ -460,6 +460,14 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                     X = ind
                 label = format_coord(X, Y, Z, sep="\n", ind=ind)
                 if legend is not None:
+                    if "f_e" in legend and "H" in legend:
+                        H = float(legend.split("H")[1].split(" ")[0])
+                        legend = (
+                            legend.split(")")[0]
+                            + "="
+                            + format(X * H / 60, "4g")
+                            + "[Hz])"
+                        )
                     label = legend + "\n" + label
                 if annot is not None:
                     label += "\n" + annot
