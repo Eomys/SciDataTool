@@ -20,6 +20,7 @@ from numpy import (
     ceil,
     floor,
     argmin,
+    logical_and,
 )
 
 
@@ -541,12 +542,12 @@ def plot_3D_Data(
         y_max = y_max * 1.2
 
         if len(xticks) == 0 or (
-            len(xticks) > 20
+            logical_and(xticks > x_min, xticks < x_max).sum() > 20
             and not axes_list[list(result.keys()).index(axes_names[0])].is_components
         ):
             xticks = None
         if len(yticks) == 0 or (
-            len(yticks) > 20
+            logical_and(yticks > y_min, yticks < y_max).sum() > 20
             and not axes_list[list(result.keys()).index(axes_names[1])].is_components
         ):
             yticks = None
