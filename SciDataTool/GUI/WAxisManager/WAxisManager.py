@@ -307,7 +307,7 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                         self.w_axis_1.axes_list[i] = ifft_dict[axis]
             self.gen_slice_op(is_refresh=False)
 
-        elif axis_changed == "axis 2" and self.w_axis_2.get_axis_selected() != "None":
+        elif axis_changed == "axis 2":
             if self.w_axis_2.get_axis_selected() != "None":
                 action_selected = self.w_axis_2.get_current_action_name()
                 self.w_axis_1.set_action(action_selected)
@@ -375,6 +375,11 @@ class WAxisManager(Ui_WAxisManager, QWidget):
                         self.w_axis_2.axis_selected in fft_dict
                         or self.w_axis_2.axis_selected in ifft_dict
                     ):
+                        self.w_axis_2.axes_list[i] = ifft_dict[axis]
+            else:
+                # Make sure that all axes are reset to ifft
+                for i, axis in enumerate(self.w_axis_2.axes_list):
+                    if axis in ifft_dict:
                         self.w_axis_2.axes_list[i] = ifft_dict[axis]
             self.gen_slice_op(is_refresh=False)
         self.w_axis_1.set_unit()
