@@ -13,7 +13,7 @@ def plot_4D(
     Zdata,
     Sdata=None,
     is_same_size=False,
-    colormap="RdBu_r",
+    colormap="jet",
     x_min=None,
     x_max=None,
     y_min=None,

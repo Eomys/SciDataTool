@@ -13,7 +13,7 @@ def plot_3D(
     Xdata,
     Ydata,
     Zdata,
-    colormap="RdBu_r",
+    colormap="jet",
     color_list=None,
     x_min=None,
     x_max=None,
@@ -290,6 +290,9 @@ def plot_3D(
         clb = fig.colorbar(c, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
+        if is_contour:
+            CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8)
+            ax.clabel(CS, CS.levels, inline=True, fmt="4g", fontsize=font_size_legend)
         for l in clb.ax.yaxis.get_ticklabels():
             l.set_family(font_name)
         if xticks is not None:

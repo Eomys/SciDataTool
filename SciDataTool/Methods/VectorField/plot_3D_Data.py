@@ -26,7 +26,7 @@ def plot_3D_Data(
     is_logscale_z=False,
     thresh=None,
     is_switch_axes=False,
-    colormap="RdBu_r",
+    colormap="jet",
     win_title=None,
     font_name="arial",
     font_size_title=12,
