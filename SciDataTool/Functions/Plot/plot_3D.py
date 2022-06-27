@@ -1,4 +1,4 @@
-from numpy import nanmin as np_min, nanmax as np_max, abs as np_abs, log10
+from numpy import nanmin as np_min, nanmax as np_max, abs as np_abs, log10, linspace
 
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.art3d as art3d
@@ -49,6 +49,7 @@ def plot_3D(
     font_size_legend=8,
     levels=None,
     is_log_cmap=False,
+    gamma=1
 ):
     """Plots a 3D graph ("stem", "surf" or "pcolor")
 
@@ -288,7 +289,7 @@ def plot_3D(
                 shading=shading,
                 antialiased=True,
                 picker=True,
-                norm=colors.LogNorm(vmin=z_min, vmax=z_max),
+                norm=colors.PowerNorm(vmin=z_min, vmax=z_max,gamma=gamma),
             )
         else :
             c = ax.pcolormesh(
