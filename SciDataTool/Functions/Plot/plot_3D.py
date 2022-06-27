@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.art3d as art3d
 from matplotlib.image import NonUniformImage
 import matplotlib
+import matplotlib.colors as colors
 
 from SciDataTool.Functions.Plot.init_fig import init_fig
 from SciDataTool.Functions.Plot import COLORS
@@ -47,6 +48,7 @@ def plot_3D(
     font_size_label=10,
     font_size_legend=8,
     levels=None,
+    is_log_cmap=False,
 ):
     """Plots a 3D graph ("stem", "surf" or "pcolor")
 
@@ -277,17 +279,29 @@ def plot_3D(
             shading = "flat"
         else:
             shading = "gouraud"
-        c = ax.pcolormesh(
-            Xdata,
-            Ydata,
-            Zdata,
-            cmap=colormap,
-            shading=shading,
-            antialiased=True,
-            picker=True,
-            vmin=z_min,
-            vmax=z_max,
-        )
+        if is_log_cmap:
+            c = ax.pcolormesh(
+                Xdata,
+                Ydata,
+                Zdata,
+                cmap=colormap,
+                shading=shading,
+                antialiased=True,
+                picker=True,
+                norm=colors.LogNorm(vmin=z_min, vmax=z_max),
+            )
+        else :
+            c = ax.pcolormesh(
+                Xdata,
+                Ydata,
+                Zdata,
+                cmap=colormap,
+                shading=shading,
+                antialiased=True,
+                picker=True,
+                vmin=z_min,
+                vmax=z_max,
+            )
         clb = fig.colorbar(c, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
