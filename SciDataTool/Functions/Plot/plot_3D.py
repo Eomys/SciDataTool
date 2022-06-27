@@ -292,10 +292,12 @@ def plot_3D(
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
         if is_contour:
-            CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8)
             if levels is None:
-                levels = CS.levels
-            ax.clabel(CS, levels, inline=True, fmt="%4g", fontsize=font_size_legend)
+                CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8)
+            else :
+                CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8, levels=levels)
+            print(CS.levels)
+            ax.clabel(CS, CS.levels, inline=True, fmt="%4g", fontsize=font_size_legend)
         for l in clb.ax.yaxis.get_ticklabels():
             l.set_family(font_name)
         if xticks is not None:
