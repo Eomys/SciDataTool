@@ -296,7 +296,6 @@ def plot_3D(
                 CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8)
             else :
                 CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8, levels=levels)
-            print(CS.levels)
             ax.clabel(CS, CS.levels, inline=True, fmt="%4g", fontsize=font_size_legend)
         for l in clb.ax.yaxis.get_ticklabels():
             l.set_family(font_name)
