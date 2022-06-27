@@ -46,6 +46,7 @@ def plot_3D(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
+    levels=None,
 ):
     """Plots a 3D graph ("stem", "surf" or "pcolor")
 
@@ -292,7 +293,9 @@ def plot_3D(
         clb.ax.tick_params(labelsize=font_size_legend)
         if is_contour:
             CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8)
-            ax.clabel(CS, CS.levels, inline=True, fmt="4g", fontsize=font_size_legend)
+            if levels is None:
+                levels = CS.levels
+            ax.clabel(CS, levels, inline=True, fmt="%4g", fontsize=font_size_legend)
         for l in clb.ax.yaxis.get_ticklabels():
             l.set_family(font_name)
         if xticks is not None:
