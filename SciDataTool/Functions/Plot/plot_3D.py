@@ -98,9 +98,9 @@ def plot_3D(
     is_disp_title : bool
         boolean indicating if the title must be displayed
     type_plot : str
-        type of 3D graph : "stem", "surf", "pcolor" or "scatter"
+        type of 3D graph : "stem", "surf", "pcolor", "pcolormesh" or "scatter"
     is_contour : bool
-        True to show contour line if type_plot = "pcolor"
+        True to show contour line if type_plot = "pcolor" or "pcolormesh"
     is_shading_flat : bool
         True to use flat shading instead of Gouraud for pcolormesh or bilinear for pcolor
     save_path : str
@@ -109,10 +109,10 @@ def plot_3D(
         True to show figure after plot
     is_switch_axes : bool
         to switch x and y axes
-    levels : list
+    levels : list of float or int
         the levels for the contour to be drawn if is_contour is True and type_plot is "pcolormesh"
         if None, the levels will be determined automatically 
-    gamma : float
+    gamma : int or float
         the power of the PowerNorm that can be used if type_plot is "pcolormesh"
     n_ticks : int
         the number of ticks that will be displayed on the colorbar if type_plot is "pcolormesh" and
