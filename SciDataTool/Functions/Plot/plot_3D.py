@@ -291,6 +291,10 @@ def plot_3D(
                 picker=True,
                 norm=colors.PowerNorm(vmin=z_min, vmax=z_max,gamma=gamma),
             )
+            # Number of ticks on the colorbar 
+            N=7
+            ticks=[z_min+i**(1/gamma)*(z_max-z_min)/(N-1)**(1/gamma) for i in range(N)]
+            clb = fig.colorbar(c, ax=ax, ticks=ticks)
         else :
             c = ax.pcolormesh(
                 Xdata,
@@ -303,7 +307,7 @@ def plot_3D(
                 vmin=z_min,
                 vmax=z_max,
             )
-        clb = fig.colorbar(c, ax=ax)
+            clb = fig.colorbar(c, ax=ax)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
         if is_contour:
