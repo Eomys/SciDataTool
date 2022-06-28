@@ -48,8 +48,8 @@ def plot_3D(
     font_size_label=10,
     font_size_legend=8,
     levels=None,
-    is_log_cmap=False,
-    gamma=1
+    gamma=1,
+    n_ticks = 7,
 ):
     """Plots a 3D graph ("stem", "surf" or "pcolor")
 
@@ -109,6 +109,14 @@ def plot_3D(
         True to show figure after plot
     is_switch_axes : bool
         to switch x and y axes
+    levels : list
+        the levels for the contour to be drawn if is_contour is True and type_plot is "pcolormesh"
+        if None, the levels will be determined automatically 
+    gamma : float
+        the power of the PowerNorm that can be used if type_plot is "pcolormesh"
+    n_ticks : int
+        the number of ticks that will be displayed on the colorbar if type_plot is "pcolormesh" and
+        gamma != 1
     """
 
     # Set if figure must be shown if is_show_fig is None
@@ -280,22 +288,7 @@ def plot_3D(
             shading = "flat"
         else:
             shading = "gouraud"
-        if is_log_cmap:
-            c = ax.pcolormesh(
-                Xdata,
-                Ydata,
-                Zdata,
-                cmap=colormap,
-                shading=shading,
-                antialiased=True,
-                picker=True,
-                norm=colors.PowerNorm(vmin=z_min, vmax=z_max,gamma=gamma),
-            )
-            # Number of ticks on the colorbar 
-            N=7
-            ticks=[z_min+i**(1/gamma)*(z_max-z_min)/(N-1)**(1/gamma) for i in range(N)]
-            clb = fig.colorbar(c, ax=ax, ticks=ticks)
-        else :
+        if gamma==1:
             c = ax.pcolormesh(
                 Xdata,
                 Ydata,
@@ -308,6 +301,21 @@ def plot_3D(
                 vmax=z_max,
             )
             clb = fig.colorbar(c, ax=ax)
+        else :
+            c = ax.pcolormesh(
+                Xdata,
+                Ydata,
+                Zdata,
+                cmap=colormap,
+                shading=shading,
+                antialiased=True,
+                picker=True,
+                norm=colors.PowerNorm(vmin=z_min, vmax=z_max,gamma=gamma),
+            )
+            # Number of ticks on the colorbar 
+            N=n_ticks
+            ticks=[z_min+i**(1/gamma)*(z_max-z_min)/(N-1)**(1/gamma) for i in range(N)]
+            clb = fig.colorbar(c, ax=ax, ticks=ticks)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
         if is_contour:
