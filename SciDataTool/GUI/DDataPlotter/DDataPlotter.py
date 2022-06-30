@@ -13,7 +13,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from matplotlib.collections import PathCollection, QuadMesh
 from matplotlib.text import Annotation
-from numpy import array, allclose
+from numpy import array, allclose, argmin, argmax, where, abs as np_abs
 from SciDataTool.Functions.is_axes_in_order import is_axes_in_order
 from SciDataTool.Functions.Plot import TEXT_BOX
 from SciDataTool.Classes.Norm_ref import Norm_ref
@@ -374,7 +374,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
             # Add hidden annotations
             if annotations != [] and not annotations[0]._visible and is_annot:
-                for annotation in annotations:
+                for ii, annotation in enumerate(annotations):
                     if annotation._x == x and annotation._y == y:
                         label += sep + annotation._text
 
@@ -423,6 +423,23 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         and "Overall" not in legend
                     ):
                         annot = annotations[self.ax.lines.index(plot_obj)]._text
+                        if "main " in annot:
+                            speed_index = argmin(
+                                np_abs(self.data.get_axes("speed")[0].get_values() - X)
+                            )
+                            H = "H" + legend.split("H")[1].split(" ")[0]
+                            order_index = [
+                                True if H in string else False
+                                for string in self.data.get_axes("order")[
+                                    0
+                                ].get_values()
+                            ].index(True)
+                            loadcases = self.data.get_axes("loadcases")[0].get_values()
+                            lc_index = argmax(
+                                self.data.values[speed_index, order_index, :]
+                            )
+                            main_lc = loadcases[lc_index]
+                            annot += main_lc
             elif isinstance(plot_obj, PathCollection):
                 X = plot_obj.get_offsets().data[ind][0][0]
                 Y = plot_obj.get_offsets().data[ind][0][1]
