@@ -15,7 +15,7 @@ from matplotlib.collections import PathCollection, QuadMesh
 from matplotlib.text import Annotation
 from numpy import array, allclose, argmin, argmax, where, abs as np_abs
 from SciDataTool.Functions.is_axes_in_order import is_axes_in_order
-from SciDataTool.Functions.Plot import TEXT_BOX
+from SciDataTool.Functions.Plot import TEXT_BOX, fft_dict
 from SciDataTool.Classes.Norm_ref import Norm_ref
 
 
@@ -471,7 +471,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
             # Offset for the label
             x_min, x_max = self.ax.get_xlim()
-            dx = (x_max - x_min) / 50
+            dx = (x_max - x_min) / 20
             if X is not None and Y is not None:
                 if isinstance(X, str):
                     X = ind
@@ -665,6 +665,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                             + " "
                             + self.data.get_axes(axis_cont)[0].values[index]
                         )
+                    if "y_min" in plot_arg_dict_2D:
+                        del plot_arg_dict_2D["y_min"]
+                    if "y_max" in plot_arg_dict_2D:
+                        del plot_arg_dict_2D["y_max"]
                     self.data.plot_2D_Data(
                         *[*axes_selected, *data_selection],
                         **plot_arg_dict_2D,
@@ -694,6 +698,12 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                                         + "{"
                                         + axis_selected.split("{")[1]
                                     )
+                if "y_min" in plot_arg_dict_3D:
+                    if "wavenumber" not in axes_selected[1]:
+                        del plot_arg_dict_3D["y_min"]
+                if "y_max" in plot_arg_dict_3D:
+                    if "wavenumber" not in axes_selected[1]:
+                        del plot_arg_dict_3D["y_max"]
                 if output_range["min"] is not None:
                     plot_arg_dict_3D["z_min"] = output_range["min"]
                 if output_range["max"] is not None:
