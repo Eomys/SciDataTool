@@ -289,7 +289,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.worker = SaveGifWorker(
             widget=self,
             main_widget=self.main_widget,
-            gif=gif,
+            gif=join(dirname(gif), "tmp.gif"),
             plot_input=plot_input,
             data_selection=operations_selected,
             is_3D=is_3D,

@@ -79,6 +79,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         save_path="",
         logger=None,
         path_to_image=None,
+        text_box=None,
     ):
         """Initialize the UI according to the input given by the user
 
@@ -126,6 +127,7 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
         self.plot_arg_dict = plot_arg_dict
         self.data = data
         self.data_orig = data
+        self.text_box = text_box
 
         # Initializing the figure inside the UI
         (self.fig, self.ax, _, _) = init_fig()
@@ -215,7 +217,10 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
 
         """
         if text_box is None:
-            text_box = TEXT_BOX
+            if self.text_box is None:
+                text_box = TEXT_BOX
+            else:
+                text_box = self.text_box
         # Set plot layout
         self.canvas = FigureCanvas(fig)
         if self.toolbar is None:
@@ -669,7 +674,15 @@ class DDataPlotter(Ui_DDataPlotter, QWidget):
                         del plot_arg_dict_2D["y_min"]
                     if "y_max" in plot_arg_dict_2D:
                         del plot_arg_dict_2D["y_max"]
-                    self.data.plot_2D_Data(
+                    if (
+                        "data_list" in plot_arg_dict_2D
+                        and "wavenumber" in axes_selected[0]
+                    ):
+                        data = plot_arg_dict_2D["data_list"][0]
+                        del plot_arg_dict_2D["data_list"]
+                    else:
+                        data = self.data
+                    data.plot_2D_Data(
                         *[*axes_selected, *data_selection],
                         **plot_arg_dict_2D,
                         unit=output_range["unit"],
