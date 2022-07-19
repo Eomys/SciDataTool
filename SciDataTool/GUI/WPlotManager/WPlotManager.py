@@ -70,6 +70,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         module = __import__("SciDataTool")
         DATA_DIR = getattr(module, "DATA_DIR")
         self.save_path = DATA_DIR  # Path to directory where animation are stored
+        self.gif_path = None
         self.path_to_image = None  # Path to recover the image for the animate button
         self.main_widget = None
         self.plot_arg_dict = {}
@@ -266,8 +267,12 @@ class WPlotManager(Ui_WPlotManager, QWidget):
             if wid.axis_name == animated_axis.split("[")[0]:
                 self.l_loading = wid.l_loading
 
-        gif = self.save_path + "/" + gif_name + str_format
-        gif = gif.replace("\\", "/")
+        if self.gif_path is not None:
+            gif_path = self.gif_path
+        else:
+            gif_path = self.save_path
+
+        gif = join(gif_path, gif_name + str_format)
 
         # Using an index to make sure that we are generating a new gif everytime
         idx = 1
@@ -289,7 +294,7 @@ class WPlotManager(Ui_WPlotManager, QWidget):
         self.worker = SaveGifWorker(
             widget=self,
             main_widget=self.main_widget,
-            gif=join(dirname(gif), "tmp.gif"),
+            gif=gif,
             plot_input=plot_input,
             data_selection=operations_selected,
             is_3D=is_3D,
