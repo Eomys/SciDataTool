@@ -13,7 +13,11 @@ def to_rphiz(self):
     module = __import__("SciDataTool.Classes.VectorField", fromlist=["VectorField"])
     VectorField = getattr(module, "VectorField")
 
-    if "radial" in self.components or "tangential" in self.components:
+    if (
+        "radial" in self.components
+        or "tangential" in self.components
+        or "axial" in self.components
+    ):
         return self.copy()
 
     else:

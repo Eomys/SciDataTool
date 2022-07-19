@@ -102,7 +102,11 @@ class WVectorSelector(Ui_WVectorSelector, QWidget):
         self.c_component.clear()
         self.c_component.addItems([REV_COMP_DICT[comp] for comp in comp_stored])
         model = self.c_component.model()
-        if "radial" in comp_stored or "tangential" in comp_stored:
+        if (
+            "radial" in comp_stored
+            or "tangential" in comp_stored
+            or "axial" in comp_stored
+        ):
             item = QStandardItem("Polar coordinates")
             font = item.font()
             font.setBold(True)
