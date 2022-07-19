@@ -1,9 +1,10 @@
-from numpy import nanmin as np_min, nanmax as np_max, abs as np_abs, log10
+from numpy import nanmin as np_min, nanmax as np_max, abs as np_abs, log10, linspace
 
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.art3d as art3d
 from matplotlib.image import NonUniformImage
 import matplotlib
+import matplotlib.colors as colors
 
 from SciDataTool.Functions.Plot.init_fig import init_fig
 from SciDataTool.Functions.Plot import COLORS
@@ -46,6 +47,9 @@ def plot_3D(
     font_size_title=12,
     font_size_label=10,
     font_size_legend=8,
+    levels=None,
+    gamma=1,
+    n_ticks = 7,
 ):
     """Plots a 3D graph ("stem", "surf" or "pcolor")
 
@@ -94,9 +98,9 @@ def plot_3D(
     is_disp_title : bool
         boolean indicating if the title must be displayed
     type_plot : str
-        type of 3D graph : "stem", "surf", "pcolor" or "scatter"
+        type of 3D graph : "stem", "surf", "pcolor", "pcolormesh" or "scatter"
     is_contour : bool
-        True to show contour line if type_plot = "pcolor"
+        True to show contour line if type_plot = "pcolor" or "pcolormesh"
     is_shading_flat : bool
         True to use flat shading instead of Gouraud for pcolormesh or bilinear for pcolor
     save_path : str
@@ -105,6 +109,14 @@ def plot_3D(
         True to show figure after plot
     is_switch_axes : bool
         to switch x and y axes
+    levels : list of float or int
+        the levels for the contour to be drawn if is_contour is True and type_plot is "pcolormesh"
+        if None, the levels will be determined automatically 
+    gamma : int or float
+        the power of the PowerNorm that can be used if type_plot is "pcolormesh"
+    n_ticks : int
+        the number of ticks that will be displayed on the colorbar if type_plot is "pcolormesh" and
+        gamma != 1
     """
 
     # Set if figure must be shown if is_show_fig is None
@@ -276,23 +288,42 @@ def plot_3D(
             shading = "flat"
         else:
             shading = "gouraud"
-        c = ax.pcolormesh(
-            Xdata,
-            Ydata,
-            Zdata,
-            cmap=colormap,
-            shading=shading,
-            antialiased=True,
-            picker=True,
-            vmin=z_min,
-            vmax=z_max,
-        )
-        clb = fig.colorbar(c, ax=ax)
+        if gamma==1:
+            c = ax.pcolormesh(
+                Xdata,
+                Ydata,
+                Zdata,
+                cmap=colormap,
+                shading=shading,
+                antialiased=True,
+                picker=True,
+                vmin=z_min,
+                vmax=z_max,
+            )
+            clb = fig.colorbar(c, ax=ax)
+        else :
+            c = ax.pcolormesh(
+                Xdata,
+                Ydata,
+                Zdata,
+                cmap=colormap,
+                shading=shading,
+                antialiased=True,
+                picker=True,
+                norm=colors.PowerNorm(vmin=z_min, vmax=z_max,gamma=gamma),
+            )
+            # Number of ticks on the colorbar 
+            N=n_ticks
+            ticks=[z_min+i**(1/gamma)*(z_max-z_min)/(N-1)**(1/gamma) for i in range(N)]
+            clb = fig.colorbar(c, ax=ax, ticks=ticks)
         clb.ax.set_title(zlabel, fontsize=font_size_legend, fontname=font_name)
         clb.ax.tick_params(labelsize=font_size_legend)
         if is_contour:
-            CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8)
-            ax.clabel(CS, CS.levels, inline=True, fmt="4g", fontsize=font_size_legend)
+            if levels is None:
+                CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8)
+            else :
+                CS = ax.contour(Xdata, Ydata, Zdata, colors="black", linewidths=0.8, levels=levels)
+            ax.clabel(CS, CS.levels, inline=True, fmt="%4g", fontsize=font_size_legend)
         for l in clb.ax.yaxis.get_ticklabels():
             l.set_family(font_name)
         if xticks is not None:
