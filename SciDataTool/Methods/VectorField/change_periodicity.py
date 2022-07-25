@@ -28,9 +28,10 @@ def change_periodicity(
     """
 
     DataLinspace = import_class("SciDataTool.Classes", "DataLinspace")
+    DataPattern = import_class("SciDataTool.Classes", "DataPattern")
 
     # Get axes list in original VectorField
-    # Assumes axes are the following: time, angle, z and z is DataPattern
+    # Assumes axes are the following: time, angle, z and z is DataPattern or radius
     axes_list = self.get_axes()
 
     # Get replicating number for time axis
@@ -73,7 +74,11 @@ def change_periodicity(
         angle_arg = "angle[oneperiod]"
 
     # Get argument list for call to get_rphiz_along on one time and space period
-    arg_list = [time_arg, angle_arg, "z[smallestpattern]"]
+    arg_list = [time_arg, angle_arg]
+    if isinstance(self.get_axes()[-1], DataPattern):
+        arg_list.append("z[smallestpattern]")
+    else:
+        arg_list.append(self.get_axes()[-1].name)
 
     # Get axes values on requested axes
     result = self.get_rphiz_along(*arg_list, is_squeeze=False)
