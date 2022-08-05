@@ -126,3 +126,31 @@ SC_LINE_WIDTH = 1
 MAIN_LINE_COLOR = "0.5"  # Gray
 MAIN_LINE_STYLE = "dotted"
 MAIN_LINE_WIDTH = 1
+
+REV_COMP_DICT = {
+    "radial": "radial",
+    "tangential": "circumferential",
+    "axial": "axial",
+    "comp_x": "x-axis component",
+    "comp_y": "y-axis component",
+    "comp_z": "z-axis component",
+}
+
+PARAM_3D = [
+    "is_2D_view",
+    "is_contour",
+    "is_same_size",
+    "N_stem",
+    "colormap",
+    "annotation_delim",
+    "marker_color",
+    "z_range",
+]
+
+PARAM_2D = [
+    "color_list",
+    "data_list",
+    "legend_list",
+    "fund_harm_dict",
+    "is_show_legend",
+]

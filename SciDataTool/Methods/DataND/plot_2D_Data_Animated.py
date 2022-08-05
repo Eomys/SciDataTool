@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 from numpy import arange, nanmax, nanmin, frombuffer
 import imageio
-from ...GUI.DDataPlotter.DDataPlotter import PARAM_3D
-from SciDataTool.Functions.Plot import fft_dict, ifft_dict
+from SciDataTool.Functions.Plot import fft_dict, ifft_dict, PARAM_3D
 
 
 def plot_2D_Data_Animated(

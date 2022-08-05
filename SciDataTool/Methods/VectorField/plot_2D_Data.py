@@ -5,7 +5,7 @@ from SciDataTool.Functions.conversions import (
     xyz_to_rphiz,
     rphiz_to_xyz_field,
 )
-from SciDataTool.GUI.WVectorSelector.WVectorSelector import REV_COMP_DICT
+from SciDataTool.Functions.Plot import REV_COMP_DICT
 from SciDataTool.Functions.Load.import_class import import_class
 
 
